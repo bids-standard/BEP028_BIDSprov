@@ -2,7 +2,48 @@
     "@context": 
       {
         "bids" : "https://some/url/to/bids_context.jsonld",
-        "exp_dir" : {"@id" : "$HOME/nidm-results-examples/spm-default/ds011/"}
+        "prov" : "http://www.w3.org/ns/prov#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "exp_dir" : {
+          "@id" : "exp_dir",
+          "prov:atLocation" : "$HOME/nidm-results-examples/spm-default/ds011/"
+        },
+        "startedAtTime" : {
+          "@id": "http://www.w3.org/ns/prov#startedAtTime",
+          "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+        },
+        "endedAtTime" : {
+          "@id": "http://www.w3.org/ns/prov#endedAtTime",
+          "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+        },
+        "wasGeneratedBy" : {
+          "@id": "http://www.w3.org/ns/prov#wasGeneratedBy",
+          "@type": "http://www.w3.org/2001/XMLSchema#Entity"
+        },
+        "wasAssociatedWith" : {
+          "@id": "http://www.w3.org/ns/prov#wasAssociatedWith",
+          "@type": "http://www.w3.org/2001/XMLSchema#Agent"
+        },
+        "wasInformedBy" : {
+          "@id": "http://www.w3.org/ns/prov#wasInformedBy",
+          "@type": "http://www.w3.org/2001/XMLSchema#Activity"
+        },
+        "used" : {
+          "@id": "http://www.w3.org/ns/prov#used",
+          "@type": "http://www.w3.org/2001/XMLSchema#Entity"
+        },
+        "quality" : {
+          "@id": "TODO",
+          "@type": "xsd:float"
+        },
+        "sep" : {
+          "@id" : "TODO",
+          "@type" : "xsd:int" 
+        },
+        "which" : {
+          "@id" : "TODO",
+          "@type" : "xsd:list"
+        }
       },
     "@id": "http://example.org/ds00000X",
     "generatedAt": "2020-03-10T10:00:00",
@@ -18,8 +59,8 @@
     "@graph": [
       {
         "@id" : "realign",
-        "@type" : "bids:bids_activity",
-        "wasAssociatedWith" : "bids:spmspatial.realign.estwrite",
+        "@type" : "prov:Activity",
+        "wasAssociatedWith" : "estwrite",
         "startedAtTime" : "10/10/2020 00:00:00",
         "endedAtTime" : "10/10/2020 01:00:00",
         "used" : ":exp_dir/PREPROCESSING/ANATOMICAL/*",
@@ -30,6 +71,19 @@
         "roptions" : {
           "which" : [0, 1],
           "interp" : 4
+        }
+      },
+      {
+        "@id" : "coreg.estimate",
+        "@type" : "prov:Activity",
+        "wasAssociatedWith" : "SPM",
+        "wasInformedBy" : "realign",
+        "startedAtTime" : "10/10/2020 00:00:00",
+        "endedAtTime" : "10/10/2020 01:0",
+        "used" : "TODO",
+        "eoptions" : {
+          "cost_fun" : "nmi",
+          "sep" : [4, 2]
         }
       }
     ]
