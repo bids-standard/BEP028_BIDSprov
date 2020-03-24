@@ -1,0 +1,62 @@
+{
+  "@context": "https://raw.githubusercontent.com/Inria-Visages/BIDS-prov/master/context.json",
+  "@id": "http://example.org/ds00000X",
+  "generatedAt": "2020-03-10T10:00:00",
+  "wasGeneratedBy": {
+      "@id": "INRIA",
+      "@type": "Project",
+      "startedAt": "2016-09-01T10:00:00",
+      "wasAssociatedWith": { "@id": "NIH",
+                              "@type": "Organization",
+                              "hadRole": "Funding"
+                            }
+    },
+  "@graph": [
+    {
+      "prov:Activity" : [
+        {
+          "@id" : "realign",
+          "wasAssociatedWith" : "estwrite",
+          "startedAtTime" : "10/10/2020 00:00:00",
+          "endedAtTime" : "10/10/2020 01:00:00",
+          "used" : "$HOME/BIDS-prov/nidm-results-examples/spm_default/ds011/PREPROCESSING/ANATOMICAL/*",
+          "attributes" : [
+            ["eoptions.quality", 0.9],
+            ["eoptions.sep", 4],
+            ["roptions.which", [0, 1]],
+            ["roptions.interp", 4]
+          ]
+        },
+        {
+          "@id" : "coreg.estimate",
+          "wasAssociatedWith" : {
+              "@type" : "prov:SoftwareAgent",
+              "RRID" : "https://scicrunch.org/resources/Any/record/nlx_144509-1/SCR_007037/resolver?q=SPM&l=SPM",
+              "label" : "SPM"
+            },
+            "startedAtTime" : "10/10/2020 00:00:00",
+            "endedAtTime" : "10/10/2020 01:0",
+            "used" : "$HOME/BIDS-prov/nidm-results-examples/spm_default/ds011/PREPROCESSING/FUNCTIONAL/*",
+            "attributes" : [
+              ["eoptions.cost_fun", "nmi"],
+              ["sep", [4, 2]]
+            ]
+          }
+      ]
+    },
+    {
+      "prov:Entity" : [
+        {
+          "@id" : "realign_output",
+          "wasAttributedTo" : {
+            "@type" : "prov:SoftwareAgent",
+            "RRID" : "https://scicrunch.org/resources/Any/record/nlx_144509-1/SCR_007037/resolver?q=SPM&l=SPM",
+            "label" : "SPM" 
+          },
+          "wasGeneratedBy" : "realign",
+          "derivedFrom" : "$HOME/BIDS-prov/nidm-results-examples/spm_default/ds011/PREPROCESSING/ANATOMICAL/*"
+        }
+      ]
+    }
+  ]
+}
