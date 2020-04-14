@@ -5,11 +5,11 @@ provenance framework for BIDS
 ## BIDS-prov in the NIDM project
 The Neuroimaging Data Model (NIDM) is a collection of specification documents that define extensions the `W3C PROV` standard for the domain of human brain mapping
 
-![NIDM](img/nidm-layer-cake.png "NIDM building blocks")
+<center>
+<img src="img/nidm-layer-cake.png" width="80%" position="center">
+</center>
 
 BIDS-prov takes effect at level 1 in the set of layers presented above. It follows semantics web practices (level 0) to allow for expression of arbitrary interactions between Agents, Entities and Activites, as defined in the W3C documentation.
-
-Common definition and objects are directly taken from NIDM core vocab (level 2) in order to ensure all described projects speak a common language.
 
 ---------------
 Mature building blocks of NIDM:
@@ -27,3 +27,5 @@ In this case:
 * my output files are entities, derived from some input files
 * Running my SPM batch on some input files is an Activity.
 
+-----------
+### [New features (not in the spec)](new_features.md)
