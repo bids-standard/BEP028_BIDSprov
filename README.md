@@ -44,7 +44,7 @@ However, there are quite a few changes to make, and quite a lot of conversation 
 Each conceptual update to the specification should have a *``proposal file``*.
 This file should explain what change it is proposing and provide a justification for the change.
 
-Once the proposal is ready, the developer should **open a pull request** to the master branch of the BEP001 repository (this one).
+Once the proposal is ready, the developer should **open a pull request** to the master branch of the BEP028 repository (this one).
 If everyone agrees on the proposal, the file will be merged to master.
 
 (There will then be some wrangling to make the one big pull request to the bids-specification.
