@@ -1,14 +1,13 @@
-# BEP028
-provenance framework for BIDS
+# BIDS Extension Proposal 028: Provenance in BIDS (BEP028)
 This repository contains **BIDS Extension Proposal 028 : BIDS-prov, a provenance framework for BIDS**
 
 ## Our goal
 **Interpreting and comparing scientific results** and enabling reusable data and analysis output require understanding provenance, i.e. how the data were generated and processed. To be useful, the provenance must be understandable, easily communicated, and captured automatically in machine accessible form. Provenance records are thus used to encode transformations between digital objects
 
 ## Who is building BEP 028
-Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Rémi Adon ([@remiadon](https://github.com/remiadon)) are currently working on the definition of this BEP, as well as providing meaningful examples
+Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Satrajit Ghosh ([@satra](https://github.com/satra)) are the BEP co-moderators. 
 
-Satrajit Ghosh ([@satra](https://github.com/satra)) is responsible for integration in BIDS
+Rémi Adon ([@remiadon](https://github.com/remiadon)) is currently working on the definition of this BEP, as well as providing real-world examples.
 
 ### BIDS-prov in the NIDM project
 The Neuroimaging Data Model (NIDM) is a collection of specification documents that define extensions the `W3C PROV` standard for the domain of human brain mapping
