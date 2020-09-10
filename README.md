@@ -2,15 +2,24 @@
 
 This repository contains **BIDS Extension Proposal 028 : BIDS-prov, a provenance framework for BIDS**
 
+---
+
 ## Our goal
 
 **Interpreting and comparing scientific results** and enabling reusable data and analysis output require understanding provenance, i.e. how the data were generated and processed. To be useful, the provenance must be understandable, easily communicated, and captured automatically in machine accessible form. Provenance records are thus used to encode transformations between digital objects
 
-## Who is building BEP 028
+### Who is building BEP 028
 
 Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Satrajit Ghosh ([@satra](https://github.com/satra)) are the BEP co-moderators.
 
-Rémi Adon ([@remiadon](https://github.com/remiadon)) is currently working on the definition of this BEP, as well as providing real-world examples.
+List of all contributors
+
+- Camille Maumet ([@cmaumet](https://github.com/cmaumet))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Stefan Appelhoff ([@sappelhoff](https://github.com/sappelhoff))
+- Chris Markiewicz ([@effigies](https://github.com/effigies))
+- Yaroslav Halchenko ([yarikoptic](https://github.com/yarikoptic))
+- Rémi Adon ([@remiadon](https://github.com/remiadon))
 
 ### BIDS-prov in the NIDM project
 
@@ -20,11 +29,13 @@ The Neuroimaging Data Model (NIDM) is a collection of specification documents th
   <img width="50%" src="img/nidm-layer-cake.png">
 </p>
 
-BIDS-prov takes effect at level 1 in the set of layers presented above. It follows semantics web practices (level 0) to allow for expression of arbitrary interactions between Agents, Entities and Activites, as defined in the W3C documentation.
+BIDS-prov takes effect at level 1 in the set of layers presented above. It follows semantics web practices (level 0) to allow for expression of arbitrary interactions between [Agents, Entities and Activites, as defined in the W3C documentation](https://www.w3.org/TR/prov-dm/#core-structures).
+
+---
 
 ## How to help
 
-[Our goal](#our-goal) is to extends BIDS to be able to track provenance at every stage of an experiment.
+[Our goal](#our-goal) is to extend [BIDS](https://bids.neuroimaging.io/) to be able to track provenance at every stage of an experiment.
 
 For this purpose we have to **propose changes to the BIDS specification**
 
@@ -35,12 +46,7 @@ If you don't know much about markdown, here's a [good intro guide](https://guide
 
 The file that you are most likely to propose changes to is [src/03-modality-agnostic-files.md](https://github.com/bids-standard/bids-specification/blob/master/src/03-modality-agnostic-files.md), although there may be additional changes that have to happen in other pars of the repository
 
-### Avoiding great big pull requests
-
-We could do all our work in a branch of the main [bids-specification](https://github.com/bids-standard/bids-specification) repository.
-We would be able to see how our proposed changes affected the current version of the specification by opening a [pull request](https://help.github.com/articles/about-pull-requests/).
-
-However, there are quite a few changes to make, and quite a lot of conversation to have around each of them, so our proposed way of working is to **break up the individual changes into manageable chunks**.
+### Pull requests
 
 Each conceptual update to the specification should have a _`proposal file`_.
 This file should explain what change it is proposing and provide a justification for the change.
@@ -50,6 +56,8 @@ If everyone agrees on the proposal, the file will be merged to master.
 
 (There will then be some wrangling to make the one big pull request to the bids-specification.
 We'll cross that bridge when we come to it! :sparkles:)
+
+---
 
 ## Finding information and getting in touch
 
@@ -73,3 +81,9 @@ Mature building blocks of NIDM:
 [New features (to be included)](new_features.md)
 
 We also include a [code of conduct](code_of_conduct.md)
+
+---
+
+---
+
+_This document is derived from the [BEP001 README](https://github.com/bids-standard/bep001/blob/master/README.md)_
