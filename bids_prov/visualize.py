@@ -8,50 +8,52 @@ import click
 from graphviz import Digraph
 import json
 
-EDGES_PROPS = dict(
-    associatedWith={'color':'pink'},
-    informedBy={},
-    derivedFrom={},
-    actedOnBehalfOf={'color': 'pink'},
-    attributedTo={'color': 'pink'},
-    generatedBy={},
-)
+from prov.model import ProvDocument
+from prov.dot import prov_to_dot
+import requests
+import os
 
-NODE_PROPS = dict(
-    Entity=dict(shape='rect', style='rounded,filled', fillcolor='#f3f0b2'),
-    Agent=dict(shape='house', fillcolor="#F5D0A9", style="filled"),
-    Activity=dict(shape='rect', style='filled', fillcolor='#bfb4dd'),
-)
+import rdflib as rl
+import pyld as ld
+import json
 
+def viz_turtle(source=None, content=None, img_file=None, disp=True):
+    prov_doc = ProvDocument.deserialize(source=source, content=content, format='rdf', rdf_format='turtle')
+
+    dot = prov_to_dot(prov_doc, use_labels=True)
+    dot.write_png(img_file)
+
+
+def viz_jsonld11(jsonld11_file, img_file, disp=True):
+    url_context11 = json.load(open(jsonld11_file))
+
+    req_context_11 = requests.get(url=url_context11['@context'])
+    context_11 = req_context_11.json()
+
+    context_10 = {k: v for k,v in context_11['@context'].items() if k not in {'@version', 'records'}}
+
+    # Load graph from json-ld file as non 1.1 JSON-LD
+    aa=ld.jsonld.compact(
+        json.load(open(jsonld11_file, 'r')),
+        context_10)
+
+    g = rl.ConjunctiveGraph()
+    g.parse(data=json.dumps(aa, indent=2), format='json-ld')
+
+    viz_turtle(content=g.serialize(format='turtle').decode(), img_file=img_file, disp=disp)
 
 
 
 @click.command()
 @click.argument('filenames', nargs=-1)
-@click.option('--verbose', default=False)
-@click.option('--output_file', '-o', default='prov.gv')
-def main(filenames, verbose, output_file):
-    edge_props = EDGES_PROPS
-    #if not verbose:
-    #    edge_props.disc{'informedBy'}  # TODO : give a more complete set
-    
-    g = Digraph(format='png')
-    for filename in filenames:
-        with open(filename, 'r') as fd:
-            data = json.load(fd)
+@click.option('--output_file', '-o', default='')
+def main(filenames, output_file):
+    filename = filenames[0]  # FIXME handle graph across multiple files
 
-        data = data['@graph']
-        with g.subgraph(name=filename) as s:
-            for e in data:
-                props = NODE_PROPS.get(e['@type'], {})
-                s.node(e['@id'], **props)
+    if not output_file:
+        output_file = os.path.splitext(filename)[0] + '.png'
 
-            for e in data:
-                keys = e.keys() & edge_props.keys()
-                for key in keys:
-                    s.edge(e['@id'], e[key], label=key, **edge_props[key])
-
-    g.render(output_file, quiet_view=True)
+    viz_jsonld11(filename, output_file)
 
 
 if __name__ == '__main__':
