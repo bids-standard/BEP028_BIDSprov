@@ -30,7 +30,7 @@ The Neuroimaging Data Model (NIDM) is a collection of specification documents th
   <img width="50%" src="img/nidm-layer-cake.png">
 </p>
 
-BIDS-prov takes effect at level 1 in the set of layers presented above. It follows semantics web practices (level 0) to allow for expression of arbitrary interactions between [Agents, Entities and Activites, as defined in the W3C documentation](https://www.w3.org/TR/prov-dm/#core-structures).
+BIDS-prov is a BIDS extension that is compatible with NIDM.
 
 ---
 
