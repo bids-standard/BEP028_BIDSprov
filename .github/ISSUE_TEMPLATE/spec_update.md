@@ -1,3 +1,12 @@
+---
+name: Propose spec update
+about: Update BIDS-prov specification
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 ## Update proposal for BIDS Prov (BEP028)
 
 ### Problem Statement
