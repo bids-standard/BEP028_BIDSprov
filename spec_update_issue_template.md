@@ -15,8 +15,5 @@ How would this example turn if we `apply the proposed change` ?
 
 -------------
 ### Checklist 
-- [ ] link to the google doc of the proposal
-- [ ] make sure the google doc follows the [BIDS proposale template](https://docs.google.com/document/d/1W7--Mf3gCCb1mVfhsoRJCAKFhmf2umG1PFkyZ1jEgMw/edit#heading=h.4k1noo90gelw)
-- [ ] list of all authors for this proposal
-- [ ] links to related [issues](https://github.com/bids-standard/bids-specification/issues) and [PRs](https://github.com/bids-standard/bids-specification/pulls) in bids-specification
+- [ ] links to related existing [issues](https://github.com/bids-standard/BEP028_BIDSprov/issues) and/or [PR](https://github.com/bids-standard/BEP028_BIDSprov/pulls)
 
