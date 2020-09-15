@@ -87,4 +87,4 @@ We also include a [code of conduct](code_of_conduct.md)
 
 ---
 
-_This document is derived from the [BEP001 README](https://github.com/bids-standard/bep001/blob/master/README.md)_
+_Credits: This README was build based on the [BEP001 README](https://github.com/bids-standard/bep001/blob/master/README.md)._
