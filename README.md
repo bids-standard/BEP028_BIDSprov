@@ -81,7 +81,9 @@ Mature building blocks of NIDM:
 
 [New features (to be included)](new_features.md)
 
-We also include a [code of conduct](code_of_conduct.md)
+
+## Code of conduct
+We are committed to building a welcoming and harrasement free experience for all our contributors. As a contributor to the BIDS-Prov specification, we ask you to follow our [code of conduct](code_of_conduct.md)
 
 ---
 
