@@ -1,17 +1,15 @@
-## Issue template for proposal to BIDS
---------------
+## Update proposal for BIDS Prov (BEP028)
+
 ### Problem Statement
-What type of enhancement ? Is it a `new feature or a modification` ?
-What `limitation in the current spec` does this underline ?
+*What type of enhancement ? Is it a `new feature or a modification` ?
+What `limitation in the current spec` does this underline ?*
 
---------------
 ### Rationale
-What `solution` do you propose ? How does that relate to the original problem ?
+*What `solution` do you propose ? How does that relate to the original problem ?*
 
---------------
 ### Minimal example
-Provide a minimal example with the current spec.
-How would this example turn if we `apply the proposed change` ?
+*Provide a minimal example with the current spec.
+How would this example turn if we `apply the proposed change` ?*
 
 -------------
 ### Checklist 
