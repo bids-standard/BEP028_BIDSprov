@@ -18,8 +18,8 @@ List of all contributors
 - Satrajit Ghosh ([@satra](https://github.com/satra))
 - Stefan Appelhoff ([@sappelhoff](https://github.com/sappelhoff))
 - Chris Markiewicz ([@effigies](https://github.com/effigies))
-- Yaroslav Halchenko ([yarikoptic](https://github.com/yarikoptic))
-- Jean-Baptiste Poline ([jbpoline](https://github.com/jbpoline))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+- Jean-Baptiste Poline ([@jbpoline](https://github.com/jbpoline))
 - Rémi Adon ([@remiadon](https://github.com/remiadon))
 
 ### BIDS-prov in the NIDM project
