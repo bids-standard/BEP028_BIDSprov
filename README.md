@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # BEP028
 provenance framework for BIDS
 This repository contains **BIDS Extension Proposal 028 : BIDS-prov, a provenance framework for BIDS**
