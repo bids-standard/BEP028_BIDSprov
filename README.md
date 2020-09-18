@@ -98,19 +98,11 @@ The BEP028 started as a [google doc](https://docs.google.com/document/d/1vw3VNDo
 ### NIDM weekly calls
 We meet every week by videoconference on Mondays at 8-9am PDT / 11am-12pm EDT / 4-5pm BST. The group is always open to new contributors interested in neuroimaging data sharing. To join the call or to ask any question, please email us at incf-nidash-nidm@googlegroups.com.  
 
----------------
 ## Additional resources
 Mature building blocks of NIDM:
 * [NIDM-terms](https://github.com/incf-nidash/nidm-terms)
 * [NIDM-results](http://nidm.nidash.org/specs/nidm-results_130.html)
 
-
-[New features (to be included)](new_features.md)
-=======
-Mature building blocks of NIDM:
-
-- [NIDM-terms](https://github.com/incf-nidash/nidm-terms)
-- [NIDM-results](http://nidm.nidash.org/specs/nidm-results_130.html)
 
 [New features (to be included)](new_features.md)
 
