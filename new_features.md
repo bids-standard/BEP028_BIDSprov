@@ -5,3 +5,4 @@ List of all features you can find in `examples/*.json` files, but are not mentio
 - [type indexing](https://w3c.github.io/json-ld-syntax/#node-type-indexing)
 - Activity definitions, instead of just Agent and Entities
 - Activities attributes defined via key/value list-like pairs, allowing to pass unstructured extra information
+- Activities "used" field allow multiple entries : multiple entities as input
