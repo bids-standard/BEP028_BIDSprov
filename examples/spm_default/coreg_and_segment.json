@@ -1,48 +1,63 @@
 {
-  "@context": "https://raw.githubusercontent.com/Inria-Visages/BIDS-prov/master/context.json",
+  "@context": "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json",
   "@id": "http://example.org/ds00000X",
   "generatedAt": "2020-03-10T10:00:00",
   "wasGeneratedBy": {
     "@id": "INRIA",
     "@type": "Project",
     "startedAt": "2016-09-01T10:00:00",
-    "wasAssociatedWith": { "@id": "NIH",
-                            "@type": "Organization",
-                            "hadRole": "Funding"
-                          }
-    },
-  "@graph": {
-    "prov:SoftwareAgent" : [
+    "wasAssociatedWith": {
+      "@id": "NIH",
+      "@type": "Organization",
+      "hadRole": "Funding"
+    }
+  },
+  "records": {
+    "prov:Agent": [
       {
-        "@id" : "653467354367537gjsfhdgfhfdsjkn",
-        "@type" : "prov:SoftwareAgent",
-        "RRID" : "https://scicrunch.org/resources/Any/record/nlx_144509-1/SCR_007037/resolver?q=SPM&l=SPM",
-        "label" : "SPM" 
+        "@id": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "SPM"
       }
     ],
-    "prov:Activity" : [
+    "prov:Activity": [
       {
-        "@id" : "fdsljfnqkljfdklqsjdfq",
-        "label" : "coregister",
-        "wasAssociatedWith" : "653467354367537gjsfhdgfhfdsjkn",
-        "startedAtTime" : "10/10/2020 00:00:00",
-        "endedAtTime" : "10/10/2020 01:0",
-        "used" : "fdsjnflqj12381U39fdskjnf",
-        "attributes" : [
+        "@id": "niiri:fdsljfnqkljfdklqsjdfq",
+        "label": "coregister",
+        "wasAssociatedWith": "RRID:SCR_007037",
+        "startedAtTime": "10/10/2020 00:00:00",
+        "endedAtTime": "10/10/2020 01:0",
+        "used": "niiri:fdsjnflqj12381U39fdskjnf",
+        "attributes": [
           ["eoptions.cost_fun", "nmi"],
           ["eoptions.sep", [4, 2]],
-          ["eoptions.tol", [0.02, 0.02, 0.02, 0.001, 0.001, 0.001, 0.01, 0.01, 0.01, 0.001, 0.001, 0.001]],
+          [
+            "eoptions.tol",
+            [
+              0.02,
+              0.02,
+              0.02,
+              0.001,
+              0.001,
+              0.001,
+              0.01,
+              0.01,
+              0.01,
+              0.001,
+              0.001,
+              0.001
+            ]
+          ],
           ["eoptions.fhwm", [0, 1]]
         ]
       },
       {
-        "@id" : "sdfsdfjoisjdfojsojdofjiosdf",
-        "label" : "segment",
-        "wasAssociatedWith" : "653467354367537gjsfhdgfhfdsjkn",
-        "startedAtTime" : "10/10/2020 00:00:00",
-        "endedAtTime" : "10/10/2020 01:09",
-        "used" : "TODO",
-        "attributes" : [
+        "@id": "niiri:sdfsdfjoisjdfojsojdofjiosdf",
+        "label": "segment",
+        "wasAssociatedWith": "RRID:SCR_007037",
+        "startedAtTime": "10/10/2020 00:00:00",
+        "endedAtTime": "10/10/2020 01:09",
+        "attributes": [
           ["tissue1.tpm", "$HOME/spm12/tpm/TPM.nii,1"],
           ["tissue1.ngaus", 1],
           ["tissue1.native", [1, 0]],
@@ -70,73 +85,73 @@
         ]
       }
     ],
-    "prov:Entity" : [
+    "prov:Entity": [
       {
-        "@id" : "fsiudfqsoi938409283409fdskj",
-        "label" : ".nii updated header",
-        "wasAttributedTo" : "653467354367537gjsfhdgfhfdsjkn",
-        "wasGeneratedBy" : "fdsljfnqkljfdklqsjdfq",
-        "derivedFrom" : [
-          "fdsjnflqj12381U39fdskjnf",
+        "@id": "fsiudfqsoi938409283409fdskj",
+        "label": ".nii updated header",
+        "wasAttributedTo": "RRID:SCR_007037",
+        "wasGeneratedBy": "niiri:fdsljfnqkljfdklqsjdfq",
+        "derivedFrom": [
+          "niiri:fdsjnflqj12381U39fdskjnf",
           "sjhgdfhfdsqldjkfnlqkjaaaaaaaaaa"
         ],
-        "prov:atLocation" : "TODO"
+        "prov:atLocation": "TODO"
       },
       {
-        "@id" : "102983fsdkjnfskjdfnks129",
-        "label" : "anat bias corrected",
-        "wasAttributedTo" : "653467354367537gjsfhdgfhfdsjkn",
-        "wasGeneratedBy" : "sdfsdfjoisjdfojsojdofjiosdf",
-        "derivedFrom" : "fsiudfqsoi938409283409fdskj",
-        "prov:atLocation" : "$HOME/spm12/tpm/"
+        "@id": "102983fsdkjnfskjdfnks129",
+        "label": "anat bias corrected",
+        "wasAttributedTo": "RRID:SCR_007037",
+        "wasGeneratedBy": "niiri:sdfsdfjoisjdfojsojdofjiosdf",
+        "derivedFrom": "fsiudfqsoi938409283409fdskj",
+        "prov:atLocation": "$HOME/spm12/tpm/"
       },
       {
-        "@id" : "fksjndflkqsjnf1290389",
-        "label" : "tissue1",
-        "wasAttributedTo" : "653467354367537gjsfhdgfhfdsjkn",
-        "wasGeneratedBy" : "sdfsdfjoisjdfojsojdofjiosdf",
-        "derivedFrom" : "fsiudfqsoi938409283409fdskj",
-        "prov:atLocation" : "$HOME/spm12/tpm/TPM.nii,1"
+        "@id": "fksjndflkqsjnf1290389",
+        "label": "tissue1",
+        "wasAttributedTo": "RRID:SCR_007037",
+        "wasGeneratedBy": "niiri:sdfsdfjoisjdfojsojdofjiosdf",
+        "derivedFrom": "fsiudfqsoi938409283409fdskj",
+        "prov:atLocation": "$HOME/spm12/tpm/TPM.nii,1"
       },
       {
-        "@id" : "dsfklsnqfjkdlnqs132",
-        "label" : "tissue2",
-        "wasAttributedTo" : "653467354367537gjsfhdgfhfdsjkn",
-        "wasGeneratedBy" : "sdfsdfjoisjdfojsojdofjiosdf",
-        "derivedFrom" : "fsiudfqsoi938409283409fdskj",
-        "prov:atLocation" : "$HOME/spm12/tpm/TPM.nii,2"
+        "@id": "dsfklsnqfjkdlnqs132",
+        "label": "tissue2",
+        "wasAttributedTo": "RRID:SCR_007037",
+        "wasGeneratedBy": "niiri:sdfsdfjoisjdfojsojdofjiosdf",
+        "derivedFrom": "fsiudfqsoi938409283409fdskj",
+        "prov:atLocation": "$HOME/spm12/tpm/TPM.nii,2"
       },
       {
-        "@id" : "fdsqljnflqsjfnd1203",
-        "label" : "tissue3",
-        "wasAttributedTo" : "653467354367537gjsfhdgfhfdsjkn",
-        "wasGeneratedBy" : "sdfsdfjoisjdfojsojdofjiosdf",
-        "derivedFrom" : "fsiudfqsoi938409283409fdskj",
-        "prov:atLocation" : "$HOME/spm12/tpm/TPM.nii,3"
+        "@id": "fdsqljnflqsjfnd1203",
+        "label": "tissue3",
+        "wasAttributedTo": "RRID:SCR_007037",
+        "wasGeneratedBy": "niiri:sdfsdfjoisjdfojsojdofjiosdf",
+        "derivedFrom": "fsiudfqsoi938409283409fdskj",
+        "prov:atLocation": "$HOME/spm12/tpm/TPM.nii,3"
       },
       {
-        "@id" : "fdsqlnfqksjn1290321093",
-        "label" : "tissue4",
-        "wasAttributedTo" : "653467354367537gjsfhdgfhfdsjkn",
-        "wasGeneratedBy" : "sdfsdfjoisjdfojsojdofjiosdf",
-        "derivedFrom" : "fsiudfqsoi938409283409fdskj",
-        "prov:atLocation" : "$HOME/spm12/tpm/TPM.nii,4"
+        "@id": "fdsqlnfqksjn1290321093",
+        "label": "tissue4",
+        "wasAttributedTo": "RRID:SCR_007037",
+        "wasGeneratedBy": "niiri:sdfsdfjoisjdfojsojdofjiosdf",
+        "derivedFrom": "fsiudfqsoi938409283409fdskj",
+        "prov:atLocation": "$HOME/spm12/tpm/TPM.nii,4"
       },
       {
-        "@id" : "fjkn120932109fdsjk",
-        "label" : "tisue5",
-        "wasAttributedTo" : "653467354367537gjsfhdgfhfdsjkn",
-        "wasGeneratedBy" : "sdfsdfjoisjdfojsojdofjiosdf",
-        "derivedFrom" : "fsiudfqsoi938409283409fdskj",
-        "prov:atLocation" : "$HOME/spm12/tpm/TPM.nii,5"
+        "@id": "fjkn120932109fdsjk",
+        "label": "tisue5",
+        "wasAttributedTo": "RRID:SCR_007037",
+        "wasGeneratedBy": "niiri:sdfsdfjoisjdfojsojdofjiosdf",
+        "derivedFrom": "fsiudfqsoi938409283409fdskj",
+        "prov:atLocation": "$HOME/spm12/tpm/TPM.nii,5"
       },
       {
-        "@id" : "1903809128fshbfqqcbcbc",
-        "label" : "tissue6",
-        "wasAttributedTo" : "653467354367537gjsfhdgfhfdsjkn",
-        "wasGeneratedBy" : "sdfsdfjoisjdfojsojdofjiosdf",
-        "derivedFrom" : "fsiudfqsoi938409283409fdskj",
-        "prov:atLocation" : "$HOME/spm12/tpm/TPM.nii,6"
+        "@id": "1903809128fshbfqqcbcbc",
+        "label": "tissue6",
+        "wasAttributedTo": "RRID:SCR_007037",
+        "wasGeneratedBy": "niiri:sdfsdfjoisjdfojsojdofjiosdf",
+        "derivedFrom": "fsiudfqsoi938409283409fdskj",
+        "prov:atLocation": "$HOME/spm12/tpm/TPM.nii,6"
       }
     ]
   }
