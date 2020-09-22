@@ -25,10 +25,11 @@ OPTIONAL_FIELDS = dict(  # fields to omit if `--high-level` flag activated
     Entity=("atLocation", "generatedAt"),
 )
 
-def viz_turtle(source=None, content=None, img_file=None):
+def viz_turtle(source=None, content=None, img_file=None, **kwargs):
     prov_doc = ProvDocument.deserialize(source=source, content=content, format='rdf', rdf_format='turtle')
 
-    dot = prov_to_dot(prov_doc, use_labels=True)
+    # TODO : show attributes has optional arg
+    dot = prov_to_dot(prov_doc, use_labels=True, show_element_attributes=False, show_relation_attributes=False)
     dot.write_png(img_file)
 
 
@@ -67,8 +68,10 @@ def join_jsonld(lds, graph_key="records", omit_details=True):
     if not len(ctx) == 1:
         raise ValueError(f"jsonlds should have a common context, found {ctx}")
     payload = {"@context" : next(iter(ctx)), graph_key : defaultdict(list)}
-    for ld in lds:
+    for idx, ld in enumerate(lds, start=1):
         graph = ld.get(graph_key, dict())
+        if not graph:
+            warnings.warn(f"no graph found in jsonld file number {idx}")
         for _type, values in graph.items():
             if omit_details and _type[5:] in OPTIONAL_FIELDS.keys():
                 values = [
