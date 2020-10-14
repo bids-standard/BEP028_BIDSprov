@@ -6,3 +6,4 @@ List of all features you can find in `examples/*.json` files, but are not mentio
 - Activity definitions, instead of just Agent and Entities
 - Activities attributes defined via key/value list-like pairs, allowing to pass unstructured extra information
 - Activities "used" field allow multiple entries : multiple entities as input
+- [prov:wasInfluencedBy](https://www.w3.org/TR/prov-o/#wasInfluencedBy) to represent inplace edition of an entity, instead of outputting a new entity (a new "state" of the former entity) and a new Activity corresponding to the edition. This is to encourage human readable representations, as the number of nodes is reduced.
