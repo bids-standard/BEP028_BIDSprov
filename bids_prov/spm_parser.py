@@ -45,7 +45,7 @@ def get_records(task_groups, records=defaultdict(list)):
             "label" : ''.join(activity_name),
         }
         # TODO : add time to activity
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         used = list()
         entities = []
         for v in values:
@@ -69,7 +69,7 @@ def get_records(task_groups, records=defaultdict(list)):
                 records["prov:Entity"].append(e)
             entities_ids.add(e["@id"])
 
-        
+
     return records
 
 
@@ -80,7 +80,7 @@ def get_records(task_groups, records=defaultdict(list)):
 def spm_to_bids_prov(filenames, output_file):
     filename = filenames[0]  # FIXME
 
-    base_graph = {
+    graph = {
         "@context": "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json",
         "@id": "http://example.org/ds00000X",
         "generatedAt": "2020-03-10T10:00:00",
@@ -95,7 +95,11 @@ def spm_to_bids_prov(filenames, output_file):
             }
         },
         "records": {
-            "prov:Agent": [],
+            "prov:Agent": [{
+                "@id": "RRID:SCR_007037",  # TODO query for version
+                "@type": "prov:SoftwareAgent",
+                "label": "SPM"
+            }],
             "prov:Activity": [],
             "prov:Entity": [],
         }
@@ -103,11 +107,11 @@ def spm_to_bids_prov(filenames, output_file):
 
     lines = realines(filename)
     tasks = group_lines(lines)
-    graph = get_records(tasks)
+    records = get_records(tasks)
+    graph["records"].update(records)
 
-
-    with open(output_file, 'r') as fd:
-        json.dump(graph)
+    with open(output_file, 'w') as fd:
+        json.dump(graph, fd, indent=2)
 
     
 
