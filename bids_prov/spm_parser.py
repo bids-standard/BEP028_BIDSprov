@@ -2,16 +2,55 @@ import sys
 import click
 import json
 import re
+import os
 
 from collections import defaultdict
 
 import random
 import string
 
+PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
+PARAM_REGEX = r"[^\.]+\(\d+\)"
+FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
+
 get_id = lambda: "".join(random.choice(string.ascii_letters) for i in range(10))
+has_parameter = lambda line: next(re.finditer(PARAM_REGEX, line), None) is not None
+# has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
 
 
-def realines(filename):
+def get_input_entity(left, right):
+    """get input Entity if possible else return None
+
+    left: string
+        left side of ' = '
+    right: string
+        right side of ' = '
+    """
+    if has_parameter(left):
+        return None
+    if not next(re.finditer(PATH_REGEX, right), None):
+        return None
+
+    f = next(re.finditer(FILE_REGEX, right), None)
+    if f is None:
+        return None
+    entity_label = left.split("/")[-1].split(".")[0]
+    entity = {
+        "@id": "niiri:" + entity_label + get_id(),
+        "label": entity_label,
+        "prov:atLocation": right[2:-3],
+        "attributedTo": "RRID:SCR_0070037",
+    }
+    return entity
+
+
+def preproc_param_value(val):
+    if val[0] == "[":
+        return val.replace(" ", ", ")
+    return val
+
+
+def readlines(filename):
     with open(filename) as fd:
         for line in fd:
             if line.startswith("matlabbatch"):
@@ -20,22 +59,23 @@ def realines(filename):
 
 def group_lines(lines):
     res = defaultdict(list)
-    key = lambda line: re.finditer(r"\{\d+\}", line)
     for line in lines:
         a = next(re.finditer(r"\{\d+\}", line), None)
-        b = line.split(".")[2]
-        if a and b:
-            g = a.group()
-            k = (b, g)
-            res[k].append(line[len(f"matlabbatch{g}.") :])
+        if a:
+            g = a.group()[1:-1]
+            res[g].append(line[len(f"matlabbatch{g}.") + 2 :])
 
-    return dict(res)
+    new_res = dict()
+    for k, v in res.items():
+        common_prefix = os.path.commonprefix([_.split(" = ")[0] for _ in v])
+        new_key = f"{common_prefix}_{k}"
+        new_res[new_key] = [_[len(common_prefix) :] for _ in v]
+    return new_res
 
 
 def get_records(task_groups, records=defaultdict(list)):
     entities_ids = set()
-    for _, values in task_groups.items():
-        activity_name = "".join(_)
+    for activity_name, values in task_groups.items():
         activity_id = "niiri:" + activity_name + get_id()
         activity = {
             "@id": activity_id,
@@ -45,21 +85,32 @@ def get_records(task_groups, records=defaultdict(list)):
         # import pdb; pdb.set_trace()
         used = list()
         entities = []
-        for v in values:
-            entity_split = v.split(" = ")
-            if len(entity_split) == 2:
-                left, right = entity_split
-                entity_label = left.split("/")[-1].split(".")[0]
-                entity = {
-                    "@id": "niiri:" + entity_label + get_id(),
-                    "label": entity_label,
-                    "prov:atLocation": right[2:-3],
-                    "wasGeneratedBy": activity_id,
-                }
+        params = []
+        for line in values:
+            split = line.split(" = ")
+            if len(split) != 2:
+                print(f"could not parse {line}")
+                continue
+            left, right = split
 
+            entity = get_input_entity(left, right)
+            if entity:
                 entities.append(entity)
+            elif has_parameter(line):
+                pass
+            else:
+                param_name = ".".join(left.split(".")[-2:])
+                try:
+                    param_value = preproc_param_value(right[:-1])
+                    value = eval(param_value)
+                    params.append([param_name, param_value])
+                except:
+                    continue
 
-        activity["used"] = [e["@id"] for e in entities]
+        if entities:
+            activity["used"] = [e["@id"] for e in entities]
+        if params:
+            activity["attributes"] = params
         records["prov:Activity"].append(activity)
         for e in entities:
             if e["@id"] not in entities_ids:
@@ -102,7 +153,7 @@ def spm_to_bids_prov(filenames, output_file):
         },
     }
 
-    lines = realines(filename)
+    lines = readlines(filename)
     tasks = group_lines(lines)
     records = get_records(tasks)
     graph["records"].update(records)
