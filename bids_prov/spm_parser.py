@@ -3,6 +3,7 @@ import click
 import json
 import re
 import os
+from difflib import SequenceMatcher
 
 from collections import defaultdict
 
@@ -12,10 +13,13 @@ import string
 PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
 PARAM_REGEX = r"[^\.]+\(\d+\)"
 FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
+DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'")]*)['"]\,.*"""  # TODO : add ": " in match
 
 get_id = lambda: "".join(random.choice(string.ascii_letters) for i in range(10))
 has_parameter = lambda line: next(re.finditer(PARAM_REGEX, line), None) is not None
 # has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
+
+DEPENDENCY_DICT = dict(Segment="spatial.preproc")
 
 
 def get_input_entity(left, right):
@@ -31,10 +35,11 @@ def get_input_entity(left, right):
     if not next(re.finditer(PATH_REGEX, right), None):
         return None
 
-    f = next(re.finditer(FILE_REGEX, right), None)
-    if f is None:
+    if next(re.finditer(FILE_REGEX, right), None) is None:
         return None
-    entity_label = left.split("/")[-1].split(".")[0]
+
+    entity_label = re.sub(r"[{};\'\"]", "", right).split("/")[-1]
+    # import pdb; pdb.set_trace()
     entity = {
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
@@ -73,18 +78,16 @@ def group_lines(lines):
     return new_res
 
 
-def get_records(task_groups, records=defaultdict(list)):
+def get_records(task_groups: dict, records=defaultdict(list)):
     entities_ids = set()
     for activity_name, values in task_groups.items():
         activity_id = "niiri:" + activity_name + get_id()
         activity = {
             "@id": activity_id,
-            "label": "".join(activity_name),
+            "label": ".".join(activity_name.split(".")[-3:]),
+            "used": list(),
         }
-        # TODO : add time to activity
-        # import pdb; pdb.set_trace()
-        used = list()
-        entities = []
+        input_entities, output_entities = list(), list()
         params = []
         for line in values:
             split = line.split(" = ")
@@ -93,11 +96,39 @@ def get_records(task_groups, records=defaultdict(list)):
                 continue
             left, right = split
 
-            entity = get_input_entity(left, right)
-            if entity:
-                entities.append(entity)
-            elif has_parameter(line):
-                pass
+            _in = get_input_entity(left, right)
+            if _in:
+                input_entities.append(_in)
+            elif has_parameter(left):
+                dependency = re.search(DEPENDENCY_REGEX, right, re.IGNORECASE)
+                if dependency is not None:
+                    # import pdb; pdb.set_trace()
+                    parts = dependency.group(1).split(": ")
+                    to_match = "".join(
+                        parts[:-1]
+                    ).lower()  # TODO : str.lower before that
+                    if to_match in DEPENDENCY_DICT:
+                        to_match = DEPENDENCY_DICT[to_match]
+                    closest_activity = max(
+                        records["prov:Activity"],
+                        key=lambda a: SequenceMatcher(
+                            None, a["label"], to_match
+                        ).ratio(),
+                    )
+                    _id = "niiri:" + parts[-1].replace(" ", "") + get_id()
+                    activity["used"].append(_id)
+                    output_entities.append(
+                        {
+                            "@id": _id,
+                            "label": parts[-1],
+                            # "prov:atLocation": TODO
+                            "wasGeneratedBy": closest_activity["@id"],
+                            "attributedTo": "RRID:SCR_0070037",
+                        }
+                    )
+                    pass
+                else:
+                    Warning(f"Could not parse line {line}")
             else:
                 param_name = ".".join(left.split(".")[-2:])
                 try:
@@ -107,8 +138,9 @@ def get_records(task_groups, records=defaultdict(list)):
                 except:
                     continue
 
-        if entities:
-            activity["used"] = [e["@id"] for e in entities]
+        if input_entities:
+            activity["used"] = [e["@id"] for e in input_entities]
+        entities = input_entities + output_entities
         if params:
             activity["attributes"] = params
         records["prov:Activity"].append(activity)
