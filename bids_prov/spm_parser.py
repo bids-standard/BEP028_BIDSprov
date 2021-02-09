@@ -39,12 +39,11 @@ def get_input_entity(left, right):
         return None
 
     entity_label = re.sub(r"[{};\'\"]", "", right).split("/")[-1]
-    # import pdb; pdb.set_trace()
     entity = {
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
         "prov:atLocation": right[2:-3],
-        "attributedTo": "RRID:SCR_0070037",
+        "wasAttributedTo": "RRID:SCR_007037",
     }
     return entity
 
@@ -86,6 +85,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
             "@id": activity_id,
             "label": ".".join(activity_name.split(".")[-3:]),
             "used": list(),
+            "wasAssociatedWith": "RRID:SCR_007037",
         }
         input_entities, output_entities = list(), list()
         params = []
@@ -102,7 +102,6 @@ def get_records(task_groups: dict, records=defaultdict(list)):
             elif has_parameter(left):
                 dependency = re.search(DEPENDENCY_REGEX, right, re.IGNORECASE)
                 if dependency is not None:
-                    # import pdb; pdb.set_trace()
                     parts = dependency.group(1).split(": ")
                     to_match = "".join(
                         parts[:-1]
@@ -123,7 +122,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                             "label": parts[-1],
                             # "prov:atLocation": TODO
                             "wasGeneratedBy": closest_activity["@id"],
-                            "attributedTo": "RRID:SCR_0070037",
+                            "wasAttributedTo": "RRID:SCR_007037",
                         }
                     )
                     pass
