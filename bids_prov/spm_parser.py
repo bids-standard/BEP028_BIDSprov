@@ -7,6 +7,7 @@ from difflib import SequenceMatcher
 
 from collections import defaultdict
 
+import prov.model as prov
 import random
 import string
 
@@ -159,11 +160,16 @@ def get_records(task_groups: dict, records=defaultdict(list)):
 @click.command()
 @click.argument("filenames", nargs=-1)
 @click.option("--output-file", "-o", required=True)
-def spm_to_bids_prov(filenames, output_file):
+@click.option(
+    "--context-file",
+    "-c",
+    default="https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json",
+)
+def spm_to_bids_prov(filenames, output_file, context_file):
     filename = filenames[0]  # FIXME
 
     graph = {
-        "@context": "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json",
+        "@context": context_file,
         "@id": "http://example.org/ds00000X",
         "generatedAt": "2020-03-10T10:00:00",
         "wasGeneratedBy": {  # TODO : change this
