@@ -13,13 +13,20 @@ import string
 PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
 PARAM_REGEX = r"[^\.]+\(\d+\)"
 FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
-DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'")]*)['"]\,.*"""  # TODO : add ": " in match
+DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in match
 
 get_id = lambda: "".join(random.choice(string.ascii_letters) for i in range(10))
 has_parameter = lambda line: next(re.finditer(PARAM_REGEX, line), None) is not None
 # has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
 
 DEPENDENCY_DICT = dict(Segment="spatial.preproc")
+
+
+def format_activity_name(s, l=15):
+    tmp = s.split(".")
+    while sum(map(len, tmp)) > l:
+        tmp = tmp[1:]
+    return ".".join(tmp)
 
 
 def get_input_entity(left, right):
@@ -83,12 +90,13 @@ def get_records(task_groups: dict, records=defaultdict(list)):
         activity_id = "niiri:" + activity_name + get_id()
         activity = {
             "@id": activity_id,
-            "label": ".".join(activity_name.split(".")[-3:]),
+            "label": format_activity_name(activity_name),
             "used": list(),
             "wasAssociatedWith": "RRID:SCR_007037",
         }
         input_entities, output_entities = list(), list()
         params = []
+
         for line in values:
             split = line.split(" = ")
             if len(split) != 2:
@@ -99,7 +107,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
             _in = get_input_entity(left, right)
             if _in:
                 input_entities.append(_in)
-            elif has_parameter(left):
+            elif has_parameter(left) or has_parameter(activity_name):
                 dependency = re.search(DEPENDENCY_REGEX, right, re.IGNORECASE)
                 if dependency is not None:
                     parts = dependency.group(1).split(": ")
@@ -110,9 +118,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                         to_match = DEPENDENCY_DICT[to_match]
                     closest_activity = max(
                         records["prov:Activity"],
-                        key=lambda a: SequenceMatcher(
-                            None, a["label"], to_match
-                        ).ratio(),
+                        key=lambda a: SequenceMatcher(None, a["@id"], to_match).ratio(),
                     )
                     _id = "niiri:" + parts[-1].replace(" ", "") + get_id()
                     activity["used"].append(_id)
@@ -125,7 +131,6 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                             "wasAttributedTo": "RRID:SCR_007037",
                         }
                     )
-                    pass
                 else:
                     Warning(f"Could not parse line {line}")
             else:
