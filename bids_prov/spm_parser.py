@@ -51,7 +51,7 @@ def get_input_entity(left, right):
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
         "prov:atLocation": right[2:-3],
-        "wasAttributedTo": "RRID:SCR_007037",
+        # "wasAttributedTo": "RRID:SCR_007037",
     }
     return entity
 
@@ -129,7 +129,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                             "label": parts[-1],
                             # "prov:atLocation": TODO
                             "wasGeneratedBy": closest_activity["@id"],
-                            "wasAttributedTo": "RRID:SCR_007037",
+                            # "wasAttributedTo": "RRID:SCR_007037",
                         }
                     )
                 else:
@@ -161,18 +161,18 @@ def get_records(task_groups: dict, records=defaultdict(list)):
 @click.argument("filenames", nargs=-1)
 @click.option("--output-file", "-o", required=True)
 @click.option(
-    "--context-file",
+    "--context-url",
     "-c",
     default="https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json",
 )
-def spm_to_bids_prov(filenames, output_file, context_file):
+def spm_to_bids_prov(filenames, output_file, context_url):
     filename = filenames[0]  # FIXME
 
     graph = {
-        "@context": context_file,
+        "@context": context_url,
         "@id": "http://example.org/ds00000X",
         "generatedAt": "2020-03-10T10:00:00",
-        "wasGeneratedBy": {  # TODO : change this
+        "wasGeneratedBy": {
             "@id": "INRIA",
             "@type": "Project",
             "startedAt": "2016-09-01T10:00:00",
