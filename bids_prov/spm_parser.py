@@ -23,7 +23,9 @@ has_parameter = lambda line: next(re.finditer(PARAM_REGEX, line), None) is not N
 DEPENDENCY_DICT = dict(Segment="spatial.preproc")
 
 
-def format_activity_name(s, l=15):
+def format_activity_name(s, l=30):
+    if s.startswith("spm."):
+        s = s[4:]
     tmp = s.split(".")
     while sum(map(len, tmp)) > l:
         tmp = tmp[1:]
