@@ -64,6 +64,21 @@ def preproc_param_value(val):
     return val
 
 
+def get_closest_activity(records: dict, to_match: str, dep_number: str = None):
+    if dep_number:
+        closest_activity = next(
+            filter(lambda a: a["label"].endswith(dep_number), records["prov:Activity"])
+        )
+    else:
+        to_match = to_match.lower()  # TODO : str.lower before that
+        to_match = DEPENDENCY_DICT.get(to_match, to_match)
+        closest_activity = max(
+            records["prov:Activity"],
+            key=lambda a: SequenceMatcher(None, a["@id"], to_match).ratio(),
+        )
+    return closest_activity
+
+
 def readlines(filename):
     with open(filename) as fd:
         for line in fd:
@@ -112,16 +127,13 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 input_entities.append(_in)
             elif has_parameter(left) or has_parameter(activity_name):
                 dependency = re.search(DEPENDENCY_REGEX, right, re.IGNORECASE)
+                dep_number = re.search(r"{(\d+)}", right)
                 if dependency is not None:
                     parts = dependency.group(1).split(": ")
-                    to_match = "".join(
-                        parts[:-1]
-                    ).lower()  # TODO : str.lower before that
-                    if to_match in DEPENDENCY_DICT:
-                        to_match = DEPENDENCY_DICT[to_match]
-                    closest_activity = max(
-                        records["prov:Activity"],
-                        key=lambda a: SequenceMatcher(None, a["@id"], to_match).ratio(),
+                    closest_activity = get_closest_activity(
+                        records,
+                        to_match="".join(parts[:-1]),
+                        dep_number=dep_number.group(1),
                     )
                     _id = "niiri:" + parts[-1].replace(" ", "") + get_id()
                     activity["used"].append(_id)

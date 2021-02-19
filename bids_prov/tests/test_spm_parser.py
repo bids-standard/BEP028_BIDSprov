@@ -1,7 +1,7 @@
 import pytest
 import json
 
-from ..spm_parser import get_records, DEPENDENCY_REGEX
+from ..spm_parser import get_records, DEPENDENCY_REGEX, get_closest_activity
 import re
 
 
@@ -36,3 +36,12 @@ def test_dep_regex():
     '{}',{1}), substruct('()',{1}, '.','files'));
     """
     assert re.search(DEPENDENCY_REGEX, s, re.IGNORECASE) is not None
+
+
+def test_closest_activity():
+    records = {
+        "prov:Activity": [
+            {"@id": "niiri:cfg_basicio.file_dir.file_ops.file_move._1kuxDmvbfxp"},
+            {"@id": "niiri:cfg_basicio.file_dir.file_ops.file_move._1kuxDmvbfxp"},
+        ]
+    }
