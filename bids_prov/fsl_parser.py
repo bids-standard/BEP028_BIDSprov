@@ -4,6 +4,7 @@ import sys
 from collections import defaultdict
 import requests
 import json
+import os
 
 import prov.model as prov
 
@@ -13,6 +14,8 @@ import string
 get_id = lambda size=10: "".join(
     random.choice(string.ascii_letters) for i in range(size)
 )
+
+PARAM_RE = r"-*([a-zA-Z_]+)[\s=]+([a-zA-Z\d\\._]+)"
 
 
 def readlines(filename):
@@ -76,26 +79,37 @@ def build_document(groups: dict, ctx: dict):  # TODO
 def build_records(groups: dict):
     records = defaultdict(list)
 
-    for a_i, (k, v) in enumerate(groups.items()):
-        a = {
-            "@id": "niiri:" + str(a_i),
-            "label": k.lower().replace(" ", ""),
-            "wasAssociatedWith": "RRID:SCR_002823",
-            "attributes": list(),
-            "used": list(),
-        }
-        entities = list()
+    for group, (k, v) in enumerate(groups.items()):
         for cmd in v:
-            params = re.findall(r"-([a-zA-Z][^-]*)[\s=]+([a-zA-Z\d\.]+)", cmd)
-            cmd = re.sub(
-                r"-([a-zA-Z][^-]*)[\s=]+([a-zA-Z\d\.]+)", "", cmd
-            )  # remove params
+            entities = list()
+            a_name = cmd.split(" ", 1)[0]
+            if a_name.endswith(":"):  # result of `echo`
+                continue
+            a_name = os.path.split(a_name)[1]
+            params = re.findall(PARAM_RE, cmd)
+            # if "--" in cmd:
+            #    import pdb; pdb.set_trace()
+            cmd = re.sub(PARAM_RE, "", cmd)  # remove params
+            params.extend(re.findall(r"-{1,2}([a-z\d_\.]+)", cmd))  # add --[option]
             entity_names = re.findall(r"(\/?[^ ]*\.[\w:]+)", cmd)
-            # entity_names = [_ for _ in cmd.split(" ") if re.match(r"(/?[a-z]+)+\.[a-z]+", _)]
-            for p_name, p_val in params:
-                a["attributes"].append((p_name, p_val))
+
+            group_name = k.lower().replace(" ", "")
+            label = f"{group_name}_{a_name}"
+            a = {
+                "@id": f"niiri:{label}_{get_id(5)}",
+                "label": label,
+                "wasAssociatedWith": "RRID:SCR_002823",
+                "attributes": list(),
+                "used": list(),
+            }
+            for p in params:
+                a["attributes"].append(p)
 
             for entity_name in entity_names:
+                if "0.05" in entity_name:
+                    import pdb
+
+                    pdb.set_trace()
                 e_id = f"niiri:{get_id(size=5)}_{entity_name.replace('/', '_')}"
                 e = {
                     "@id": e_id,  # TODO : uuid
@@ -111,8 +125,8 @@ def build_records(groups: dict):
                 else:
                     a["used"].append(e_id)
                 entities.append(e)
-        records["prov:Activity"].append(a)
-        records["prov:Entity"].extend(entities)
+            records["prov:Activity"].append(a)
+            records["prov:Entity"].extend(entities)
     return dict(records)
 
 
