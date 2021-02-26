@@ -7,6 +7,13 @@ import json
 
 import prov.model as prov
 
+import random
+import string
+
+get_id = lambda size=10: "".join(
+    random.choice(string.ascii_letters) for i in range(size)
+)
+
 
 def readlines(filename):
     res = defaultdict(list)
@@ -79,9 +86,6 @@ def build_records(groups: dict):
         }
         entities = list()
         for cmd in v:
-            import pdb
-
-            pdb.set_trace()
             params = re.findall(r"-([a-zA-Z][^-]*)[\s=]+([a-zA-Z\d\.]+)", cmd)
             cmd = re.sub(
                 r"-([a-zA-Z][^-]*)[\s=]+([a-zA-Z\d\.]+)", "", cmd
@@ -92,11 +96,11 @@ def build_records(groups: dict):
                 a["attributes"].append((p_name, p_val))
 
             for entity_name in entity_names:
-                e_id = entity_name  # TODO improve
+                e_id = f"niiri:{get_id(size=5)}_{entity_name.replace('/', '_')}"
                 e = {
-                    "@id": "niiri:" + str(entity_name),  # TODO : uuid
+                    "@id": e_id,  # TODO : uuid
                     "label": entity_name,
-                    "prov:atLocation": e_id,
+                    "prov:atLocation": entity_name,
                     "wasAttributedTo": "RRID:SCR_002823",
                     "derivedFrom": "TODO",
                 }
