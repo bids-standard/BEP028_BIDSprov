@@ -11,6 +11,8 @@ import prov.model as prov
 import random
 import string
 
+from difflib import SequenceMatcher
+
 get_id = lambda size=10: "".join(
     random.choice(string.ascii_letters) for i in range(size)
 )
@@ -80,20 +82,26 @@ def build_records(groups: dict):
     records = defaultdict(list)
 
     for group, (k, v) in enumerate(groups.items()):
+        group_name = k.lower().replace(" ", "_")
+        group_activity_id = f"niiri:{group_name}_{get_id(5)}"
+        records["prov:Activity"].append(
+            {
+                "@id": group_activity_id,
+                "label": group_name,
+                "wasAssociatedWith": "RRID:SCR_002823",
+            }
+        )
+
         for cmd in v:
-            entities = list()
             a_name = cmd.split(" ", 1)[0]
             if a_name.endswith(":"):  # result of `echo`
                 continue
             a_name = os.path.split(a_name)[1]
             params = re.findall(PARAM_RE, cmd)
-            # if "--" in cmd:
-            #    import pdb; pdb.set_trace()
             cmd = re.sub(PARAM_RE, "", cmd)  # remove params
             params.extend(re.findall(r"-{1,2}([a-z\d_\.]+)", cmd))  # add --[option]
             entity_names = re.findall(r"(\/?[^ ]*\.[\w:]+)", cmd)
 
-            group_name = k.lower().replace(" ", "")
             label = f"{group_name}_{a_name}"
             a = {
                 "@id": f"niiri:{label}_{get_id(5)}",
@@ -101,6 +109,7 @@ def build_records(groups: dict):
                 "wasAssociatedWith": "RRID:SCR_002823",
                 "attributes": list(),
                 "used": list(),
+                "prov:wasInfluencedBy": group_activity_id,
             }
             for p in params:
                 a["attributes"].append(p)
@@ -115,18 +124,25 @@ def build_records(groups: dict):
                     "@id": e_id,  # TODO : uuid
                     "label": entity_name,
                     "prov:atLocation": entity_name,
-                    "wasAttributedTo": "RRID:SCR_002823",
+                    # "wasAttributedTo": "RRID:SCR_002823",
                     "derivedFrom": "TODO",
                 }
                 if entity_name == entity_names[-1]:  # output
                     e["wasGeneratedBy"] = a[
                         "@id"
                     ]  # wasAffectedBy if enity is ther result of an intermediate step of this activity ?
+                    records["prov:Entity"].append(e)
                 else:
-                    a["used"].append(e_id)
-                entities.append(e)
+                    closest_entity = max(
+                        records["prov:Entity"],
+                        key=lambda a: SequenceMatcher(
+                            None, a["label"], entity_name
+                        ).ratio(),
+                    )
+                    a["used"].append(
+                        closest_entity["@id"]
+                    )  # TODO find closest, already defined entity
             records["prov:Activity"].append(a)
-            records["prov:Entity"].extend(entities)
     return dict(records)
 
 
