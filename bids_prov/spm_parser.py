@@ -1,26 +1,13 @@
 import sys
 import click
 import json
-import re
 import os
 from difflib import SequenceMatcher
 
 from collections import defaultdict
 
-import prov.model as prov
-import random
-import string
-
-PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
-PARAM_REGEX = r"[^\.]+\(\d+\)"
-FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
-DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in match
-
-get_id = lambda: "".join(random.choice(string.ascii_letters) for i in range(10))
-has_parameter = lambda line: next(re.finditer(PARAM_REGEX, line), None) is not None
-# has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
-
-DEPENDENCY_DICT = dict(Segment="spatial.preproc")
+from .spm_config import *
+from . import get_id
 
 
 def format_activity_name(s, l=30):
