@@ -2,11 +2,12 @@ import sys
 import click
 import json
 import os
+import re
 from difflib import SequenceMatcher
 
 from collections import defaultdict
 
-from .spm_config import *
+from . import spm_config as conf
 from . import get_id
 
 
@@ -27,12 +28,12 @@ def get_input_entity(left, right):
     right: string
         right side of ' = '
     """
-    if has_parameter(left):
+    if conf.has_parameter(left):
         return None
-    if not next(re.finditer(PATH_REGEX, right), None):
+    if not next(re.finditer(conf.PATH_REGEX, right), None):
         return None
 
-    if next(re.finditer(FILE_REGEX, right), None) is None:
+    if next(re.finditer(conf.FILE_REGEX, right), None) is None:
         return None
 
     entity_label = re.sub(r"[{};\'\"]", "", right).split("/")[-1]
@@ -112,8 +113,8 @@ def get_records(task_groups: dict, records=defaultdict(list)):
             _in = get_input_entity(left, right)
             if _in:
                 input_entities.append(_in)
-            elif has_parameter(left) or has_parameter(activity_name):
-                dependency = re.search(DEPENDENCY_REGEX, right, re.IGNORECASE)
+            elif conf.has_parameter(left) or conf.has_parameter(activity_name):
+                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)
                 dep_number = re.search(r"{(\d+)}", right)
                 if dependency is not None:
                     parts = dependency.group(1).split(": ")
@@ -164,37 +165,12 @@ def get_records(task_groups: dict, records=defaultdict(list)):
 @click.option(
     "--context-url",
     "-c",
-    default="https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json",
+    default=conf.CONTEXT_URL,
 )
 def spm_to_bids_prov(filenames, output_file, context_url):
     filename = filenames[0]  # FIXME
 
-    graph = {
-        "@context": context_url,
-        "@id": "http://example.org/ds00000X",
-        "generatedAt": "2020-03-10T10:00:00",
-        "wasGeneratedBy": {
-            "@id": "INRIA",
-            "@type": "Project",
-            "startedAt": "2016-09-01T10:00:00",
-            "wasAssociatedWith": {
-                "@id": "NIH",
-                "@type": "Organization",
-                "hadRole": "Funding",
-            },
-        },
-        "records": {
-            "prov:Agent": [
-                {
-                    "@id": "RRID:SCR_007037",  # TODO query for version
-                    "@type": "prov:SoftwareAgent",
-                    "label": "SPM",
-                }
-            ],
-            "prov:Activity": [],
-            "prov:Entity": [],
-        },
-    }
+    graph = conf.get_empty_graph(context_url=context_url)
 
     lines = readlines(filename)
     tasks = group_lines(lines)

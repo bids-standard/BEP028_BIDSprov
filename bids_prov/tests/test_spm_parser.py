@@ -1,7 +1,8 @@
 import pytest
 import json
 
-from ..spm_parser import get_records, DEPENDENCY_REGEX, get_closest_activity
+from ..spm_config import DEPENDENCY_REGEX
+from ..spm_parser import get_records, get_closest_activity
 import re
 
 
