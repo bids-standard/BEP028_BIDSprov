@@ -11,6 +11,8 @@ import prov.model as prov
 import random
 import string
 
+from . import fsl_config as conf
+
 from difflib import SequenceMatcher
 
 get_id = lambda size=10: "".join(
@@ -54,28 +56,12 @@ def read_commands(lines):
     return res, i
 
 
-def build_document(groups: dict, ctx: dict):  # TODO
-    document = prov.ProvDocument()
-    # for k, v in ctx.items():
-    #    if isinstance(v, str) and not k.startswith("@"):
-    #        document.add_namespace(k, v)
-
-    # document.agent(identifier="RRID:SCR_002823", other_attributes={  # FIXME ProvElementIdentifierRequired: An identifier is missing. All PROV elements require a valid identifier.
-    # "@type" : "prov:SoftwareAgent",
-    #    "label" : "FSL",
-    # })
-
-    for a_i, (k, v) in enumerate(groups.items()):
-        a = document.activity(
-            "niiri:" + str(a_i),
-            other_attributes={
-                # "label" : k.lower().replace(" ", ""),  # prov.model.ProvExceptionInvalidQualifiedName: Invalid Qualified Name: label
-                # "wasAssociatedWith": "RRID:SCR_002823",
-            },
-        )
-        for cmd in v:
-            attributes = re.findall(r"(-[a-zA-Z][^-]*)\s([a-zA-Z\d\.]+)", cmd)
-    return
+def get_closest_config(key):
+    key = re.sub("\d", "", key)
+    key = next((k for k in conf.bosh_config.keys() if (k in key or key in k)), None)
+    if key is not None:
+        return conf.bosh_config[key]
+    return None
 
 
 def build_records(groups: dict):
@@ -94,9 +80,22 @@ def build_records(groups: dict):
 
         for cmd in v:
             a_name = cmd.split(" ", 1)[0]
+            if "bet" in a_name:
+                import pdb
+
+                pdb.set_trace()
             if a_name.endswith(":"):  # result of `echo`
                 continue
             a_name = os.path.split(a_name)[1]
+            cmd_conf = get_closest_config(a_name)
+            if cmd_conf:
+                conf_inputs = [
+                    _.get("command-line-flag")
+                    for _ in cmd_conf["inputs"]
+                    if "command-line-flag" in _
+                ]
+            else:
+                cmd_conf = None
             params = re.findall(PARAM_RE, cmd)
             cmd = re.sub(PARAM_RE, "", cmd)  # remove params
             params.extend(re.findall(r"-{1,2}([a-z\d_\.]+)", cmd))  # add --[option]
@@ -115,22 +114,17 @@ def build_records(groups: dict):
                 a["attributes"].append(p)
 
             for entity_name in entity_names:
-                if "0.05" in entity_name:
-                    import pdb
-
-                    pdb.set_trace()
                 e_id = f"niiri:{get_id(size=5)}_{entity_name.replace('/', '_')}"
                 e = {
                     "@id": e_id,  # TODO : uuid
                     "label": entity_name,
                     "prov:atLocation": entity_name,
-                    # "wasAttributedTo": "RRID:SCR_002823",
                     "derivedFrom": "TODO",
                 }
                 if entity_name == entity_names[-1]:  # output
                     e["wasGeneratedBy"] = a[
                         "@id"
-                    ]  # wasAffectedBy if enity is ther result of an intermediate step of this activity ?
+                    ]  # wasAffectedBy if entity is ther result of an intermediate step of this activity ?
                     records["prov:Entity"].append(e)
                 else:
                     closest_entity = max(
@@ -139,9 +133,7 @@ def build_records(groups: dict):
                             None, a["label"], entity_name
                         ).ratio(),
                     )
-                    a["used"].append(
-                        closest_entity["@id"]
-                    )  # TODO find closest, already defined entity
+                    a["used"].append(closest_entity["@id"])
             records["prov:Activity"].append(a)
     return dict(records)
 
@@ -152,42 +144,12 @@ def build_records(groups: dict):
 @click.option(
     "--context-url",
     "-c",
-    default="https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json",
+    default=conf.DEFAULT_CONTEXT_URL,
 )
 def fsl_to_bids_pros(filenames, output_file, context_url):
     filename = filenames[0]  # FIXME
 
-    graph = {
-        "@context": context_url,
-        "@id": "http://example.org/ds00000X",
-        "generatedAt": "2020-03-10T10:00:00",
-        "wasGeneratedBy": {
-            "@id": "INRIA",
-            "@type": "Project",
-            "startedAt": "2016-09-01T10:00:00",
-            "wasAssociatedWith": {
-                "@id": "NIH",
-                "@type": "Organization",
-                "hadRole": "Funding",
-            },
-        },
-        "records": {
-            "prov:Agent": [
-                {
-                    "@id": "RRID:SCR_002823",  # TODO query for version
-                    "@type": "prov:SoftwareAgent",
-                    "label": "FSL",
-                }
-            ],
-            "prov:Activity": [],
-            "prov:Entity": [],
-        },
-    }
-
-    import urllib.request, json
-
-    with urllib.request.urlopen(context_url) as url:
-        ctx = json.loads(url.read().decode()).get("@context", dict())
+    graph = conf.get_default_graph(context_url)
 
     lines = readlines(filename)
     records = build_records(lines)
