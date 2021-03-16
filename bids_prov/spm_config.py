@@ -1,4 +1,10 @@
 import re
+import yaml
+import os
+
+import os
+
+this_path = os.path.dirname(os.path.abspath(__file__))
 
 PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
 PARAM_REGEX = r"[^\.]+\(\d+\)"
@@ -8,9 +14,10 @@ DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in ma
 has_parameter = lambda line: next(re.finditer(PARAM_REGEX, line), None) is not None
 # has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
 
-DEPENDENCY_DICT = dict(Segment="spatial.preproc")
-
 CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
+
+with open(this_path + "/spm_config.yml", "r") as fd:
+    conf = yaml.load(fd)
 
 
 def get_empty_graph(context_url=CONTEXT_URL):
