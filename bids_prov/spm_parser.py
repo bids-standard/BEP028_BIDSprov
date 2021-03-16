@@ -59,7 +59,7 @@ def get_closest_activity(records: dict, to_match: str, dep_number: str = None):
         )
     else:
         to_match = to_match.lower()  # TODO : str.lower before that
-        to_match = DEPENDENCY_DICT.get(to_match, to_match)
+        to_match = conf.conf["activities"].get(to_match, to_match)
         closest_activity = max(
             records["prov:Activity"],
             key=lambda a: SequenceMatcher(None, a["@id"], to_match).ratio(),
