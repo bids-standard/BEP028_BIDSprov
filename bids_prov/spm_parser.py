@@ -59,11 +59,14 @@ def get_closest_activity(records: dict, to_match: str, dep_number: str = None):
         )
     else:
         to_match = to_match.lower()  # TODO : str.lower before that
-        to_match = conf.conf["activities"].get(to_match, to_match)
-        closest_activity = max(
-            records["prov:Activity"],
-            key=lambda a: SequenceMatcher(None, a["@id"], to_match).ratio(),
-        )
+        to_match = DEPENDENCY_DICT.get(to_match, to_match)
+        closest_activity = None
+        max_ratio = 0.6  # TODO threshold in params
+        for activity in records["prov:Activity"]:
+            ratio = SequenceMatcher(None, activity["@id"], to_match).ratio()
+            if ratio >= max_ratio:
+                closest_activity = activity
+                max_ratio = ratio
     return closest_activity
 
 
@@ -115,6 +118,8 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 input_entities.append(_in)
             elif conf.has_parameter(left) or conf.has_parameter(activity_name):
                 dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)
+                # if "GunZ" in right:
+                #    import pdb; pdb.set_trace()
                 dep_number = re.search(r"{(\d+)}", right)
                 if dependency is not None:
                     parts = dependency.group(1).split(": ")
@@ -123,11 +128,15 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                         to_match="".join(parts[:-1]),
                         dep_number=dep_number.group(1),
                     )
-                    _id = "niiri:" + parts[-1].replace(" ", "") + get_id()
-                    activity["used"].append(_id)
+                    if closest_activity is None:
+                        continue
+                    output_id = (
+                        "niiri:" + parts[-1].replace(" ", "") + dep_number.group(1)
+                    )
+                    activity["used"].append(output_id)
                     output_entities.append(
                         {
-                            "@id": _id,
+                            "@id": output_id,
                             "label": parts[-1],
                             # "prov:atLocation": TODO
                             "wasGeneratedBy": closest_activity["@id"],
