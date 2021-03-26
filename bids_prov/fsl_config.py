@@ -3,7 +3,7 @@ from boutiques.puller import Puller
 
 from functools import lru_cache
 import json
-from . import get_or_load
+from bids_prov import get_or_load
 
 DEFAULT_CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
 
@@ -22,10 +22,8 @@ def get_config(agent):
         except Exception:
             print(f"could not load config from {result['TITLE']}")
             continue
-        payload = d["command-line"]
-        res[result["TITLE"]] = d["command-line"]
-
-        # TODO make input regex
+        payload = {k: v for k, v in d.items() if k in ("command-line", "inputs")}
+        res[result["TITLE"]] = payload
 
     return res
 
