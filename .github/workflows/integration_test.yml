@@ -16,16 +16,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
           pip install -r requirements.txt
-      - name: Test SPM parser on explicit_mask
+      - name: Test SPM parser on explicit_mask  # test generation of json sidecar file from matlab + visualisation of this json
         run: |
           curl -LJO https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_explicit_mask/batch.m
           python -m bids_prov.spm_parser batch.m -o explicit_mask.json
 
-      - name: Test SPM Parser on groups OLS
+      - name: Test SPM Parser on groups OLS  # test generation of json sidecar file from matlab + visualisation of this json
         run: |
           curl -LJO https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_group_ols/batch.m
           python -m bids_prov.spm_parser batch.m -o ols.json
 
-      - name: Test FSL Parser
+      - name: Test FSL Parser  # test generation of json sidecar file from markdown
         run: |
           python -m bids_prov.fsl_parser examples/fsl_default/logs.md -o tests.json
