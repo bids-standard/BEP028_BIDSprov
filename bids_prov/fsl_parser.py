@@ -58,6 +58,8 @@ def read_commands(lines):
 
 def get_closest_config(key):
     key = re.sub("\d", "", key)
+    if not key:
+        return None
     key = next((k for k in conf.bosh_config.keys() if (k in key or key in k)), None)
     if key is not None:
         return conf.bosh_config[key]
@@ -80,10 +82,8 @@ def build_records(groups: dict):
 
         for cmd in v:
             a_name = cmd.split(" ", 1)[0]
-            if "bet" in a_name:
-                import pdb
-
-                pdb.set_trace()
+            # if "bet" in a_name:
+            # import pdb; pdb.set_trace()
             if a_name.endswith(":"):  # result of `echo`
                 continue
             a_name = os.path.split(a_name)[1]
