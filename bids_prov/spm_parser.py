@@ -106,6 +106,22 @@ def get_records(task_groups: dict, records=defaultdict(list)):
         input_entities, output_entities = list(), list()
         params = []
 
+        static_map = next(
+            (k for k in conf.static["activities"] if k in activity_name), None
+        )
+        if static_map is not None:
+            static_map = conf.static["activities"][static_map]
+            activity_name = static_map["name"]  # FIXME ? discuss
+            for output in static_map["outputs"]:
+                output_entities.append(
+                    {
+                        "@id": output + get_id(),
+                        "label": output,
+                        "prov:atLocation": "TODO",
+                        "wasGeneratedBy": activity_id,
+                    }
+                )
+
         for line in values:
             split = line.split(" = ")
             if len(split) != 2:
@@ -118,8 +134,6 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 input_entities.append(_in)
             elif conf.has_parameter(left) or conf.has_parameter(activity_name):
                 dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)
-                # if "GunZ" in right:
-                #    import pdb; pdb.set_trace()
                 dep_number = re.search(r"{(\d+)}", right)
                 if dependency is not None:
                     parts = dependency.group(1).split(": ")
