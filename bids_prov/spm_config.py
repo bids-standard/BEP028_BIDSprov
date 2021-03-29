@@ -17,7 +17,7 @@ has_parameter = lambda line: next(re.finditer(PARAM_REGEX, line), None) is not N
 CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
 
 with open(this_path + "/spm_config.yml", "r") as fd:
-    conf = yaml.load(fd)
+    static = yaml.load(fd)
 
 
 def get_empty_graph(context_url=CONTEXT_URL):
