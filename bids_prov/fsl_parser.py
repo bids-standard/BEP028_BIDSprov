@@ -2,6 +2,7 @@ import click
 import re
 import sys
 from collections import defaultdict
+from itertools import chain
 import requests
 import json
 import os
@@ -10,6 +11,7 @@ import prov.model as prov
 
 import random
 import string
+import codecs
 
 from . import fsl_config as conf
 
@@ -19,7 +21,30 @@ get_id = lambda size=10: "".join(
     random.choice(string.ascii_letters) for i in range(size)
 )
 
-PARAM_RE = r"-*([a-zA-Z_]+)[\s=]+([a-zA-Z\d\\._]+)"
+INPUT_RE = r"([\/\w\.\?-]{3,}\.?[\w]{2,})"  # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> `cp`, `no_ext` adn `5.0` don't match
+ATTRIBUTE_RE = r"(-+[a-zA-Z_]+)[\s|=]?([\/a-zA-Z._\d]+)?"
+
+INPUT_TAGS = frozenset(
+    [
+        "-in",
+        "-i",
+        "[INPUT_FILE]",  # sepcific to bet2
+        # "-r",  # `cp -r` --> recursrive ???
+    ]
+)
+
+OUPUT_TAGS = frozenset(
+    [
+        "-o",
+        "-omat",
+    ]
+)
+
+
+def format_label(s):
+    s = os.path.split(s)[1]
+    # s = os.path.splitext(s)[0]
+    return s
 
 
 def readlines(filename):
@@ -81,59 +106,101 @@ def build_records(groups: dict):
         )
 
         for cmd in v:
-            a_name = cmd.split(" ", 1)[0]
-            # if "bet" in a_name:
-            # import pdb; pdb.set_trace()
+            cmd_s = cmd.split(" ")
+            a_name, args = cmd_s[0], cmd_s[1:]
             if a_name.endswith(":"):  # result of `echo`
                 continue
-            a_name = os.path.split(a_name)[1]
+
+            attributes = defaultdict(list)
+            for key, value in re.findall(
+                ATTRIBUTE_RE, cmd
+            ):  # same key can have multiple value
+                attributes[key].append(value)
+
+            cmd = re.sub(
+                ATTRIBUTE_RE, "", cmd
+            )  # make sure attributes are not considered as entities
+            inputs = list(
+                chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS))
+            )
+            outputs = list(
+                chain(*(attributes.pop(k) for k in attributes.keys() & OUPUT_TAGS))
+            )
+            entity_names = [_ for _ in re.findall(INPUT_RE, cmd[len(a_name) :])]
             cmd_conf = get_closest_config(a_name)
             if cmd_conf:
-                conf_inputs = [
-                    _.get("command-line-flag")
-                    for _ in cmd_conf["inputs"]
-                    if "command-line-flag" in _
-                ]
-            else:
-                cmd_conf = None
-            params = re.findall(PARAM_RE, cmd)
-            cmd = re.sub(PARAM_RE, "", cmd)  # remove params
-            params.extend(re.findall(r"-{1,2}([a-z\d_\.]+)", cmd))  # add --[option]
-            entity_names = re.findall(r"(\/?[^ ]*\.[\w:]+)", cmd)
+                pos_args = filter(
+                    lambda e: not e.startswith("-"), cmd_s
+                )  # TODO use "-key value" mappings
+                _map = dict(zip(cmd_conf["command-line"].split(" "), pos_args))
+                inputs += [_map[i] for i in INPUT_TAGS if i in _map]
 
-            label = f"{group_name}_{a_name}"
+            elif entity_names and entity_names[0] in cmd:
+                outputs.append(entity_names[-1])
+                if len(entity_names) > 1:
+                    inputs.append(entity_names[0])
+
+            label = f"{group_name}_{os.path.split(a_name)[1]}"
             a = {
                 "@id": f"niiri:{label}_{get_id(5)}",
                 "label": label,
                 "wasAssociatedWith": "RRID:SCR_002823",
-                "attributes": list(),
+                "attributes": [
+                    (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
+                ],
                 "used": list(),
                 "prov:wasInfluencedBy": group_activity_id,
             }
-            for p in params:
-                a["attributes"].append(p)
 
-            for entity_name in entity_names:
-                e_id = f"niiri:{get_id(size=5)}_{entity_name.replace('/', '_')}"
-                e = {
-                    "@id": e_id,  # TODO : uuid
-                    "label": entity_name,
-                    "prov:atLocation": entity_name,
-                    "derivedFrom": "TODO",
-                }
-                if entity_name == entity_names[-1]:  # output
-                    e["wasGeneratedBy"] = a[
-                        "@id"
-                    ]  # wasAffectedBy if entity is ther result of an intermediate step of this activity ?
+            input_id = ""
+            for input_path in inputs:
+                input_name = input_path.replace("/", "_")
+                input_id = f"niiri:{get_id(size=5)}_{input_name}"  # def format_id
+
+                existing_input = next(
+                    (
+                        _
+                        for _ in records["prov:Entity"]
+                        if _["prov:atLocation"] == input_path
+                    ),
+                    None,
+                )
+                if existing_input is None:
+                    e = {
+                        "@id": input_id,  # TODO : uuid
+                        "label": format_label(input_path),
+                        "prov:atLocation": input_path,
+                    }
                     records["prov:Entity"].append(e)
+                    a["used"].append(input_id)
                 else:
-                    closest_entity = max(
+                    a["used"].append(existing_input["@id"])
+
+            for output_path in outputs:
+                output_name = output_path.replace("/", "_")
+                records["prov:Entity"].append(
+                    {
+                        "@id": f"niiri:{get_id(size=5)}_{output_name}",
+                        "label": format_label(output_path),
+                        "prov:atLocation": output_name,
+                        "wasGeneratedBy": a["@id"],
+                        "derivedFrom": input_id,  # FIXME currently last input ID
+                    }
+                )
+
+            """
+            for entity_name in entity_names:  # inputs and outputs
+                try:
+                    closest_entity = max(  # TODO filter with matching threshold
                         records["prov:Entity"],
                         key=lambda a: SequenceMatcher(
                             None, a["label"], entity_name
                         ).ratio(),
                     )
                     a["used"].append(closest_entity["@id"])
+                except:
+                    print(f"could not resolve entity {entity_name}")
+            """
             records["prov:Activity"].append(a)
     return dict(records)
 
