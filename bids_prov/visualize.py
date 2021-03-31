@@ -21,14 +21,18 @@ import json
 from collections import defaultdict
 import warnings
 
-OPTIONAL_FIELDS = { 'Activity':("startedAtTime", "endedAtTime"),
-                    'Entity': ("atLocation", "generatedAt")} # fields to omit if `--high-level` flag activated
+OPTIONAL_FIELDS = {'Activity': ("startedAtTime", "endedAtTime"),
+                   'Entity': ("atLocation", "generatedAt")}  # fields to omit if `--high-level` flag activated
+
 
 def viz_turtle(content=None, img_file=None, source=None, **kwargs) -> None:
 
-    prov_doc = ProvDocument.deserialize(content=content, format="rdf", rdf_format="turtle", source=source )
+    prov_doc = ProvDocument.deserialize(
+        content=content, format="rdf", rdf_format="turtle", source=source)
     # TODO : show attributes has optional arg
-    dot = prov_to_dot(prov_doc, use_labels=True, show_element_attributes=False, show_relation_attributes=False,)
+    dot = prov_to_dot(prov_doc, use_labels=True,
+                      show_element_attributes=False, show_relation_attributes=False)
+
     dot.write_png(img_file)
 
 
@@ -47,16 +51,19 @@ def viz_jsonld11(jsonld11: dict, img_file: str) -> None:
         if k not in {"@version", "records"}
     }
 
-    aa = ld.jsonld.compact(jsonld11, context_10)     # Load graph from json-ld file as non 1.1 JSON-LD
+    # Load graph from json-ld file as non 1.1 JSON-LD
+    aa = ld.jsonld.compact(jsonld11, context_10)
     dataaa = json.dumps(aa, indent=2)  # , sort_keys=True)
 
-    g = (rl.ConjunctiveGraph())  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+    # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+    g = (rl.ConjunctiveGraph())
     g.parse(data=dataaa, format="json-ld")
     viz_turtle(content=g.serialize(format="turtle"), img_file=img_file)
     # TODO remove pyld dependency and get rdflib parsing directly
     #   https://github.com/digitalbazaar/pyld/blob/316fbc2c9e25b3cf718b4ee189012a64b91f17e7/lib/pyld/jsonld.py#L660
 
-def join_jsonld(lds: list, graph_key="records", omit_details=True) ->dict :
+
+def join_jsonld(lds: list, graph_key="records", omit_details=True) -> dict:
     """
     lds: list of dict
         jsonld graphs to be joined
@@ -76,20 +83,23 @@ def join_jsonld(lds: list, graph_key="records", omit_details=True) ->dict :
         for _type, values in graph.items():
             if omit_details and _type[5:] in OPTIONAL_FIELDS.keys():
                 values = [
-                            {
-                            k: d[k]
-                            for k in d
-                            if k not in OPTIONAL_FIELDS.get(_type[5:], tuple())
-                            }
-                            for d in values
-                        ]
+                    {
+                        k: d[k]
+                        for k in d
+                        if k not in OPTIONAL_FIELDS.get(_type[5:], tuple())
+                    }
+                    for d in values
+                ]
 
-            payload[graph_key][_type].extend(values)  # FIXME check for duplicated defs
+            # FIXME check for duplicated defs
+            payload[graph_key][_type].extend(values)
 
     if not payload[graph_key]:
-        warnings.warn(f"could not found any {graph_key} section in the jsonlds")
+        warnings.warn(
+            f"could not found any {graph_key} section in the jsonlds")
     # payload[graph_key]] = dict(payload[graph_key]])
     return payload
+
 
 def main(filename: str, output_file=None, omit_details=True) -> None:
     jsonld11s = list()
@@ -98,10 +108,12 @@ def main(filename: str, output_file=None, omit_details=True) -> None:
         jsonld11s.append(ld)
 
     # join multiple definitions
-    jsonld11 = join_jsonld(jsonld11s, graph_key="records", omit_details=omit_details)
+    jsonld11 = join_jsonld(jsonld11s, graph_key="records",
+                           omit_details=omit_details)
 
     if output_file is None:
-        output_file = (os.path.splitext(filename)[0] + ".png")  # replace extension .jsonld by .png
+        # replace extension .jsonld by .png
+        output_file = (os.path.splitext(filename)[0] + ".png")
 
     viz_jsonld11(jsonld11, output_file)
 
@@ -110,9 +122,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", type=str, help="data jsonld file ",)
-    parser.add_argument("--output_file", type=str, default="res.png", help="output dir where results are written",)
+    parser.add_argument("--output_file", type=str, default="res.png",
+                        help="output dir where results are written",)
     opt = parser.parse_args()
 
     main(opt.input_file, output_file=opt.output_file, omit_details=True)
     # >> python -m   bids_prov.visualize --input_file ./res_temp.jsonld  --output_file res.png
-
