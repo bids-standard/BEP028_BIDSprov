@@ -7,7 +7,7 @@ from difflib import SequenceMatcher
 
 from collections import defaultdict
 
-from . import spm_config as conf
+from . import spm_load_config as conf
 from . import get_id
 
 
