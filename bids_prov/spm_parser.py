@@ -106,13 +106,13 @@ def get_records(task_groups: dict, records=defaultdict(list)):
         input_entities, output_entities = list(), list()
         params = []
 
-        static_map = next(
+        conf_outputs = next(
             (k for k in conf.static["activities"] if k in activity_name), None
         )
-        if static_map is not None:
-            static_map = conf.static["activities"][static_map]
-            activity_name = static_map["name"]  # FIXME ? discuss
-            for output in static_map["outputs"]:
+        if conf_outputs is not None:
+            conf_outputs = conf.static["activities"][conf_outputs]
+            activity_name = conf_outputs["name"]  # FIXME ? discuss
+            for output in conf_outputs["outputs"]:
                 output_entities.append(
                     {
                         "@id": output + get_id(),
