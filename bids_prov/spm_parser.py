@@ -169,7 +169,8 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                     continue
 
         if input_entities:
-            activity["used"] = [e["@id"] for e in input_entities]
+            used_entities = [e["@id"] for e in input_entities]
+            activity["used"] = activity["used"] + used_entities
         entities = input_entities + output_entities
         if params:
             activity["attributes"] = params
