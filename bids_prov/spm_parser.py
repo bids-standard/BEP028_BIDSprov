@@ -1,26 +1,14 @@
 import sys
 import click
 import json
-import re
 import os
+import re
 from difflib import SequenceMatcher
 
 from collections import defaultdict
 
-import prov.model as prov
-import random
-import string
-
-PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
-PARAM_REGEX = r"[^\.]+\(\d+\)"
-FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
-DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in match
-
-get_id = lambda: "".join(random.choice(string.ascii_letters) for i in range(10))
-has_parameter = lambda line: next(re.finditer(PARAM_REGEX, line), None) is not None
-# has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
-
-DEPENDENCY_DICT = dict(Segment="spatial.preproc")
+from . import spm_load_config as conf
+from . import get_id
 
 
 def format_activity_name(s, l=30):
@@ -40,12 +28,12 @@ def get_input_entity(left, right):
     right: string
         right side of ' = '
     """
-    if has_parameter(left):
+    if conf.has_parameter(left):
         return None
-    if not next(re.finditer(PATH_REGEX, right), None):
+    if not next(re.finditer(conf.PATH_REGEX, right), None):
         return None
 
-    if next(re.finditer(FILE_REGEX, right), None) is None:
+    if next(re.finditer(conf.FILE_REGEX, right), None) is None:
         return None
 
     entity_label = re.sub(r"[{};\'\"]", "", right).split("/")[-1]
@@ -72,10 +60,13 @@ def get_closest_activity(records: dict, to_match: str, dep_number: str = None):
     else:
         to_match = to_match.lower()  # TODO : str.lower before that
         to_match = DEPENDENCY_DICT.get(to_match, to_match)
-        closest_activity = max(
-            records["prov:Activity"],
-            key=lambda a: SequenceMatcher(None, a["@id"], to_match).ratio(),
-        )
+        closest_activity = None
+        max_ratio = 0.6  # TODO threshold in params
+        for activity in records["prov:Activity"]:
+            ratio = SequenceMatcher(None, activity["@id"], to_match).ratio()
+            if ratio >= max_ratio:
+                closest_activity = activity
+                max_ratio = ratio
     return closest_activity
 
 
@@ -115,6 +106,22 @@ def get_records(task_groups: dict, records=defaultdict(list)):
         input_entities, output_entities = list(), list()
         params = []
 
+        static_map = next(
+            (k for k in conf.static["activities"] if k in activity_name), None
+        )
+        if static_map is not None:
+            static_map = conf.static["activities"][static_map]
+            activity_name = static_map["name"]  # FIXME ? discuss
+            for output in static_map["outputs"]:
+                output_entities.append(
+                    {
+                        "@id": output + get_id(),
+                        "label": output,
+                        "prov:atLocation": "TODO",
+                        "wasGeneratedBy": activity_id,
+                    }
+                )
+
         for line in values:
             split = line.split(" = ")
             if len(split) != 2:
@@ -125,8 +132,8 @@ def get_records(task_groups: dict, records=defaultdict(list)):
             _in = get_input_entity(left, right)
             if _in:
                 input_entities.append(_in)
-            elif has_parameter(left) or has_parameter(activity_name):
-                dependency = re.search(DEPENDENCY_REGEX, right, re.IGNORECASE)
+            elif conf.has_parameter(left) or conf.has_parameter(activity_name):
+                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)
                 dep_number = re.search(r"{(\d+)}", right)
                 if dependency is not None:
                     parts = dependency.group(1).split(": ")
@@ -135,11 +142,15 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                         to_match="".join(parts[:-1]),
                         dep_number=dep_number.group(1),
                     )
-                    _id = "niiri:" + parts[-1].replace(" ", "") + get_id()
-                    activity["used"].append(_id)
+                    if closest_activity is None:
+                        continue
+                    output_id = (
+                        "niiri:" + parts[-1].replace(" ", "") + dep_number.group(1)
+                    )
+                    activity["used"].append(output_id)
                     output_entities.append(
                         {
-                            "@id": _id,
+                            "@id": output_id,
                             "label": parts[-1],
                             # "prov:atLocation": TODO
                             "wasGeneratedBy": closest_activity["@id"],
@@ -158,7 +169,8 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                     continue
 
         if input_entities:
-            activity["used"] = [e["@id"] for e in input_entities]
+            used_entities = [e["@id"] for e in input_entities]
+            activity["used"] = activity["used"] + used_entities
         entities = input_entities + output_entities
         if params:
             activity["attributes"] = params
@@ -177,37 +189,12 @@ def get_records(task_groups: dict, records=defaultdict(list)):
 @click.option(
     "--context-url",
     "-c",
-    default="https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json",
+    default=conf.CONTEXT_URL,
 )
 def spm_to_bids_prov(filenames, output_file, context_url):
     filename = filenames[0]  # FIXME
 
-    graph = {
-        "@context": context_url,
-        "@id": "http://example.org/ds00000X",
-        "generatedAt": "2020-03-10T10:00:00",
-        "wasGeneratedBy": {
-            "@id": "INRIA",
-            "@type": "Project",
-            "startedAt": "2016-09-01T10:00:00",
-            "wasAssociatedWith": {
-                "@id": "NIH",
-                "@type": "Organization",
-                "hadRole": "Funding",
-            },
-        },
-        "records": {
-            "prov:Agent": [
-                {
-                    "@id": "RRID:SCR_007037",  # TODO query for version
-                    "@type": "prov:SoftwareAgent",
-                    "label": "SPM",
-                }
-            ],
-            "prov:Activity": [],
-            "prov:Entity": [],
-        },
-    }
+    graph = conf.get_empty_graph(context_url=context_url)
 
     lines = readlines(filename)
     tasks = group_lines(lines)
