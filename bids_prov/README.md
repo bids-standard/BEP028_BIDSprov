@@ -4,7 +4,7 @@
 All scripts provide a `--help` flag, to get an overview of possible parameters and default values
 Here is an example
 ```bash
->> python bids_prov/visualize.py --help
+>> python -m bids_prov.visualize --help
 Usage: visualize.py [OPTIONS] [FILENAMES]...
 
 Options:
@@ -13,5 +13,15 @@ Options:
                           ('startedAtTime', 'endedAtTime'), 'Entity':
                           ('atLocation', 'generatedAt')}
 
+  --help                  Show this message and exit.
+```
+
+```bash
+>> python -m bids_prov.spm_parser --help
+Usage: spm_parser.py [OPTIONS] [FILENAMES]...
+
+Options:
+  -o, --output-file TEXT  [required]
+  -c, --context-url TEXT
   --help                  Show this message and exit.
 ```

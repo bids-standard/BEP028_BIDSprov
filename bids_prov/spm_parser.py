@@ -173,12 +173,19 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                     Warning(f"Could not parse line {line}")
             else:
                 param_name = ".".join(left.split(".")[-2:])
+                param_value = preproc_param_value(right[:-1])
+
+                # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
+                if param_value.startswith("struct"):
+                    continue  # TODO handle dictionary-like parameters
+
                 try:
-                    param_value = preproc_param_value(right[:-1])
-                    value = eval(param_value)
-                    params.append([param_name, param_value])
+                    eval(param_value)
                 except:
+                    Warning(f"could not set {param_name} to {param_value}")
                     continue
+                finally:
+                    params.append([param_name, param_value])
 
         if input_entities:
             used_entities = [e["@id"] for e in input_entities]
@@ -192,9 +199,6 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 records["prov:Entity"].append(e)
             entities_ids.add(e["@id"])
 
-    import pdb
-
-    pdb.set_trace()
     return records
 
 
