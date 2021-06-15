@@ -52,24 +52,6 @@ def preproc_param_value(val):
     return val
 
 
-def get_closest_activity(records: dict, to_match: str, dep_number: str = None):
-    if dep_number:
-        closest_activity = next(
-            filter(lambda a: a["label"].endswith(dep_number), records["prov:Activity"])
-        )
-    else:
-        to_match = to_match.lower()  # TODO : str.lower before that
-        to_match = DEPENDENCY_DICT.get(to_match, to_match)
-        closest_activity = None
-        max_ratio = 0.6  # TODO threshold in params
-        for activity in records["prov:Activity"]:
-            ratio = SequenceMatcher(None, activity["@id"], to_match).ratio()
-            if ratio >= max_ratio:
-                closest_activity = activity
-                max_ratio = ratio
-    return closest_activity
-
-
 def readlines(filename):
     with open(filename) as fd:
         for line in fd:
@@ -78,12 +60,33 @@ def readlines(filename):
 
 
 def group_lines(lines):
+    """Group line by their activity id
+
+    The activity id is between curly brackets, for every line
+
+    Parameters
+    ----------
+    lines: iterable[str]
+        lines to be grouped, where every element is a python string
+
+    Returns
+    -------
+    dict[int, str]
+        a mapping from activity id to lines belonging to this activity
+
+    Example
+    -------
+    >>> from bids_prov.spm_parser import group_lines
+    >>> lines = ["batch{1}.file_ops.file_move.call", "batch{1}.file_ops.file_move.different.call"]
+    >>> group_lines(lines)
+    {'file_ops.file_move._1': ['call', 'different.call']}
+    """
     res = defaultdict(list)
     for line in lines:
-        a = next(re.finditer(r"\{\d+\}", line), None)
+        a = re.search(r"\{\d+\}", line)
         if a:
             g = a.group()[1:-1]
-            res[g].append(line[len(f"matlabbatch{g}.") + 2 :])
+            res[g].append(line[a.end() + 1 :])
 
     new_res = dict()
     for k, v in res.items():
@@ -94,6 +97,13 @@ def group_lines(lines):
 
 
 def get_records(task_groups: dict, records=defaultdict(list)):
+    """Take the result of `group_lines` and output the corresponding
+    JSON-ld graph as a python dict
+
+    See Also
+    --------
+    bids_prov.spm_parser.group_lines
+    """
     entities_ids = set()
     for activity_name, values in task_groups.items():
         activity_id = "niiri:" + activity_name + get_id()
@@ -137,10 +147,12 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 dep_number = re.search(r"{(\d+)}", right)
                 if dependency is not None:
                     parts = dependency.group(1).split(": ")
-                    closest_activity = get_closest_activity(
-                        records,
-                        to_match="".join(parts[:-1]),
-                        dep_number=dep_number.group(1),
+                    closest_activity = next(
+                        filter(
+                            lambda a: a["label"].endswith(dep_number.group(1)),
+                            records["prov:Activity"],
+                        ),
+                        None,
                     )
                     if closest_activity is None:
                         continue
@@ -180,6 +192,9 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 records["prov:Entity"].append(e)
             entities_ids.add(e["@id"])
 
+    import pdb
+
+    pdb.set_trace()
     return records
 
 
