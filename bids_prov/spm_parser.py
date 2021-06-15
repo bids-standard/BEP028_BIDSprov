@@ -127,7 +127,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                     {
                         "@id": output + get_id(),
                         "label": output,
-                        "prov:atLocation": "TODO",
+                        "prov:atLocation": output,
                         "wasGeneratedBy": activity_id,
                     }
                 )
