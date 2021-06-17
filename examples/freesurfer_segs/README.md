@@ -9,4 +9,4 @@ this example.
 
 In this example, I didn't parse up the freesurfer:cmdline to separate out all the parameters.  I wasn't sure yet how to format that in BIDS-Prov.  
 
-In case you don't like to read jsonld files, you can see a visualation [here](https://drive.google.com/file/d/1mwhcetcJMT-1CwghJZ1_ILnaXEiPaDmw/view?usp=sharing).
+In case you don't like to read jsonld files, you can see a visualization [here](https://drive.google.com/file/d/1mwhcetcJMT-1CwghJZ1_ILnaXEiPaDmw/view?usp=sharing).
