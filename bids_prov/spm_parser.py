@@ -52,13 +52,20 @@ def preproc_param_value(val):
 
 
 def readlines(filename):
+    """Read lines from the original batch.m file
+
+    A definition should be associated with a single line in the output
+    """
     with open(filename) as fd:
         for line in fd:
             if line.count("{") != line.count("}"):
                 # TODO handle multiline definition
                 continue
             if line.startswith("matlabbatch"):
-                yield line[:-1]  # remove "\n"
+                _line = line[:-1]
+                while _line.count("{") != _line.count("}"):
+                    _line += next(fd, "} ")[:-1].lstrip() + ","
+                yield _line  # remove "\n"
 
 
 def group_lines(lines):
