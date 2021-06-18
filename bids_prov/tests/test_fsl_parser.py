@@ -1,4 +1,4 @@
-from ..fsl_parser import INPUT_RE, ATTRIBUTE_RE, format_label
+from ..fsl_parser import INPUT_RE, ATTRIBUTE_RE
 import re
 
 import pytest
@@ -38,7 +38,3 @@ def test_match_attrs(attr_to_match):
 
 
 # TODO : attributes
-
-
-def test_format_label():
-    assert format_label("/path/to/somewhere.txt") == format_label("somewhere.txt")
