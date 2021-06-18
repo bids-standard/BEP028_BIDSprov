@@ -41,7 +41,6 @@ def get_input_entity(left, right):
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
         "prov:atLocation": right[2:-3],
-        # "wasAttributedTo": "RRID:SCR_007037",
     }
     return entity
 
@@ -166,7 +165,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                             "label": parts[-1],
                             # "prov:atLocation": TODO
                             "wasGeneratedBy": closest_activity["@id"],
-                            # "wasAttributedTo": "RRID:SCR_007037",
+                            #
                         }
                     )
                 else:
