@@ -41,7 +41,6 @@ def get_input_entity(left, right):
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
         "prov:atLocation": right[2:-3],
-        # "wasAttributedTo": "RRID:SCR_007037",
     }
     return entity
 
@@ -55,6 +54,9 @@ def preproc_param_value(val):
 def readlines(filename):
     with open(filename) as fd:
         for line in fd:
+            if line.count("{") != line.count("}"):
+                # TODO handle multiline definition
+                continue
             if line.startswith("matlabbatch"):
                 yield line[:-1]  # remove "\n"
 
@@ -166,7 +168,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                             "label": parts[-1],
                             # "prov:atLocation": TODO
                             "wasGeneratedBy": closest_activity["@id"],
-                            # "wasAttributedTo": "RRID:SCR_007037",
+                            #
                         }
                     )
                 else:
