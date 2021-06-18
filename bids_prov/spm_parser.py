@@ -3,7 +3,6 @@ import click
 import json
 import os
 import re
-from difflib import SequenceMatcher
 
 from collections import defaultdict
 
@@ -41,7 +40,7 @@ def get_input_entity(left, right):
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
         "prov:atLocation": right[2:-3],
-        # "wasAttributedTo": "RRID:SCR_007037",
+        "wasAttributedTo": conf.SPM_RRID,
     }
     return entity
 
@@ -50,13 +49,6 @@ def preproc_param_value(val):
     if val[0] == "[":
         return val.replace(" ", ", ")
     return val
-
-
-def readlines(filename):
-    with open(filename) as fd:
-        for line in fd:
-            if line.startswith("matlabbatch"):
-                yield line[:-1]  # remove "\n"
 
 
 def group_lines(lines):
@@ -82,16 +74,19 @@ def group_lines(lines):
     {'file_ops.file_move._1': ['call', 'different.call']}
     """
     res = defaultdict(list)
+
     for line in lines:
-        a = re.search(r"\{\d+\}", line)
+        a = re.search(r"matlabbatch(\{\d+\})", line)
         if a:
-            g = a.group()[1:-1]
+            g = int(a.group(1)[1:-1])
+            if res and max(res.keys()) > g:
+                g += max(res.keys())
             res[g].append(line[a.end() + 1 :])
 
     new_res = dict()
     for k, v in res.items():
         common_prefix = os.path.commonprefix([_.split(" = ")[0] for _ in v])
-        new_key = f"{common_prefix}_{k}"
+        new_key = f"{common_prefix}_{str(k)}"
         new_res[new_key] = [_[len(common_prefix) :] for _ in v]
     return new_res
 
@@ -106,12 +101,12 @@ def get_records(task_groups: dict, records=defaultdict(list)):
     """
     entities_ids = set()
     for activity_name, values in task_groups.items():
-        activity_id = "niiri:" + activity_name + get_id()
+        activity_id = "niiri:" + re.sub(r"[\{\}]", "", activity_name) + get_id()
         activity = {
             "@id": activity_id,
             "label": format_activity_name(activity_name),
             "used": list(),
-            "wasAssociatedWith": "RRID:SCR_007037",
+            "wasAssociatedWith": conf.SPM_RRID,
         }
         input_entities, output_entities = list(), list()
         params = []
@@ -166,7 +161,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                             "label": parts[-1],
                             # "prov:atLocation": TODO
                             "wasGeneratedBy": closest_activity["@id"],
-                            # "wasAttributedTo": "RRID:SCR_007037",
+                            "wasAttributedTo": conf.SPM_RRID,
                         }
                     )
                 else:
@@ -215,8 +210,8 @@ def spm_to_bids_prov(filenames, output_file, context_url):
 
     graph = conf.get_empty_graph(context_url=context_url)
 
-    lines = readlines(filename)
-    tasks = group_lines(lines)
+    with open(filename) as fd:
+        tasks = group_lines(fd)
     records = get_records(tasks)
     graph["records"].update(records)
 

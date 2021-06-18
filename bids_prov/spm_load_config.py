@@ -19,6 +19,8 @@ CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-
 with open(this_path + "/spm_config.yml", "r") as fd:
     static = yaml.load(fd)
 
+SPM_RRID = "RRID:SCR_007037"  # TODO query for version
+
 
 def get_empty_graph(context_url=CONTEXT_URL):
     return {
@@ -38,7 +40,7 @@ def get_empty_graph(context_url=CONTEXT_URL):
         "records": {
             "prov:Agent": [
                 {
-                    "@id": "RRID:SCR_007037",  # TODO query for version
+                    "@id": SPM_RRID,
                     "@type": "prov:SoftwareAgent",
                     "label": "SPM",
                 }
