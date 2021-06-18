@@ -54,6 +54,9 @@ def preproc_param_value(val):
 def readlines(filename):
     with open(filename) as fd:
         for line in fd:
+            if line.count("{") != line.count("}"):
+                # TODO handle multiline definition
+                continue
             if line.startswith("matlabbatch"):
                 yield line[:-1]  # remove "\n"
 
