@@ -58,9 +58,6 @@ def readlines(filename):
     """
     with open(filename) as fd:
         for line in fd:
-            if line.count("{") != line.count("}"):
-                # TODO handle multiline definition
-                continue
             if line.startswith("matlabbatch"):
                 _line = line[:-1]
                 while _line.count("{") != _line.count("}"):
