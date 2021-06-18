@@ -2,8 +2,6 @@ import re
 import yaml
 import os
 
-import os
-
 this_path = os.path.dirname(os.path.abspath(__file__))
 
 PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
@@ -23,6 +21,7 @@ with open(this_path + "/spm_config.yml", "r") as fd:
 def get_empty_graph(context_url=CONTEXT_URL):
     return {
         "@context": context_url,
+        "BIDSProvVersion": "1.0.0",
         "@id": "http://example.org/ds00000X",
         "generatedAt": "2020-03-10T10:00:00",
         "wasGeneratedBy": {
