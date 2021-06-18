@@ -1,10 +1,10 @@
+from typing import Mapping, Union
+
 from boutiques.searcher import Searcher
 from boutiques.puller import Puller
 
-from functools import lru_cache
 import json
 from bids_prov import get_or_load
-from itertools import groupby
 
 DEFAULT_CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
 
@@ -17,7 +17,11 @@ TYPES = (
 
 
 @get_or_load
-def get_config(agent):
+def get_config(agent: str) -> Mapping[str, Mapping[str, object]]:
+    """get a config by querying bosh with `agent`
+
+    eq to running ```bosh search``` from the command-line
+    """
     searcher = Searcher(agent)
     results = searcher.search()
     ids = [_["ID"] for _ in results]
@@ -38,7 +42,7 @@ def get_config(agent):
 bosh_config = get_config("fsl")
 
 
-def get_default_graph(context_url):
+def get_default_graph(context_url: str) -> Mapping[str, Union[str, Mapping]]:
     return {
         "@context": context_url,
         "@id": "http://example.org/ds00000X",

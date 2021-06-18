@@ -5,8 +5,9 @@ from os.path import expanduser
 import string
 import random
 
+
 def get_id(size=10):
-    return "".join(random.choice(string.ascii_letters) for i in range(size))
+    return "".join(random.choice(string.ascii_letters) for _ in range(size))
 
 
 def get_or_load(fn):
@@ -32,4 +33,3 @@ def get_or_load(fn):
             return d
 
     return wrapper
-
