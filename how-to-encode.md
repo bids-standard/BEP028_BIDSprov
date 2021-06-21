@@ -3,7 +3,7 @@
 Either you are a software developper, a researcher striving for reproducible science, or anyone working in the neuro-imaging field and willing to 
 use BIDS-prov, at some point you might be asking yourself the following question :
 
-> What is the right way to represent my workflow given in the philosophy of BIDS-prov ?
+> What is the right way to represent my workflow in the philosophy of BIDS-prov ?
 
 This set of examples will give you an overview the the typical cases and how to apply BIDS-prov concepts !
 
@@ -83,6 +83,7 @@ You can the `prov-O` isPartOf relationship to add an extralink to you activity
         "prov:atLocation": "/root/file.xyz",
         "generatedAt": "2019-10-10T10:00:00"
       },
+    ]
 ```
 
 You can see relations with objects of other types (entites here) are reserved to the activity with the lowest level :`Activity 1`
