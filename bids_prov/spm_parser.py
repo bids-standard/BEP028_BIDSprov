@@ -3,7 +3,6 @@ import click
 import json
 import os
 import re
-from difflib import SequenceMatcher
 
 from collections import defaultdict
 
@@ -105,7 +104,7 @@ def group_lines(lines):
     return new_res
 
 
-def get_records(task_groups: dict, records=defaultdict(list)):
+def get_records(task_groups: dict, agent_id: str):
     """Take the result of `group_lines` and output the corresponding
     JSON-ld graph as a python dict
 
@@ -113,6 +112,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
     --------
     bids_prov.spm_parser.group_lines
     """
+    records = defaultdict(list)
     entities_ids = set()
     for activity_name, values in task_groups.items():
         activity_id = "niiri:" + re.sub(r"[\{\}]", "", activity_name) + get_id()
@@ -120,7 +120,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
             "@id": activity_id,
             "label": format_activity_name(activity_name),
             "used": list(),
-            "wasAssociatedWith": "RRID:SCR_007037",
+            "wasAssociatedWith": agent_id,
         }
         input_entities, output_entities = list(), list()
         params = []
@@ -227,7 +227,8 @@ def spm_to_bids_prov(filenames, output_file, context_url):
     lines = readlines(filename)
 
     tasks = group_lines(lines)
-    records = get_records(tasks)
+    agent_id = graph["records"]["prov:Agent"][0]["@id"]
+    records = get_records(tasks, agent_id=agent_id)
     graph["records"].update(records)
 
     with open(output_file, "w") as fd:
