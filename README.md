@@ -50,7 +50,7 @@ The file that you are most likely to propose changes to is [src/03-modality-agno
 The BEP028 is in a [google doc](https://docs.google.com/document/d/1vw3VNDof5cecv2PkFp7Lw_pNUTUo8-m8V4SIdtGJVKs/edit?usp=sharing)
 
 ### NIDM weekly calls
-We meet every week by videoconference on Mondays at 8-9am PDT / 11am-12pm EDT / 4-5pm BST. The group is always open to new contributors interested in neuroimaging data sharing. To join the call or to ask any question, please email us at incf-nidash-nidm@googlegroups.com.  
+We meet every two weeks by videoconference on Mondays at 7-8am PDT / 10am-11am EDT / 3-4pm BST. The group is always open to new contributors interested in neuroimaging data sharing. To join the call or to ask any question, please email us at incf-nidash-nidm@googlegroups.com.  
 
 ## Additional resources
 Mature building blocks of NIDM:
