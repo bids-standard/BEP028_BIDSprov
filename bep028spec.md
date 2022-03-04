@@ -3,7 +3,7 @@
 
 *Extension moderators/leads: Satra Ghosh &lt;[satra@mit.edu](mailto:satra@mit.edu)> and Camille Maumet &lt;[camille.maumet@inria.fr](mailto:camille.maumet@inria.fr)>*
 
-*Contributors: Stefan Appelhoff, Chris Markiewicz, Yaroslav Halchenko, Jean-Baptiste Poline, 	Rémi Adon, Michael Dayan, Sarah Saneei, Eric Earl, Tibor Auer.*
+*Contributors: Stefan Appelhoff, Chris Markiewicz, Yaroslav Halchenko, Jean-Baptiste Poline,  Rémi Adon, Michael Dayan, Sarah Saneei, Eric Earl, Tibor Auer.*
 
 We meet every two weeks by videoconference on Mondays at 7-8am PDT / 10am-11am EDT / 3-4pm BST. The group is always open to new contributors interested in neuroimaging data sharing. To join the call or to ask any question, please email us at [incf-nidash-nidm@googlegroups.com](mailto:incf-nidash-nidm@googlegroups.com).
 
@@ -14,16 +14,13 @@ This document contains a draft of the Brain Imaging Data Structure standard exte
 This specification is an extension of BIDS, and general principles are shared. The specification should work for many different settings and facilitate the integration with other imaging methods.
 
 To see the original BIDS specification, see this link. This document inherits all components of the original specification (e.g. how to store imaging data, events, stimuli and behavioral data), and should be seen as an extension of it, not a replacement.
+
 ---
 
 
 
 ## Table of contents
-
-
 [TOC]
-
-
 
 ## 1. Overview {#1-overview}
 
@@ -44,8 +41,6 @@ Provenance comes up in many different contexts in BIDS. This specification focus
 1. The raw conversion from DICOM images or other instrument native formats to BIDS layout, details of stimulus presentation and cognitive paradigms, and clinical and neuropsychiatric assessments, each come with their own details of provenance.
 2. In BIDS derivatives, the consideration of outputs requires knowledge of which inputs from the BIDS dataset were used together with what software was run in what environment and with what parameters.
 
-TODO: those above should be covered with their own example
-
 But provenance comes up in other contexts as well, which might be addressed at a later stage:
 
 
@@ -61,7 +56,7 @@ Note that some level of provenance is already encoded in BIDS (cf. ), this BEP a
 
 ### 1.3 File naming {#1-3-file-naming}
 
-This document describes the contents of a BIDS Prov file; for naming and organization conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following:
+This document describes the contents of a BIDS Prov file; for naming and organization conventions, please consult the [BIDS specification]([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following:
 
 BIDS-Prov files are JSON-LD files --, i.e. a specific type of JSON files that allows encoding graph-like structures with the Resource Description Framework[^1] --  
 
@@ -71,32 +66,23 @@ They can be stored in two different locations:
 
 
 ```
-sub-<label>/[ses-<label>/]sub-<label>[_ses-<label>]_<suffix>_prov.jsonld
-prov/<sub_file_path>.prov.jsonld
+[pipeline<id>/]
+    sub-<label>/
+        [ses-<label>/]
+            <modality>/
+                <file-name>_prov.jsonld
 ```
 
 
 At the file level, provenance follows some of the same concepts at the dataset level, but is specifically about the current file under consideration.
-
-**Participant level provenance. **BIDS-Prov files can be stored in a `prov/` folder inside a subfolder. Each BIDS-Prov file must meet the following naming convention:
-
-
-```
-prov/sub-<label>/[ses-<label>/]sub-<label>[_ses-<label>]_<suffix>_prov.jsonld
-prov/sub-<label>/[ses-<label>/]<modality>/sub-<label>[_ses-<label>]_<suffix>_prov.jsonld
-prov/<label>_prov.jsonld
-
-Participant-level provenance -- Not related to a given file but all related to a given subject!
-
-We need to think about provenance of BIDS-derivatives !!
-```
 
 
 **Dataset level provenance.** BIDS-Prov files can be stored in a `prov/` directory immediately below the BIDS dataset (or BIDS-Derivatives dataset) root. Each BIDS-Prov file must meet the following naming convention:
 
 
 ```
-<label>_prov.jsonld
+prov/
+    <label>_prov.jsonld
 ```
 
 
@@ -128,7 +114,7 @@ A skeleton for a file-level BIDS-Prov JSON-LD file looks like this:
     "used": {
         <...Entity 2…>
       }
-   	}
+    }
 }
 
 
@@ -191,35 +177,35 @@ A skeleton for a dataset level BIDS-Prov JSON-LD file looks like this:
 "@context": "https://purl.org/nidash/bidsprov/context.json",  
 "BIDSProvVersion": "0.0.1",
 "records": {
-	"Agent": [
-  	{
-    		<...Agent 1...>
-  	},
-  	{
-    		<...Agent 2...>
-  	}
-	],
-	"Activity": [
-	{
-    		<...Activity 1...>
-    		<used>
-    		<generated>
-    		<wasAssociatedWith>
-	}
-	{
-    		<...Activity 2...>
-	}
-	],
-	"Entity": [
-	{
-    		<...Entity 1...>
-    		<wasDerivedFrom>
-    		<wasAttributedTo>
-	},
-	{
-    		<...Entity 2...>
-	}
-	]
+  "Agent": [
+    {
+        <...Agent 1...>
+    },
+    {
+        <...Agent 2...>
+    }
+  ],
+  "Activity": [
+  {
+        <...Activity 1...>
+        <used>
+        <generated>
+        <wasAssociatedWith>
+  }
+  {
+        <...Activity 2...>
+  }
+  ],
+  "Entity": [
+  {
+        <...Entity 1...>
+        <wasDerivedFrom>
+        <wasAttributedTo>
+  },
+  {
+        <...Entity 2...>
+  }
+  ]
   }
 }
 }
@@ -484,6 +470,9 @@ Provenance is information about a file, including any metadata that is relevant 
 
 ## This set of examples will give you an overview of the typical cases and how to apply BIDS-prov concepts !
 
+                
+                
+TODO: the examples of provenance covered by the spec and descripbed in "Goal" should be covered with their own example here
 
 #### I have many activities/entities to track, should I put everything in a single file ?
 
@@ -493,33 +482,33 @@ If you have Activity 1 and Entity 1 defined in a provenance file called init.jso
 
 "prov:Activity": [
 
-  	{
+    {
 
 
-        	"@id": "niiri:init",
+          "@id": "niiri:init",
 
 
-        	"label": "Do some init",
+          "label": "Do some init",
 
 
-        	"command": "python -m my_module.init --weights '[0, 1]'",
+          "command": "python -m my_module.init --weights '[0, 1]'",
 
 
-        	"parameters": { "weights" : [0, 1]},
+          "parameters": { "weights" : [0, 1]},
 
 
-        	"startedAtTime": "2020-10-10T10:00:00",
+          "startedAtTime": "2020-10-10T10:00:00",
 
 
-        	"used": "niiri:bids_data1"
+          "used": "niiri:bids_data1"
 
-  	},
+    },
 
 ],
 
 "prov:Entity": [
 
-  	{"@id": "niiri:bids_data1", "label": "Bids dataset 1", "prov:atLocation": "data/bids_root"}
+    {"@id": "niiri:bids_data1", "label": "Bids dataset 1", "prov:atLocation": "data/bids_root"}
 
 ]
 
@@ -557,65 +546,65 @@ The most simplistic way you can think of is to have this container "black-boxed"
 
 "prov:Activty": [
 
-  	{
+    {
 
 
-        	"@id": "niiri:fMRIPrep1",
+          "@id": "niiri:fMRIPrep1",
 
 
-        	"label": "fMRIPrep step",
+          "label": "fMRIPrep step",
 
 
-        	"command": "fmriprep data/bids_root/ out/ participant -w work/",
+          "command": "fmriprep data/bids_root/ out/ participant -w work/",
 
 
-        	"parameters": {
+          "parameters": {
 
 
-                	"bids_dir" : "data/bids_root",
+                  "bids_dir" : "data/bids_root",
 
 
-                	"output_dir" : "out/",
+                  "output_dir" : "out/",
 
 
-                	"anaysis_level" : "participant"
+                  "anaysis_level" : "participant"
 
-    		},
-
-
-        	"used": "niiri:bids_data1"
-
-  	},
-
-	],
-
-	"prov:Entity": [
+        },
 
 
-      	{"@id": "niiri:bids_data1", "label": "Bids dataset 1", "prov:atLocation": "data/bids_root"},
+          "used": "niiri:bids_data1"
+
+    },
+
+  ],
+
+  "prov:Entity": [
 
 
-    	{
+        {"@id": "niiri:bids_data1", "label": "Bids dataset 1", "prov:atLocation": "data/bids_root"},
 
 
-            	"@id": "niiri:fmri_prep_output1",
+      {
 
 
-            	"label": "FMRI prep output 1",
+              "@id": "niiri:fmri_prep_output1",
 
 
-            	"prov:atLocation": "out/",
+              "label": "FMRI prep output 1",
 
 
-            	"generatedAt": "2019-10-10T10:00:00",
+              "prov:atLocation": "out/",
 
 
-            	"wasGeneratedBy": "niiri:fMRIPrep1"
+              "generatedAt": "2019-10-10T10:00:00",
 
 
-    	},
+              "wasGeneratedBy": "niiri:fMRIPrep1"
 
-	]
+
+      },
+
+  ]
 
 
 #### What if I have a group of tasks, belonging to a subgroup of tasks ?
@@ -624,46 +613,46 @@ You can the `prov-O` isPartOf relationship to add an extra link to you activity
 
 "prov:Activity": [
 
-  	{"@id": "niiri:activity_group1", "label": "Activity Group 1", "command": "launch.sh"},
+    {"@id": "niiri:activity_group1", "label": "Activity Group 1", "command": "launch.sh"},
 
-  	{
-
-
-        	"@id": "niiri:activity_1",
+    {
 
 
-        	"label": "Activity 1",
+          "@id": "niiri:activity_1",
 
 
-        	"command": "task_specific_executable.sh --arg 1",
+          "label": "Activity 1",
 
 
-        	"parameters": {"arg1" : 1},
+          "command": "task_specific_executable.sh --arg 1",
 
 
-        	"wasAssociatedWith": "RRID:SCR_007037",
+          "parameters": {"arg1" : 1},
 
 
-        	"startedAtTime": "2019-10-10T10:00:00",
+          "wasAssociatedWith": "RRID:SCR_007037",
 
 
-        	"endedAtTime": "2019-10-10T10:00:00",
+          "startedAtTime": "2019-10-10T10:00:00",
 
 
-        	"used": "niiri:entity_1"
+          "endedAtTime": "2019-10-10T10:00:00",
 
 
-      	}
+          "used": "niiri:entity_1"
 
-	],
 
-	"prov:Entity": [
+        }
 
-  		{"@id": "niiri:entity_1", "label": "Entity 1", "prov:atLocation": "/root/file.xyz"},
+  ],
 
-	]
+  "prov:Entity": [
 
-	
+      {"@id": "niiri:entity_1", "label": "Entity 1", "prov:atLocation": "/root/file.xyz"},
+
+  ]
+
+  
 
 
 ---
@@ -758,7 +747,7 @@ sub-01/
   "attributedTo": {"@type": "SoftwareAgent",
                "version": "1.3.0",
                "RRID": "RRID:SCR_017427"
-        	 "label": "SPM",
+           "label": "SPM",
         "description": "If this is a custom script, treat this as a methods section",
               }
   }
