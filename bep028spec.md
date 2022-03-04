@@ -82,15 +82,14 @@ At the file level, provenance follows some of the same concepts at the dataset l
 
 ```
 prov/
-    <label>_prov.jsonld
+    [<subfolders>*/]
+        <label>_prov.jsonld
 ```
 
 
 At the dataset level, provenance could be about the dataset itself, or about any BIDS file in the dataset. 
 
-It is RECOMMENDED to place entity (file) related provenance alongside the files where it is possible (i.e. file level provenance). Dataset level provenance may evolve as new data are added, which may include sourcedata, BIDS data, and BIDS derived data. One option is to make use of <code>[https://w3c.github.io/json-ld-syntax/#named-graphs](https://w3c.github.io/json-ld-syntax/#named-graphs)</code>.
-
-Note: since these jsonld documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
+Dataset level provenance may evolve as new data are added, which may include sourcedata, BIDS data, and BIDS derived data. 
 
 
 ### 1.2 Top-level structure {#1-2-top-level-structure}
@@ -116,11 +115,12 @@ A skeleton for a file-level BIDS-Prov JSON-LD file looks like this:
       }
     }
 }
-
+```
 
 <table>
   <tr>
-   <td>```
+   <td>
+
 
 <strong>Key name</strong>
    </td>
@@ -209,11 +209,11 @@ A skeleton for a dataset level BIDS-Prov JSON-LD file looks like this:
   }
 }
 }
-
+```
 
 <table>
   <tr>
-   <td>```
+   <td>
 
 <strong>Key name</strong>
    </td>
@@ -793,6 +793,11 @@ Contexts are created at the BIDS organization level, and only if necessary exten
 
 <!-- Footnotes themselves at the bottom. -->
 ## Notes
+                
+TO be discussed / integrated with more context : 
+ - It is RECOMMENDED to place entity (file) related provenance alongside the files where it is possible (i.e. file level provenance). 
+- One option is to make use of <code>[https://w3c.github.io/json-ld-syntax/#named-graphs](https://w3c.github.io/json-ld-syntax/#named-graphs)</code>.
+- Note: since these jsonld documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
 
 [^1]:
      https://www.w3.org/TR/json-ld11/#basic-concepts
