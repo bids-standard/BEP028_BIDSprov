@@ -95,81 +95,9 @@ Dataset level provenance may evolve as new data are added, which may include sou
 ### 1.2 Top-level structure {#1-2-top-level-structure}
 
 
-#### File-level provenance
+#### BIDS-Prov JSON-LD file
 
-A skeleton for a file-level BIDS-Prov JSON-LD file looks like this:
-
-
-```
-{
-"@context": "https://purl.org/nidash/bidsprov/context.json", 
-"BIDSProvVersion": "1.0.0", 
-<...Entity 1...>
-"wasGeneratedBy": {
-<...Activity...>
-    "wasAssociatedWith": {
-        <...Agent...>
-        },
-    "used": {
-        <...Entity 2…>
-      }
-    }
-}
-```
-
-<table>
-  <tr>
-   <td>
-
-
-<strong>Key name</strong>
-   </td>
-   <td><strong>Description</strong>
-   </td>
-  </tr>
-  <tr>
-   <td><code>@context</code>
-   </td>
-   <td>REQUIRED. A URL to the BIDS-Prov json context. Value must be “<code>https://purl.org/nidash/bidsprov/context.json"</code>
-   </td>
-  </tr>
-  <tr>
-   <td><code>BIDSProvVersion</code>
-   </td>
-   <td>REQUIRED. A string identifying the version of the specification adhered to.
-   </td>
-  </tr>
-  <tr>
-   <td><code>[no-key : root-level attributes]</code>
-   </td>
-   <td>REQUIRED. An Entity record describing the provenance (see “Entity” section below).
-   </td>
-  </tr>
-  <tr>
-   <td><code>wasGeneratedBy</code>
-   </td>
-   <td>REQUIRED. An Activity describing the provenance (see “Activity”, section below).
-   </td>
-  </tr>
-  <tr>
-   <td><code>wasAssociatedWith</code>
-   </td>
-   <td>OPTIONAL. An Agent describing the provenance (see “Activity”, section below).
-   </td>
-  </tr>
-  <tr>
-   <td><code>used</code>
-   </td>
-   <td>OPTIONAL. An Entity describing the provenance (see “Entity”, section below).
-   </td>
-  </tr>
-</table>
-
-
-
-#### Dataset-level provenance
-
-A skeleton for a dataset level BIDS-Prov JSON-LD file looks like this:
+A skeleton for a file-level or dataset-level BIDS-Prov JSON-LD file looks like this:
 
 
 ```
@@ -188,9 +116,6 @@ A skeleton for a dataset level BIDS-Prov JSON-LD file looks like this:
   "Activity": [
   {
         <...Activity 1...>
-        <used>
-        <generated>
-        <wasAssociatedWith>
   }
   {
         <...Activity 2...>
@@ -199,8 +124,6 @@ A skeleton for a dataset level BIDS-Prov JSON-LD file looks like this:
   "Entity": [
   {
         <...Entity 1...>
-        <wasDerivedFrom>
-        <wasAttributedTo>
   },
   {
         <...Entity 2...>
