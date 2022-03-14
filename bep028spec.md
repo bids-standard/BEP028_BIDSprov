@@ -66,11 +66,10 @@ They can be stored in two different locations:
 
 
 ```
-[pipeline<id>/]
-    sub-<label>/
+    [sub-<label>/]
         [ses-<label>/]
-            <modality>/
-                <file-name>_prov.jsonld
+            [<modality>/]
+                <file-name-wth-ext>.prov.jsonld
 ```
 
 
@@ -83,7 +82,7 @@ At the file level, provenance follows some of the same concepts at the dataset l
 ```
 prov/
     [<subfolders>*/]
-        <label>_prov.jsonld
+        <label>.prov.jsonld
 ```
 
 
