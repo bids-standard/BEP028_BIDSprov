@@ -52,7 +52,7 @@ def viz_jsonld11(jsonld11, img_file):
     g = rl.ConjunctiveGraph()
     g.parse(data=json.dumps(aa, indent=2), format='json-ld')
 
-    viz_turtle(content=g.serialize(format='turtle').decode(), img_file=img_file)
+    viz_turtle(content=g.serialize(format='turtle'), img_file=img_file)
 
 
 def join_jsonld(lds, graph_key="records", omit_details=True):
