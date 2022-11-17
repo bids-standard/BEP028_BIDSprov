@@ -24,6 +24,7 @@ with open(this_path + "/spm_config.yml", "r") as fd:
 def get_empty_graph(context_url=CONTEXT_URL):
     return {
         "@context": context_url,
+        "BIDSProvVersion": "1.0.0",                 # TODO ?
         "@id": "http://example.org/ds00000X",       # TODO ?
         "generatedAt": "2020-03-10T10:00:00",       # TODO ?
         "wasGeneratedBy": {
@@ -39,7 +40,7 @@ def get_empty_graph(context_url=CONTEXT_URL):
         "records": {
             "prov:Agent": [
                 {
-                    "@id": "RRID:SCR_007037",  # TODO query for version (ligne 3 ?)
+                    "@id": "RRID:SCR_007037",  # TODO query for version (line 3 ?)
                     "@type": "prov:SoftwareAgent",
                     "label": "SPM",
                 }
