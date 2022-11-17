@@ -4,6 +4,7 @@ import os
 
 import os
 
+# contains the path from home to the directory where this script is located
 this_path = os.path.dirname(os.path.abspath(__file__))
 
 PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
@@ -23,12 +24,12 @@ with open(this_path + "/spm_config.yml", "r") as fd:
 def get_empty_graph(context_url=CONTEXT_URL):
     return {
         "@context": context_url,
-        "@id": "http://example.org/ds00000X",
-        "generatedAt": "2020-03-10T10:00:00",
+        "@id": "http://example.org/ds00000X",       # TODO ?
+        "generatedAt": "2020-03-10T10:00:00",       # TODO ?
         "wasGeneratedBy": {
             "@id": "INRIA",
             "@type": "Project",
-            "startedAt": "2016-09-01T10:00:00",
+            "startedAt": "2016-09-01T10:00:00",     # TODO ?
             "wasAssociatedWith": {
                 "@id": "NIH",
                 "@type": "Organization",
@@ -38,7 +39,7 @@ def get_empty_graph(context_url=CONTEXT_URL):
         "records": {
             "prov:Agent": [
                 {
-                    "@id": "RRID:SCR_007037",  # TODO query for version
+                    "@id": "RRID:SCR_007037",  # TODO query for version (ligne 3 ?)
                     "@type": "prov:SoftwareAgent",
                     "label": "SPM",
                 }
