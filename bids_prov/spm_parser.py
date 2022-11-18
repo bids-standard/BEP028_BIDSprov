@@ -173,7 +173,7 @@ def get_records(task_groups: dict, records=defaultdict(list)):
             _in = get_input_entity(left, right)
             if _in:
                 input_entities.append(_in)
-            elif (conf.has_parameter(left) or conf.has_parameter(activity_name)) and "substruct" in left:
+            elif (conf.has_parameter(left) or conf.has_parameter(activity_name)) and ("substruct" in left or "substruct" in activity_name or "substruct" in right):
                 print("elif")
                 # or has_parameter(activity_name) is mandatory because if in our activity we have only one call
                 # to a function, the common part will be full and so left will be empty
@@ -212,11 +212,13 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 else:
                     Warning(f"Could not parse line {line}")
             else:
+                print("params")
                 param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 param_value = preproc_param_value(right[:-1])  # remove ";" at the end of right
+                print(param_name, param_value)
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
-                if param_value.startswith("struct"):
-                    continue  # TODO handle dictionary-like parameters
+                # if param_value.startswith("struct"):
+                #     continue  # TODO handle dictionary-like parameters
 
                 try:
                     eval(param_value)
