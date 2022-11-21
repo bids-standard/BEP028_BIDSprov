@@ -647,7 +647,7 @@ def test_get_records():
 
     tasks = group_lines(LIST_READLINES)
     records = get_records(tasks, records=defaultdict(list))
-    print("TESSSSST  records", records)
+    assert DeepDiff(records, RECORDS) == {}
 
 
 def test_get_records_copy_attributes():
