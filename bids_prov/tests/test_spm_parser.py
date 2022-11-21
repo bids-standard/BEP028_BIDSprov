@@ -2,9 +2,13 @@ import pytest
 import json
 
 from ..spm_load_config import DEPENDENCY_REGEX
-from ..spm_parser import get_records
+from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name
 import re
 from deepdiff import DeepDiff
+
+from .. import init_random_state, get_id
+from ..spm_load_config import static, has_parameter
+
 
 LIST_READLINES = [
     "matlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.files = {'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};",
@@ -211,6 +215,40 @@ TASKS = {'cfg_basicio.file_dir.file_ops.file_move._1': [
 def test_group_lines():
     group = group_lines(LIST_READLINES)
     assert (DeepDiff(group, TASKS) == {})
+
+
+def test_format_activity_name():
+    s = "cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "file_dir.file_ops.file_move._1"
+
+
+def test_get_input_entity():
+
+    init_random_state()
+    left = "files"
+    right = "{'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};"
+    # entity label : sub-01_task-tonecounting_bold.nii.gz
+    entity = {
+        '@id': 'niiri:sub-01_task-tonecounting_bold.nii.gzgNSWPHprVq',
+        'label': 'sub-01_task-tonecounting_bold.nii.gz',
+        'prov:atLocation': '$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'
+    }
+
+    assert get_input_entity(left, right) == entity
+
+
+def test_has_parameter():
+    string = "files"
+    assert has_parameter(string) == False
+
+    string = "file_dir.file_ops.file_move._2"
+    assert has_parameter(string) == False
+
+    string = "channel.vols(1)"
+    assert has_parameter(string) == True
+
+    string = "consess{1}.tcon.name"
+    assert has_parameter(string) == False
 
 
 def test_get_records_copy_attributes():
