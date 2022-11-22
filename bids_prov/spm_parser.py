@@ -12,7 +12,7 @@ from . import get_id
 
 
 def format_activity_name(
-    s, l=30
+        s, l=30
 ):  # s example : cfg_basicio.file_dir.file_ops.file_move._1
     if s.startswith("spm."):
         s = s[4:]
@@ -48,7 +48,7 @@ def get_input_entity(left, right, verbose=False):
             print("the string does not match with conf.PATH_REGEX")
         return None
     if (
-        next(re.finditer(conf.FILE_REGEX, right), None) is None
+            next(re.finditer(conf.FILE_REGEX, right), None) is None
     ):  # r"(\.[a-z]{1,3}){1,2}"
         # the string does not contain a filename extension so this is not an entity
         if verbose:
@@ -69,8 +69,8 @@ def get_input_entity(left, right, verbose=False):
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
         "prov:atLocation": right[
-            2:-3
-        ],  # similar processing with respect to the entity_label variable. The line
+                           2:-3
+                           ],  # similar processing with respect to the entity_label variable. The line
         # removes "{'" at the beginning and "'};" at the end
     }
     if verbose:
@@ -129,7 +129,7 @@ def group_lines(lines):
         if a:
             g = a.group()[1:-1]  # retrieves the batch number without the braces
             res[g].append(
-                line[a.end() + 1 :]
+                line[a.end() + 1:]
             )  # retrieves the rest of the line without the dot after the brace of
             # the activity number
 
@@ -140,7 +140,7 @@ def group_lines(lines):
         common_prefix = os.path.commonprefix([_.split(" = ")[0] for _ in v])
         new_key = f"{common_prefix}_{k}"  # add to the common prefix the activity number
         new_res[new_key] = [
-            _[len(common_prefix) :] for _ in v
+            _[len(common_prefix):] for _ in v
         ]  # keep the rest of the line
     return new_res
 
@@ -202,9 +202,9 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
             if _in:
                 input_entities.append(_in)
             elif (conf.has_parameter(left) or conf.has_parameter(activity_name)) and (
-                "substruct" in left
-                or "substruct" in activity_name
-                or "substruct" in right
+                    "substruct" in left
+                    or "substruct" in activity_name
+                    or "substruct" in right
             ):
                 if verbose:
                     print("elif")
@@ -238,7 +238,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
                     if closest_activity is None:
                         continue
                     output_id = (
-                        "niiri:" + parts[-1].replace(" ", "") + dep_number.group(1)
+                            "niiri:" + parts[-1].replace(" ", "") + dep_number.group(1)
                     )
                     # example : "niiri:oved/CopiedFiles1
                     activity["used"].append(
@@ -259,9 +259,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
             else:
                 if verbose:
                     print("params")
-                param_name = ".".join(
-                    left.split(".")[-2:]
-                )  # split left by "." and keep the two last elements
+                param_name = left
                 param_value = preproc_param_value(
                     right[:-1]
                 )  # remove ";" at the end of right
@@ -277,7 +275,6 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
                     Warning(f"could not set {param_name} to {param_value}")
                     continue
                 finally:
-                    # params.append([param_name, param_value])
                     params[param_name] = param_value
 
         if verbose:
@@ -287,7 +284,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
             if verbose:
                 print(f'activity["used"] : {activity["used"]}')
             activity["used"] = (
-                activity["used"] + used_entities
+                    activity["used"] + used_entities
             )  # we add entities from input_entities
         entities = input_entities + output_entities
         if params:
