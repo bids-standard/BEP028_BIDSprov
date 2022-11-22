@@ -18,7 +18,6 @@ def main(data_dir, output_dir):
     os.makedirs(output_dir, exist_ok=True)
 
     for root, dirs, files in os.walk(data_dir[0]):
-
         for file in files:
             # matlab extension the one of your choice.
             if file.endswith("batch.m"):
@@ -26,6 +25,10 @@ def main(data_dir, output_dir):
 
                 output_file_base = root.split("/")[-1]
 
+                filename = root + "/" + str(file)
+                shutil.copyfile(
+                    filename, output_dir + "/" + output_file_base + "_batch.m"
+                )
                 try:
                     spm_to_bids_prov(
                         [
