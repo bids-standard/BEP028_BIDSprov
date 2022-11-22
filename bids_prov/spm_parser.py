@@ -22,7 +22,7 @@ def format_activity_name(
     return ".".join(tmp)  # file_dir.file_ops.file_move._1
 
 
-def get_input_entity(left, right):
+def get_input_entity(left, right, verbose=False):
     """get input Entity if possible else return None
     Very few entities in detectable inputs. We find for example the read files.
 
@@ -31,24 +31,30 @@ def get_input_entity(left, right):
     right: string
         right side of ' = '
     """
-    print(f"left : {left}")
-    print(f"right : {right}")
+    if verbose:
+        print(f"left : {left}")
+        print(f"right : {right}")
     if conf.has_parameter(left):  # r"[^\.]+\(\d+\)"
         # a string contains at least one parameter if it does not start with a dot and contains at least one digit
         # between brackets.
         # if there are parameters, they are necessarily in the left part (function call) and this is not an entity
-        print("the string contains parameters so this is not an input_entity")
+        if verbose:
+            print("the string contains parameters so this is not an input_entity")
         return None
     if not next(re.finditer(conf.PATH_REGEX, right), None):
         # r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
         # if not None (if it doesn't match with conf.PATH_REGEX), enter in if
-        print("the string does not match with conf.PATH_REGEX")
+        if verbose:
+            print("the string does not match with conf.PATH_REGEX")
         return None
     if (
         next(re.finditer(conf.FILE_REGEX, right), None) is None
     ):  # r"(\.[a-z]{1,3}){1,2}"
         # the string does not contain a filename extension so this is not an entity
-        print("the string does not contain a filename so this is not an input_entity")
+        if verbose:
+            print(
+                "the string does not contain a filename so this is not an input_entity"
+            )
         return None
 
     entity_label = re.sub(r"[{};\'\"]", "", right).split("/")[
@@ -57,7 +63,8 @@ def get_input_entity(left, right):
     # quotation mark.
     # If we have : "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
     # the line will return "sub-01_task-tonecounting_bold.nii.gz" and not "sub-01_task-tonecounting_bold.nii.gz'};"
-    print(f"entity label : {entity_label}")
+    if verbose:
+        print(f"entity label : {entity_label}")
     entity = {
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
@@ -66,7 +73,8 @@ def get_input_entity(left, right):
         ],  # similar processing with respect to the entity_label variable. The line
         # removes "{'" at the beginning and "'};" at the end
     }
-    print(f"entity : {entity}")
+    if verbose:
+        print(f"entity : {entity}")
     return entity
 
 
@@ -137,7 +145,7 @@ def group_lines(lines):
     return new_res
 
 
-def get_records(task_groups: dict, records=defaultdict(list)):
+def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
     """Take the result of `group_lines` and output the corresponding
     JSON-ld graph as a python dict
 
@@ -146,9 +154,11 @@ def get_records(task_groups: dict, records=defaultdict(list)):
     bids_prov.spm_parser.group_lines
     """
     entities_ids = set()
-    print(f"task_groups : {task_groups}")
+    if verbose:
+        print(f"task_groups : {task_groups}")
     for activity_name, values in task_groups.items():
-        print("-" * 50)
+        if verbose:
+            print("-" * 50)
         activity_id = "niiri:" + activity_name + get_id()
         activity = {
             "@id": activity_id,
@@ -156,7 +166,8 @@ def get_records(task_groups: dict, records=defaultdict(list)):
             "used": list(),
             "wasAssociatedWith": "RRID:SCR_007037",  # TODO ?
         }
-        print(f"activity : {activity}, values : {task_groups[activity_name]}")
+        if verbose:
+            print(f"activity : {activity}, values : {task_groups[activity_name]}")
         input_entities, output_entities = list(), list()
         params = []
 
@@ -182,11 +193,12 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 " = "
             )  # split in 2 at the level of the equal the rest of the action
             if len(split) != 2:
-                print(f"could not parse {line}")
+                if verbose:
+                    print(f"could not parse {line}")
                 continue
             left, right = split
 
-            _in = get_input_entity(left, right)
+            _in = get_input_entity(left, right, verbose=verbose)
             if _in:
                 input_entities.append(_in)
             elif (conf.has_parameter(left) or conf.has_parameter(activity_name)) and (
@@ -194,7 +206,8 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 or "substruct" in activity_name
                 or "substruct" in right
             ):
-                print("elif")
+                if verbose:
+                    print("elif")
                 # or has_parameter(activity_name) is mandatory because if in our activity we have only one call
                 # to a function, the common part will be full and so left will be empty
                 dependency = re.search(
@@ -218,8 +231,10 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                         None,
                     )  # among all the activities, check if one of them has a label ending with "dep_number" and
                     # return the activity
-                    print(f"records : {records}")
-                    print(f"closest_activity : {closest_activity}")
+                    if verbose:
+                        print(f"records : {records}")
+                    if verbose:
+                        print(f"closest_activity : {closest_activity}")
                     if closest_activity is None:
                         continue
                     output_id = (
@@ -242,14 +257,16 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 else:
                     Warning(f"Could not parse line {line}")
             else:
-                print("params")
+                if verbose:
+                    print("params")
                 param_name = ".".join(
                     left.split(".")[-2:]
                 )  # split left by "." and keep the two last elements
                 param_value = preproc_param_value(
                     right[:-1]
                 )  # remove ";" at the end of right
-                print(param_name, param_value)
+                if verbose:
+                    print(param_name, param_value)
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
                 # if param_value.startswith("struct"):
                 #     continue  # TODO handle dictionary-like parameters
@@ -262,10 +279,12 @@ def get_records(task_groups: dict, records=defaultdict(list)):
                 finally:
                     params.append([param_name, param_value])
 
-        print(f"input_entities : {input_entities}")
+        if verbose:
+            print(f"input_entities : {input_entities}")
         if input_entities:
             used_entities = [e["@id"] for e in input_entities]
-            print(f'activity["used"] : {activity["used"]}')
+            if verbose:
+                print(f'activity["used"] : {activity["used"]}')
             activity["used"] = (
                 activity["used"] + used_entities
             )  # we add entities from input_entities
@@ -289,14 +308,14 @@ def get_records(task_groups: dict, records=defaultdict(list)):
     "-c",
     default=conf.CONTEXT_URL,
 )
-def spm_to_bids_prov(filenames, output_file, context_url):
+@click.option("--verbose", default=False)
+def spm_to_bids_prov(filenames, output_file, context_url, verbose):
     filename = filenames[0]  # FIXME
-
     graph = conf.get_empty_graph(context_url=context_url)
 
     lines = readlines(filename)
     tasks = group_lines(lines)
-    records = get_records(tasks)
+    records = get_records(tasks, verbose=verbose)
     graph["records"].update(records)
 
     with open(output_file, "w") as fd:

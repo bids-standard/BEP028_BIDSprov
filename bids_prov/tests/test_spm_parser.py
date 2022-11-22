@@ -647,6 +647,7 @@ def test_get_records():
 
     tasks = group_lines(LIST_READLINES)
     records = get_records(tasks, records=defaultdict(list))
+
     assert DeepDiff(records, RECORDS) == {}
 
 
