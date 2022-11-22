@@ -57,6 +57,8 @@ def get_input_entity(left, right, verbose=False):
     # quotation mark.
     # If we have : "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
     # the line will return "sub-01_task-tonecounting_bold.nii.gz" and not "sub-01_task-tonecounting_bold.nii.gz'};"
+    if verbose:
+        print(f"entity label : {entity_label}")
     entity = {
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
@@ -257,9 +259,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
             used_entities = [e["@id"] for e in input_entities]
             if verbose:
                 print(f'activity["used"] : {activity["used"]}')
-            activity["used"] = (
-                    activity["used"] + used_entities
-            )  # we add entities from input_entities
+            activity["used"] = (activity["used"] + used_entities)  # we add entities from input_entities
         entities = input_entities + output_entities
 
         if params:
