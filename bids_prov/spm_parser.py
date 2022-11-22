@@ -11,9 +11,8 @@ from . import spm_load_config as conf
 from . import get_id
 
 
-def format_activity_name(
-    s, l=30
-):  # s example : cfg_basicio.file_dir.file_ops.file_move._1
+def format_activity_name(s, l=30):
+    # s example : cfg_basicio.file_dir.file_ops.file_move._1
     if s.startswith("spm."):
         s = s[4:]
     tmp = s.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
@@ -47,30 +46,21 @@ def get_input_entity(left, right, verbose=False):
         if verbose:
             print("the string does not match with conf.PATH_REGEX")
         return None
-    if (
-        next(re.finditer(conf.FILE_REGEX, right), None) is None
-    ):  # r"(\.[a-z]{1,3}){1,2}"
+    if not next(re.finditer(conf.FILE_REGEX, right), None):
+        # r"(\.[a-z]{1,3}){1,2}"
         # the string does not contain a filename extension so this is not an entity
         if verbose:
-            print(
-                "the string does not contain a filename so this is not an input_entity"
-            )
+            print("the string does not contain a filename so this is not an input_entity")
         return None
 
-    entity_label = re.sub(r"[{};\'\"]", "", right).split("/")[
-        -1
-    ]  # sub allows you to remove braces; apostrophe and
+    entity_label = re.sub(r"[{};\'\"]", "", right).split("/")[-1]  # sub allows you to remove braces; apostrophe and
     # quotation mark.
     # If we have : "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
     # the line will return "sub-01_task-tonecounting_bold.nii.gz" and not "sub-01_task-tonecounting_bold.nii.gz'};"
-    if verbose:
-        print(f"entity label : {entity_label}")
     entity = {
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
-        "prov:atLocation": right[
-            2:-3
-        ],  # similar processing with respect to the entity_label variable. The line
+        "prov:atLocation": right[2:-3],  # similar processing with respect to the entity_label variable. The line
         # removes "{'" at the beginning and "'};" at the end
     }
     if verbose:
@@ -128,9 +118,7 @@ def group_lines(lines):
         a = re.search(r"\{\d+\}", line)
         if a:
             g = a.group()[1:-1]  # retrieves the batch number without the braces
-            res[g].append(
-                line[a.end() + 1 :]
-            )  # retrieves the rest of the line without the dot after the brace of
+            res[g].append(line[a.end() + 1:])  # retrieves the rest of the line without the dot after the brace of
             # the activity number
 
     new_res = (
@@ -139,9 +127,7 @@ def group_lines(lines):
     for k, v in res.items():
         common_prefix = os.path.commonprefix([_.split(" = ")[0] for _ in v])
         new_key = f"{common_prefix}_{k}"  # add to the common prefix the activity number
-        new_res[new_key] = [
-            _[len(common_prefix) :] for _ in v
-        ]  # keep the rest of the line
+        new_res[new_key] = [_[len(common_prefix):] for _ in v]  # keep the rest of the line
     return new_res
 
 
@@ -171,9 +157,8 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
         input_entities, output_entities = list(), list()
         params = {}
 
-        conf_outputs = next(
-            (k for k in conf.static["activities"] if k in activity_name), None
-        )  # checks if spatial.preproc is contained in the name of the current activity and if so returns
+        conf_outputs = next((k for k in conf.static["activities"] if k in activity_name), None)
+        # checks if spatial.preproc is contained in the name of the current activity and if so returns
         # spatial.preproc
         if conf_outputs is not None:
             conf_outputs = conf.static["activities"][conf_outputs]
@@ -189,9 +174,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
                 )
 
         for line in values:
-            split = line.split(
-                " = "
-            )  # split in 2 at the level of the equal the rest of the action
+            split = line.split(" = ")  # split in 2 at the level of the equal the rest of the action
             if len(split) != 2:
                 if verbose:
                     print(f"could not parse {line}")
@@ -202,21 +185,16 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
             if _in:
                 input_entities.append(_in)
             elif (conf.has_parameter(left) or conf.has_parameter(activity_name)) and (
-                "substruct" in left
-                or "substruct" in activity_name
-                or "substruct" in right
+                    "substruct" in left or "substruct" in activity_name or "substruct" in right
             ):
                 if verbose:
                     print("elif")
                 # or has_parameter(activity_name) is mandatory because if in our activity we have only one call
                 # to a function, the common part will be full and so left will be empty
-                dependency = re.search(
-                    conf.DEPENDENCY_REGEX, right, re.IGNORECASE
-                )  # cfg_dep\(['"]([^'"]*)['"]\,.*
+                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
                 # check if the line call cfg_dep and retrieve the first parameter
-                dep_number = re.search(
-                    r"{(\d+)}", right
-                )  # retrieve all digits between parenthesis
+                dep_number = re.search(r"{(\d+)}", right)  # retrieve all digits between parenthesis
+
                 if dependency is not None:
                     parts = dependency.group(1).split(
                         ": "
@@ -237,13 +215,10 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
                         print(f"closest_activity : {closest_activity}")
                     if closest_activity is None:
                         continue
-                    output_id = (
-                        "niiri:" + parts[-1].replace(" ", "") + dep_number.group(1)
-                    )
+                    output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
                     # example : "niiri:oved/CopiedFiles1
-                    activity["used"].append(
-                        output_id
-                    )  # adds to the current activity the fact that it has used the
+                    activity["used"].append(output_id)
+                    # adds to the current activity the fact that it has used the
                     # previous entity
                     output_entities.append(
                         {
@@ -259,12 +234,8 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
             else:
                 if verbose:
                     print("params")
-                param_name = ".".join(
-                    left.split(".")[-2:]
-                )  # split left by "." and keep the two last elements
-                param_value = preproc_param_value(
-                    right[:-1]
-                )  # remove ";" at the end of right
+                param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
+                param_value = preproc_param_value(right[:-1])  # remove ";" at the end of right
                 if verbose:
                     print(param_name, param_value)
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
@@ -287,9 +258,10 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
             if verbose:
                 print(f'activity["used"] : {activity["used"]}')
             activity["used"] = (
-                activity["used"] + used_entities
+                    activity["used"] + used_entities
             )  # we add entities from input_entities
         entities = input_entities + output_entities
+
         if params:
             activity["parameters"] = params
         records["prov:Activity"].append(activity)
@@ -304,11 +276,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
 @click.command()
 @click.argument("filenames", nargs=-1)
 @click.option("--output-file", "-o", required=True)
-@click.option(
-    "--context-url",
-    "-c",
-    default=conf.CONTEXT_URL,
-)
+@click.option("--context-url", "-c", default=conf.CONTEXT_URL,)
 @click.option("--verbose", default=False)
 def spm_to_bids_prov(filenames, output_file, context_url, verbose):
     filename = filenames[0]  # FIXME
@@ -325,3 +293,6 @@ def spm_to_bids_prov(filenames, output_file, context_url, verbose):
 
 if __name__ == "__main__":
     sys.exit(spm_to_bids_prov())
+
+# Example command :
+# python -m bids_prov.spm_parser -o res.jsonld ./examples/spm_default/batch.m --verbose=True
