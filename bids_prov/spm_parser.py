@@ -169,7 +169,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
         if verbose:
             print(f"activity : {activity}, values : {task_groups[activity_name]}")
         input_entities, output_entities = list(), list()
-        params = []
+        params = {}
 
         conf_outputs = next(
             (k for k in conf.static["activities"] if k in activity_name), None
@@ -277,7 +277,8 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
                     Warning(f"could not set {param_name} to {param_value}")
                     continue
                 finally:
-                    params.append([param_name, param_value])
+                    # params.append([param_name, param_value])
+                    params[param_name] = param_value
 
         if verbose:
             print(f"input_entities : {input_entities}")
@@ -290,7 +291,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
             )  # we add entities from input_entities
         entities = input_entities + output_entities
         if params:
-            activity["attributes"] = params
+            activity["parameters"] = params
         records["prov:Activity"].append(activity)
         for e in entities:
             if e["@id"] not in entities_ids:

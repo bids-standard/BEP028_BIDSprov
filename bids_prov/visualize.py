@@ -25,6 +25,7 @@ OPTIONAL_FIELDS = dict(  # fields to omit if `--high-level` flag activated
     Entity=("atLocation", "generatedAt"),
 )
 
+
 def viz_turtle(source=None, content=None, img_file=None, **kwargs):
     prov_doc = ProvDocument.deserialize(source=source, content=content, format='rdf', rdf_format='turtle')
 
@@ -44,10 +45,10 @@ def viz_jsonld11(jsonld11, img_file):
     req_context_11 = requests.get(url=jsonld11['@context'])
     context_11 = req_context_11.json()
 
-    context_10 = {k: v for k,v in context_11['@context'].items() if k not in {'@version', 'records'}}
+    context_10 = {k: v for k, v in context_11['@context'].items() if k not in {'@version', 'records'}}
 
     # Load graph from json-ld file as non 1.1 JSON-LD
-    aa=ld.jsonld.compact(jsonld11, context_10)
+    aa = ld.jsonld.compact(jsonld11, context_10)
 
     g = rl.ConjunctiveGraph()
     g.parse(data=json.dumps(aa, indent=2), format='json-ld')
@@ -67,7 +68,7 @@ def join_jsonld(lds, graph_key="records", omit_details=True):
     ctx = set((_['@context'] for _ in lds))
     if not len(ctx) == 1:
         raise ValueError(f"jsonlds should have a common context, found {ctx}")
-    payload = {"@context" : next(iter(ctx)), graph_key : defaultdict(list)}
+    payload = {"@context": next(iter(ctx)), graph_key: defaultdict(list)}
     for idx, ld in enumerate(lds, start=1):
         graph = ld.get(graph_key, dict())
         if not graph:
@@ -84,9 +85,8 @@ def join_jsonld(lds, graph_key="records", omit_details=True):
         warnings.warn(
             f"could not found any {graph_key} section in the jsonlds"
         )
-    #payload[graph_key]] = dict(payload[graph_key]])
+    # payload[graph_key]] = dict(payload[graph_key]])
     return payload
-
 
 
 @click.command()
