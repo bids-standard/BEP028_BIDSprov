@@ -11,7 +11,7 @@ from . import spm_load_config as conf
 from . import get_id
 
 
-def format_activity_name(s, l=30):
+def format_activity_name(s: str, l=30) -> str:
     # s example : cfg_basicio.file_dir.file_ops.file_move._1
     if s.startswith("spm."):
         s = s[4:]
@@ -21,7 +21,7 @@ def format_activity_name(s, l=30):
     return ".".join(tmp)  # file_dir.file_ops.file_move._1
 
 
-def get_input_entity(left, right, verbose=False):
+def get_input_entity(left: str, right: str, verbose=False):
     """get input Entity if possible else return None
     Very few entities in detectable inputs. We find for example the read files.
 
@@ -70,13 +70,13 @@ def get_input_entity(left, right, verbose=False):
     return entity
 
 
-def preproc_param_value(val):
+def preproc_param_value(val: str) -> str:
     if val[0] == "[":  # example : [4 2] becomes [4, 2]
         return val.replace(" ", ", ")
     return val
 
 
-def readlines(filename):
+def readlines(filename: str):
     """Read lines from the original batch.m file
 
     A definition should be associated with a single line in the output
@@ -93,7 +93,7 @@ def readlines(filename):
                 yield _line
 
 
-def group_lines(lines):
+def group_lines(lines: list) -> dict:
     """Group line by their activity id
 
     The activity id is between curly brackets, for every line
@@ -123,9 +123,7 @@ def group_lines(lines):
             res[g].append(line[a.end() + 1:])  # retrieves the rest of the line without the dot after the brace of
             # the activity number
 
-    new_res = (
-        dict()
-    )  # keys : common prefix shared by the functions of an activity, values : rest of each line
+    new_res = dict()  # keys : common prefix shared by the functions of an activity, values : rest of each line
     for k, v in res.items():
         common_prefix = os.path.commonprefix([_.split(" = ")[0] for _ in v])
         new_key = f"{common_prefix}_{k}"  # add to the common prefix the activity number
@@ -133,7 +131,7 @@ def group_lines(lines):
     return new_res
 
 
-def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
+def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> dict :
     """Take the result of `group_lines` and output the corresponding
     JSON-ld graph as a python dict
 
@@ -276,9 +274,9 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False):
 @click.command()
 @click.argument("filenames", nargs=-1)
 @click.option("--output-file", "-o", required=True)
-@click.option("--context-url", "-c", default=conf.CONTEXT_URL,)
+@click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
 @click.option("--verbose", default=False)
-def spm_to_bids_prov(filenames, output_file, context_url, verbose):
+def spm_to_bids_prov(filenames: list, output_file: str, context_url: str, verbose: bool) -> None:
     filename = filenames[0]  # FIXME
     graph = conf.get_empty_graph(context_url=context_url)
 
