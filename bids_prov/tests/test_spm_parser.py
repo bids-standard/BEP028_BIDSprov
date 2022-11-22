@@ -280,327 +280,327 @@ TASKS = {
     ],
 }
 
-RECORDS = defaultdict(
-    list,
-    {
-        "prov:Activity": [
-            {
-                "@id": "niiri:cfg_basicio.file_dir.file_ops.file_move._1gNSWPHprVq",
-                "label": "file_dir.file_ops.file_move._1",
-                "used": ["niiri:sub-01_task-tonecounting_bold.nii.gzsUeQCtDRzz"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    [
-                        "action.copyto",
-                        "{'$HOME/nidmresults-examples/spm_default/ds011/PREPROCESSING/FUNCTIONAL'}",
-                    ]
-                ],
-            },
-            {
-                "@id": "niiri:cfg_basicio.file_dir.file_ops.file_move._2XhqouwZqxZ",
-                "label": "file_dir.file_ops.file_move._2",
-                "used": ["niiri:sub-01_T1w.nii.gzOOHjkJQQrk"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    [
-                        "action.copyto",
-                        "{'/home/remiadon/nidmresults-examples/spm_default/ds011/PREPROCESSING/ANATOMICAL'}",
-                    ]
-                ],
-            },
-            {
-                "@id": "niiri:cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_3aPehMvbfrn",
-                "label": "cfg_gunzip_files.files(1)_3",
-                "used": ["niiri:Moved/CopiedFiles1"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-            },
-            {
-                "@id": "niiri:cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_4yzLCMgPRhL",
-                "label": "cfg_gunzip_files.files(1)_4",
-                "used": ["niiri:Moved/CopiedFiles2"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-            },
-            {
-                "@id": "niiri:spm.spatial.realign.estwrite._5LOOxlgVFGR",
-                "label": "spatial.realign.estwrite._5",
-                "used": ["niiri:GunZippedFiles3"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    ["eoptions.quality", "0.9"],
-                    ["eoptions.sep", "4"],
-                    ["eoptions.fwhm", "5"],
-                    ["eoptions.rtm", "1"],
-                    ["eoptions.interp", "2"],
-                    ["eoptions.wrap", "[0, 0, 0]"],
-                    ["eoptions.weight", "''"],
-                    ["roptions.which", "[0, 1]"],
-                    ["roptions.interp", "4"],
-                    ["roptions.wrap", "[0, 0, 0]"],
-                    ["roptions.mask", "1"],
-                    ["roptions.prefix", "'r'"],
-                ],
-            },
-            {
-                "@id": "niiri:spm.spatial.coreg.estimate._6mrCNnFZsGq",
-                "label": "spatial.coreg.estimate._6",
-                "used": ["niiri:MeanImage5", "niiri:GunZippedFiles4"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    ["other", "{''}"],
-                    ["eoptions.cost_fun", "'nmi'"],
-                    ["eoptions.sep", "[4, 2]"],
-                    [
-                        "eoptions.tol",
-                        "[0.02, 0.02, 0.02, 0.001, 0.001, 0.001, 0.01, 0.01, 0.01, 0.001, 0.001, 0.001]",
-                    ],
-                    ["eoptions.fwhm", "[7, 7]"],
-                ],
-            },
-            {
-                "@id": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
-                "label": "spatial.preproc._7",
-                "used": ["niiri:GunZippedFiles4"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    ["channel.biasreg", "0.001"],
-                    ["channel.biasfwhm", "60"],
-                    ["channel.write", "[0, 1]"],
-                    ["tissue(1).tpm", "{'/home/radon/spm12/tpm/TPM.nii,1'}"],
-                    ["tissue(1).ngaus", "1"],
-                    ["tissue(1).native", "[1, 0]"],
-                    ["tissue(1).warped", "[0, 0]"],
-                    ["tissue(2).tpm", "{'/home/radon/spm12/tpm/TPM.nii,2'}"],
-                    ["tissue(2).ngaus", "1"],
-                    ["tissue(2).native", "[1, 0]"],
-                    ["tissue(2).warped", "[0, 0]"],
-                    ["tissue(3).tpm", "{'/home/radon/spm12/tpm/TPM.nii,3'}"],
-                    ["tissue(3).ngaus", "2"],
-                    ["tissue(3).native", "[1, 0]"],
-                    ["tissue(3).warped", "[0, 0]"],
-                    ["tissue(4).tpm", "{'/home/radon/spm12/tpm/TPM.nii,4'}"],
-                    ["tissue(4).ngaus", "3"],
-                    ["tissue(4).native", "[1, 0]"],
-                    ["tissue(4).warped", "[0, 0]"],
-                    ["tissue(5).tpm", "{'/home/radon/spm12/tpm/TPM.nii,5'}"],
-                    ["tissue(5).ngaus", "4"],
-                    ["tissue(5).native", "[1, 0]"],
-                    ["tissue(5).warped", "[0, 0]"],
-                    ["tissue(6).tpm", "{'/home/radon/spm12/tpm/TPM.nii,6'}"],
-                    ["tissue(6).ngaus", "2"],
-                    ["tissue(6).native", "[0, 0]"],
-                    ["tissue(6).warped", "[0, 0]"],
-                    ["warp.mrf", "1"],
-                    ["warp.cleanup", "1"],
-                    ["warp.reg", "[0, 0.001, 0.5, 0.05, 0.2]"],
-                    ["warp.affreg", "'mni'"],
-                    ["warp.fwhm", "0"],
-                    ["warp.samp", "3"],
-                    ["warp.write", "[0, 1]"],
-                ],
-            },
-            {
-                "@id": "niiri:spm.spatial.normalise.write._8EzpCNFeKjF",
-                "label": "spatial.normalise.write._8",
-                "used": ["niiri:ForwardDeformations7", "niiri:RealignedImages(Sess1)5"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    ["woptions.bb", "[-78, -112, -70, 78, 76, 85]"],
-                    ["woptions.vox", "[2, 2, 2]"],
-                    ["woptions.interp", "4"],
-                    ["woptions.prefix", "'w'"],
-                ],
-            },
-            {
-                "@id": "niiri:spm.spatial.normalise.write._9TrKCbTzBbw",
-                "label": "spatial.normalise.write._9",
-                "used": ["niiri:ForwardDeformations7", "niiri:BiasCorrected(1)7"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    ["woptions.bb", "[-78, -112, -70, 78, 76, 85]"],
-                    ["woptions.vox", "[2, 2, 2]"],
-                    ["woptions.interp", "4"],
-                    ["woptions.prefix", "'w'"],
-                ],
-            },
-            {
-                "@id": "niiri:spm.spatial.smooth._10TKxEqwtHmc",
-                "label": "spatial.smooth._10",
-                "used": ["niiri:NormalisedImages(Subj1)8"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    ["fwhm", "[6, 6, 6]"],
-                    ["dtype", "0"],
-                    ["im", "0"],
-                    ["prefix", "'s'"],
-                ],
-            },
-            {
-                "@id": "niiri:spm.stats.fmri_spec._11OJEZqgygcm",
-                "label": "stats.fmri_spec._11",
-                "used": [
-                    "niiri:SmoothedImages10",
-                    "niiri:sub-01-MultiCond.mattbaLGsHZwq",
-                ],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    [
-                        "dir",
-                        "{'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/spm_voxelwise_p0001'}",
-                    ],
-                    ["timing.units", "'secs'"],
-                    ["timing.RT", "2"],
-                    ["timing.fmri_t", "16"],
-                    ["timing.fmri_t0", "8"],
-                    [
-                        "sess.cond",
-                        "struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {})",
-                    ],
-                    ["sess.regress", "struct('name', {}, 'val', {})"],
-                    ["sess.multi_reg", "{''}"],
-                    ["sess.hpf", "128"],
-                    ["fact", "struct('name', {}, 'levels', {})"],
-                    ["hrf.derivs", "[0, 0]"],
-                    ["volt", "1"],
-                    ["global", "'None'"],
-                    ["mthresh", "0.8"],
-                    ["mask", "{''}"],
-                    ["cvi", "'AR(1)'"],
-                ],
-            },
-            {
-                "@id": "niiri:spm.stats.fmri_est._12hcjXmaoqGq",
-                "label": "stats.fmri_est._12",
-                "used": ["niiri:SPM.matFile11"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [["write_residuals", "0"], ["method.Classical", "1"]],
-            },
-            {
-                "@id": "niiri:spm.stats.con._13lpnMRvsUWx",
-                "label": "stats.con._13",
-                "used": ["niiri:SPM.matFile12"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    ["tcon.name", "'tone counting vs baseline'"],
-                    ["tcon.weights", "[1, 0]"],
-                    ["tcon.sessrep", "'none'"],
-                    ["delete", "0"],
-                ],
-            },
-            {
-                "@id": "niiri:spm.stats.results._14cJMVYWkGPm",
-                "label": "stats.results._14",
-                "used": ["niiri:SPM.matFile13"],
-                "wasAssociatedWith": "RRID:SCR_007037",
-                "attributes": [
-                    ["conspec.titlestr", "''"],
-                    ["conspec.contrasts", "Inf"],
-                    ["conspec.threshdesc", "'none'"],
-                    ["conspec.thresh", "0.001"],
-                    ["conspec.extent", "0"],
-                    ["conspec.conjunction", "1"],
-                    ["mask.none", "1"],
-                    ["units", "1"],
-                    ["print", "'pdf'"],
-                    ["tspm.basename", "'thresh'"],
-                ],
-            },
-        ],
-        "prov:Entity": [
-            {
-                "@id": "niiri:sub-01_task-tonecounting_bold.nii.gzsUeQCtDRzz",
-                "label": "sub-01_task-tonecounting_bold.nii.gz",
-                "prov:atLocation": "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
-            },
-            {
-                "@id": "niiri:sub-01_T1w.nii.gzOOHjkJQQrk",
-                "label": "sub-01_T1w.nii.gz",
-                "prov:atLocation": "/home/remiadon/nidmresults-examples/spm_default/ds011/sub-01/anat/sub-01_T1w.nii.gz",
-            },
-            {
-                "@id": "niiri:Moved/CopiedFiles1",
-                "label": "Moved/Copied Files",
-                "wasGeneratedBy": "niiri:cfg_basicio.file_dir.file_ops.file_move._1gNSWPHprVq",
-            },
-            {
-                "@id": "niiri:Moved/CopiedFiles2",
-                "label": "Moved/Copied Files",
-                "wasGeneratedBy": "niiri:cfg_basicio.file_dir.file_ops.file_move._2XhqouwZqxZ",
-            },
-            {
-                "@id": "niiri:GunZippedFiles3",
-                "label": "GunZipped Files",
-                "wasGeneratedBy": "niiri:cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_3aPehMvbfrn",
-            },
-            {
-                "@id": "niiri:MeanImage5",
-                "label": "Mean Image",
-                "wasGeneratedBy": "niiri:spm.spatial.realign.estwrite._5LOOxlgVFGR",
-            },
-            {
-                "@id": "niiri:GunZippedFiles4",
-                "label": "GunZipped Files",
-                "wasGeneratedBy": "niiri:cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_4yzLCMgPRhL",
-            },
-            {
-                "@id": "c1xxx.nii.gzhRHLfBERkI",
-                "label": "c1xxx.nii.gz",
-                "prov:atLocation": "c1xxx.nii.gz",
-                "wasGeneratedBy": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
-            },
-            {
-                "@id": "c2xxx.nii.gzyDtFDBAMgq",
-                "label": "c2xxx.nii.gz",
-                "prov:atLocation": "c2xxx.nii.gz",
-                "wasGeneratedBy": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
-            },
-            {
-                "@id": "niiri:ForwardDeformations7",
-                "label": "Forward Deformations",
-                "wasGeneratedBy": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
-            },
-            {
-                "@id": "niiri:RealignedImages(Sess1)5",
-                "label": "Realigned Images (Sess 1)",
-                "wasGeneratedBy": "niiri:spm.spatial.realign.estwrite._5LOOxlgVFGR",
-            },
-            {
-                "@id": "niiri:BiasCorrected(1)7",
-                "label": "Bias Corrected (1)",
-                "wasGeneratedBy": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
-            },
-            {
-                "@id": "niiri:NormalisedImages(Subj1)8",
-                "label": "Normalised Images (Subj 1)",
-                "wasGeneratedBy": "niiri:spm.spatial.normalise.write._8EzpCNFeKjF",
-            },
-            {
-                "@id": "niiri:sub-01-MultiCond.mattbaLGsHZwq",
-                "label": "sub-01-MultiCond.mat",
-                "prov:atLocation": "/home/remiadon/nidmresults-examples/spm_default/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat",
-            },
-            {
-                "@id": "niiri:SmoothedImages10",
-                "label": "Smoothed Images",
-                "wasGeneratedBy": "niiri:spm.spatial.smooth._10TKxEqwtHmc",
-            },
-            {
-                "@id": "niiri:SPM.matFile11",
-                "label": "SPM.mat File",
-                "wasGeneratedBy": "niiri:spm.stats.fmri_spec._11OJEZqgygcm",
-            },
-            {
-                "@id": "niiri:SPM.matFile12",
-                "label": "SPM.mat File",
-                "wasGeneratedBy": "niiri:spm.stats.fmri_est._12hcjXmaoqGq",
-            },
-            {
-                "@id": "niiri:SPM.matFile13",
-                "label": "SPM.mat File",
-                "wasGeneratedBy": "niiri:spm.stats.con._13lpnMRvsUWx",
-            },
-        ],
-    },
-)
+# RECORDS = defaultdict(
+#     list,
+#     {
+#         "prov:Activity": [
+#             {
+#                 "@id": "niiri:cfg_basicio.file_dir.file_ops.file_move._1gNSWPHprVq",
+#                 "label": "file_dir.file_ops.file_move._1",
+#                 "used": ["niiri:sub-01_task-tonecounting_bold.nii.gzsUeQCtDRzz"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     [
+#                         "action.copyto",
+#                         "{'$HOME/nidmresults-examples/spm_default/ds011/PREPROCESSING/FUNCTIONAL'}",
+#                     ]
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:cfg_basicio.file_dir.file_ops.file_move._2XhqouwZqxZ",
+#                 "label": "file_dir.file_ops.file_move._2",
+#                 "used": ["niiri:sub-01_T1w.nii.gzOOHjkJQQrk"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     [
+#                         "action.copyto",
+#                         "{'/home/remiadon/nidmresults-examples/spm_default/ds011/PREPROCESSING/ANATOMICAL'}",
+#                     ]
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_3aPehMvbfrn",
+#                 "label": "cfg_gunzip_files.files(1)_3",
+#                 "used": ["niiri:Moved/CopiedFiles1"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#             },
+#             {
+#                 "@id": "niiri:cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_4yzLCMgPRhL",
+#                 "label": "cfg_gunzip_files.files(1)_4",
+#                 "used": ["niiri:Moved/CopiedFiles2"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#             },
+#             {
+#                 "@id": "niiri:spm.spatial.realign.estwrite._5LOOxlgVFGR",
+#                 "label": "spatial.realign.estwrite._5",
+#                 "used": ["niiri:GunZippedFiles3"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     ["eoptions.quality", "0.9"],
+#                     ["eoptions.sep", "4"],
+#                     ["eoptions.fwhm", "5"],
+#                     ["eoptions.rtm", "1"],
+#                     ["eoptions.interp", "2"],
+#                     ["eoptions.wrap", "[0, 0, 0]"],
+#                     ["eoptions.weight", "''"],
+#                     ["roptions.which", "[0, 1]"],
+#                     ["roptions.interp", "4"],
+#                     ["roptions.wrap", "[0, 0, 0]"],
+#                     ["roptions.mask", "1"],
+#                     ["roptions.prefix", "'r'"],
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:spm.spatial.coreg.estimate._6mrCNnFZsGq",
+#                 "label": "spatial.coreg.estimate._6",
+#                 "used": ["niiri:MeanImage5", "niiri:GunZippedFiles4"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     ["other", "{''}"],
+#                     ["eoptions.cost_fun", "'nmi'"],
+#                     ["eoptions.sep", "[4, 2]"],
+#                     [
+#                         "eoptions.tol",
+#                         "[0.02, 0.02, 0.02, 0.001, 0.001, 0.001, 0.01, 0.01, 0.01, 0.001, 0.001, 0.001]",
+#                     ],
+#                     ["eoptions.fwhm", "[7, 7]"],
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
+#                 "label": "spatial.preproc._7",
+#                 "used": ["niiri:GunZippedFiles4"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     ["channel.biasreg", "0.001"],
+#                     ["channel.biasfwhm", "60"],
+#                     ["channel.write", "[0, 1]"],
+#                     ["tissue(1).tpm", "{'/home/radon/spm12/tpm/TPM.nii,1'}"],
+#                     ["tissue(1).ngaus", "1"],
+#                     ["tissue(1).native", "[1, 0]"],
+#                     ["tissue(1).warped", "[0, 0]"],
+#                     ["tissue(2).tpm", "{'/home/radon/spm12/tpm/TPM.nii,2'}"],
+#                     ["tissue(2).ngaus", "1"],
+#                     ["tissue(2).native", "[1, 0]"],
+#                     ["tissue(2).warped", "[0, 0]"],
+#                     ["tissue(3).tpm", "{'/home/radon/spm12/tpm/TPM.nii,3'}"],
+#                     ["tissue(3).ngaus", "2"],
+#                     ["tissue(3).native", "[1, 0]"],
+#                     ["tissue(3).warped", "[0, 0]"],
+#                     ["tissue(4).tpm", "{'/home/radon/spm12/tpm/TPM.nii,4'}"],
+#                     ["tissue(4).ngaus", "3"],
+#                     ["tissue(4).native", "[1, 0]"],
+#                     ["tissue(4).warped", "[0, 0]"],
+#                     ["tissue(5).tpm", "{'/home/radon/spm12/tpm/TPM.nii,5'}"],
+#                     ["tissue(5).ngaus", "4"],
+#                     ["tissue(5).native", "[1, 0]"],
+#                     ["tissue(5).warped", "[0, 0]"],
+#                     ["tissue(6).tpm", "{'/home/radon/spm12/tpm/TPM.nii,6'}"],
+#                     ["tissue(6).ngaus", "2"],
+#                     ["tissue(6).native", "[0, 0]"],
+#                     ["tissue(6).warped", "[0, 0]"],
+#                     ["warp.mrf", "1"],
+#                     ["warp.cleanup", "1"],
+#                     ["warp.reg", "[0, 0.001, 0.5, 0.05, 0.2]"],
+#                     ["warp.affreg", "'mni'"],
+#                     ["warp.fwhm", "0"],
+#                     ["warp.samp", "3"],
+#                     ["warp.write", "[0, 1]"],
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:spm.spatial.normalise.write._8EzpCNFeKjF",
+#                 "label": "spatial.normalise.write._8",
+#                 "used": ["niiri:ForwardDeformations7", "niiri:RealignedImages(Sess1)5"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     ["woptions.bb", "[-78, -112, -70, 78, 76, 85]"],
+#                     ["woptions.vox", "[2, 2, 2]"],
+#                     ["woptions.interp", "4"],
+#                     ["woptions.prefix", "'w'"],
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:spm.spatial.normalise.write._9TrKCbTzBbw",
+#                 "label": "spatial.normalise.write._9",
+#                 "used": ["niiri:ForwardDeformations7", "niiri:BiasCorrected(1)7"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     ["woptions.bb", "[-78, -112, -70, 78, 76, 85]"],
+#                     ["woptions.vox", "[2, 2, 2]"],
+#                     ["woptions.interp", "4"],
+#                     ["woptions.prefix", "'w'"],
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:spm.spatial.smooth._10TKxEqwtHmc",
+#                 "label": "spatial.smooth._10",
+#                 "used": ["niiri:NormalisedImages(Subj1)8"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     ["fwhm", "[6, 6, 6]"],
+#                     ["dtype", "0"],
+#                     ["im", "0"],
+#                     ["prefix", "'s'"],
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:spm.stats.fmri_spec._11OJEZqgygcm",
+#                 "label": "stats.fmri_spec._11",
+#                 "used": [
+#                     "niiri:SmoothedImages10",
+#                     "niiri:sub-01-MultiCond.mattbaLGsHZwq",
+#                 ],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     [
+#                         "dir",
+#                         "{'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/spm_voxelwise_p0001'}",
+#                     ],
+#                     ["timing.units", "'secs'"],
+#                     ["timing.RT", "2"],
+#                     ["timing.fmri_t", "16"],
+#                     ["timing.fmri_t0", "8"],
+#                     [
+#                         "sess.cond",
+#                         "struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {})",
+#                     ],
+#                     ["sess.regress", "struct('name', {}, 'val', {})"],
+#                     ["sess.multi_reg", "{''}"],
+#                     ["sess.hpf", "128"],
+#                     ["fact", "struct('name', {}, 'levels', {})"],
+#                     ["hrf.derivs", "[0, 0]"],
+#                     ["volt", "1"],
+#                     ["global", "'None'"],
+#                     ["mthresh", "0.8"],
+#                     ["mask", "{''}"],
+#                     ["cvi", "'AR(1)'"],
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:spm.stats.fmri_est._12hcjXmaoqGq",
+#                 "label": "stats.fmri_est._12",
+#                 "used": ["niiri:SPM.matFile11"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [["write_residuals", "0"], ["method.Classical", "1"]],
+#             },
+#             {
+#                 "@id": "niiri:spm.stats.con._13lpnMRvsUWx",
+#                 "label": "stats.con._13",
+#                 "used": ["niiri:SPM.matFile12"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     ["tcon.name", "'tone counting vs baseline'"],
+#                     ["tcon.weights", "[1, 0]"],
+#                     ["tcon.sessrep", "'none'"],
+#                     ["delete", "0"],
+#                 ],
+#             },
+#             {
+#                 "@id": "niiri:spm.stats.results._14cJMVYWkGPm",
+#                 "label": "stats.results._14",
+#                 "used": ["niiri:SPM.matFile13"],
+#                 "wasAssociatedWith": "RRID:SCR_007037",
+#                 "attributes": [
+#                     ["conspec.titlestr", "''"],
+#                     ["conspec.contrasts", "Inf"],
+#                     ["conspec.threshdesc", "'none'"],
+#                     ["conspec.thresh", "0.001"],
+#                     ["conspec.extent", "0"],
+#                     ["conspec.conjunction", "1"],
+#                     ["mask.none", "1"],
+#                     ["units", "1"],
+#                     ["print", "'pdf'"],
+#                     ["tspm.basename", "'thresh'"],
+#                 ],
+#             },
+#         ],
+#         "prov:Entity": [
+#             {
+#                 "@id": "niiri:sub-01_task-tonecounting_bold.nii.gzsUeQCtDRzz",
+#                 "label": "sub-01_task-tonecounting_bold.nii.gz",
+#                 "prov:atLocation": "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
+#             },
+#             {
+#                 "@id": "niiri:sub-01_T1w.nii.gzOOHjkJQQrk",
+#                 "label": "sub-01_T1w.nii.gz",
+#                 "prov:atLocation": "/home/remiadon/nidmresults-examples/spm_default/ds011/sub-01/anat/sub-01_T1w.nii.gz",
+#             },
+#             {
+#                 "@id": "niiri:Moved/CopiedFiles1",
+#                 "label": "Moved/Copied Files",
+#                 "wasGeneratedBy": "niiri:cfg_basicio.file_dir.file_ops.file_move._1gNSWPHprVq",
+#             },
+#             {
+#                 "@id": "niiri:Moved/CopiedFiles2",
+#                 "label": "Moved/Copied Files",
+#                 "wasGeneratedBy": "niiri:cfg_basicio.file_dir.file_ops.file_move._2XhqouwZqxZ",
+#             },
+#             {
+#                 "@id": "niiri:GunZippedFiles3",
+#                 "label": "GunZipped Files",
+#                 "wasGeneratedBy": "niiri:cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_3aPehMvbfrn",
+#             },
+#             {
+#                 "@id": "niiri:MeanImage5",
+#                 "label": "Mean Image",
+#                 "wasGeneratedBy": "niiri:spm.spatial.realign.estwrite._5LOOxlgVFGR",
+#             },
+#             {
+#                 "@id": "niiri:GunZippedFiles4",
+#                 "label": "GunZipped Files",
+#                 "wasGeneratedBy": "niiri:cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_4yzLCMgPRhL",
+#             },
+#             {
+#                 "@id": "c1xxx.nii.gzhRHLfBERkI",
+#                 "label": "c1xxx.nii.gz",
+#                 "prov:atLocation": "c1xxx.nii.gz",
+#                 "wasGeneratedBy": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
+#             },
+#             {
+#                 "@id": "c2xxx.nii.gzyDtFDBAMgq",
+#                 "label": "c2xxx.nii.gz",
+#                 "prov:atLocation": "c2xxx.nii.gz",
+#                 "wasGeneratedBy": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
+#             },
+#             {
+#                 "@id": "niiri:ForwardDeformations7",
+#                 "label": "Forward Deformations",
+#                 "wasGeneratedBy": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
+#             },
+#             {
+#                 "@id": "niiri:RealignedImages(Sess1)5",
+#                 "label": "Realigned Images (Sess 1)",
+#                 "wasGeneratedBy": "niiri:spm.spatial.realign.estwrite._5LOOxlgVFGR",
+#             },
+#             {
+#                 "@id": "niiri:BiasCorrected(1)7",
+#                 "label": "Bias Corrected (1)",
+#                 "wasGeneratedBy": "niiri:spm.spatial.preproc._7ghfrrhbkVA",
+#             },
+#             {
+#                 "@id": "niiri:NormalisedImages(Subj1)8",
+#                 "label": "Normalised Images (Subj 1)",
+#                 "wasGeneratedBy": "niiri:spm.spatial.normalise.write._8EzpCNFeKjF",
+#             },
+#             {
+#                 "@id": "niiri:sub-01-MultiCond.mattbaLGsHZwq",
+#                 "label": "sub-01-MultiCond.mat",
+#                 "prov:atLocation": "/home/remiadon/nidmresults-examples/spm_default/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat",
+#             },
+#             {
+#                 "@id": "niiri:SmoothedImages10",
+#                 "label": "Smoothed Images",
+#                 "wasGeneratedBy": "niiri:spm.spatial.smooth._10TKxEqwtHmc",
+#             },
+#             {
+#                 "@id": "niiri:SPM.matFile11",
+#                 "label": "SPM.mat File",
+#                 "wasGeneratedBy": "niiri:spm.stats.fmri_spec._11OJEZqgygcm",
+#             },
+#             {
+#                 "@id": "niiri:SPM.matFile12",
+#                 "label": "SPM.mat File",
+#                 "wasGeneratedBy": "niiri:spm.stats.fmri_est._12hcjXmaoqGq",
+#             },
+#             {
+#                 "@id": "niiri:SPM.matFile13",
+#                 "label": "SPM.mat File",
+#                 "wasGeneratedBy": "niiri:spm.stats.con._13lpnMRvsUWx",
+#             },
+#         ],
+#     },
+# )
 
 
 def test_group_lines():
@@ -642,13 +642,13 @@ def test_has_parameter():
     assert has_parameter(string) == False
 
 
-def test_get_records():
-    init_random_state()
+# def test_get_records():
+#     init_random_state()
 
-    tasks = group_lines(LIST_READLINES)
-    records = get_records(tasks, records=defaultdict(list))
+#     tasks = group_lines(LIST_READLINES)
+#     records = get_records(tasks, records=defaultdict(list))
 
-    assert DeepDiff(records, RECORDS) == {}
+#     assert DeepDiff(records, RECORDS) == {}
 
 
 def test_get_records_copy_attributes():
