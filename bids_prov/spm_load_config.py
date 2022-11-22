@@ -26,7 +26,6 @@ def get_empty_graph(context_url=CONTEXT_URL):
         "@context": context_url,
         "BIDSProvVersion": "1.0.0",                 # TODO ?
         "@id": "http://example.org/ds00000X",       # TODO ?
-        "generatedAt": "2020-03-10T10:00:00",       # TODO ?
         "wasGeneratedBy": {
             "@id": "INRIA",
             "@type": "Project",
@@ -40,9 +39,11 @@ def get_empty_graph(context_url=CONTEXT_URL):
         "records": {
             "prov:Agent": [
                 {
-                    "@id": "RRID:SCR_007037",  # TODO query for version (line 3 ?)
+                    "@id": "exampleAgentID",
+                    "RRID": "RRID:SCR_007037",
                     "@type": "prov:SoftwareAgent",
                     "label": "SPM",
+                    "version": "dev"
                 }
             ],
             "prov:Activity": [],
