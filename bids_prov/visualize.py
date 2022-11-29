@@ -5,9 +5,8 @@ This facilitates debugging and design of the specifications
 """
 
 import click
-from graphviz import Digraph
-import json
-
+# from graphviz import Digraph
+# import json
 from prov.model import ProvDocument
 from prov.dot import prov_to_dot
 import requests
@@ -79,21 +78,19 @@ def join_jsonld(lds, graph_key="records", omit_details=True):
                     {k: d[k] for k in d if k not in OPTIONAL_FIELDS.get(_type[5:], tuple())}
                     for d in values
                 ]
+
             payload[graph_key][_type].extend(values)  # FIXME check for duplicated defs
 
     if not payload[graph_key]:
-        warnings.warn(
-            f"could not found any {graph_key} section in the jsonlds"
-        )
+        warnings.warn(f"could not found any {graph_key} section in the jsonlds")
     # payload[graph_key]] = dict(payload[graph_key]])
     return payload
 
 
-@click.command()
-@click.argument('filenames', nargs=-1)
-@click.option('--output_file', '-o', default='')
-@click.option('--omit-details', is_flag=True,
-              help=f"""omit the following low level details : {OPTIONAL_FIELDS}""")
+# @click.command()
+# @click.argument('filenames', nargs=-1)
+# @click.option('--output_file', '-o', default='')
+# @click.option('--omit-details', is_flag=True, help=f"""omit the following low level details : {OPTIONAL_FIELDS}""")
 def main(filenames, output_file, omit_details):
     jsonld11s = list()
     for filename in filenames:
@@ -101,14 +98,19 @@ def main(filenames, output_file, omit_details):
             ld = json.load(fd)
             jsonld11s.append(ld)
 
-    # join multiple definitions
-    jsonld11 = join_jsonld(jsonld11s, omit_details=omit_details)
+        # join multiple definitions
+        jsonld11 = join_jsonld(jsonld11s, omit_details=omit_details)
 
-    if not output_file:
-        output_file = os.path.splitext(filename)[0] + '.png'
+        if not output_file:
+            output_file = os.path.splitext(filename)[0] + '.png'
 
-    viz_jsonld11(jsonld11, output_file)
+        viz_jsonld11(jsonld11, output_file)
 
 
 if __name__ == '__main__':
-    main()
+    filenames = ['../batch_example_spm.m',]
+                 # '../nidm-examples/spm_covariate/batch.m',
+                 # './tests/batch_test/SpatialPreproc.m',
+                 # '../spm_HRF_informed_basis/batch.m']
+    output_file = '../result.png'
+    main(filenames, output_file, omit_details=False)

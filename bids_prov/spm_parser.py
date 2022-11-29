@@ -7,8 +7,9 @@ from difflib import SequenceMatcher
 
 from collections import defaultdict
 
-from . import spm_load_config as conf
-from . import get_id
+# sys.path.append('..')
+from bids_prov import spm_load_config as conf
+from bids_prov import get_id
 
 
 def format_activity_name(s: str, l=30) -> str:
@@ -21,7 +22,7 @@ def format_activity_name(s: str, l=30) -> str:
     return ".".join(tmp)  # file_dir.file_ops.file_move._1
 
 
-def get_input_entity(left: str, right: str, verbose=False):
+def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
     """get input Entity if possible else return None
     Very few entities in detectable inputs. We find for example the read files.
 
@@ -57,8 +58,7 @@ def get_input_entity(left: str, right: str, verbose=False):
     # quotation mark.
     # If we have : "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
     # the line will return "sub-01_task-tonecounting_bold.nii.gz" and not "sub-01_task-tonecounting_bold.nii.gz'};"
-    if verbose:
-        print(f"entity label : {entity_label}")
+
     entity = {
         "@id": "niiri:" + entity_label + get_id(),
         "label": entity_label,
@@ -76,7 +76,7 @@ def preproc_param_value(val: str) -> str:
     return val
 
 
-def readlines(filename: str):
+def readlines(filename: str):  # -> Generator[str, None, None]  from https://docs.python.org/3/library/typing.html
     """Read lines from the original batch.m file
 
     A definition should be associated with a single line in the output
@@ -87,9 +87,11 @@ def readlines(filename: str):
             if line.startswith("matlabbatch"):
                 _line = line[:-1]  # remove "\n"
                 while _line.count("{") != _line.count("}"):
-                    _line += next(fd, "} ")[:-1].lstrip() + ","
-                while _line.count("[") != _line.count("]"):
-                    _line = _line.strip() + " " + next(fd)[:-1].lstrip()
+                    _line += next(fd)[:-1].lstrip() + ","
+                    # TODO error sur covariate matlabbatch{# 1}.spm.stats.factorial_design.des.t1.scans "," at end
+                while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
+                    _line = _line.strip() + " " + next(fd)[:-1].lstrip()  # append
+                # print(_line)
                 yield _line
 
 
@@ -107,7 +109,6 @@ def group_lines(lines: list) -> dict:
     -------
     dict[int, str]
         a mapping from activity id to lines belonging to this activity
-
     Example
     -------
     >>> from bids_prov.spm_parser import group_lines
@@ -115,23 +116,62 @@ def group_lines(lines: list) -> dict:
     >>> group_lines(lines)
     {'file_ops.file_move._1': ['call', 'different.call']}
     """
-    res = defaultdict(list)  # keys : activity number, values : rest of the line
+    res = defaultdict(list)  # KEYS : activity number (act_id), VALUES : rest of the line without matlabbatch{3}.
+    # example: in batch.m of spm12:
+    # matlabbatch{3}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));
+    # matlabbatch{3}.spm.stats.con.consess{1}.tcon.name = 'mr vs plain covariate';
+    # matlabbatch{3}.spm.stats.con.consess{1}.tcon.weights = 1;
+    # matlabbatch{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
+    # return
+
     for line in lines:
+        print(line)
         a = re.search(r"\{\d+\}", line)
         if a:
-            g = a.group()[1:-1]  # retrieves the batch number without the braces
-            res[g].append(line[a.end() + 1:])  # retrieves the rest of the line without the dot after the brace of
-            # the activity number
+            g = a.group()[1:-1]  # retrieves the batch number without the braces , here '3'
+            res[g].append(line[a.end() + 1:])
+            # retrieves the rest of the line without the dot after the brace of the activity number
 
+    # res = {..., '3', "spm.stats.con.consess{1}.tcon.name = 'mr vs plain covariate';", ...}
     new_res = dict()  # keys : common prefix shared by the functions of an activity, values : rest of each line
-    for k, v in res.items():
-        common_prefix = os.path.commonprefix([_.split(" = ")[0] for _ in v])
-        new_key = f"{common_prefix}_{k}"  # add to the common prefix the activity number
-        new_res[new_key] = [_[len(common_prefix):] for _ in v]  # keep the rest of the line
+    for act_id, right_part_act_id_list in res.items():
+        left_egal_list = [right_part_act_id.split(" = ")[0] for right_part_act_id in right_part_act_id_list]
+        common_prefix = os.path.commonprefix(left_egal_list)
+        after_common_list = [right_part_act_id[len(common_prefix):] for right_part_act_id in right_part_act_id_list]
+        new_key = f"{common_prefix}_{act_id}"  # add to the common prefix the activity number
+        new_res[new_key] = after_common_list  # keep the rest of the line
+    # newres = {..., 'spm.stats.con._3':["spmmat(1) = cfg_dep('Model estimation: SP...;",
+    #                                    "consess{1}.tcon.name = 'mr vs plain covariate';"
+    #                                    ...], ...}
     return new_res
 
 
-def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> dict :
+def get_entities_from_ext_config(conf_dic, activity_name, activity_id):
+    # checks if spatial.preproc is contained in the name of the current activity and if so returns
+    # spatial.preproc
+
+    # REMI like :conf_outputs = next((k for k in conf_dic if k in activity_n), None)
+    # if conf_outputs is not None:
+    # activity_name = conf_outputs["name"]  # FIXME ? useless ?
+    # conf_outputs = conf_dic[conf_outputs]
+    output_entities = list()
+    for activity in conf_dic.keys():
+
+        if activity in activity_name:
+            for output in conf_dic[activity]:
+                output_entities.append(
+                    {"@id": output + get_id(),
+                     "label": output,
+                     "prov:atLocation": output,
+                     "wasGeneratedBy": activity_id,
+                     }
+                )
+            break  # stop for loop at first math in if statement (match activity)
+
+    return output_entities  # empty list [] if no match,
+
+
+def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> dict:
     """Take the result of `group_lines` and output the corresponding
     JSON-ld graph as a python dict
 
@@ -139,111 +179,100 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
     --------
     bids_prov.spm_parser.group_lines
     """
+
     entities_ids = set()
     if verbose:
         print(f"task_groups : {task_groups}")
-    for activity_name, values in task_groups.items():
-        if verbose:
-            print("-" * 50)
-        activity_id = "niiri:" + activity_name + get_id()
+    for common_prefix_act, end_line_list in task_groups.items():
+
+        activity_id = "niiri:" + common_prefix_act + get_id()
         activity = {
             "@id": activity_id,
-            "label": format_activity_name(activity_name),
+            "label": format_activity_name(common_prefix_act),
             "used": list(),
             "wasAssociatedWith": "RRID:SCR_007037",  # TODO ?
         }
         if verbose:
-            print(f"activity : {activity}, values : {task_groups[activity_name]}")
-        input_entities, output_entities = list(), list()
+            print("-" * 50)
+            print(f"activity : {activity}, values : {task_groups[common_prefix_act]}")
+        output_entities, input_entities = list(), list()
+
+
+        output_ext_entities = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
+        output_entities.extend(output_ext_entities)
         params = {}
-
-        conf_outputs = next((k for k in conf.static["activities"] if k in activity_name), None)
-        # checks if spatial.preproc is contained in the name of the current activity and if so returns
-        # spatial.preproc
-        if conf_outputs is not None:
-            conf_outputs = conf.static["activities"][conf_outputs]
-            activity_name = conf_outputs["name"]  # FIXME ? useless ?
-            for output in conf_outputs["outputs"]:
-                output_entities.append(
-                    {
-                        "@id": output + get_id(),
-                        "label": output,
-                        "prov:atLocation": output,
-                        "wasGeneratedBy": activity_id,
-                    }
-                )
-
-        for line in values:
-            split = line.split(" = ")  # split in 2 at the level of the equal the rest of the action
+        # FIXME STOP HERE to debug
+        for end_line in end_line_list:
+            split = end_line.split(" = ")  # split in 2 at the level of the equal the rest of the action
             if len(split) != 2:
-                if verbose:
-                    print(f"could not parse {line}")
+                print(f"could not parse with '... = ... ' {end_line}")
                 continue
-            left, right = split
 
-            _in = get_input_entity(left, right, verbose=verbose)
-            if _in:
-                input_entities.append(_in)
-            elif (conf.has_parameter(left) or conf.has_parameter(activity_name)) and (
-                    "substruct" in left or "substruct" in activity_name or "substruct" in right
-            ):
-                if verbose:
-                    print("elif")
-                # or has_parameter(activity_name) is mandatory because if in our activity we have only one call
+            left, right = split
+            in_entity = get_input_entity(left, right, verbose=verbose)
+
+            if in_entity:
+                input_entities.append(in_entity)
+
+            elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
+                    and any(["substruct" in l for l in [common_prefix_act, left, right]]):
+                # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
                 # to a function, the common part will be full and so left will be empty
                 dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
                 # check if the line call cfg_dep and retrieve the first parameter
                 dep_number = re.search(r"{(\d+)}", right)  # retrieve all digits between parenthesis
 
                 if dependency is not None:
-                    parts = dependency.group(1).split(
-                        ": "
-                    )  # retrieve name of the output_entity
+
+                    parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
                     # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
                     # return : ['Move/Delete Files', 'Moved/Copied Files']
-                    closest_activity = next(
-                        filter(
-                            lambda a: a["label"].endswith(dep_number.group(1)),
-                            records["prov:Activity"],
-                        ),
-                        None,
-                    )  # among all the activities, check if one of them has a label ending with "dep_number" and
+                    closest_activity = next(filter(lambda a: a["label"].endswith(dep_number.group(1)),
+                                                   records["prov:Activity"], ),
+                                            None, )
+                    # among all the activities, check if one of them has a label ending with "dep_number" and
                     # return the activity
+
+                    closest_activity2 = None
+                    for act in records["prov:Activity"]:
+                        if act["label"].endswith(dep_number.group(1)):
+                            closes_activity2 = act
+                            break
+
+                    # REMI like
+                    if closest_activity is None:
+                        continue  # break for loop end_line in end_line_list
+
                     if verbose:
                         print(f"records : {records}")
-                    if verbose:
                         print(f"closest_activity : {closest_activity}")
-                    if closest_activity is None:
-                        continue
+
                     output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
                     # example : "niiri:oved/CopiedFiles1
-                    activity["used"].append(output_id)
-                    # adds to the current activity the fact that it has used the
+                    activity["used"].append(output_id)  # adds to the current activity the fact that it has used the
                     # previous entity
-                    output_entities.append(
-                        {
-                            "@id": output_id,
-                            "label": parts[-1],
-                            # "prov:atLocation": TODO
-                            "wasGeneratedBy": closest_activity["@id"],
-                            #
-                        }
-                    )
-                else:
-                    Warning(f"Could not parse line {line}")
-            else:
-                if verbose:
-                    print("params")
+
+                    output_entities.append({
+                        "@id": output_id,
+                        "label": parts[-1],
+                        # "prov:atLocation": TODO
+                        "wasGeneratedBy": closest_activity["@id"],
+                    })
+                else:  # dependency is None no r"(d+)"
+                    Warning(f"Could not parse line with dependency {end_line}")
+
+            else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
                 param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 param_value = preproc_param_value(right[:-1])  # remove ";" at the end of right
                 if verbose:
+                    print("params")
                     print(param_name, param_value)
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
                 # if param_value.startswith("struct"):
                 #     continue  # TODO handle dictionary-like parameters
 
-                try:
-                    eval(param_value)
+                try:  # TODO why exceptions
+                    eval(param_value) # Convert '5' to 5
                 except:
                     Warning(f"could not set {param_name} to {param_value}")
                     continue
@@ -251,17 +280,17 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
                     # params.append([param_name, param_value])
                     params[param_name] = param_value
 
-        if verbose:
-            print(f"input_entities : {input_entities}")
         if input_entities:
             used_entities = [e["@id"] for e in input_entities]
             if verbose:
+                print(f"input_entities : {input_entities}")
                 print(f'activity["used"] : {activity["used"]}')
             activity["used"] = (activity["used"] + used_entities)  # we add entities from input_entities
         entities = input_entities + output_entities
 
         if params:
             activity["parameters"] = params
+
         records["prov:Activity"].append(activity)
         for e in entities:
             if e["@id"] not in entities_ids:
@@ -271,13 +300,13 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
     return records
 
 
-@click.command()
-@click.argument("filenames", nargs=-1)
-@click.option("--output-file", "-o", required=True)
-@click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
-@click.option("--verbose", default=False)
-def spm_to_bids_prov(filenames: list, output_file: str, context_url: str, verbose: bool) -> None:
-    filename = filenames[0]  # FIXME
+# @click.command()
+# @click.argument("filenames", nargs=-1)
+# @click.option("--output-file", "-o", required=True)
+# @click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
+# @click.option("--verbose", default=False)
+def spm_to_bids_prov(filename, output_file: str, context_url: str, verbose: bool) -> None:
+    # filename = filenames[0]  # FIXME
     graph = conf.get_empty_graph(context_url=context_url)
 
     lines = readlines(filename)
@@ -288,9 +317,21 @@ def spm_to_bids_prov(filenames: list, output_file: str, context_url: str, verbos
     with open(output_file, "w") as fd:
         json.dump(graph, fd, indent=2)
 
+    return graph
+
 
 if __name__ == "__main__":
-    sys.exit(spm_to_bids_prov())
+    # sys.exit(spm_to_bids_prov())
+    filenames = ['../batch_example_spm.m',
+                 '../nidm-examples/spm_covariate/batch.m',
+                 './tests/batch_test/SpatialPreproc.m',
+                 '../spm_HRF_informed_basis/batch.m']
+    output_file = '../result.dat'
+    CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
+    # UTLISIER CLICK https://zetcode.com/python/click/
 
-# Example command :
+    graph = spm_to_bids_prov(filenames[2], output_file, CONTEXT_URL, verbose=False)
+    # lines = readlines(filenames[0])
+    # print(*list(lines), sep='\n')
+# Example command  with CLI:
 # python -m bids_prov.spm_parser -o res.jsonld ./examples/spm_default/batch.m --verbose=True

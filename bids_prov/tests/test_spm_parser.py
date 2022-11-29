@@ -15,7 +15,6 @@ from collections import defaultdict
 
 from .. import init_random_state, get_id
 
-
 LIST_READLINES = [
     "matlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.files = {'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};",
     "matlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.action.copyto = {'$HOME/nidmresults-examples/spm_default/ds011/PREPROCESSING/FUNCTIONAL'};",
@@ -279,6 +278,7 @@ TASKS = {
         "write.tspm.basename = 'thresh';",
     ],
 }
+
 
 # RECORDS = defaultdict(
 #     list,
@@ -614,7 +614,6 @@ def test_format_activity_name():
 
 
 def test_get_input_entity():
-
     init_random_state()
     left = "files"
     right = "{'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};"
@@ -630,16 +629,16 @@ def test_get_input_entity():
 
 def test_has_parameter():
     string = "files"
-    assert has_parameter(string) == False
+    assert not has_parameter(string)  # == False
 
     string = "file_dir.file_ops.file_move._2"
-    assert has_parameter(string) == False
+    assert not has_parameter(string)
 
     string = "channel.vols(1)"
-    assert has_parameter(string) == True
+    assert not has_parameter(string)
 
     string = "consess{1}.tcon.name"
-    assert has_parameter(string) == False
+    assert not has_parameter(string)
 
 
 # def test_get_records():
@@ -652,7 +651,6 @@ def test_has_parameter():
 
 
 def test_get_records_copy_attributes():
-
     task_groups = dict(
         file_ops_1=[
             ".files = {'$PATH-TO-NII-FILES/tonecounting_bold.nii.gz'};",

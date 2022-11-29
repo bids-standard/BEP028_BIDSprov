@@ -2,13 +2,11 @@ import re
 import yaml
 import os
 
-import os
-
 # contains the path from home to the directory where this script is located
 this_path = os.path.dirname(os.path.abspath(__file__))
 
 PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
-PARAM_REGEX = r"[^\.]+\(\d+\)"
+PARAM_REGEX = r"[^\.]+\(\d+\)"  # balbla.fonc(53)
 FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
 DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in match
 
@@ -24,12 +22,12 @@ with open(this_path + "/spm_config.yml", "r") as fd:
 def get_empty_graph(context_url=CONTEXT_URL):
     return {
         "@context": context_url,
-        "BIDSProvVersion": "1.0.0",                 # TODO ?
-        "@id": "http://example.org/ds00000X",       # TODO ?
+        "BIDSProvVersion": "1.0.0",  # TODO ?
+        "@id": "http://example.org/ds00000X",  # TODO ?
         "wasGeneratedBy": {
             "@id": "INRIA",
             "@type": "Project",
-            "startedAt": "2016-09-01T10:00:00",     # TODO ?
+            "startedAt": "2016-09-01T10:00:00",  # TODO ?
             "wasAssociatedWith": {
                 "@id": "NIH",
                 "@type": "Organization",
@@ -50,3 +48,9 @@ def get_empty_graph(context_url=CONTEXT_URL):
             "prov:Entity": [],
         },
     }
+
+
+if __name__ == '__main__':
+    left_egal, right_egal = "channels.vols(1)", "cfg_dep('GunZip Files: GunZipped Files', substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{':'}));"
+    print(has_parameter(left_egal))
+    print(has_parameter(right_egal))
