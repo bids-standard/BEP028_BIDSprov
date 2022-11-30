@@ -6,9 +6,9 @@ import click
 import shutil
 
 
-# @click.command()
-# @click.argument("data_dir", nargs=-1)
-# @click.option("--output_dir", "-o", default="result")
+@click.command()
+@click.argument("data_dir", nargs=-1)
+@click.option("--output_dir", "-o", default="result")
 def main(data_dir, output_dir):
     """
     Launch all batch.m in a relative folder data_dir, export jsonld + png in output_dir
@@ -57,4 +57,5 @@ def main(data_dir, output_dir):
 
 
 if __name__ == "__main__":
-    main('./nidm-examples', './nidm-results')
+    main()
+    # main('./nidm-examples', './nidm-results')
