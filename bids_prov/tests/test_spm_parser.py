@@ -1,18 +1,11 @@
 import pytest
 import json
-
-from ..spm_load_config import static, has_parameter, DEPENDENCY_REGEX
-from ..spm_parser import (
-    get_records,
-    group_lines,
-    get_input_entity,
-    format_activity_name,
-    preproc_param_value,
-)
 import re
 from deepdiff import DeepDiff
 from collections import defaultdict
 
+from ..spm_load_config import static, has_parameter, DEPENDENCY_REGEX
+from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, preproc_param_value
 from .. import init_random_state, get_id
 
 LIST_READLINES = [
