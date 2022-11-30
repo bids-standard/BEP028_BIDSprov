@@ -3,11 +3,8 @@ import click
 import json
 import os
 import re
-from difflib import SequenceMatcher
 
 from collections import defaultdict
-
-# sys.path.append('..')
 from bids_prov import spm_load_config as conf
 from bids_prov import get_id
 
@@ -125,7 +122,6 @@ def group_lines(lines: list) -> dict:
     # return
 
     for line in lines:
-        print(line)
         a = re.search(r"\{\d+\}", line)
         if a:
             g = a.group()[1:-1]  # retrieves the batch number without the braces , here '3'
@@ -156,7 +152,6 @@ def get_entities_from_ext_config(conf_dic, activity_name, activity_id):
     # conf_outputs = conf_dic[conf_outputs]
     output_entities = list()
     for activity in conf_dic.keys():
-
         if activity in activity_name:
             for output in conf_dic[activity]:
                 output_entities.append(
@@ -197,11 +192,10 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
             print(f"activity : {activity}, values : {task_groups[common_prefix_act]}")
         output_entities, input_entities = list(), list()
 
-
         output_ext_entities = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
         output_entities.extend(output_ext_entities)
         params = {}
-        # FIXME STOP HERE to debug
+
         for end_line in end_line_list:
             split = end_line.split(" = ")  # split in 2 at the level of the equal the rest of the action
             if len(split) != 2:
@@ -227,13 +221,13 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
                     parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
                     # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
                     # return : ['Move/Delete Files', 'Moved/Copied Files']
-                    closest_activity = next(filter(lambda a: a["label"].endswith(dep_number.group(1)),
-                                                   records["prov:Activity"], ),
-                                            None, )
+                    # closest_activity_REMY = next(filter(lambda a: a["label"].endswith(dep_number.group(1)),
+                    #                                records["prov:Activity"], ),
+                    #                         None, )
                     # among all the activities, check if one of them has a label ending with "dep_number" and
                     # return the activity
 
-                    closest_activity2 = None
+                    closest_activity = None
                     for act in records["prov:Activity"]:
                         if act["label"].endswith(dep_number.group(1)):
                             closes_activity2 = act
@@ -271,7 +265,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
                 # if param_value.startswith("struct"):
                 #     continue  # TODO handle dictionary-like parameters
 
-                try:  # TODO why exceptions
+                try:  # TODO why use of exceptions
                     eval(param_value) # Convert '5' to 5
                 except:
                     Warning(f"could not set {param_name} to {param_value}")
@@ -300,17 +294,17 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
     return records
 
 
-# @click.command()
-# @click.argument("filenames", nargs=-1)
-# @click.option("--output-file", "-o", required=True)
-# @click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
-# @click.option("--verbose", default=False)
-def spm_to_bids_prov(filename, output_file: str, context_url: str, verbose: bool) -> None:
-    # filename = filenames[0]  # FIXME
+@click.command()
+@click.argument("filenames", nargs=-1)
+@click.option("--output-file", "-o", required=True)
+@click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
+@click.option("--verbose", default=False)
+def spm_to_bids_prov(filenames, output_file: str, context_url: str, verbose: bool) -> None:
+    filename = filenames[0]  # FIXME
     graph = conf.get_empty_graph(context_url=context_url)
 
     lines = readlines(filename)
-    tasks = group_lines(lines)
+    tasks = group_lines(lines)  # same as list(lines) to expand generator
     records = get_records(tasks, verbose=verbose)
     graph["records"].update(records)
 
@@ -321,17 +315,19 @@ def spm_to_bids_prov(filename, output_file: str, context_url: str, verbose: bool
 
 
 if __name__ == "__main__":
-    # sys.exit(spm_to_bids_prov())
-    filenames = ['../batch_example_spm.m',
-                 '../nidm-examples/spm_covariate/batch.m',
-                 './tests/batch_test/SpatialPreproc.m',
-                 '../spm_HRF_informed_basis/batch.m']
-    output_file = '../result.dat'
-    CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
-    # UTLISIER CLICK https://zetcode.com/python/click/
+    sys.exit(spm_to_bids_prov())
+    # Example command  with CLI:
+    # python -m bids_prov.spm_parser -o res.jsonld ./examples/spm_default/batch.m --verbose=True
 
-    graph = spm_to_bids_prov(filenames[2], output_file, CONTEXT_URL, verbose=False)
+    # temporary test without click
+    # filenames = ['../batch_example_spm.m',
+    #              '../nidm-examples/spm_covariate/batch.m',
+    #              './tests/batch_test/SpatialPreproc.m',
+    #              '../spm_HRF_informed_basis/batch.m']
+    # output_file = '../batch_example_spm.jsonld'
+    # CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
+    # # UTLISIER CLICK https://zetcode.com/python/click/
+    # graph = spm_to_bids_prov(filenames[0], output_file, CONTEXT_URL, verbose=False)
     # lines = readlines(filenames[0])
     # print(*list(lines), sep='\n')
-# Example command  with CLI:
-# python -m bids_prov.spm_parser -o res.jsonld ./examples/spm_default/batch.m --verbose=True
+
