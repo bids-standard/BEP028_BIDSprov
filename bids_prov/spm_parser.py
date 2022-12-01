@@ -192,15 +192,16 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
             print(f"activity : {activity}, values : {task_groups[common_prefix_act]}")
         output_entities, input_entities = list(), list()
 
-        output_ext_entities = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
-        output_entities.extend(output_ext_entities)
+        output_ext_entity = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
+        output_entities.extend(output_ext_entity)
         params = {}
 
         for end_line in end_line_list:
+
             split = end_line.split(" = ")  # split in 2 at the level of the equal the rest of the action
             if len(split) != 2:
                 print(f"could not parse with '... = ... ' {end_line}")
-                continue
+                continue  # skip end of loop for end_line in end_line_list:
 
             left, right = split
             in_entity = get_input_entity(left, right, verbose=verbose)
@@ -221,6 +222,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
                     parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
                     # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
                     # return : ['Move/Delete Files', 'Moved/Copied Files']
+
                     # closest_activity_REMY = next(filter(lambda a: a["label"].endswith(dep_number.group(1)),
                     #                                records["prov:Activity"], ),
                     #                         None, )
@@ -230,16 +232,14 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
                     closest_activity = None
                     for act in records["prov:Activity"]:
                         if act["label"].endswith(dep_number.group(1)):
-                            closes_activity2 = act
+                            closest_activity = act
                             break
-
-                    # REMI like
+                    # closest_activity = act or None
                     if closest_activity is None:
                         continue  # break for loop end_line in end_line_list
 
                     if verbose:
-                        print(f"records : {records}")
-                        print(f"closest_activity : {closest_activity}")
+                        print(f"records : {records} \n closest_activity : {closest_activity}")
 
                     output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
                     # example : "niiri:oved/CopiedFiles1
@@ -259,27 +259,27 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
                 param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 param_value = preproc_param_value(right[:-1])  # remove ";" at the end of right
                 if verbose:
-                    print("params")
-                    print(param_name, param_value)
+                    print("params", param_name, param_value)
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
                 # if param_value.startswith("struct"):
                 #     continue  # TODO handle dictionary-like parameters
 
                 try:  # TODO why use of exceptions
-                    eval(param_value) # Convert '5' to 5
+                    eval(param_value)  # Convert '5' to 5
                 except:
                     Warning(f"could not set {param_name} to {param_value}")
                     continue
+
                 finally:
                     # params.append([param_name, param_value])
                     params[param_name] = param_value
 
         if input_entities:
             used_entities = [e["@id"] for e in input_entities]
-            if verbose:
-                print(f"input_entities : {input_entities}")
-                print(f'activity["used"] : {activity["used"]}')
             activity["used"] = (activity["used"] + used_entities)  # we add entities from input_entities
+            if verbose:
+                print(f'activity["used"] : {activity["used"]}')
+
         entities = input_entities + output_entities
 
         if params:
@@ -299,8 +299,8 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
 @click.option("--output-file", "-o", required=True)
 @click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
 @click.option("--verbose", default=False)
-def spm_to_bids_prov(filenames, output_file: str, context_url: str, verbose: bool) -> None:
-    filename = filenames[0]  # FIXME
+def spm_to_bids_prov(filename, output_file: str, context_url: str, verbose: bool) -> None:
+    # filename = filenames[0]  # FIXME
     graph = conf.get_empty_graph(context_url=context_url)
 
     lines = readlines(filename)
@@ -327,7 +327,6 @@ if __name__ == "__main__":
     # output_file = '../batch_example_spm.jsonld'
     # CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
     # # UTLISIER CLICK https://zetcode.com/python/click/
-    # graph = spm_to_bids_prov(filenames[0], output_file, CONTEXT_URL, verbose=False)
+    # spm_to_bids_prov(filenames[0], output_file, CONTEXT_URL, verbose=False)
     # lines = readlines(filenames[0])
     # print(*list(lines), sep='\n')
-
