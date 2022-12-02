@@ -3,10 +3,10 @@ A Command Line Interface to generate `graphviz` graphs from bids-prov JSON-ld fi
 
 This facilitates debugging and design of the specifications
 """
+import sys
 
 import click
 # from graphviz import Digraph
-# import json
 from prov.model import ProvDocument
 from prov.dot import prov_to_dot
 import requests
@@ -24,10 +24,9 @@ OPTIONAL_FIELDS = dict(  # fields to omit if `--high-level` flag activated
     Entity=("atLocation", "generatedAt"),
 )
 
-
 def viz_turtle(content=None, img_file=None, source=None, **kwargs):
-    prov_doc = ProvDocument.deserialize(content=content, format='rdf', rdf_format='turtle', source=source)
 
+    prov_doc = ProvDocument.deserialize(content=content, format='rdf', rdf_format='turtle', source=source)
     # TODO : show attributes has optional arg
     dot = prov_to_dot(prov_doc, use_labels=True, show_element_attributes=False, show_relation_attributes=False)
     dot.write_png(img_file)
@@ -48,7 +47,7 @@ def viz_jsonld11(jsonld11, img_file):
     # Load graph from json-ld file as non 1.1 JSON-LD
     aa = ld.jsonld.compact(jsonld11, context_10)
     # print('aa from  ld.jsonld.compact', *aa['@graph'], sep='\n')
-    dataaa = json.dumps(aa, indent=2, sort_keys=True)
+    dataaa = json.dumps(aa, indent=2)  # , sort_keys=True)
 
     g = rl.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
     g.parse(data=dataaa, format='json-ld')
@@ -103,13 +102,15 @@ def join_jsonld(lds, graph_key="records", omit_details=True):
     return payload
 
 
-# @click.command()
-# @click.argument('filenames', nargs=-1)
-# @click.option('--output_file', '-o', default='')
-# @click.option('--omit-details', is_flag=True, help=f"""omit the following low level details : {OPTIONAL_FIELDS}""")
-def main(filename, output_file, omit_details):
+
+@click.command()
+@click.argument('filename', nargs=-1)
+@click.option('--output_file', '-o', default='')
+@click.option('--omit-details', is_flag=True, help=f"""omit the following low level details : {OPTIONAL_FIELDS}""")
+def main(filename, output_file=None, omit_details=True):
+    filename = filename[0] # FIXME
     jsonld11s = list()
-    # for filename in filenames: # TODO get list of inputs
+    # for filename in filenames:  # TODO get list of inputs
     with open(filename) as fd:
         ld = json.load(fd)
         jsonld11s.append(ld)
@@ -117,19 +118,27 @@ def main(filename, output_file, omit_details):
     # join multiple definitions
     jsonld11 = join_jsonld(jsonld11s, graph_key="records", omit_details=omit_details)
 
-    if not output_file:
-        output_file = os.path.splitext(filename)[0] + '.png'
+    if output_file is None:
+        output_file = os.path.splitext(filename)[0] + '.png'  # replace extension .jsonld by .png
 
     viz_jsonld11(jsonld11, output_file)
 
 
 if __name__ == '__main__':
-    filenames = ['../batch_example_spm.jsonld', ]
-    # '../nidm-examples/spm_covariate/batch.m',
+    sys.exit(main())
+    # Example command  with CLI:
+    # python -m bids_prov.visualize ./res.jsonld -o res.png
+
+
+    # filenames = ['../batch_example_spm_ref.jsonld',
+    #              '../nidm-examples/spm_covariate/batch_ref.jsonld'
+    #              ]
+    #
+    # # filename = '../batch_example_spm_ref.jsonld'
     # './tests/batch_test/SpatialPreproc.m',
     # '../spm_HRF_informed_basis/batch.m']
-    output_file = '../batch_example_spm2.png'
-    main(filenames[0], output_file, omit_details=False)
+    # output_file = '../batch_example_spm2.png'
+    # main(filenames[1], omit_details=True)
 
     ##
 

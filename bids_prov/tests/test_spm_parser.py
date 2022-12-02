@@ -1,12 +1,123 @@
-import pytest
 import json
 import re
+import os
 from deepdiff import DeepDiff
 from collections import defaultdict
 
-from ..spm_load_config import static, has_parameter, DEPENDENCY_REGEX
-from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, preproc_param_value
-from .. import init_random_state, get_id
+from .compare_graph import load_jsonld11_for_rdf, compare_rdf_graph
+from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
+from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov
+from .. import init_random_state
+
+
+def test_spm_to_bids_prov():
+    """ Test spm_to_bids_prov.py parser with a previous reference name_ref.jsonld.
+    batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
+
+    """
+    dir_sample_test = os.path.abspath('./bids_prov/tests/samples_test')
+    all_files = os.listdir(dir_sample_test)
+    # print(os.path.dirname(dir_sample_test))
+    sample_spm_list = [f for f in all_files if os.path.splitext(f)[-1] == '.m']
+    CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
+    print("\n test_spm_to_bids_prov: Compare .m to a reference jsonld in directory:\n", dir_sample_test)
+
+    for idx, sample_spm in enumerate(sample_spm_list):
+
+        name = os.path.splitext(sample_spm)[0]
+        ref_jsonld = dir_sample_test + '/' + name + '_ref.jsonld'
+        new_jsonld = dir_sample_test + '/' + name + '.jsonld'
+        if os.path.exists(ref_jsonld):
+            spm_to_bids_prov(dir_sample_test + '/' + sample_spm, CONTEXT_URL, output_file=new_jsonld)
+            graph_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
+            graph_new = load_jsonld11_for_rdf(new_jsonld, pyld_convert=True)
+            res_compare = compare_rdf_graph(graph_ref, graph_new, verbose=False)
+            print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
+        else:
+            print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
+            continue
+
+        assert res_compare
+
+
+def test_group_lines():
+    group = group_lines(LIST_READLINES)
+    assert DeepDiff(group, TASKS) == {}
+
+
+def test_format_activity_name():
+    s = "cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "file_dir.file_ops.file_move._1"
+
+
+def test_get_input_entity():
+    init_random_state()
+    left = "files"
+    right = "{'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};"
+    # entity label : sub-01_task-tonecounting_bold.nii.gz
+    entity = {
+        "@id": "niiri:sub-01_task-tonecounting_bold.nii.gzgNSWPHprVq",
+        "label": "sub-01_task-tonecounting_bold.nii.gz",
+        "prov:atLocation": "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
+    }
+
+    assert get_input_entity(left, right) == entity
+
+
+def test_has_parameter():
+    string = "files"
+    assert not has_parameter(string)  # == False
+
+    string = "file_dir.file_ops.file_move._2"
+    assert not has_parameter(string)
+
+    string = "channel.vols(1)"
+    assert has_parameter(string)
+
+    string = "consess{1}.tcon.name"
+    assert not has_parameter(string)
+
+
+# def test_get_records():
+#     init_random_state()
+
+#     tasks = group_lines(LIST_READLINES)
+#     records = get_records(tasks, records=defaultdict(list))
+
+#     assert DeepDiff(records, RECORDS) == {}
+
+
+# PB in test
+def test_get_records_copy_attributes():
+    task_groups = dict(
+        file_ops_1=[
+            ".files = {'$PATH-TO-NII-FILES/tonecounting_bold.nii.gz'};",
+            ".action.copyto = {'$PATH-TO-PREPROCESSING/FUNCTIONAL'};",
+        ]
+    )
+    recs = get_records(task_groups, records=defaultdict(list))
+    attrs = [_["parameters"] for _ in recs["prov:Activity"]]
+    assert "action.copyto" in json.dumps(attrs)
+
+
+def test_get_records_attrs():
+    task_groups = dict(
+        estwrite_5=[".sep = 4;",
+                    ".fwhm = 5;", ]
+    )
+    recs = get_records(task_groups, records=defaultdict(list))
+    attrs = [_["parameters"] for _ in recs["prov:Activity"]]
+    assert "4" in json.dumps(attrs)
+
+
+def test_dep_regex():
+    s = """
+    cfg_dep('Normalise: Write: Normalised Images (Subj 1)', 
+    substruct('.','val', '{}',{8}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', 
+    '{}',{1}), substruct('()',{1}, '.','files'));
+    """
+    assert re.search(DEPENDENCY_REGEX, s, re.IGNORECASE) is not None
+
 
 LIST_READLINES = [
     "matlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.files = {'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};",
@@ -271,7 +382,6 @@ TASKS = {
         "write.tspm.basename = 'thresh';",
     ],
 }
-
 
 # RECORDS = defaultdict(
 #     list,
@@ -594,83 +704,3 @@ TASKS = {
 #         ],
 #     },
 # )
-
-
-def test_group_lines():
-    group = group_lines(LIST_READLINES)
-    assert DeepDiff(group, TASKS) == {}
-
-
-def test_format_activity_name():
-    s = "cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(s) == "file_dir.file_ops.file_move._1"
-
-
-def test_get_input_entity():
-    init_random_state()
-    left = "files"
-    right = "{'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};"
-    # entity label : sub-01_task-tonecounting_bold.nii.gz
-    entity = {
-        "@id": "niiri:sub-01_task-tonecounting_bold.nii.gzgNSWPHprVq",
-        "label": "sub-01_task-tonecounting_bold.nii.gz",
-        "prov:atLocation": "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
-    }
-
-    assert get_input_entity(left, right) == entity
-
-
-def test_has_parameter():
-    string = "files"
-    assert not has_parameter(string)  # == False
-
-    string = "file_dir.file_ops.file_move._2"
-    assert not has_parameter(string)
-
-    string = "channel.vols(1)"
-    assert not has_parameter(string)
-
-    string = "consess{1}.tcon.name"
-    assert not has_parameter(string)
-
-
-# def test_get_records():
-#     init_random_state()
-
-#     tasks = group_lines(LIST_READLINES)
-#     records = get_records(tasks, records=defaultdict(list))
-
-#     assert DeepDiff(records, RECORDS) == {}
-
-
-def test_get_records_copy_attributes():
-    task_groups = dict(
-        file_ops_1=[
-            ".files = {'$PATH-TO-NII-FILES/tonecounting_bold.nii.gz'};",
-            ".action.copyto = {'$PATH-TO-PREPROCESSING/FUNCTIONAL'};",
-        ]
-    )
-    recs = get_records(task_groups, records=defaultdict(list))
-    attrs = [_["attributes"] for _ in recs["prov:Activity"]]
-    assert "action.copyto" in json.dumps(attrs)
-
-
-def test_get_records_attrs():
-    task_groups = dict(
-        estwrite_5=[
-            ".sep = 4;",
-            ".fwhm = 5;",
-        ]
-    )
-    recs = get_records(task_groups, records=defaultdict(list))
-    attrs = [_["attributes"] for _ in recs["prov:Activity"]]
-    assert "4" in json.dumps(attrs)
-
-
-def test_dep_regex():
-    s = """
-    cfg_dep('Normalise: Write: Normalised Images (Subj 1)', 
-    substruct('.','val', '{}',{8}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', 
-    '{}',{1}), substruct('()',{1}, '.','files'));
-    """
-    assert re.search(DEPENDENCY_REGEX, s, re.IGNORECASE) is not None
