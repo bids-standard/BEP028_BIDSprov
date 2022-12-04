@@ -15,12 +15,12 @@ def test_spm_to_bids_prov():
     batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
 
     """
-    dir_sample_test = os.path.abspath('./bids_prov/tests/samples_test')
+    dir_sample_test = os.path.abspath('./tests/samples_test')
+    print("\n test_spm_to_bids_prov: Compare .m to a reference jsonld in directory:\n", dir_sample_test)
+
     all_files = os.listdir(dir_sample_test)
-    # print(os.path.dirname(dir_sample_test))
     sample_spm_list = [f for f in all_files if os.path.splitext(f)[-1] == '.m']
     CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
-    print("\n test_spm_to_bids_prov: Compare .m to a reference jsonld in directory:\n", dir_sample_test)
 
     for idx, sample_spm in enumerate(sample_spm_list):
 

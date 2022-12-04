@@ -294,13 +294,13 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
     return records
 
 
-@click.command()
-@click.argument("filename", nargs=-1)
-@click.option("--output-file", "-o", required=True)
-@click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
-@click.option("--verbose", default=False)
+# @click.command()
+# @click.argument("filename", nargs=-1)
+# @click.option("--output-file", "-o", required=True)
+# @click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
+# @click.option("--verbose", default=False)
 def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=False) -> None:
-    filename = filename[0]  # FIXME
+    # filename = filename  # FIXME
     # print(filename)
     graph = conf.get_empty_graph(context_url=context_url)
 
@@ -320,7 +320,6 @@ if __name__ == "__main__":
     sys.exit(spm_to_bids_prov())
     # Example command  with CLI:
     # python -m bids_prov.spm_parser  ./examples/spm_default/batch.m  -o res.jsonld --verbose=False
-
 
     # temporary test without click
     # filenames = ['../batch_example_spm.m',
