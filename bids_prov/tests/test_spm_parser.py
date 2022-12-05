@@ -3,6 +3,7 @@ import re
 import os
 from deepdiff import DeepDiff
 from collections import defaultdict
+import rdflib
 
 from .compare_graph import load_jsonld11_for_rdf, compare_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
@@ -28,19 +29,29 @@ def test_spm_to_bids_prov(verbose=False):
     for idx, sample_spm in enumerate(sample_spm_list):
 
         name = os.path.splitext(sample_spm)[0]
-        ref_jsonld = dir_sample_test + '/' + name + '_ref.jsonld'
-        new_jsonld = dir_sample_test + '/' + name + '.jsonld'
+        ref_jsonld = os.path.join(dir_sample_test , name + '_ref.jsonld')
+
         if os.path.exists(ref_jsonld):
-            spm_to_bids_prov(dir_sample_test + '/' + sample_spm, CONTEXT_URL, output_file=new_jsonld)
-            graph_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
-            graph_new = load_jsonld11_for_rdf(new_jsonld, pyld_convert=True)
-            res_compare = compare_rdf_graph(graph_ref, graph_new, verbose=False)
-            assert res_compare
+            new_jsonld = os.path.join(dir_sample_test, name + '.jsonld')
+            spm_batch = os.path.join(dir_sample_test, sample_spm)
+            spm_to_bids_prov(spm_batch, CONTEXT_URL, output_file=new_jsonld)
+
+            jsonld11_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
+            graph_ref = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+            graph_ref.parse(data=json.dumps(jsonld11_ref, indent=2), format='json-ld')
+
+            jsonld11_new = load_jsonld11_for_rdf(new_jsonld, pyld_convert=True)
+            graph_new = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+            graph_new.parse(data=json.dumps(jsonld11_new, indent=2), format='json-ld')
+
+            res_compare = compare_rdf_graph(graph_ref, graph_new, verbose=True)
 
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
                 if not os.path.exists(ref_jsonld):
                     print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
+
+            assert res_compare
 
 
 

@@ -74,7 +74,7 @@ def preproc_param_value(val: str) -> str:
 
 
 def readlines(filename: str):  # -> Generator[str, None, None]  from https://docs.python.org/3/library/typing.html
-    """Read lines from the original batch.m file
+    """Read lines from the original batch_covariate.m file
 
     A definition should be associated with a single line in the output
     """
@@ -114,7 +114,7 @@ def group_lines(lines: list) -> dict:
     {'file_ops.file_move._1': ['call', 'different.call']}
     """
     res = defaultdict(list)  # KEYS : activity number (act_id), VALUES : rest of the line without matlabbatch{3}.
-    # example: in batch.m of spm12:
+    # example: in batch_covariate.m of spm12:
     # matlabbatch{3}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.name = 'mr vs plain covariate';
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.weights = 1;
@@ -322,17 +322,17 @@ def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=
 if __name__ == "__main__":
     # sys.exit(spm_to_bids_prov())
     # Example command  with CLI:
-    # python -m bids_prov.spm_parser  ./examples/spm_default/batch.m  -o res.jsonld --verbose=False
+    # python -m bids_prov.spm_parser  ./examples/spm_default/batch_covariate.m  -o res.jsonld --verbose=False
 
     # temporary test without click
     filenames = ['../batch_example_spm.m',
-                 '../nidm-examples/spm_covariate/batch.m',
+                 '../batch_covariate.m',
                  './tests/batch_test/SpatialPreproc.m',
-                 '../spm_HRF_informed_basis/batch.m']
+                 '../spm_HRF_informed_basis/batch_covariate.m']
 
     # output_file = '../batch_example_spm_ref.jsonld'
     CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
     # UTLISIER CLICK https://zetcode.com/python/click/
-    spm_to_bids_prov(filenames[0], CONTEXT_URL)
+    spm_to_bids_prov(filenames[1], CONTEXT_URL)
     # lines = readlines(filenames[0])
     # print(*list(lines), sep='\n')
