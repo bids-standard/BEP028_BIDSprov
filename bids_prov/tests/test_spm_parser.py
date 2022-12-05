@@ -12,7 +12,8 @@ from .. import init_random_state
 
 
 def test_spm_to_bids_prov(verbose=False):
-    """ Test spm_to_bids_prov.py parser with a previous reference name_ref.jsonld.
+    """
+    Test spm_to_bids_prov.py parser with a previous reference name_ref.jsonld.
     batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
 
     """
