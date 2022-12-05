@@ -103,12 +103,12 @@ def join_jsonld(lds, graph_key="records", omit_details=True):
 
 
 
-@click.command()
-@click.argument('filename', nargs=-1)
-@click.option('--output_file', '-o', default='')
-@click.option('--omit-details', is_flag=True, help=f"""omit the following low level details : {OPTIONAL_FIELDS}""")
+# @click.command()
+# @click.argument('filename', nargs=-1)
+# @click.option('--output_file', '-o', default='')
+# @click.option('--omit-details', is_flag=True, help=f"""omit the following low level details : {OPTIONAL_FIELDS}""")
 def main(filename, output_file=None, omit_details=True):
-    filename = filename[0] # FIXME
+    # filename = filename[0] # FIXME
     jsonld11s = list()
     # for filename in filenames:  # TODO get list of inputs
     with open(filename) as fd:
@@ -125,20 +125,20 @@ def main(filename, output_file=None, omit_details=True):
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    # sys.exit(main())
     # Example command  with CLI:
     # python -m bids_prov.visualize ./res.jsonld -o res.png
 
 
-    # filenames = ['../batch_example_spm_ref.jsonld',
-    #              '../nidm-examples/spm_covariate/batch_ref.jsonld'
-    #              ]
-    #
+    filenames = ['../batch_example_spm.jsonld',
+                 '../nidm-examples/spm_covariate/batch_ref.jsonld'
+                 ]
+
     # # filename = '../batch_example_spm_ref.jsonld'
     # './tests/batch_test/SpatialPreproc.m',
     # '../spm_HRF_informed_basis/batch.m']
     # output_file = '../batch_example_spm2.png'
-    # main(filenames[1], omit_details=True)
+    main(filenames[0], omit_details=True)
 
     ##
 
