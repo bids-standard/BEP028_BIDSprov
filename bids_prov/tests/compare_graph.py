@@ -29,7 +29,7 @@ def compare_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=True) -> bool:
 
     if cmp:
         if verbose:
-            print(" P inputs rdf graph are similar")
+            print("inputs rdf graph are similar")
         # if rdflib.compare.isomorphic(g1, g2):
         #     if verbose:
         #         print("they are also isomorphic")

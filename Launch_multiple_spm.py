@@ -11,7 +11,7 @@ import shutil
 @click.option("--output_dir", "-o", default="result")
 def main(data_dir, output_dir):
     """
-    Launch all batch_covariate.m in a relative folder data_dir, export jsonld + png in output_dir
+    Launch all batch.m in a relative folder data_dir, export jsonld + png in output_dir
     """
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
@@ -20,7 +20,7 @@ def main(data_dir, output_dir):
     for root, dirs, files in os.walk(data_dir[0]):
         for file in files:
             # matlab extension the one of your choice.
-            if file.endswith("batch_covariate.m"):
+            if file.endswith("batch.m"):
                 print(root + "/" + str(file))
 
                 output_file_base = root.split("/")[-1]
