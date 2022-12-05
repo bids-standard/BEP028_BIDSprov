@@ -10,13 +10,16 @@ from ..spm_parser import get_records, group_lines, get_input_entity, format_acti
 from .. import init_random_state
 
 
-def test_spm_to_bids_prov():
+def test_spm_to_bids_prov(verbose=False):
     """ Test spm_to_bids_prov.py parser with a previous reference name_ref.jsonld.
     batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
 
     """
-    dir_sample_test = os.path.abspath('./tests/samples_test')
-    print("\n test_spm_to_bids_prov: Compare .m to a reference jsonld in directory:\n", dir_sample_test)
+    # print("CWD", os.getcwd())
+    dir_sample_test = os.path.abspath('./bids_prov/tests/samples_test')
+    # TODO ./bids_prov/tests/samples_test fo pytest from this file dir
+    if verbose:
+        print("\n test_spm_to_bids_prov: Compare .m to a reference jsonld in directory:\n", dir_sample_test)
 
     all_files = os.listdir(dir_sample_test)
     sample_spm_list = [f for f in all_files if os.path.splitext(f)[-1] == '.m']
@@ -32,12 +35,14 @@ def test_spm_to_bids_prov():
             graph_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
             graph_new = load_jsonld11_for_rdf(new_jsonld, pyld_convert=True)
             res_compare = compare_rdf_graph(graph_ref, graph_new, verbose=False)
-            print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
-        else:
-            print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
-            continue
+            assert res_compare
 
-        assert res_compare
+            if verbose:
+                print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
+                if not os.path.exists(ref_jsonld):
+                    print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
+
+
 
 
 def test_group_lines():
@@ -89,24 +94,21 @@ def test_has_parameter():
 
 # PB in test
 def test_get_records_copy_attributes():
-    task_groups = dict(
-        file_ops_1=[
-            ".files = {'$PATH-TO-NII-FILES/tonecounting_bold.nii.gz'};",
-            ".action.copyto = {'$PATH-TO-PREPROCESSING/FUNCTIONAL'};",
-        ]
-    )
+    task_groups = dict(file_ops_1=[".files = {'$PATH-TO-NII-FILES/tonecounting_bold.nii.gz'};",
+                                   ".action.copyto = {'$PATH-TO-PREPROCESSING/FUNCTIONAL'};",
+                                  ]
+                      )
     recs = get_records(task_groups, records=defaultdict(list))
-    attrs = [_["parameters"] for _ in recs["prov:Activity"]]
+    attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
     assert "action.copyto" in json.dumps(attrs)
 
 
 def test_get_records_attrs():
-    task_groups = dict(
-        estwrite_5=[".sep = 4;",
-                    ".fwhm = 5;", ]
-    )
+    task_groups = dict(estwrite_5=[".sep = 4;",
+                                   ".fwhm = 5;", ]
+                      )
     recs = get_records(task_groups, records=defaultdict(list))
-    attrs = [_["parameters"] for _ in recs["prov:Activity"]]
+    attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
     assert "4" in json.dumps(attrs)
 
 
