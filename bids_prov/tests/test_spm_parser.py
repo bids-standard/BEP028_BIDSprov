@@ -1,10 +1,9 @@
 import json
 import re
 import os
-# from deepdiff import DeepDiff
+from deepdiff import DeepDiff
 from collections import defaultdict
 import rdflib
-import sys
 
 from .compare_graph import load_jsonld11_for_rdf, compare_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
@@ -57,10 +56,9 @@ def test_spm_to_bids_prov(verbose=False):
 
 
 
-
-# def test_group_lines():
-#     group = group_lines(LIST_READLINES)
-#     assert DeepDiff(group, TASKS) == {}
+def test_group_lines():
+    group = group_lines(LIST_READLINES)
+    assert DeepDiff(group, TASKS) == {}
 
 
 def test_format_activity_name():
