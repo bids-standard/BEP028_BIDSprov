@@ -74,7 +74,7 @@ def preproc_param_value(val: str) -> str:
 
 
 def readlines(filename: str):  # -> Generator[str, None, None]  from https://docs.python.org/3/library/typing.html
-    """Read lines from the original batch_covariate.m file
+    """Read lines from the original batch.m file
 
     A definition should be associated with a single line in the output
     """
@@ -301,7 +301,7 @@ def get_records(task_groups: dict, records=defaultdict(list), verbose=False) -> 
 # @click.option("--verbose", default=False)
 def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=False) -> None:
     """
-    Exporter from batchfile .m to a output jsonld
+    Exporter from batch.m to a output jsonld
 
     """
     # filename = filename[0]  # FIXME
