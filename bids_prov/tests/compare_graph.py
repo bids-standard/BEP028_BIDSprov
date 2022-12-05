@@ -1,4 +1,6 @@
 import json
+import os.path
+
 import rdflib
 import requests
 import pyld
@@ -27,7 +29,7 @@ def compare_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=True) -> bool:
 
     if cmp:
         if verbose:
-            print("inputs rdf graph are similar")
+            print(" P inputs rdf graph are similar")
         # if rdflib.compare.isomorphic(g1, g2):
         #     if verbose:
         #         print("they are also isomorphic")
@@ -61,25 +63,27 @@ if __name__ == '__main__':
     filenames = ['./samples_test/batch_example_spm_ref.jsonld',
                  '../nidm-examples/spm_covariate/batch_ref.jsonld'
                  ]
-    filename = "/home/hcourtei/Projects/F-WIN/BEP028_BIDSprov/bids_prov/tests/samples_test/batch_example_spm_ref.jsonld"
-    jsonld11 = load_jsonld11_for_rdf(filename, pyld_convert=True)
+    new_jsonld = os.path.abspath("./samples_test/batch_example_spm.jsonld")
+    ref_jsonld = os.path.abspath("./samples_test/batch_example_spm_ref.jsonld")
 
-    data1 = json.dumps(jsonld11, indent=2)
-    g = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
-    g.parse(data=data1, format='json-ld')
+    print(ref_jsonld)
+    jsonld11_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
+    graph_ref = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+    graph_ref.parse(data=json.dumps(jsonld11_ref, indent=2), format='json-ld')
 
-    data2 = json.dumps(jsonld11, indent=2, sort_keys=True)
-    g2 = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
-    g2.parse(data=data2, format='json-ld')
+    jsonld11_new = load_jsonld11_for_rdf(new_jsonld, pyld_convert=True)
+    graph_new = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+    graph_new.parse(data=json.dumps(jsonld11_new, indent=2), format='json-ld')
+
+    # g = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+    # g.parse(data=json.dumps(jsonld11, indent=2), format='json-ld')
+    #
+    # g2 = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+    # g2.parse(data=json.dumps(jsonld11, indent=2, sort_keys=True), format='json-ld')
 
     # iso1 = rdflib.compare.to_isomorphic(g)
     # iso2 = rdflib.compare.to_isomorphic(g2)
-
-    cmp = compare_rdf_graph(g, g2, verbose=True)
-    # p = graph_to_str(g)
-    # # print("=="*30)
-    # p2 = print_g(g2)
-    #
+    cmp = compare_rdf_graph(graph_new, graph_ref, verbose=True)
     # graph_Lee = Graph()
     # graph_Lee.parse("http://www.w3.org/People/Berners-Lee/card")
     # print_g(graph_Lee)
