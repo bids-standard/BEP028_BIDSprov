@@ -132,14 +132,14 @@ if __name__ == '__main__':
 
     filenames = ['../batch_example_spm.jsonld',
                  '../batch_covariate_ref.jsonld',
-                 '../nidm-examples/spm_covariate/batch_ref.jsonld'
-                 ]
+                 '../nidm-examples/spm_covariate/batch_ref.jsonld',
+                 '../partial_conjunction.jsonld']
 
     # # filename = '../batch_example_spm_ref.jsonld'
     # './tests/batch_test/SpatialPreproc.m',
     # '../spm_HRF_informed_basis/batch_covariate.m']
     # output_file = '../batch_example_spm2.png'
-    main(filenames[1], omit_details=True)
+    main(filenames[-1], omit_details=True)
 
     ##
 

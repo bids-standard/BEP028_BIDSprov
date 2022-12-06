@@ -45,7 +45,7 @@ def test_spm_to_bids_prov(verbose=False):
             graph_new = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
             graph_new.parse(data=json.dumps(jsonld11_new, indent=2), format='json-ld')
 
-            res_compare = compare_rdf_graph(graph_ref, graph_new, verbose=True)
+            res_compare = compare_rdf_graph(graph_ref, graph_new, verbose=verbose)
 
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
