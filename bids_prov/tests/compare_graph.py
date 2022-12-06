@@ -25,7 +25,9 @@ def load_jsonld11_for_rdf(jsonld11_file: str, pyld_convert=True):
 
 
 def compare_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=False) -> bool:
-    cmp = rdflib.compare.similar(g1, g2)
+    cmp = rdflib.compare.similar(g1, g2) # Checks if the two graphs are “similar”.
+    # Checks if the two graphs are “similar”, by comparing sorted triples where all bnodes have been replaced by a
+    # singular mock bnode (the _MOCK_BNODE).
 
     if cmp:
         if verbose:
