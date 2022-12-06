@@ -24,13 +24,13 @@ def load_jsonld11_for_rdf(jsonld11_file: str, pyld_convert=True):
     return jsonld11
 
 
-def compare_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=True) -> bool:
+def compare_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=False) -> bool:
     cmp = rdflib.compare.similar(g1, g2)
 
     if cmp:
         if verbose:
             print("inputs rdf graph are similar")
-        # if rdflib.compare.isomorphic(g1, g2):
+        # if rdflib.compare.isomorphic(g1, g2): # more restrictive
         #     if verbose:
         #         print("they are also isomorphic")
     else:
