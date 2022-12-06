@@ -78,13 +78,13 @@ def readlines(filename: str):  # -> Generator[str, None, None]  from https://doc
 
     A definition should be associated with a single line in the output
     """
-    cnt = 0
+    cnt = 0 # TODO count activity here or in another function
     with open(filename) as fd:
         for line in fd:
             if line.startswith("matlabbatch"):
                 _line = line[:-1]  # remove "\n"
                 while _line.count("{") != _line.count("}"):
-                    _line += next(fd)[:-1].lstrip() + ","
+                    _line += next(fd)[:-1].lstrip() + ","  # TODO not cover by test
                     # TODO error sur covariate matlabbatch{# 1}.spm.stats.factorial_design.des.t1.scans "," at end
                 while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
                     _line = _line.strip() + " " + next(fd)[:-1].lstrip()  # append
@@ -145,10 +145,10 @@ def group_lines(lines: list) -> dict:
 def get_entities_from_ext_config(conf_dic, activity_name, activity_id):
     # checks if spatial.preproc is contained in the name of the current activity and if so returns
     # spatial.preproc
-
+    #
     # REMI like :conf_outputs = next((k for k in conf_dic if k in activity_n), None)
     # if conf_outputs is not None:
-    # activity_name = conf_outputs["name"]  # FIXME ? useless ?
+    # activity_name = conf_outputs["name"]
     # conf_outputs = conf_dic[conf_outputs]
     output_entities = list()
     for activity in conf_dic.keys():
@@ -165,6 +165,44 @@ def get_entities_from_ext_config(conf_dic, activity_name, activity_id):
 
     return output_entities  # empty list [] if no match,
 
+def with_dependency_process(records, activity, right, end_line, verbose=False):
+    # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
+    # to a function, the common part will be full and so left will be empty
+    dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
+    # check if the line call cfg_dep and retrieve the first parameter
+    dep_number = re.search(r"{(\d+)}", right)  # retrieve all digits between parenthesis
+    if dependency is not None:
+        parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
+        # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
+        # return : ['Move/Delete Files', 'Moved/Copied Files']
+
+        closest_activity = None
+        for act in records["prov:Activity"]:
+            if act["label"].endswith(dep_number.group(1)):
+                closest_activity = act
+                break
+
+        break_loop = True  if closest_activity is None else False
+        # break for loop go to :  end_line in end_line_list
+
+        if verbose:
+            print(f"records : {records} \n closest_activity : {closest_activity}")
+
+        output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1)) #example : "niiri:oved/CopiedFiles1
+
+        activity["used"].append(output_id)  # adds to the current activity the fact that it has used the previous entity
+
+        output_entity = {
+            "@id": output_id,
+            "label": parts[-1],
+            # "prov:atLocation": TODO
+            "wasGeneratedBy": closest_activity["@id"],
+        }
+    else:  # dependency is None no r"(d+)" # TODO not cover by test
+        break_loop = True
+        output_entity = {}
+        Warning(f"Could not parse line with dependency {end_line}")
+    return break_loop, output_entity
 
 def get_records(task_groups: dict, records=None, verbose=False) -> dict:
     """Take the result of `group_lines` and output the corresponding
@@ -203,7 +241,7 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 
             split = end_line.split(" = ")  # split in 2 at the level of the equal the rest of the action
             if len(split) != 2:
-                print(f"could not parse with '... = ... ' {end_line}")
+                print(f"could not parse with more than 2 '=' in end line : ' {end_line}'") # TODO not cover by test
                 continue  # skip end of loop for end_line in end_line_list:
 
             left, right = split
@@ -214,49 +252,13 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
                     and any(["substruct" in l for l in [common_prefix_act, left, right]]):
-                # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
-                # to a function, the common part will be full and so left will be empty
-                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
-                # check if the line call cfg_dep and retrieve the first parameter
-                dep_number = re.search(r"{(\d+)}", right)  # retrieve all digits between parenthesis
 
-                if dependency is not None:
+                break_loop, output_entity = with_dependency_process(records, activity, right, end_line, verbose=verbose)
 
-                    parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
-                    # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
-                    # return : ['Move/Delete Files', 'Moved/Copied Files']
-
-                    # closest_activity_REMY = next(filter(lambda a: a["label"].endswith(dep_number.group(1)),
-                    #                                records["prov:Activity"], ),
-                    #                         None, )
-                    # among all the activities, check if one of them has a label ending with "dep_number" and
-                    # return the activity
-
-                    closest_activity = None
-                    for act in records["prov:Activity"]:
-                        if act["label"].endswith(dep_number.group(1)):
-                            closest_activity = act
-                            break
-                    # closest_activity = act or None
-                    if closest_activity is None:
-                        continue  # break for loop end_line in end_line_list
-
-                    if verbose:
-                        print(f"records : {records} \n closest_activity : {closest_activity}")
-
-                    output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
-                    # example : "niiri:oved/CopiedFiles1
-                    activity["used"].append(output_id)  # adds to the current activity the fact that it has used the
-                    # previous entity
-
-                    output_entities.append({
-                        "@id": output_id,
-                        "label": parts[-1],
-                        # "prov:atLocation": TODO
-                        "wasGeneratedBy": closest_activity["@id"],
-                    })
-                else:  # dependency is None no r"(d+)"
-                    Warning(f"Could not parse line with dependency {end_line}")
+                if break_loop:
+                    continue
+                else:
+                    output_entities.append(output_entity)
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
                 param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
@@ -304,7 +306,8 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 # @click.option("--verbose", default=False)
 def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=False) -> None:
     """
-    Exporter from batch.m to a output jsonld
+    Exporter from batch.m to an output jsonld
+
 
     """
     # filename = filename[0]  # FIXME
@@ -323,19 +326,26 @@ def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=
 
 
 if __name__ == "__main__":
+    pass
     # sys.exit(spm_to_bids_prov())
     # Example command  with CLI:
     # python -m bids_prov.spm_parser  ./examples/spm_default/batch_covariate.m  -o res.jsonld --verbose=False
 
     # temporary test without click
-    filenames = ['../batch_example_spm.m',
-                 '../batch_covariate.m',
-                 './tests/batch_test/SpatialPreproc.m',
-                 '../spm_HRF_informed_basis/batch_covariate.m']
-
-    # output_file = '../batch_example_spm_ref.jsonld'
-    CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
-    # UTLISIER CLICK https://zetcode.com/python/click/
-    spm_to_bids_prov(filenames[1], CONTEXT_URL)
+    # filenames = ['./tests/samples_test/batch_example_spm.m',
+    #              './tests/samples_test/partial_conjunction.m',
+    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
+    #              '../nidm-examples/spm_explicit_mask/batch.m',
+    #              '../nidm-examples/spm_full_example001/batch.m', # fr closest None
+    #
+    #              '../batch_covariate.m',
+    #              './tests/batch_test/SpatialPreproc.m',
+    #
+    #              '../batch_2_egal_split.m']
+    # #
+    # output_file = '../res_temp.jsonld'
+    # CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
+    # # # UTLISIER CLICK https://zetcode.com/python/click/
+    # spm_to_bids_prov(filenames[1],CONTEXT_URL, output_file=output_file)
     # lines = readlines(filenames[0])
     # print(*list(lines), sep='\n')
