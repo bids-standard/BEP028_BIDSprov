@@ -28,9 +28,6 @@ def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
     right: string
         right side of ' = '
     """
-    if verbose:
-        print(f"left : {left}")
-        print(f"right : {right}")
     if conf.has_parameter(left):  # r"[^\.]+\(\d+\)"
         # a string contains at least one parameter if it does not start with a dot and contains at least one digit
         # between brackets.
@@ -62,7 +59,9 @@ def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
         "prov:atLocation": right[2:-3],  # similar processing with respect to the entity_label variable. The line
         # removes "{'" at the beginning and "'};" at the end
     }
+
     if verbose:
+        print(f"left : {left} \nright : {right} ")
         print(f"entity : {entity}")
     return entity
 
@@ -142,9 +141,8 @@ def group_lines(lines: list) -> dict:
     return new_res
 
 
-def get_entities_from_ext_config(conf_dic, activity_name, activity_id):
-    # checks if spatial.preproc is contained in the name of the current activity and if so returns
-    # spatial.preproc
+def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id: str) -> list:
+    # checks if spatial.preproc is contained in the name of the current activity and if so returns spatial.preproc
     #
     # REMI like :conf_outputs = next((k for k in conf_dic if k in activity_n), None)
     # if conf_outputs is not None:
@@ -165,7 +163,7 @@ def get_entities_from_ext_config(conf_dic, activity_name, activity_id):
 
     return output_entities  # empty list [] if no match,
 
-def with_dependency_process(records, activity, right, end_line, verbose=False):
+def with_dependency_process(records: dict, activity: dict, right: str, end_line: str, verbose=False) -> tuple:
     # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
     # to a function, the common part will be full and so left will be empty
     dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
@@ -175,7 +173,6 @@ def with_dependency_process(records, activity, right, end_line, verbose=False):
         parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
         # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
         # return : ['Move/Delete Files', 'Moved/Copied Files']
-
         closest_activity = None
         for act in records["prov:Activity"]:
             if act["label"].endswith(dep_number.group(1)):
@@ -304,7 +301,7 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 # @click.option("--output-file", "-o", required=True)
 # @click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
 # @click.option("--verbose", default=False)
-def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=False) -> None:
+def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=False, indent=2) -> None:
     """
     Exporter from batch.m to an output jsonld
 
@@ -322,7 +319,7 @@ def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=
         output_file = os.path.splitext(filename)[0] + '.jsonld'  # replace extension .m by .jsonld
 
     with open(output_file, "w") as fd:
-        json.dump(graph, fd, indent=2)
+        json.dump(graph, fd, indent=indent)
 
 
 if __name__ == "__main__":
@@ -337,15 +334,10 @@ if __name__ == "__main__":
     #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
     #              '../nidm-examples/spm_explicit_mask/batch.m',
     #              '../nidm-examples/spm_full_example001/batch.m', # fr closest None
-    #
     #              '../batch_covariate.m',
-    #              './tests/batch_test/SpatialPreproc.m',
-    #
-    #              '../batch_2_egal_split.m']
-    # #
+    #              './tests/batch_test/SpatialPreproc.m']
     # output_file = '../res_temp.jsonld'
     # CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
     # # # UTLISIER CLICK https://zetcode.com/python/click/
     # spm_to_bids_prov(filenames[1],CONTEXT_URL, output_file=output_file)
-    # lines = readlines(filenames[0])
-    # print(*list(lines), sep='\n')
+
