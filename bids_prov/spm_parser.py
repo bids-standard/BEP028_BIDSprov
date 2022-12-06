@@ -329,15 +329,17 @@ if __name__ == "__main__":
     # python -m bids_prov.spm_parser  ./examples/spm_default/batch_covariate.m  -o res.jsonld --verbose=False
 
     # temporary test without click
-    # filenames = ['./tests/samples_test/batch_example_spm.m',
-    #              './tests/samples_test/partial_conjunction.m',
-    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
-    #              '../nidm-examples/spm_explicit_mask/batch.m',
-    #              '../nidm-examples/spm_full_example001/batch.m', # fr closest None
-    #              '../batch_covariate.m',
-    #              './tests/batch_test/SpatialPreproc.m']
-    # output_file = '../res_temp.jsonld'
-    # CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
-    # # # UTLISIER CLICK https://zetcode.com/python/click/
-    # spm_to_bids_prov(filenames[1],CONTEXT_URL, output_file=output_file)
+    filenames = ['./tests/samples_test/batch_example_spm.m',
+                 './tests/samples_test/partial_conjunction.m',
+                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
+                 '../nidm-examples/spm_explicit_mask/batch.m',
+                 '../nidm-examples/spm_full_example001/batch.m', # fr closest None
+                 '../batch_covariate.m',
+                 './tests/batch_test/SpatialPreproc.m']
+    output_file = '../res_temp.jsonld'
+    CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
+    # # UTLISIER CLICK https://zetcode.com/python/click/
+    spm_to_bids_prov(filenames[0],CONTEXT_URL, output_file=output_file)
+    print("******")
+    spm_to_bids_prov(filenames[0], CONTEXT_URL, output_file=output_file)
 
