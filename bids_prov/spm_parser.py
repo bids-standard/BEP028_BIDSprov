@@ -305,6 +305,7 @@ def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=
     """
     Exporter from batch.m to an output jsonld
 
+
     """
     # filename = filename[0]  # FIXME
     graph = conf.get_empty_graph(context_url=context_url)
