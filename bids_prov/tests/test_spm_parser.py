@@ -393,8 +393,7 @@ TASKS = {
     ],
 }
 
-RECORDS = dict(
-    {
+RECORDS = defaultdict( list,     {
         "prov:Activity": [
             {
                 "@id": "niiri:cfg_basicio.file_dir.file_ops.file_move._1gNSWPHprVq",
