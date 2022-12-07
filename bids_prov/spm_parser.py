@@ -11,7 +11,7 @@ from bids_prov import spm_load_config as conf
 from bids_prov import get_id
 
 
-def format_activity_name(s: str, l=30) -> str:
+def format_activity_name(s: str, l=40) -> str:
     # s example : cfg_basicio.file_dir.file_ops.file_move._1
     if s.startswith("spm."):
         s = s[4:]
@@ -37,21 +37,23 @@ def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
         if verbose:
             print("the string contains parameters so this is not an input_entity")
         return None
-    if not next(re.finditer(conf.PATH_REGEX, right), None):
+    # if not next(re.finditer(conf.PATH_REGEX, right), None):  # Remi like
+    if not re.search(conf.PATH_REGEX, right):
         # r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
         # if not None (if it doesn't match with conf.PATH_REGEX), enter in if
         if verbose:
             print("the string does not match with conf.PATH_REGEX")
         return None
-    if not next(re.finditer(conf.FILE_REGEX, right), None):
+    # if not next(re.finditer(conf.FILE_REGEX, right), None):
+    if not re.search(conf.FILE_REGEX, right):
         # r"(\.[a-z]{1,3}){1,2}"
         # the string does not contain a filename extension so this is not an entity
         if verbose:
             print("the string does not contain a filename so this is not an input_entity")
         return None
 
-    entity_label = re.sub(r"[{};\'\"]", "", right).split("/")[-1]  # sub allows you to remove braces; apostrophe and
-    # quotation mark.
+    entity_label = re.sub(r"[{};\'\"]", "", right)  # sub allows you to remove braces; apostrophe and  quotation mark.
+    entity_label = entity_label.split("/")[-1]
     # If we have : "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
     # the line will return "sub-01_task-tonecounting_bold.nii.gz" and not "sub-01_task-tonecounting_bold.nii.gz'};"
 
@@ -62,9 +64,6 @@ def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
         # removes "{'" at the beginning and "'};" at the end
     }
 
-    if verbose:
-        print(f"left : {left} \nright : {right} ")
-        print(f"entity : {entity}")
     return entity
 
 
@@ -165,7 +164,7 @@ def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id
 
     return output_entities  # empty list [] if no match,
 
-def with_dependency_process(records: dict, activity: dict, right: str, end_line: str, verbose=False) -> tuple:
+def dependency_process(records: dict, activity: dict, right: str, end_line: str, verbose=False) -> tuple:
     # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
     # to a function, the common part will be full and so left will be empty
     dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
@@ -184,11 +183,10 @@ def with_dependency_process(records: dict, activity: dict, right: str, end_line:
                 output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))  # example : "niiri:oved/CopiedFiles1
 
                 activity["used"].append(output_id)  # adds to the current activity the fact that it has used the previous entity
-                output_entity = {
-                    "@id": output_id,
-                    "label": parts[-1],
-                    # "prov:atLocation": TODO
-                    "wasGeneratedBy": closest_activity["@id"],
+                output_entity = {"@id": output_id,
+                                 "label": parts[-1],
+                                 # "prov:atLocation": TODO
+                                 "wasGeneratedBy": closest_activity["@id"],
                 }
             if verbose:
                 print(f"records : {records} \n closest_activity : {closest_activity}")
@@ -208,27 +206,27 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 
     if records is None:
         records = defaultdict(list)
-
-    entities_ids = set()
     if verbose:
         print(f"task_groups : {task_groups}")
+
+    entities_ids = set()
+
     for common_prefix_act, end_line_list in task_groups.items():
 
         activity_id = "niiri:" + common_prefix_act + get_id()
-        activity = {
-            "@id": activity_id,
-            "label": format_activity_name(common_prefix_act),
-            "used": list(),
-            "wasAssociatedWith": "RRID:SCR_007037",  # TODO ?
+        activity = {"@id": activity_id,
+                    "label": format_activity_name(common_prefix_act),
+                    "used": list(),
+                    "wasAssociatedWith": "RRID:SCR_007037",  # TODO ?
         }
         if verbose:
             print("-" * 50)
             print(f"activity : {activity}, values : {task_groups[common_prefix_act]}")
         output_entities, input_entities = list(), list()
+        params = {}
 
         output_ext_entity = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
         output_entities.extend(output_ext_entity)
-        params = {}
 
         for end_line in end_line_list:
 
@@ -238,6 +236,7 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
                 continue  # skip end of loop for end_line in end_line_list:
 
             left, right = split
+            print(left, '=', right)
             in_entity = get_input_entity(left, right, verbose=verbose)
 
             if in_entity:
@@ -246,7 +245,7 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
                     and any(["substruct" in l for l in [common_prefix_act, left, right]]):
 
-                closest_activity, output_entity = with_dependency_process(records, activity, right, end_line, verbose=verbose)
+                closest_activity, output_entity = dependency_process(records, activity, right, end_line, verbose=verbose)
 
                 if closest_activity is None:
                     continue
@@ -254,6 +253,7 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
                     output_entities.append(output_entity)
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
+                # def param_process(left,right,verbose=False): TODO
                 param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 param_value = preproc_param_value(right[:-1])  # remove ";" at the end of right
                 if verbose:
@@ -264,16 +264,23 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 
                 try:  # TODO why use of exceptions
                     eval(param_value)  # Convert '5' to 5
+                    # print(f"ok {param_value} type {type(param_value)}")
+
                 except:
+                    print(f"POP {param_value} type {type(param_value)}  \n")
                     Warning(f"could not set {param_name} to {param_value}")
-                    continue
+                    # "struct('name', {}, 'levels', {})" dans batch_example_spm
+                    # Inf dans spm_HRF_informed_basis
+                    # {'/storage/essicd/data/NIDM-Ex/Testing/ds000006/RESULTS/Sub01/CanonicalHRF/con_0001.nii,1', ........}; type <class 'str'> dans spm_non_sphericity
+                    # continue
 
                 finally:
-                    # params.append([param_name, param_value])
                     params[param_name] = param_value
 
+                    # params.append([param_name, param_value])
+
         if input_entities:
-            used_entities = [e["@id"] for e in input_entities]
+            used_entities = [entity["@id"] for entity in input_entities]
             activity["used"] = (activity["used"] + used_entities)  # we add entities from input_entities
             if verbose:
                 print(f'activity["used"] : {activity["used"]}')
@@ -284,10 +291,11 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
             activity["parameters"] = params
 
         records["prov:Activity"].append(activity)
-        for e in entities:
-            if e["@id"] not in entities_ids:
-                records["prov:Entity"].append(e)
-            entities_ids.add(e["@id"])
+
+        for entity in entities:
+            if entity["@id"] not in entities_ids:
+                records["prov:Entity"].append(entity)
+            entities_ids.add(entity["@id"])
 
     return records
 
@@ -324,22 +332,30 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-                        help="data dir where batch.m are researched",)
-    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written", )
+                        help="data dir where batch.m are researched")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
     parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
     spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
 
-    # # # temporary test without parser
+    # # temporary test without parser
     # filenames = ['./tests/samples_test/batch_example_spm.m',
     #              './tests/samples_test/partial_conjunction.m',
     #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
     #              '../nidm-examples/spm_explicit_mask/batch.m',
     #              '../nidm-examples/spm_full_example001/batch.m', # fr closest None
-    #              '../batch_covariate.m',
-    #              './tests/batch_test/SpatialPreproc.m']
+    #              '../nidm-examples/spm_non_sphericity/batch.m',
+    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
+    #            ]
     # output_file = '../res_temp.jsonld'
-    # # # UTLISIER CLICK https://zetcode.com/python/click/
-    # spm_to_bids_prov(filenames[4],conf.CONTEXT_URL, output_file=output_file)
+    # for filename in filenames[-1:]:
+    #     print(filename + '\n')
+    #     spm_to_bids_prov(filename, output_file=output_file)
+
+    # nidm_samples = os.listdir('../nidm-examples/')
+    # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
+    # # for spm_sample in spm_samples:
+    #     print('\n' + spm_sample + '\n')
+    #     spm_to_bids_prov(f"../nidm-examples/{spm_sample}/batch.m", output_file=output_file)

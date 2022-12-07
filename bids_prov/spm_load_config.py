@@ -51,6 +51,11 @@ def get_empty_graph(context_url=CONTEXT_URL):
 
 
 if __name__ == '__main__':
-    left_egal, right_egal = "channels.vols(1)", "cfg_dep('GunZip Files: GunZipped Files', substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{':'}));"
-    print(has_parameter(left_egal))
-    print(has_parameter(right_egal))
+    # left_egal, right_egal = "channels.vols(1)", "cfg_dep('GunZip Files: GunZipped Files', substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{':'}));"
+    # print(has_parameter(left_egal))
+    # print(has_parameter(right_egal))
+    right = '0.9;'
+    if not re.search(PATH_REGEX, right):
+        print("if")
+    else:
+        print("pas if")
