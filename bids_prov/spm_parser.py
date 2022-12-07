@@ -171,37 +171,31 @@ def with_dependency_process(records: dict, activity: dict, right: str, end_line:
     dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
     # check if the line call cfg_dep and retrieve the first parameter
     dep_number = re.search(r"{(\d+)}", right)  # retrieve all digits between parenthesis
+    output_entity = {}
+    closest_activity = None
     if dependency is not None:
         parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
         # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
         # return : ['Move/Delete Files', 'Moved/Copied Files']
-        closest_activity = None
+
         for act in records["prov:Activity"]:
             if act["label"].endswith(dep_number.group(1)):
                 closest_activity = act
-                break
+                output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))  # example : "niiri:oved/CopiedFiles1
 
-        break_loop = True  if closest_activity is None else False
-        # break for loop go to :  end_line in end_line_list
-
-        if verbose:
-            print(f"records : {records} \n closest_activity : {closest_activity}")
-
-        output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1)) #example : "niiri:oved/CopiedFiles1
-
-        activity["used"].append(output_id)  # adds to the current activity the fact that it has used the previous entity
-
-        output_entity = {
-            "@id": output_id,
-            "label": parts[-1],
-            # "prov:atLocation": TODO
-            "wasGeneratedBy": closest_activity["@id"],
-        }
+                activity["used"].append(output_id)  # adds to the current activity the fact that it has used the previous entity
+                output_entity = {
+                    "@id": output_id,
+                    "label": parts[-1],
+                    # "prov:atLocation": TODO
+                    "wasGeneratedBy": closest_activity["@id"],
+                }
+            if verbose:
+                print(f"records : {records} \n closest_activity : {closest_activity}")
     else:  # dependency is None no r"(d+)" # TODO not cover by test
-        break_loop = True
-        output_entity = {}
+
         Warning(f"Could not parse line with dependency {end_line}")
-    return break_loop, output_entity
+    return closest_activity, output_entity
 
 def get_records(task_groups: dict, records=None, verbose=False) -> dict:
     """Take the result of `group_lines` and output the corresponding
@@ -252,9 +246,9 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
                     and any(["substruct" in l for l in [common_prefix_act, left, right]]):
 
-                break_loop, output_entity = with_dependency_process(records, activity, right, end_line, verbose=verbose)
+                closest_activity, output_entity = with_dependency_process(records, activity, right, end_line, verbose=verbose)
 
-                if break_loop:
+                if closest_activity is None:
                     continue
                 else:
                     output_entities.append(output_entity)
@@ -303,10 +297,9 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 # @click.option("--output-file", "-o", required=True)
 # @click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
 # @click.option("--verbose", default=False)
-def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=False, indent=2) -> None:
+def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, verbose=False, indent=2) -> None:
     """
     Exporter from batch.m to an output jsonld
-
 
     """
     # filename = filename[0]  # FIXME
@@ -325,36 +318,21 @@ def spm_to_bids_prov(filename: str, context_url: str, output_file=None, verbose=
 
 
 if __name__ == "__main__":
-    pass
     # sys.exit(spm_to_bids_prov())
     # Example command  with CLI:
     # python -m bids_prov.spm_parser  ./examples/spm_default/batch_covariate.m  -o res.jsonld --verbose=False
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--input_file",
-        type=str,
-        default="./examples/spm_default/batch.m",
-        help="data dir where batch.m are researched",
-    )
-    parser.add_argument(
-        "--output_file",
-        type=str,
-        default="res.jsonld",
-        help="output dir where results are written",
-    )
+    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+                        help="data dir where batch.m are researched",)
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written", )
     parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
-    spm_to_bids_prov(
-        opt.input_file,
-        context_url=opt.context_url,
-        output_file=opt.output_file,
-        verbose=opt.verbose,
-    )
+    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
 
-    # # temporary test without click
+    # # # temporary test without parser
     # filenames = ['./tests/samples_test/batch_example_spm.m',
     #              './tests/samples_test/partial_conjunction.m',
     #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
@@ -363,8 +341,5 @@ if __name__ == "__main__":
     #              '../batch_covariate.m',
     #              './tests/batch_test/SpatialPreproc.m']
     # output_file = '../res_temp.jsonld'
-    # CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
     # # # UTLISIER CLICK https://zetcode.com/python/click/
-    # spm_to_bids_prov(filenames[0],CONTEXT_URL, output_file=output_file)
-    # print("******")
-    # spm_to_bids_prov(filenames[0], CONTEXT_URL, output_file=output_file)
+    # spm_to_bids_prov(filenames[4],conf.CONTEXT_URL, output_file=output_file)
