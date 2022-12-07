@@ -11,7 +11,7 @@ from bids_prov import spm_load_config as conf
 from bids_prov import get_id
 
 
-def format_activity_name(s: str, l=40) -> str:
+def format_activity_name(s: str, l=30) -> str:
     # s example : cfg_basicio.file_dir.file_ops.file_move._1
     if s.startswith("spm."):
         s = s[4:]
@@ -77,10 +77,10 @@ def readlines(filename: str):  # -> Generator[str, None, None]  from https://doc
                 brace_with_multiline = False
                 while _line.count("{") != _line.count("}"):
                     brace_with_multiline = True
-                    _line += next(fd)[:-1].lstrip() + ","  # TODO not cover by test
-                    # TODO error sur covariate matlabbatch{# 1}.spm.stats.factorial_design.des.t1.scans "," at end
+                    _line += next(fd)[:-1].lstrip() + ","  #
+                    # DONE error sur covariate matlabbatch{# 1}.spm.stats.factorial_design.des.t1.scans "," at end
                 if brace_with_multiline:
-                    _line = _line[-1] #drop last ,
+                    _line = _line[:-1] #drop last ,
                 while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
                     _line = _line.strip() + " " + next(fd)[:-1].lstrip()  # append
                 # print(_line)
@@ -231,8 +231,8 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
                 continue  # skip end of loop for end_line in end_line_list:
 
             left, right = split
-            print(left, '=', right)
             in_entity = get_input_entity(left, right, verbose=verbose)
+            print(f'M {common_prefix_act} end: ', left, '=', right)
 
             if in_entity:
                 print('-> in  entity')
@@ -249,37 +249,37 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
                     output_entities.append(output_entity)
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
-                # def param_process(left,right,verbose=False): TODO
+                # def param_process(left,right,verbose=False):
 
                 param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 right_= right[:-1]  # remove ";" at the end of right
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
                 # example : [4 2] becomes [4, 2]
-                # FIXME
-                if verbose:
-                    print("params", param_name, param_value)
+
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
                 # if param_value.startswith("struct"):
                 #     continue  # TODO handle dictionary-like parameters
 
-                try:  # TODO why use of exceptions
-                    eval(param_value)  # Convert '5' to 5
-                    # print(f"ok {param_value}")
+                # try:  # TODO why use of exceptions
+                #     eval(param_value)  # Convert '5' to 5
+                #     # print(f"ok {param_value}")
+                #
+                # except:
+                #     print(f"PARAM value except {param_value}  \n")
+                #     Warning(f"could not set {param_name} to {param_value}")
+                #     # "struct('name', {}, 'levels', {})" dans batch_example_spm
+                #     # Inf dans spm_HRF_informed_basis
+                #     # DONE spm_non_sphericity
+                #     #  if right {'/storage/essicdULTS/Sub01/CanonicalHRF/con_0001.nii,1', ........};,
+                #     #  param_value still have an extra ;
+                #
+                ## params.append([param_name, param_value])
+                # finally:
+                if verbose:
+                    print("params", param_name, param_value)
 
-                except:
-                    print(f"POP {param_value}  \n")
-                    Warning(f"could not set {param_name} to {param_value}")
-                    # "struct('name', {}, 'levels', {})" dans batch_example_spm
-                    # Inf dans spm_HRF_informed_basis
-                    # FIXME spm_non_sphericity
-                    #  if right {'/storage/essicdULTS/Sub01/CanonicalHRF/con_0001.nii,1', ........};,
-                    #  param_value still have an extra ;
+                params[param_name] = param_value
 
-
-                finally:
-                    params[param_name] = param_value
-
-                    # params.append([param_name, param_value])
 
         if input_entities:
             used_entities = [entity["@id"] for entity in input_entities]
@@ -332,29 +332,29 @@ if __name__ == "__main__":
     # Example command  with CLI:
     # python -m bids_prov.spm_parser  ./examples/spm_default/batch_covariate.m  -o res.jsonld --verbose=False
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-                        help="data dir where batch.m are researched")
-    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
-    parser.add_argument("--verbose", action="store_true", help="more print")
-    opt = parser.parse_args()
-
-    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+    #                     help="data dir where batch.m are researched")
+    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    # parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
+    # parser.add_argument("--verbose", action="store_true", help="more print")
+    # opt = parser.parse_args()
+    #
+    # spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
 
     # temporary test without parser
-    # filenames = ['./tests/samples_test/batch_example_spm.m',
-    #              './tests/samples_test/partial_conjunction.m',
-    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
-    #              '../nidm-examples/spm_explicit_mask/batch.m',
-    #              '../nidm-examples/spm_full_example001/batch.m', # fr closest None
-    #              '../nidm-examples/spm_non_sphericity/batch.m',
-    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
-    #            ]
-    # output_file = '../res_temp.jsonld'
-    # for filename in filenames[-2:-1]:
-    #     print(filename + '\n')
-    #     spm_to_bids_prov(filename, output_file=output_file)
+    filenames = ['./tests/samples_test/batch_example_spm.m',
+                 './tests/samples_test/partial_conjunction.m',
+                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
+                 '../nidm-examples/spm_explicit_mask/batch.m',
+                 '../nidm-examples/spm_full_example001/batch.m', # fr closest None
+                 '../nidm-examples/spm_non_sphericity/batch.m',
+                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
+               ]
+    output_file = '../res_temp.jsonld'
+    for filename in filenames[-2:-1]:
+        print(filename + '\n')
+        spm_to_bids_prov(filename, output_file=output_file)
 
     # nidm_samples = os.listdir('../nidm-examples/')
     # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
