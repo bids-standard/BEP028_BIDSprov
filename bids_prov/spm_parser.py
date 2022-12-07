@@ -64,12 +64,6 @@ def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
     return entity
 
 
-def preproc_param_value(val: str) -> str:
-    if val[0] == "[":  # example : [4 2] becomes [4, 2]
-        return val.replace(" ", ", ")
-    return val
-
-
 def readlines(filename: str):  # -> Generator[str, None, None]  from https://docs.python.org/3/library/typing.html
     """Read lines from the original batch.m file
 
@@ -80,9 +74,13 @@ def readlines(filename: str):  # -> Generator[str, None, None]  from https://doc
         for line in fd:
             if line.startswith("matlabbatch"):
                 _line = line[:-1]  # remove "\n"
+                brace_with_multiline = False
                 while _line.count("{") != _line.count("}"):
+                    brace_with_multiline = True
                     _line += next(fd)[:-1].lstrip() + ","  # TODO not cover by test
                     # TODO error sur covariate matlabbatch{# 1}.spm.stats.factorial_design.des.t1.scans "," at end
+                if brace_with_multiline:
+                    _line = _line[-1] #drop last ,
                 while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
                     _line = _line.strip() + " " + next(fd)[:-1].lstrip()  # append
                 # print(_line)
@@ -237,6 +235,7 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
             in_entity = get_input_entity(left, right, verbose=verbose)
 
             if in_entity:
+                print('-> in  entity')
                 input_entities.append(in_entity)
 
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
@@ -251,8 +250,12 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
                 # def param_process(left,right,verbose=False): TODO
+
                 param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
-                param_value = preproc_param_value(right[:-1])  # remove ";" at the end of right
+                right_= right[:-1]  # remove ";" at the end of right
+                param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
+                # example : [4 2] becomes [4, 2]
+                # FIXME
                 if verbose:
                     print("params", param_name, param_value)
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
@@ -261,15 +264,17 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 
                 try:  # TODO why use of exceptions
                     eval(param_value)  # Convert '5' to 5
-                    # print(f"ok {param_value} type {type(param_value)}")
+                    # print(f"ok {param_value}")
 
                 except:
-                    print(f"POP {param_value} type {type(param_value)}  \n")
+                    print(f"POP {param_value}  \n")
                     Warning(f"could not set {param_name} to {param_value}")
                     # "struct('name', {}, 'levels', {})" dans batch_example_spm
                     # Inf dans spm_HRF_informed_basis
-                    # {'/storage/essicd/data/NIDM-Ex/Testing/ds000006/RESULTS/Sub01/CanonicalHRF/con_0001.nii,1', ........}; type <class 'str'> dans spm_non_sphericity
-                    # continue
+                    # FIXME spm_non_sphericity
+                    #  if right {'/storage/essicdULTS/Sub01/CanonicalHRF/con_0001.nii,1', ........};,
+                    #  param_value still have an extra ;
+
 
                 finally:
                     params[param_name] = param_value
@@ -337,7 +342,7 @@ if __name__ == "__main__":
 
     spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
 
-    # # temporary test without parser
+    # temporary test without parser
     # filenames = ['./tests/samples_test/batch_example_spm.m',
     #              './tests/samples_test/partial_conjunction.m',
     #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
@@ -347,7 +352,7 @@ if __name__ == "__main__":
     #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
     #            ]
     # output_file = '../res_temp.jsonld'
-    # for filename in filenames[-1:]:
+    # for filename in filenames[-2:-1]:
     #     print(filename + '\n')
     #     spm_to_bids_prov(filename, output_file=output_file)
 
