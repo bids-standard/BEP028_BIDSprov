@@ -38,15 +38,12 @@ def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
             print("the string contains parameters so this is not an input_entity")
         return None
     # if not next(re.finditer(conf.PATH_REGEX, right), None):  # Remi like
-    if not re.search(conf.PATH_REGEX, right):
-        # r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
+    if not re.search(conf.PATH_REGEX, right):  # r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
         # if not None (if it doesn't match with conf.PATH_REGEX), enter in if
         if verbose:
             print("the string does not match with conf.PATH_REGEX")
         return None
-    # if not next(re.finditer(conf.FILE_REGEX, right), None):
-    if not re.search(conf.FILE_REGEX, right):
-        # r"(\.[a-z]{1,3}){1,2}"
+    if not re.search(conf.FILE_REGEX, right): # r"(\.[a-z]{1,3}){1,2}"
         # the string does not contain a filename extension so this is not an entity
         if verbose:
             print("the string does not contain a filename so this is not an input_entity")
