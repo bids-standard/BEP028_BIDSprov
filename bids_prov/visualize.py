@@ -5,7 +5,9 @@ This facilitates debugging and design of the specifications
 """
 import sys
 
-import click
+# import click
+import argparse
+
 # from graphviz import Digraph
 from prov.model import ProvDocument
 from prov.dot import prov_to_dot
@@ -24,11 +26,19 @@ OPTIONAL_FIELDS = dict(  # fields to omit if `--high-level` flag activated
     Entity=("atLocation", "generatedAt"),
 )
 
+
 def viz_turtle(content=None, img_file=None, source=None, **kwargs):
 
-    prov_doc = ProvDocument.deserialize(content=content, format='rdf', rdf_format='turtle', source=source)
+    prov_doc = ProvDocument.deserialize(
+        content=content, format="rdf", rdf_format="turtle", source=source
+    )
     # TODO : show attributes has optional arg
-    dot = prov_to_dot(prov_doc, use_labels=True, show_element_attributes=False, show_relation_attributes=False)
+    dot = prov_to_dot(
+        prov_doc,
+        use_labels=True,
+        show_element_attributes=False,
+        show_relation_attributes=False,
+    )
     dot.write_png(img_file)
 
 
@@ -40,19 +50,25 @@ def viz_jsonld11(jsonld11, img_file):
     img_file: str
         output path
     """
-    req_context_11 = requests.get(url=jsonld11['@context'])
+    req_context_11 = requests.get(url=jsonld11["@context"])
     context_11 = req_context_11.json()
-    context_10 = {k: v for k, v in context_11['@context'].items() if k not in {'@version', 'records'}}
+    context_10 = {
+        k: v
+        for k, v in context_11["@context"].items()
+        if k not in {"@version", "records"}
+    }
 
     # Load graph from json-ld file as non 1.1 JSON-LD
     aa = ld.jsonld.compact(jsonld11, context_10)
     # print('aa from  ld.jsonld.compact', *aa['@graph'], sep='\n')
     dataaa = json.dumps(aa, indent=2)  # , sort_keys=True)
 
-    g = rl.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
-    g.parse(data=dataaa, format='json-ld')
+    g = (
+        rl.ConjunctiveGraph()
+    )  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+    g.parse(data=dataaa, format="json-ld")
     # print("G .serial\n\n", "==" * 15, g.serialize(format='turtle'))
-    viz_turtle(content=g.serialize(format='turtle'), img_file=img_file)
+    viz_turtle(content=g.serialize(format="turtle"), img_file=img_file)
 
     # TODO remove pyld dependency and get rdflib parsing directly
     #   https://github.com/digitalbazaar/pyld/blob/316fbc2c9e25b3cf718b4ee189012a64b91f17e7/lib/pyld/jsonld.py#L660
@@ -79,7 +95,7 @@ def join_jsonld(lds, graph_key="records", omit_details=True):
         omit low level details like datetimes and paths
     Notes: assumes graph is typed indexed
     """
-    ctx = set((_['@context'] for _ in lds))
+    ctx = set((_["@context"] for _ in lds))
     if not len(ctx) == 1:
         raise ValueError(f"jsonlds should have a common context, found {ctx}")
     payload = {"@context": next(iter(ctx)), graph_key: defaultdict(list)}
@@ -90,7 +106,11 @@ def join_jsonld(lds, graph_key="records", omit_details=True):
         for _type, values in graph.items():
             if omit_details and _type[5:] in OPTIONAL_FIELDS.keys():
                 values = [
-                    {k: d[k] for k in d if k not in OPTIONAL_FIELDS.get(_type[5:], tuple())}
+                    {
+                        k: d[k]
+                        for k in d
+                        if k not in OPTIONAL_FIELDS.get(_type[5:], tuple())
+                    }
                     for d in values
                 ]
 
@@ -100,7 +120,6 @@ def join_jsonld(lds, graph_key="records", omit_details=True):
         warnings.warn(f"could not found any {graph_key} section in the jsonlds")
     # payload[graph_key]] = dict(payload[graph_key]])
     return payload
-
 
 
 # @click.command()
@@ -119,27 +138,45 @@ def main(filename, output_file=None, omit_details=True):
     jsonld11 = join_jsonld(jsonld11s, graph_key="records", omit_details=omit_details)
 
     if output_file is None:
-        output_file = os.path.splitext(filename)[0] + '.png'  # replace extension .jsonld by .png
+        output_file = (
+            os.path.splitext(filename)[0] + ".png"
+        )  # replace extension .jsonld by .png
 
     viz_jsonld11(jsonld11, output_file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # sys.exit(main())
     # Example command  with CLI:
     # python -m bids_prov.visualize ./res.jsonld -o res.png
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input_file",
+        type=str,
+        help="data jsonld file ",
+    )
+    parser.add_argument(
+        "--output_file",
+        type=str,
+        default="res.png",
+        help="output dir where results are written",
+    )
+    opt = parser.parse_args()
 
-    filenames = ['../batch_example_spm.jsonld',
-                 '../batch_covariate_ref.jsonld',
-                 '../nidm-examples/spm_covariate/batch_ref.jsonld',
-                 '../partial_conjunction.jsonld']
+    main(opt.input_file, output_file=opt.output_file, omit_details=True)
 
-    # # filename = '../batch_example_spm_ref.jsonld'
-    # './tests/batch_test/SpatialPreproc.m',
-    # '../spm_HRF_informed_basis/batch_covariate.m']
-    # output_file = '../batch_example_spm2.png'
-    main(filenames[-1], omit_details=True)
+    # temporary test without click
+    # filenames = ['../batch_example_spm.jsonld',
+    #              '../batch_covariate_ref.jsonld',
+    #              '../nidm-examples/spm_covariate/batch_ref.jsonld',
+    #              '../partial_conjunction.jsonld']
+
+    # # # filename = '../batch_example_spm_ref.jsonld'
+    # # './tests/batch_test/SpatialPreproc.m',
+    # # '../spm_HRF_informed_basis/batch_covariate.m']
+    # # output_file = '../batch_example_spm2.png'
+    # main(filenames[-1], omit_details=True)
 
     ##
 
