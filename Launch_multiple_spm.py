@@ -5,6 +5,7 @@ import os
 import shutil
 import argparse
 from bids_prov import spm_load_config as conf
+import git
 
 
 def main():
@@ -15,9 +16,9 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--data_dir",
+        "--input_dir",
         type=str,
-        default="../nidmresults-examples",
+        default=None,
         help="data dir where batch.m are researched",
     )
     parser.add_argument(
@@ -30,15 +31,25 @@ def main():
 
     opt = parser.parse_args()
 
+    if opt.input_dir == None:
+        if os.path.exists("nidmresults-examples"):
+            opt.input_dir = "nidmresults-examples"
+        else:
+            print("Fetching nidmresults-examples...")
+            git.Git().clone("https://github.com/incf-nidash/nidmresults-examples")
+            opt.input_dir = "nidmresults-examples"
+            print("Fetch done.")
+
     if os.path.exists(opt.output_dir):
         shutil.rmtree(opt.output_dir)
     os.makedirs(opt.output_dir, exist_ok=True)
 
-    for root, dirs, files in os.walk(opt.data_dir):
+    print("Processing files...")
+    for root, dirs, files in os.walk(opt.input_dir):
         for file in files:
             # matlab extension the one of your choice.
             if file.endswith("batch.m"):
-                print("file=", root + "/" + str(file))
+                print("    file=", root + "/" + str(file))
 
                 output_file_base = root.split("/")[-1]
 
@@ -58,6 +69,7 @@ def main():
                     opt.output_dir + "/" + output_file_base + ".jsonld",
                     output_file=opt.output_dir + "/" + output_file_base + ".png",
                 )
+    print(f"End of processed files. Results in dir : '{opt.output_dir}'")
 
 
 if __name__ == "__main__":
