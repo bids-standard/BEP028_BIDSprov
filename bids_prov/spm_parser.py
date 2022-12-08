@@ -228,14 +228,14 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
             split = end_line.split(" = ")  # split in 2 at the level of the equal the rest of the action
             if len(split) != 2:
                 print(f"could not parse with more than 2 '=' in end line : ' {end_line}'") # TODO not cover by test
-                continue  # skip end of loop for end_line in end_line_list:
+                continue  # skip end of loop for end_Pline in end_line_list:
 
             left, right = split
             in_entity = get_input_entity(left, right, verbose=verbose)
-            print(f'M {common_prefix_act} end: ', left, '=', right)
+            if verbose: print(f'M {common_prefix_act} end: ', left, '=', right)
 
             if in_entity:
-                print('-> in  entity')
+                if verbose: print('-> in  entity')
                 input_entities.append(in_entity)
 
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
