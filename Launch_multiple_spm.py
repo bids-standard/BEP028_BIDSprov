@@ -15,23 +15,13 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--input_dir",
-        type=str,
-        default=None,
-        help="data dir where batch.m are researched",
-    )
-    parser.add_argument(
-        "--output_dir",
-        type=str,
-        default="results",
-        help="output dir where results are written",
-    )
+    parser.add_argument("--input_dir", type=str, default=None, help="data dir where batch.m are researched")
+    parser.add_argument("--output_dir", type=str, default="results", help="output dir where results are written")
     parser.add_argument("--verbose", action="store_true", help="more print")
 
     opt = parser.parse_args()
 
-    if opt.input_dir == None:
+    if opt.input_dir is None:
         if os.path.exists("nidmresults-examples"):
             opt.input_dir = "nidmresults-examples"
         else:
@@ -50,13 +40,9 @@ def main():
             # matlab extension the one of your choice.
             if file.endswith("batch.m"):
                 print("    file=", root + "/" + str(file))
-
                 output_file_base = root.split("/")[-1]
-
                 filename = root + "/" + str(file)
-                shutil.copyfile(
-                    filename, opt.output_dir + "/" + output_file_base + "_batch.m"
-                )
+                shutil.copyfile(filename, opt.output_dir + "/" + output_file_base + "_batch.m")
 
                 spm_to_bids_prov(
                     root + "/" + str(file),
