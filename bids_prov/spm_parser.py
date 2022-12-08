@@ -1,5 +1,3 @@
-import sys
-
 # import click
 import argparse
 import json
@@ -10,10 +8,22 @@ from collections import defaultdict
 from bids_prov import spm_load_config as conf
 from bids_prov import get_id
 
-
 def format_activity_name(activity_name: str, l_max=30) -> str:
-    """ Limit
+    """Function to limit name of activity
 
+    Parameters
+    ----------
+    activity_name : name of activity
+    l_max : maximal length with cut in words between dots
+
+
+    Examples
+    --------
+    Examples should be written in doctest format, and should illustrate how
+    to use the function.
+
+    >>> print(format_activity_name("cfg_basicio.file_dir.file_ops.file_move._1"))
+    file_dir.file_ops.file_move._1
 
     """
     # s example : cfg_basicio.file_dir.file_ops.file_move._1
@@ -26,13 +36,21 @@ def format_activity_name(activity_name: str, l_max=30) -> str:
 
 
 def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
-    """get input Entity if possible else return None
-    Very few entities in detectable inputs. We find for example the read files.
+    """Get input Entity if possible else return None
 
-    left: string
-        left side of ' = '
-    right: string
-        right side of ' = '
+
+    Parameters
+    ----------
+    left : left side of ' = '
+    right : right side of ' = '
+    verbose : bool to have more verbosity
+    Returns
+    -------
+    None
+        if parameter in left, no path_regex in right, or no file_regex in right
+     dict[str, str]
+        else with key "@id", "label", "prov"
+
     """
     if conf.has_parameter(left):  # r"[^\.]+\(\d+\)"
         # a string contains at least one parameter if it does not start with a dot and contains at least one digit
@@ -69,9 +87,12 @@ def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
 
 
 def readlines(filename: str):  # -> Generator[str, None, None]  from https://docs.python.org/3/library/typing.html
-    """Read lines from the original batch.m file
+    """Read lines from the original batch.m file. A definition should be associated with a single line in the output
 
-    A definition should be associated with a single line in the output
+    Parameters
+    ----------
+    filename : filename of a matlab batch.m
+
     """
     cnt = 0 # TODO count activity here or in another function
     with open(filename) as fd:
@@ -84,7 +105,7 @@ def readlines(filename: str):  # -> Generator[str, None, None]  from https://doc
                     _line += next(fd)[:-1].lstrip() + ","  #
                     # DONE error sur covariate matlabbatch{# 1}.spm.stats.factorial_design.des.t1.scans "," at end
                 if brace_with_multiline:
-                    _line = _line[:-1] #drop last ,
+                    _line = _line[:-1] #drop last in case of multiline,
                 while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
                     _line = _line.strip() + " " + next(fd)[:-1].lstrip()  # append
                 # print(_line)
@@ -92,9 +113,7 @@ def readlines(filename: str):  # -> Generator[str, None, None]  from https://doc
 
 
 def group_lines(lines: list) -> dict:
-    """Group line by their activity id
-
-    The activity id is between curly brackets, for every line
+    """Group line by their activity id.  The activity id is between curly brackets, for every line
 
     Parameters
     ----------
@@ -114,11 +133,10 @@ def group_lines(lines: list) -> dict:
     """
     res = defaultdict(list)  # KEYS : activity number (act_id), VALUES : rest of the line without matlabbatch{3}.
     # example: in batch_covariate.m of spm12:
-    # matlabbatch{3}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));
+    # matlabbatch{3}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File', substruct('.'....
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.name = 'mr vs plain covariate';
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.weights = 1;
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-    # return
 
     for line in lines:
         a = re.search(r"\{\d+\}", line)
@@ -142,6 +160,19 @@ def group_lines(lines: list) -> dict:
 
 
 def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id: str) -> list:
+    """ Get entities from external conf_dic (import yaml file)
+
+    Parameters
+    ----------
+    conf_dic : configuration dict (import yaml file from call)
+    activity_name : current activity name
+    activity_id : current activity id
+
+    Returns
+    -------
+    list[dict]
+        each element is an entity dict with key    "@id", "label", "prov:atLocation", "wasGeneratedBy"
+    """
     # checks if spatial.preproc is contained in the name of the current activity and if so returns spatial.preproc
     #
     # REMI like :conf_outputs = next((k for k in conf_dic if k in activity_n), None)
@@ -159,11 +190,29 @@ def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id
                      "wasGeneratedBy": activity_id,
                      }
                 )
-            break  # stop for loop at first math in if statement (match activity)
+            break  # stop for loop at first math in if statement (match activity in conf_dic)
 
     return output_entities  # empty list [] if no match,
 
-def dependency_process(records: dict, activity: dict, right: str, end_line: str, verbose=False) -> tuple:
+def dependency_process(records_activities: list, activity: dict, right: str, verbose=False) -> tuple:
+    """Function to search dependent activity in right line. If found, find the corresponding activity
+    in records_activities, update id in activity["used"], and return output_entity
+
+    Parameters
+    ----------
+    records_activities : list of the previous recorded activities
+    activity :  current activity
+    right : current right end of line
+    verbose : True to have more verbosity
+
+    Returns
+    -------
+    tuple
+        (closest_activity, output_entity) :
+        - closest_activity is None if not found . output_entity={}
+        - else closest_activity is  the previous activity in records_activities, output_entity is the generated entity
+
+    """
     # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
     # to a function, the common part will be full and so left will be empty
     dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
@@ -174,9 +223,8 @@ def dependency_process(records: dict, activity: dict, right: str, end_line: str,
     if dependency is not None:
         parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
         # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
-        # return : ['Move/Delete Files', 'Moved/Copied Files']
-
-        for act in records["prov:Activity"]:
+        # return : ['Move/Delete Files', 'Moved/Copied Files'
+        for act in records_activities:
             if act["label"].endswith(dep_number.group(1)):
                 closest_activity = act
                 output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))  # example : "niiri:oved/CopiedFiles1
@@ -188,23 +236,28 @@ def dependency_process(records: dict, activity: dict, right: str, end_line: str,
                                  "wasGeneratedBy": closest_activity["@id"],
                 }
             if verbose:
-                print(f"records : {records} \n closest_activity : {closest_activity}")
+                print(f"closest_activity : {closest_activity}")
     else:  # dependency is None no r"(d+)" # TODO not cover by test
 
-        Warning(f"Could not parse line with dependency {end_line}")
+        Warning(f"Could not parse line with dependency {right}")
     return closest_activity, output_entity
 
-def get_records(task_groups: dict, records=None, verbose=False) -> dict:
-    """Take the result of `group_lines` and output the corresponding
-    JSON-ld graph as a python dict
+def get_records(task_groups: dict, verbose=False) -> dict:
+    """Take the result of `group_lines` and output the corresponding  JSON-ld graph as a python dict
 
-    See Also
-    --------
-    bids_prov.spm_parser.group_lines
+    Parameters
+    ----------
+    task_groups : task activities grouped by activity number
+    verbose : True to have more verbosity
+
+    Returns
+    -------
+    dict[str, list]
+        records : dict with key "@context", ... "records":{"prov:Agent": ..."prov:Activity":..."prov:Entity":....}
+
     """
 
-    if records is None:
-        records = defaultdict(list)
+    records = defaultdict(list)
     if verbose:
         print(f"task_groups : {task_groups}")
 
@@ -218,9 +271,7 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
                     "used": list(),
                     "wasAssociatedWith": "RRID:SCR_007037",  # TODO ?
         }
-        if verbose:
-            print("-" * 50)
-            print(f"activity : {activity}, values : {task_groups[common_prefix_act]}")
+
         output_entities, input_entities = list(), list()
         params = {}
 
@@ -236,16 +287,19 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 
             left, right = split
             in_entity = get_input_entity(left, right, verbose=verbose)
-            print(f'M {common_prefix_act} end: ', left, '=', right)
+            if verbose:
+                print(f'M {common_prefix_act} end: ', left, '=', right)
 
             if in_entity:
-                print('-> in  entity')
                 input_entities.append(in_entity)
+                if verbose:
+                    print('-> in  entity')
 
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
                     and any(["substruct" in l for l in [common_prefix_act, left, right]]):
 
-                closest_activity, output_entity = dependency_process(records, activity, right, end_line, verbose=verbose)
+                closest_activity, output_entity = dependency_process(records["prov:Activity"],
+                                                                     activity, right, verbose=verbose)
 
                 if closest_activity is None:
                     continue
@@ -253,18 +307,17 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
                     output_entities.append(output_entity)
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
-                # def param_process(left,right,verbose=False):
 
                 param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 right_= right[:-1]  # remove ";" at the end of right
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
-                # example : [4 2] becomes [4, 2]
-
+                params[param_name] = param_value # example : [4 2] becomes [4, 2]
+                if verbose:
+                    print("params", param_name, param_value)
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
                 # if param_value.startswith("struct"):
                 #     continue  # TODO handle dictionary-like parameters
-
-                # try:  # TODO why use of exceptions
+                # try:
                 #     eval(param_value)  # Convert '5' to 5
                 #     # print(f"ok {param_value}")
                 #
@@ -279,10 +332,6 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
                 #
                 ## params.append([param_name, param_value])
                 # finally:
-                if verbose:
-                    print("params", param_name, param_value)
-
-                params[param_name] = param_value
 
 
         if input_entities:
@@ -312,8 +361,21 @@ def get_records(task_groups: dict, records=None, verbose=False) -> dict:
 # @click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
 # @click.option("--verbose", default=False)
 def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, verbose=False, indent=2) -> None:
-    """
-    Exporter from batch.m to an output jsonld
+    """ Exporter from batch.m to an output jsonld
+
+    Parameters
+    ----------
+    filename : str
+        input file of batch.m; example filename = "/test/spm_batch.m"
+    context_url : str, optional
+        url of context, by default conf.CONTEXT_URL=
+    output_file : str, optional
+        if None, default is filename with jsonld extension = "/test/spm_batch.jsonld"
+    verbose : bool, optional
+        False with less verbosity by default
+    indent : int, optional
+        2, number of indentation in jsonfile between each object
+
 
     """
     # filename = filename[0]  # FIXME
@@ -336,29 +398,29 @@ if __name__ == "__main__":
     # Example command  with CLI:
     # python -m bids_prov.spm_parser  ./examples/spm_default/batch_covariate.m  -o res.jsonld --verbose=False
 
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-    #                     help="data dir where batch.m are researched")
-    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    # parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
-    # parser.add_argument("--verbose", action="store_true", help="more print")
-    # opt = parser.parse_args()
-    #
-    # spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+                        help="data dir where batch.m are researched")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--verbose", action="store_true", help="more print")
+    opt = parser.parse_args()
 
-    # temporary test without parser
-    filenames = ['./tests/samples_test/batch_example_spm.m',
-                 './tests/samples_test/partial_conjunction.m',
-                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
-                 '../nidm-examples/spm_explicit_mask/batch.m',
-                 '../nidm-examples/spm_full_example001/batch.m', # fr closest None
-                 '../nidm-examples/spm_non_sphericity/batch.m',
-                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
-               ]
-    output_file = '../res_temp.jsonld'
-    for filename in filenames[-2:-1]:
-        print(filename + '\n')
-        spm_to_bids_prov(filename, output_file=output_file)
+    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+
+    # TEMPORY TEST FOR DEBUGGER
+    # filenames = ['./tests/samples_test/batch_example_spm.m',
+    #              './tests/samples_test/partial_conjunction.m',
+    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
+    #              '../nidm-examples/spm_explicit_mask/batch.m',
+    #              '../nidm-examples/spm_full_example001/batch.m', # fr closest None
+    #              '../nidm-examples/spm_non_sphericity/batch.m',
+    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
+    #            ]
+    # output_file = '../res_temp.jsonld'
+    # for filename in filenames[-1:]:
+    #     print('\n' + filename + '\n')
+    #     spm_to_bids_prov(filename, output_file=output_file,verbose=False)
 
     # nidm_samples = os.listdir('../nidm-examples/')
     # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
