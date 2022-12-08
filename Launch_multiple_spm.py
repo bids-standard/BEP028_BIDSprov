@@ -5,7 +5,7 @@ import os
 import shutil
 import argparse
 from bids_prov import spm_load_config as conf
-import git
+
 
 
 def main():
@@ -15,20 +15,12 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--input_dir", type=str, default=None, help="data dir where batch.m are researched")
+    parser.add_argument("--input_dir", type=str, default="nidmresults-examples",
+                        help="data dir where batch.m are researched")
     parser.add_argument("--output_dir", type=str, default="results", help="output dir where results are written")
     parser.add_argument("--verbose", action="store_true", help="more print")
 
     opt = parser.parse_args()
-
-    if opt.input_dir is None:
-        if os.path.exists("nidmresults-examples"):
-            opt.input_dir = "nidmresults-examples"
-        else:
-            print("Fetching nidmresults-examples...")
-            git.Git().clone("https://github.com/incf-nidash/nidmresults-examples")
-            opt.input_dir = "nidmresults-examples"
-            print("Fetch done.")
 
     if os.path.exists(opt.output_dir):
         shutil.rmtree(opt.output_dir)
@@ -42,19 +34,20 @@ def main():
                 print("    file=", root + "/" + str(file))
                 output_file_base = root.split("/")[-1]
                 filename = root + "/" + str(file)
-                shutil.copyfile(filename, opt.output_dir + "/" + output_file_base + "_batch.m")
+                filename_ss_ext = file.split(".m")[0]
+                shutil.copyfile(filename, opt.output_dir + "/" + output_file_base + "_" + str(file))
+                output_jsonld = opt.output_dir + "/" + output_file_base + "_" + filename_ss_ext + ".jsonld"
 
                 spm_to_bids_prov(
                     root + "/" + str(file),
                     conf.CONTEXT_URL,
-                    output_file=opt.output_dir + "/" + output_file_base + ".jsonld",
+                    output_file=output_jsonld,
                     verbose=opt.verbose,
                 )
 
-                visualize(
-                    opt.output_dir + "/" + output_file_base + ".jsonld",
-                    output_file=opt.output_dir + "/" + output_file_base + ".png",
-                )
+                output_png = opt.output_dir + "/" + output_file_base + "_" + filename_ss_ext + ".png"
+
+                visualize(output_jsonld, output_file=output_png,)
     print(f"End of processed files. Results in dir : '{opt.output_dir}'")
 
 

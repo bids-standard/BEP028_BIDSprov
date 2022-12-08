@@ -19,7 +19,28 @@ jobs:
           sudo apt-get install graphviz
       - name: Test SPM parser on SPM nidm examples
         run: |
-          python Launch_multiple_spm.py
+          mkdir -p nidmresults-examples
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_group_ols/batch.m -O nidmresults-examples/spm_group_ols_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_voxelunct4/batch.m -O nidmresults-examples/spm_thr_voxelunct4_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_clustfwep05/batch.m -O nidmresults-examples/spm_thr_clustfwep05_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_covariate/batch.m -O nidmresults-examples/spm_covariate_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_group_wls/batch.m -O nidmresults-examples/spm_group_wls_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_contrast_mask/batch.m -O nidmresults-examples/spm_contrast_mask_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_clustunck10/batch.m -O nidmresults-examples/spm_thr_clustunck10_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_voxelfwep05/batch.m -O nidmresults-examples/spm_thr_voxelfwep05_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_hrf_fir/batch.m -O nidmresults-examples/spm_hrf_fir_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_explicit_mask/batch.m -O nidmresults-examples/spm_explicit_mask_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_2_t_test/batch.m -O nidmresults-examples/spm_2_t_test_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_conjunction/batch.m -O nidmresults-examples/spm_conjunction_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_con_f/batch.m -O nidmresults-examples/spm_con_f_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_default/batch.m -O nidmresults-examples/spm_default_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_HRF_informed_basis/batch.m -O nidmresults-examples/spm_HRF_informed_basis_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_partial_conjunction/batch.m -O nidmresults-examples/spm_partial_conjunction_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_full_example001/batch.m -O nidmresults-examples/spm_full_example001_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_voxelfdrp05/batch.m -O nidmresults-examples/spm_thr_voxelfdrp05_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_temporal_derivative/batch.m -O nidmresults-examples/spm_temporal_derivative_batch.m
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_non_sphericity/batch.m -O nidmresults-examples/spm_non_sphericity_batch.m
+          python Launch_multiple_spm.py --input_dir nidmresults-examples
       - uses: actions/upload-artifact@v3
         with:
           name: SPM_on_nidm_examples
