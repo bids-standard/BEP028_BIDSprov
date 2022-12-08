@@ -60,7 +60,7 @@ def test_group_lines():
 
 
 def test_format_activity_name():
-    s = "cfg_basicio.file_dir.file_ops.file_move._1"
+    s = "cfg_basicio.file_dir.file_ops.file_move._1" # TODO
     assert format_activity_name(s) == "file_dir.file_ops.file_move._1"
 
 

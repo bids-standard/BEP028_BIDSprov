@@ -11,14 +11,18 @@ from bids_prov import spm_load_config as conf
 from bids_prov import get_id
 
 
-def format_activity_name(s: str, l=30) -> str:
+def format_activity_name(activity_name: str, l_max=30) -> str:
+    """ Limit
+
+
+    """
     # s example : cfg_basicio.file_dir.file_ops.file_move._1
-    if s.startswith("spm."):
-        s = s[4:]
-    tmp = s.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
-    while sum(map(len, tmp)) > l:  # sum of the lengths of each element of tmp
-        tmp = tmp[1:]
-    return ".".join(tmp)  # file_dir.file_ops.file_move._1
+    if activity_name.startswith("spm."):
+        activity_name = activity_name[4:]
+    act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
+    while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
+        act_split = act_split[1:]
+    return ".".join(act_split)  # file_dir.file_ops.file_move._1
 
 
 def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
