@@ -1,3 +1,5 @@
+import sys
+
 # import click
 import argparse
 import json
@@ -133,10 +135,11 @@ def group_lines(lines: list) -> dict:
     """
     res = defaultdict(list)  # KEYS : activity number (act_id), VALUES : rest of the line without matlabbatch{3}.
     # example: in batch_covariate.m of spm12:
-    # matlabbatch{3}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File', substruct('.'....
+    # matlabbatch{3}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.name = 'mr vs plain covariate';
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.weights = 1;
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
+    # return
 
     for line in lines:
         a = re.search(r"\{\d+\}", line)
@@ -307,6 +310,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                     output_entities.append(output_entity)
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
+                # def param_process(left,right,verbose=False):
 
                 param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 right_= right[:-1]  # remove ";" at the end of right
