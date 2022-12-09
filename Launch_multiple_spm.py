@@ -1,11 +1,9 @@
-from bids_prov.spm_parser import spm_to_bids_prov
-from bids_prov.visualize import main as visualize
-
 import os
 import shutil
 import argparse
 from bids_prov import spm_load_config as conf
-
+from bids_prov.spm_parser import spm_to_bids_prov
+from bids_prov.visualize import main as visualize
 
 
 def main():

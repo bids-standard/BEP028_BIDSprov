@@ -1,6 +1,5 @@
 import json
 import os.path
-
 import rdflib
 import requests
 import pyld
