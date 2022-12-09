@@ -87,12 +87,10 @@ def readlines(filename: str):  # -> Generator  from https://docs.python.org/3/li
                 while _line.count("{") != _line.count("}"):
                     brace_with_multiline = True
                     _line += next(fd)[:-1].lstrip() + ","  #
-                    # DONE error sur covariate matlabbatch{# 1}.spm.stats.factorial_design.des.t1.scans "," at end
                 if brace_with_multiline:
                     _line = _line[:-1] #drop last in case of multiline,
                 while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
                     _line = _line.strip() + " " + next(fd)[:-1].lstrip()  # append
-                # print(_line)
                 yield _line
 
 
@@ -121,7 +119,6 @@ def group_lines(lines: list) -> dict:
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.name = 'mr vs plain covariate';
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.weights = 1;
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-    # return
 
     for line in lines:
         a = re.search(r"\{\d+\}", line)
@@ -167,10 +164,12 @@ def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id
     output_entities = list()
     for activity in conf_dic.keys():
         if activity in activity_name:
-            for output in conf_dic[activity]:
+            for output in conf_dic[activity]['outputs']: #{'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
+                name = conf_dic[activity]['name']
+                # print(f"    OOOO output {output} name {name}")
                 output_entities.append(
-                    {"@id": output + get_id(),
-                     "label": output,
+                    {"@id": name + '_'+  output + get_id(),
+                     "label": name, # TODO
                      "prov:atLocation": output,
                      "wasGeneratedBy": activity_id,
                      }
@@ -192,8 +191,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
 
     Returns
     -------
-    dict
-        output_entity : it is the generated entity with the  corresponding closest activity
+    output_entity : it is the generated entity with the  corresponding closest activity
 
     """
 
@@ -406,8 +404,8 @@ if __name__ == "__main__":
     #              '../nidm-examples/spm_covariate/batch.m',
     #            ]
     # output_file = '../res_temp.jsonld'
-    # # for filename in filenames[-2:]:
-    # filename= filenames[1]
+    # # # for filename in filenames[-2:]:
+    # filename= filenames[-2]
     # print('\n' + filename + '\n')
     # spm_to_bids_prov(filename, output_file=output_file,verbose=True)
 
