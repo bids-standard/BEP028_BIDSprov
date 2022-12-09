@@ -60,7 +60,7 @@ def test_group_lines():
 
 
 def test_format_activity_name():
-    s = "cfg_basicio.file_dir.file_ops.file_move._1" # TODO
+    s = "cfg_basicio.file_dir.file_ops.file_move._1"
     assert format_activity_name(s) == "file_dir.file_ops.file_move._1"
 
 
@@ -69,13 +69,12 @@ def test_get_input_entity():
     left = "files"
     right = "{'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};"
     # entity label : sub-01_task-tonecounting_bold.nii.gz
-    entity = {
-        "@id": "niiri:sub-01_task-tonecounting_bold.nii.gzgNSWPHprVq",
-        "label": "sub-01_task-tonecounting_bold.nii.gz",
+    entities = [{
+        "@id": "niiri:func_sub-01_task-tonecounting_bold.nii.gzgNSWPHprVq",
+        "label": "func_sub-01_task-tonecounting_bold.nii.gz",
         "prov:atLocation": "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
-    }
-
-    assert get_input_entity(left, right) == entity
+    }]
+    assert   get_input_entity(right)[0] == entities[0]
 
 
 def test_has_parameter():
@@ -106,7 +105,7 @@ def test_get_records_copy_attributes():
                                    ".action.copyto = {'$PATH-TO-PREPROCESSING/FUNCTIONAL'};",
                                   ]
                       )
-    recs = get_records(task_groups, records=defaultdict(list))
+    recs = get_records(task_groups)
     attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
     assert "action.copyto" in json.dumps(attrs)
 
@@ -115,7 +114,7 @@ def test_get_records_attrs():
     task_groups = dict(estwrite_5=[".sep = 4;",
                                    ".fwhm = 5;", ]
                       )
-    recs = get_records(task_groups, records=defaultdict(list))
+    recs = get_records(task_groups)
     attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
     assert "4" in json.dumps(attrs)
 

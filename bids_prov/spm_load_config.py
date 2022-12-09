@@ -7,12 +7,13 @@ this_path = os.path.dirname(os.path.abspath(__file__))
 
 PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
 PARAM_REGEX = r"[^\.]+\(\d+\)"  # balbla.fonc(53)
-FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
+FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"  #the string does not contain a filename so this is not an input_entity
 DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in match
 
-has_parameter = lambda line: next(re.finditer(PARAM_REGEX, line), None) is not None
+has_parameter = lambda line: re.search(PARAM_REGEX, line) is not None
 # has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
-
+# a string contains at least one parameter if  it does not start with a dot and contains at least one digit between
+# brackets. if there are parameters, they are necessarily in the left part (function call) and this is not an entity
 CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
 
 with open(this_path + "/spm_config.yml", "r") as fd:

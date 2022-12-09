@@ -1,6 +1,3 @@
-import sys
-
-# import click
 import argparse
 import json
 import os
@@ -37,7 +34,7 @@ def format_activity_name(activity_name: str, l_max=30) -> str:
     return ".".join(act_split)  # file_dir.file_ops.file_move._1
 
 
-def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
+def get_input_entity(right: str, verbose=False) ->  list:
     """Get input Entity if possible else return None
 
 
@@ -54,41 +51,26 @@ def get_input_entity(left: str, right: str, verbose=False) -> (None | dict):
         else with key "@id", "label", "prov"
 
     """
-    if conf.has_parameter(left):  # r"[^\.]+\(\d+\)"
-        # a string contains at least one parameter if it does not start with a dot and contains at least one digit
-        # between brackets.
-        # if there are parameters, they are necessarily in the left part (function call) and this is not an entity
-        if verbose:
-            print("the string contains parameters so this is not an input_entity")
-        return None
-    # if not next(re.finditer(conf.PATH_REGEX, right), None):  # Remi like
-    if not re.search(conf.PATH_REGEX, right):  # r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
-        # if not None (if it doesn't match with conf.PATH_REGEX), enter in if
-        if verbose:
-            print("the string does not match with conf.PATH_REGEX")
-        return None
-    if not re.search(conf.FILE_REGEX, right): # r"(\.[a-z]{1,3}){1,2}"
-        # the string does not contain a filename extension so this is not an entity
-        if verbose:
-            print("the string does not contain a filename so this is not an input_entity")
-        return None
 
-    entity_label = re.sub(r"[{};\'\"]", "", right)  # sub allows you to remove braces; apostrophe and  quotation mark.
-    entity_label = entity_label.split("/")[-1]
-    # If we have : "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
-    # the line will return "sub-01_task-tonecounting_bold.nii.gz" and not "sub-01_task-tonecounting_bold.nii.gz'};"
+    drop_brace = re.sub(r"[{};]", "", right)  # removes "{'" at the beginning and "'};" at the end
+    file_list = drop_brace.split("',") # split if multiple files
+    entities = list()
 
-    entity = {
-        "@id": "niiri:" + entity_label + get_id(),
-        "label": entity_label,
-        "prov:atLocation": right[2:-3],  # similar processing with respect to the entity_label variable. The line
-        # removes "{'" at the beginning and "'};" at the end
-    }
+    for file_str in file_list:
+        if not file_str == "":
+            file_drop_quotes = re.sub(r"\'", "", file_str)  # 'ds000052/RESULTS/Sub01/con_0001.nii,1'
+            file_drop= re.sub(r"\,1", "", file_drop_quotes) # ds000052/RESULTS/Sub01/con_0001.nii
+            entity_label_short = "_".join(file_drop.split("/")[-2:]) # Sub01_con_0001.nii
+            entities.append({
+                "@id": "niiri:" + entity_label_short + get_id(),
+                "label": entity_label_short,
+                "prov:atLocation": file_drop
+            })
 
-    return entity
+    return entities
 
 
-def readlines(filename: str):  # -> Generator[str, None, None]  from https://docs.python.org/3/library/typing.html
+def readlines(filename: str):  # -> Generator  from https://docs.python.org/3/library/typing.html
     """Read lines from the original batch.m file. A definition should be associated with a single line in the output
 
     Parameters
@@ -197,7 +179,7 @@ def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id
 
     return output_entities  # empty list [] if no match,
 
-def dependency_process(records_activities: list, activity: dict, right: str, verbose=False) -> tuple:
+def dependency_process(records_activities: list, activity: dict, right: str, verbose=False) -> dict:
     """Function to search dependent activity in right line. If found, find the corresponding activity
     in records_activities, update id in activity["used"], and return output_entity
 
@@ -210,40 +192,35 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
 
     Returns
     -------
-    tuple
-        (closest_activity, output_entity) :
-        - closest_activity is None if not found . output_entity={}
-        - else closest_activity is  the previous activity in records_activities, output_entity is the generated entity
+    dict
+        output_entity : it is the generated entity with the  corresponding closest activity
 
     """
-    # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
-    # to a function, the common part will be full and so left will be empty
-    dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
-    # check if the line call cfg_dep and retrieve the first parameter
-    dep_number = re.search(r"{(\d+)}", right)  # retrieve all digits between parenthesis
-    output_entity = {}
-    closest_activity = None
-    if dependency is not None:
-        parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
-        # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
-        # return : ['Move/Delete Files', 'Moved/Copied Files'
-        for act in records_activities:
-            if act["label"].endswith(dep_number.group(1)):
-                closest_activity = act
-                output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))  # example : "niiri:oved/CopiedFiles1
 
-                activity["used"].append(output_id)  # adds to the current activity the fact that it has used the previous entity
-                output_entity = {"@id": output_id,
-                                 "label": parts[-1],
-                                 # "prov:atLocation": TODO
-                                 "wasGeneratedBy": closest_activity["@id"],
-                }
+    dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
+    # check if the line call cfg_dep and retrieve the first parameter retrieve all digits between parenthesis
+    output_entity = dict()
+    dep_number = re.search(r"{(\d+)}", right) #and retrieve the first parameter,  all digits between parenthesis
+    parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
+    # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
+    # return : ['Move/Delete Files', 'Moved/Copied Files'
+    for act in records_activities:
+
+        if act["label"].endswith(dep_number.group(1)):
+            closest_activity = act
             if verbose:
                 print(f"closest_activity : {closest_activity}")
-    else:  # dependency is None no r"(d+)" # TODO not cover by test
+            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))  # example : "niiri:oved/CopiedFiles1
 
-        Warning(f"Could not parse line with dependency {right}")
-    return closest_activity, output_entity
+            activity["used"].append(output_id)  # adds to the current activity the fact that it has used the previous entity
+            output_entity = {"@id": output_id,
+                             "label": parts[-1],
+                             # "prov:atLocation": TODO
+                             "wasGeneratedBy": closest_activity["@id"],
+            }
+
+
+    return output_entity
 
 def get_records(task_groups: dict, verbose=False) -> dict:
     """Take the result of `group_lines` and output the corresponding  JSON-ld graph as a python dict
@@ -261,9 +238,6 @@ def get_records(task_groups: dict, verbose=False) -> dict:
     """
 
     records = defaultdict(list)
-    if verbose:
-        print(f"task_groups : {task_groups}")
-
     entities_ids = set()
 
     for common_prefix_act, end_line_list in task_groups.items():
@@ -289,35 +263,44 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                 continue  # skip end of loop for end_line in end_line_list:
 
             left, right = split
-            in_entity = get_input_entity(left, right, verbose=verbose)
-            if verbose:
-                print(f'M {common_prefix_act} end: ', left, '=', right)
 
-            if in_entity:
-                input_entities.append(in_entity)
+            if verbose:
+                print(f'MATLAB common_prefix_act: {common_prefix_act}: left: ', left, '= right: ', right)
+
+
+            if not conf.has_parameter(left) and re.search(conf.PATH_REGEX, right) and re.search(conf.FILE_REGEX, right):
+                # left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX
+                in_entity = get_input_entity(right, verbose=verbose)
+                input_entities.extend(in_entity)
                 if verbose:
-                    print('-> in  entity')
+                    print('-> input  entity: ', in_entity)
 
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
                     and any(["substruct" in l for l in [common_prefix_act, left, right]]):
+                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
+                # check if the line call cfg_dep
+                # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
+                # to a function, the common part will be full and so left will be empty
 
-                closest_activity, output_entity = dependency_process(records["prov:Activity"],
-                                                                     activity, right, verbose=verbose)
-
-                if closest_activity is None:
-                    continue
-                else:
+                if dependency is not None:
+                    output_entity = dependency_process(records["prov:Activity"],  activity, right, verbose=False)
                     output_entities.append(output_entity)
+                    if verbose:
+                        print('-> output  entity: ', output_entity)
+
+                else:  # dependency is None no r"(d+)" # TODO not cover by test
+                    Warning(f"Could not parse line with dependency {right}")
+                    continue # break to for common_prefix_act,
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
-                # def param_process(left,right,verbose=False):
 
-                param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
+                # param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
+                param_name = left.strip()
                 right_= right[:-1]  # remove ";" at the end of right
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
                 params[param_name] = param_value # example : [4 2] becomes [4, 2]
                 if verbose:
-                    print("params", param_name, param_value)
+                    print(f"param_name: {param_name}, param_value: {param_value}")
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
                 # if param_value.startswith("struct"):
                 #     continue  # TODO handle dictionary-like parameters
@@ -420,11 +403,13 @@ if __name__ == "__main__":
     #              '../nidm-examples/spm_full_example001/batch.m', # fr closest None
     #              '../nidm-examples/spm_non_sphericity/batch.m',
     #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
+    #              '../nidm-examples/spm_covariate/batch.m',
     #            ]
     # output_file = '../res_temp.jsonld'
-    # for filename in filenames[-1:]:
-    #     print('\n' + filename + '\n')
-    #     spm_to_bids_prov(filename, output_file=output_file,verbose=False)
+    # # for filename in filenames[-2:]:
+    # filename= filenames[1]
+    # print('\n' + filename + '\n')
+    # spm_to_bids_prov(filename, output_file=output_file,verbose=True)
 
     # nidm_samples = os.listdir('../nidm-examples/')
     # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
