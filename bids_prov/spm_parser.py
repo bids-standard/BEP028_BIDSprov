@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import re
+import hashlib
 
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
@@ -396,6 +397,7 @@ if __name__ == "__main__":
     # TEMPORY TEST FOR DEBUGGER
     # filenames = ['./tests/samples_test/batch_example_spm.m',
     #              './tests/samples_test/partial_conjunction.m',
+    #              '../nidm-examples/spm_default/batch.m',
     #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
     #              '../nidm-examples/spm_explicit_mask/batch.m',
     #              '../nidm-examples/spm_full_example001/batch.m', # fr closest None
@@ -405,7 +407,7 @@ if __name__ == "__main__":
     #            ]
     # output_file = '../res_temp.jsonld'
     # # # for filename in filenames[-2:]:
-    # filename= filenames[-2]
+    # filename= filenames[2]
     # print('\n' + filename + '\n')
     # spm_to_bids_prov(filename, output_file=output_file,verbose=True)
 
