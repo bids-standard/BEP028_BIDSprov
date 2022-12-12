@@ -14,7 +14,7 @@ has_parameter = lambda line: re.search(PARAM_REGEX, line) is not None
 # has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
 # a string contains at least one parameter if  it does not start with a dot and contains at least one digit between
 # brackets. if there are parameters, they are necessarily in the left part (function call) and this is not an entity
-CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
+CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
 
 with open(this_path + "/spm_config.yml", "r") as fd:
     static = yaml.load(fd, Loader=yaml.CLoader)
@@ -50,13 +50,3 @@ def get_empty_graph(context_url=CONTEXT_URL):
         },
     }
 
-
-if __name__ == '__main__':
-    # left_egal, right_egal = "channels.vols(1)", "cfg_dep('GunZip Files: GunZipped Files', substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{':'}));"
-    # print(has_parameter(left_egal))
-    # print(has_parameter(right_egal))
-    right = '0.9;'
-    if not re.search(PATH_REGEX, right):
-        print("if")
-    else:
-        print("pas if")

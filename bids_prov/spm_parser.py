@@ -340,12 +340,6 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
     return records
 
-
-# @click.command()
-# @click.argument("filename", nargs=-1)
-# @click.option("--output-file", "-o", required=True)
-# @click.option("--context-url", "-c", default=conf.CONTEXT_URL, )
-# @click.option("--verbose", default=False)
 def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, verbose=False, indent=2) -> None:
     """ Exporter from batch.m to an output jsonld
 
@@ -364,7 +358,6 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
 
 
     """
-    # filename = filename[0]  # FIXME
     graph = conf.get_empty_graph(context_url=context_url)
 
     lines = readlines(filename)
@@ -380,9 +373,6 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
 
 
 if __name__ == "__main__":
-    # sys.exit(spm_to_bids_prov())
-    # Example command  with CLI:
-    # python -m bids_prov.spm_parser  ./examples/spm_default/batch_covariate.m  -o res.jsonld --verbose=False
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
@@ -393,26 +383,5 @@ if __name__ == "__main__":
     opt = parser.parse_args()
 
     spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+     # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
 
-    # TEMPORY TEST FOR DEBUGGER
-    # filenames = ['./tests/samples_test/batch_example_spm.m',
-    #              './tests/samples_test/partial_conjunction.m',
-    #              '../nidm-examples/spm_default/batch.m',
-    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
-    #              '../nidm-examples/spm_explicit_mask/batch.m',
-    #              '../nidm-examples/spm_full_example001/batch.m', # fr closest None
-    #              '../nidm-examples/spm_non_sphericity/batch.m',
-    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
-    #              '../nidm-examples/spm_covariate/batch.m',
-    #            ]
-    # output_file = '../res_temp.jsonld'
-    # # # for filename in filenames[-2:]:
-    # filename= filenames[2]
-    # print('\n' + filename + '\n')
-    # spm_to_bids_prov(filename, output_file=output_file,verbose=True)
-
-    # nidm_samples = os.listdir('../nidm-examples/')
-    # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
-    # # for spm_sample in spm_samples:
-    #     print('\n' + spm_sample + '\n')
-    #     spm_to_bids_prov(f"../nidm-examples/{spm_sample}/batch.m", output_file=output_file)
