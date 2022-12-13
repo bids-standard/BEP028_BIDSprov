@@ -1,6 +1,6 @@
 import string
 import random
-
+## TODO uuid from special library (20 alpha num)
 
 random.seed(14) # Control random generation for test, init at each import
 INIT_STATE = random.getstate()

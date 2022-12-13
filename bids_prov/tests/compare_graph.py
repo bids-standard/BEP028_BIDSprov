@@ -95,7 +95,6 @@ if __name__ == '__main__':
     new_jsonld = os.path.abspath("./samples_test/batch_example_spm.jsonld")
     ref_jsonld = os.path.abspath("./samples_test/batch_example_spm_ref.jsonld")
 
-    print(ref_jsonld)
     jsonld11_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
     graph_ref = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
     graph_ref.parse(data=json.dumps(jsonld11_ref, indent=2), format='json-ld')
@@ -104,15 +103,6 @@ if __name__ == '__main__':
     graph_new = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
     graph_new.parse(data=json.dumps(jsonld11_new, indent=2), format='json-ld')
 
-    # g = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
-    # g.parse(data=json.dumps(jsonld11, indent=2), format='json-ld')
-    #
-    # g2 = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
-    # g2.parse(data=json.dumps(jsonld11, indent=2, sort_keys=True), format='json-ld')
-
     # iso1 = rdflib.compare.to_isomorphic(g)
     # iso2 = rdflib.compare.to_isomorphic(g2)
     cmp = compare_rdf_graph(graph_new, graph_ref, verbose=True)
-    # graph_Lee = Graph()
-    # graph_Lee.parse("http://www.w3.org/People/Berners-Lee/card")
-    # print_g(graph_Lee)
