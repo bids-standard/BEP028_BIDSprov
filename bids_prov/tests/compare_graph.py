@@ -6,7 +6,15 @@ import pyld
 import rdflib.compare
 
 
-def load_jsonld11_for_rdf(jsonld11_file: str, pyld_convert=True):
+def load_jsonld11_for_rdf(jsonld11_file: str, pyld_convert=True) -> dict:
+    """ Load json file and convert them to json-ld1.1 version
+
+    Parameters
+    ----------
+    jsonld11_file : file_path of json-ld
+    pyld_convert : boolean to convert or not to 1.1 json-ld
+
+    """
     with open(jsonld11_file) as fd:
         jsonld11 = json.load(fd)
 
@@ -24,6 +32,15 @@ def load_jsonld11_for_rdf(jsonld11_file: str, pyld_convert=True):
 
 
 def compare_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=False) -> bool:
+    """ A wrapping function that compare rdf graph, and if they are not similar show differences
+
+    Parameters
+    ----------
+    g1 : first rdf graph
+    g2 : second rdf graph
+    verbose : boolean to have more verbosity
+
+    """
     cmp = rdflib.compare.similar(g1, g2) # Checks if the two graphs are “similar”.
     # Checks if the two graphs are “similar”, by comparing sorted triples where all bnodes have been replaced by a
     # singular mock bnode (the _MOCK_BNODE).
@@ -42,6 +59,14 @@ def compare_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=False) -> bool
 
 
 def show_diff(g1: rdflib.Graph, g2: rdflib.Graph) -> None:
+    """ A wrapping function that print differences between 2 graph
+
+    Parameters
+    ----------
+    g1 : first rdf graph
+    g2 : second rdf graph
+
+    """
     in_both, in_g1, in_g2 = rdflib.compare.graph_diff(g1, g2)
 
     for graph, text in zip([in_both, in_g1, in_g2],
@@ -52,10 +77,13 @@ def show_diff(g1: rdflib.Graph, g2: rdflib.Graph) -> None:
 
 
 def graph_to_str(graph: rdflib.Graph) -> str:
+    """ A tool function to print enumerate triplet in rdf graph under turtle format
+
+    """
     lines = graph.serialize(format='turtle').splitlines()
     res = ''
     for line in lines:
-        if line:  # not ''
+        if line:  # not empty line ''
             res = res + '\n' + line
     return res
 

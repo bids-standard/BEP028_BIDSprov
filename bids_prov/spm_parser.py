@@ -2,19 +2,17 @@ import argparse
 import json
 import os
 import re
-import hashlib
 
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
 from bids_prov import get_id
-
 def format_activity_name(activity_name: str, l_max=30) -> str:
-    """Function to limit name of activity
+    """Function to get name of activity
 
     Parameters
     ----------
     activity_name : name of activity
-    l_max : maximal length with cut in words between dots
+    l_max : maximal length with cuts in words between dots
 
 
     Examples
@@ -43,7 +41,7 @@ def get_input_entity(right: str, verbose=False) ->  list:
     ----------
     left : left side of ' = '
     right : right side of ' = '
-    verbose : bool to have more verbosity
+    verbose : boolean to have more verbosity
     Returns
     -------
     None
@@ -60,26 +58,32 @@ def get_input_entity(right: str, verbose=False) ->  list:
     for file_str in file_list:
         if not file_str == "":
             file_drop_quotes = re.sub(r"\'", "", file_str)  # 'ds000052/RESULTS/Sub01/con_0001.nii,1'
-            file_drop= re.sub(r"\,1", "", file_drop_quotes) # ds000052/RESULTS/Sub01/con_0001.nii
-            entity_label_short = "_".join(file_drop.split("/")[-2:]) # Sub01_con_0001.nii
-            entities.append({
+            file_location= re.sub(r"\,1", "", file_drop_quotes) # ds000052/RESULTS/Sub01/con_0001.nii
+            entity_label_short = "_".join(file_location.split("/")[-2:]) # Sub01_con_0001.nii
+            entity = {
                 "@id": "niiri:" + entity_label_short + get_id(),
                 "label": entity_label_short,
-                "prov:atLocation": file_drop
-            })
+                "prov:atLocation": file_location
+            }
+            if os.path.exists(file_location):
+                sha256_value = conf.get_sha256(file_location)
+                checksum_name = "sha256_"+ entity["@id"]
+                entity['digest'] = {checksum_name: sha256_value}
+
+            entities.append(entity)
 
     return entities
 
 
 def readlines(filename: str):  # -> Generator  from https://docs.python.org/3/library/typing.html
-    """Read lines from the original batch.m file. A definition should be associated with a single line in the output
+    """Read lines from the original batch.m file. A multiline matlabbatch instructions should be associated
+    with a single line in the output
 
     Parameters
     ----------
     filename : filename of a matlab batch.m
 
     """
-    cnt = 0 # TODO count activity here or in another function
     with open(filename) as fd:
         for line in fd:
             if line.startswith("matlabbatch"):
@@ -168,13 +172,12 @@ def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id
             for output in conf_dic[activity]['outputs']: #{'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
-                output_entities.append(
-                    {"@id": name + '_'+  output + get_id(),
+                entity = {"@id": name + '_'+  output + get_id(),
                      "label": name, # TODO
                      "prov:atLocation": output,
                      "wasGeneratedBy": activity_id,
                      }
-                )
+                output_entities.append(entity)
             break  # stop for loop at first math in if statement (match activity in conf_dic)
 
     return output_entities  # empty list [] if no match,
@@ -340,7 +343,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
     return records
 
-def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, verbose=False, indent=2) -> None:
+def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False, indent=2) -> None:
     """ Exporter from batch.m to an output jsonld
 
     Parameters
@@ -358,7 +361,7 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
 
 
     """
-    graph = conf.get_empty_graph(context_url=context_url)
+    graph = conf.get_empty_graph(context_url=context_url, spm_ver=spm_ver)
 
     lines = readlines(filename)
     tasks = group_lines(lines)  # same as list(lines) to expand generator
@@ -374,14 +377,37 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-                        help="data dir where batch.m are researched")
-    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
-    parser.add_argument("--verbose", action="store_true", help="more print")
-    opt = parser.parse_args()
-
-    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+    #                     help="data dir where batch.m are researched")
+    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    # parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
+    # parser.add_argument("--verbose", action="store_true", help="more print")
+    # opt = parser.parse_args()
+    #
+    # spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
      # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
+    # TEMPORY TEST FOR DEBUGGER
+    filenames = ['./tests/samples_test/batch_example_spm.m',
+                 './tests/samples_test/partial_conjunction.m',
+                 '../nidm-examples/spm_default/batch.m',
+                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
+                 '../nidm-examples/spm_explicit_mask/batch.m',
+                 '../nidm-examples/spm_full_example001/batch.m',  # fr closest None
+                 '../nidm-examples/spm_non_sphericity/batch.m',
+                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
+                 '../nidm-examples/spm_covariate/batch.m',
+                 './tests/to_test/batch_example_spm_forDigest.m',
+                 ]
+    output_file = '../res_temp.jsonld'
+    # # # for filename in filenames[-2:]:
+    filename = filenames[-1]
+    # print('\n' + filename + '\n')
+    spm_to_bids_prov(filename, output_file=output_file, verbose=True)
+
+    # nidm_samples = os.listdir('../nidm-examples/')
+    # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
+    # # for spm_sample in spm_samples:
+    #     print('\n' + spm_sample + '\n')
+    #     spm_to_bids_prov(f"../nidm-examples/{spm_sample}/batch.m", output_file=output_file)
 

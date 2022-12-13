@@ -108,7 +108,6 @@ def join_jsonld(lds: list, graph_key="records", omit_details=True) ->dict :
     # payload[graph_key]] = dict(payload[graph_key]])
     return payload
 
-
 def main(filename: str, output_file=None, omit_details=True) -> None:
     jsonld11s = list()
     with open(filename) as fd:

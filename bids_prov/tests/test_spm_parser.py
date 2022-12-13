@@ -5,26 +5,26 @@ from deepdiff import DeepDiff
 from collections import defaultdict
 import rdflib
 
+from bids_prov.spm_load_config import CONTEXT_URL
 from .compare_graph import load_jsonld11_for_rdf, compare_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
 from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov
 from .. import init_random_state
 
 
-def test_spm_to_bids_prov(verbose=True):
+def test_spm_to_bids_prov(verbose=False):
     """
     Test spm_to_bids_prov.py parser with a previous reference name_ref.jsonld.
     batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
 
     """
     dir_sample_test = os.path.abspath('./bids_prov/tests/samples_test')
-    # TODO ./bids_prov/tests/samples_test fo pytest from this file dir
     if verbose:
         print("\n test_spm_to_bids_prov: Compare .m to a reference jsonld in directory:\n", dir_sample_test)
 
     all_files = os.listdir(dir_sample_test)
     sample_spm_list = [f for f in all_files if os.path.splitext(f)[-1] == '.m']
-    CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
+
 
     for idx, sample_spm in enumerate(sample_spm_list):
 

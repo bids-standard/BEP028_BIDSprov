@@ -36,12 +36,8 @@ def main():
                 shutil.copyfile(filename, opt.output_dir + "/" + output_file_base + "_" + str(file))
                 output_jsonld = opt.output_dir + "/" + output_file_base + "_" + filename_ss_ext + ".jsonld"
 
-                spm_to_bids_prov(
-                    root + "/" + str(file),
-                    conf.CONTEXT_URL,
-                    output_file=output_jsonld,
-                    verbose=opt.verbose,
-                )
+                spm_to_bids_prov(root + "/" + str(file), conf.CONTEXT_URL, output_file=output_jsonld,
+                                 verbose=opt.verbose)
 
                 output_png = opt.output_dir + "/" + output_file_base + "_" + filename_ss_ext + ".png"
 
