@@ -296,6 +296,24 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                 params[param_name] = param_value # example : [4 2] becomes [4, 2]
                 if verbose:
                     print(f"param_name: {param_name}, param_value: {param_value}")
+                # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
+                # if param_value.startswith("struct"):
+                #     continue  # TODO handle dictionary-like parameters
+                # try:
+                #     eval(param_value)  # Convert '5' to 5
+                #     # print(f"ok {param_value}")
+                #
+                # except:
+                #     print(f"PARAM value except {param_value}  \n")
+                #     Warning(f"could not set {param_name} to {param_value}")
+                #     # "struct('name', {}, 'levels', {})" dans batch_example_spm
+                #     # Inf dans spm_HRF_informed_basis
+                #     # DONE spm_non_sphericity
+                #     #  if right {'/storage/essicdULTS/Sub01/CanonicalHRF/con_0001.nii,1', ........};,
+                #     #  param_value still have an extra ;
+                #
+                ## params.append([param_name, param_value])
+                # finally:
 
         if input_entities:
             used_entities = [entity["@id"] for entity in input_entities]
