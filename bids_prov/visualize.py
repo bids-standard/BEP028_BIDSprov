@@ -53,6 +53,8 @@ def viz_jsonld11(jsonld11: dict, img_file: str) -> None:
     g = (rl.ConjunctiveGraph())  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
     g.parse(data=dataaa, format="json-ld")
     viz_turtle(content=g.serialize(format="turtle"), img_file=img_file)
+    # TODO remove pyld dependency and get rdflib parsing directly
+    #   https://github.com/digitalbazaar/pyld/blob/316fbc2c9e25b3cf718b4ee189012a64b91f17e7/lib/pyld/jsonld.py#L660
 
 def join_jsonld(lds: list, graph_key="records", omit_details=True) ->dict :
     """

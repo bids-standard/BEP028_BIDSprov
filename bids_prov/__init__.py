@@ -11,4 +11,4 @@ def init_random_state(): # force init to initial state
 
 # generates a string containing 10 letters (upper or lower case, 52 possible characters)
 def get_id():
-    return "".join(random.choice(string.ascii_letters) for i in range(10))
+    return "".join(random.choice(string.ascii_letters + string.digits) for i in range(20))
