@@ -90,8 +90,7 @@ def graph_to_str(graph: rdflib.Graph) -> str:
 
 if __name__ == '__main__':
     filenames = ['./samples_test/batch_example_spm_ref.jsonld',
-                 '../nidm-examples/spm_covariate/batch_ref.jsonld'
-                 ]
+                 '../nidm-examples/spm_covariate/batch_ref.jsonld']
     new_jsonld = os.path.abspath("./samples_test/batch_example_spm.jsonld")
     ref_jsonld = os.path.abspath("./samples_test/batch_example_spm_ref.jsonld")
 
