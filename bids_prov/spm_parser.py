@@ -6,13 +6,12 @@ import re
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
 from bids_prov import get_id
-def format_activity_name(activity_name: str, l_max=30) -> str:
+def format_activity_name(activity_name: str) -> str:
     """Function to get name of activity
 
     Parameters
     ----------
     activity_name : name of activity
-    l_max : maximal length with cuts in words between dots
 
 
     Examples
@@ -24,10 +23,10 @@ def format_activity_name(activity_name: str, l_max=30) -> str:
     # s example : cfg_basicio.file_dir.file_ops.file_move._1
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
-    act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
-    while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
-        act_split = act_split[1:]
-    return ".".join(act_split)  # file_dir.file_ops.file_move._1
+    # act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
+    # while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
+    #     act_split = act_split[1:]
+    return activity_name #".".join(act_split)  # file_dir.file_ops.file_move._1
 
 
 def get_input_entity(right: str, verbose=False) ->  list:
@@ -237,11 +236,11 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
     for common_prefix_act, end_line_list in task_groups.items():
 
-        activity_id = "niiri:" + common_prefix_act + get_id()
+        activity_id = "niiri:" + get_id()
         activity = {"@id": activity_id,
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
-                    "wasAssociatedWith": "RRID:SCR_007037",
+                    "AssociatedWith": "RRID:SCR_007037",
         }
 
         output_entities, input_entities = list(), list()
@@ -289,7 +288,6 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
 
-                # param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 param_name = left.strip()
                 right_= right[:-1]  # remove ";" at the end of right
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
@@ -299,21 +297,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
                 # if param_value.startswith("struct"):
                 #     continue  # TODO handle dictionary-like parameters
-                # try:
-                #     eval(param_value)  # Convert '5' to 5
-                #     # print(f"ok {param_value}")
-                #
-                # except:
-                #     print(f"PARAM value except {param_value}  \n")
-                #     Warning(f"could not set {param_name} to {param_value}")
-                #     # "struct('name', {}, 'levels', {})" dans batch_example_spm
-                #     # Inf dans spm_HRF_informed_basis
-                #     # DONE spm_non_sphericity
-                #     #  if right {'/storage/essicdULTS/Sub01/CanonicalHRF/con_0001.nii,1', ........};,
-                #     #  param_value still have an extra ;
-                #
-                ## params.append([param_name, param_value])
-                # finally:
+
 
         if input_entities:
             used_entities = [entity["@id"] for entity in input_entities]
@@ -369,15 +353,40 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-                        help="data dir where batch.m are researched")
-    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
-    parser.add_argument("--verbose", action="store_true", help="more print")
-    opt = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+    #                     help="data dir where batch.m are researched")
+    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    # parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
+    # parser.add_argument("--verbose", action="store_true", help="more print")
+    # opt = parser.parse_args()
+    #
+    # spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    #  # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
+    # TEMPORY TEST FOR DEBUGGER
 
-    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
-     # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
+    filenames = ['./tests/samples_test/batch_example_spm.m',
+                 './tests/samples_test/partial_conjunction.m',
+                 '../nidm-examples/spm_default/batch.m',
+                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
+                 '../nidm-examples/spm_explicit_mask/batch.m',
+                 '../nidm-examples/spm_full_example001/batch.m',  # fr closest None
+                 '../nidm-examples/spm_non_sphericity/batch.m',
+                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
+                 '../nidm-examples/spm_covariate/batch.m',
+                 './tests/to_test/batch_example_spm_forDigest.m',
+                 ]
+    output_file = '../res_temp.jsonld'
+    # # # for filename in filenames[-2:]:
+    filename = filenames[-1]
+    # print('\n' + filename + '\n')
+    spm_to_bids_prov(filename, output_file=output_file, verbose=True)
+
+    # nidm_samples = os.listdir('../nidm-examples/')
+    # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
+    # # for spm_sample in spm_samples:
+    #     print('\n' + spm_sample + '\n')
+    #     spm_to_bids_prov(f"../nidm-examples/{spm_sample}/batch.m", output_file=output_file)
+
 
 
