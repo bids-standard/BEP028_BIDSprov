@@ -145,6 +145,8 @@ def group_lines(lines: list) -> dict:
 def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id: str) -> list:
     """ Get entities from external conf_dic (import yaml file)
 
+    For example : spatial.preproc is contained in activity_name
+
     Parameters
     ----------
     conf_dic : configuration dict (import yaml file from call)
@@ -156,12 +158,7 @@ def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id
     list[dict]
         each element is an entity dict with key    "@id", "label", "prov:atLocation", "wasGeneratedBy"
     """
-    # checks if spatial.preproc is contained in the name of the current activity and if so returns spatial.preproc
-    #
-    # REMI like :conf_outputs = next((k for k in conf_dic if k in activity_n), None)
-    # if conf_outputs is not None:
-    # activity_name = conf_outputs["name"]
-    # conf_outputs = conf_dic[conf_outputs]
+
     output_entities = list()
     for activity in conf_dic.keys():
         if activity in activity_name:
@@ -169,7 +166,7 @@ def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
                 entity = {"@id": name + '_'+  output + get_id(),
-                     "label": name, # TODO
+                     "label": name,
                      "prov:atLocation": output,
                      "wasGeneratedBy": activity_id,
                      }
@@ -240,11 +237,11 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
     for common_prefix_act, end_line_list in task_groups.items():
 
-        activity_id = "niiri:" + common_prefix_act + get_id() # TODO enlever le common prefix
+        activity_id = "niiri:" + common_prefix_act + get_id()
         activity = {"@id": activity_id,
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
-                    "wasAssociatedWith": "RRID:SCR_007037",  # TODO ?
+                    "wasAssociatedWith": "RRID:SCR_007037",
         }
 
         output_entities, input_entities = list(), list()
@@ -257,7 +254,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
             split = end_line.split(" = ")  # split in 2 at the level of the equal the rest of the action
             if len(split) != 2:
-                print(f"could not parse with more than 2 '=' in end line : ' {end_line}'") # TODO not cover by test
+                print(f"could not parse with more than 2 '=' in end line : ' {end_line}'") #
                 continue  # skip end of loop for end_line in end_line_list:
 
             left, right = split
@@ -286,7 +283,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                     if verbose:
                         print('-> output  entity: ', output_entity)
 
-                else:  # dependency is None no r"(d+)" # TODO not cover by test
+                else:  # dependency is None no r"(d+)"
                     Warning(f"Could not parse line with dependency {right}")
                     continue # break to for common_prefix_act,
 
@@ -299,25 +296,6 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                 params[param_name] = param_value # example : [4 2] becomes [4, 2]
                 if verbose:
                     print(f"param_name: {param_name}, param_value: {param_value}")
-                # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
-                # if param_value.startswith("struct"):
-                #     continue  # TODO handle dictionary-like parameters
-                # try:
-                #     eval(param_value)  # Convert '5' to 5
-                #     # print(f"ok {param_value}")
-                #
-                # except:
-                #     print(f"PARAM value except {param_value}  \n")
-                #     Warning(f"could not set {param_name} to {param_value}")
-                #     # "struct('name', {}, 'levels', {})" dans batch_example_spm
-                #     # Inf dans spm_HRF_informed_basis
-                #     # DONE spm_non_sphericity
-                #     #  if right {'/storage/essicdULTS/Sub01/CanonicalHRF/con_0001.nii,1', ........};,
-                #     #  param_value still have an extra ;
-                #
-                ## params.append([param_name, param_value])
-                # finally:
-
 
         if input_entities:
             used_entities = [entity["@id"] for entity in input_entities]

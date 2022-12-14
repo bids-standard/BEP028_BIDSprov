@@ -47,31 +47,12 @@ def viz_jsonld11(jsonld11: dict, img_file: str) -> None:
         if k not in {"@version", "records"}
     }
 
-    # Load graph from json-ld file as non 1.1 JSON-LD
-    aa = ld.jsonld.compact(jsonld11, context_10)
-    # print('aa from  ld.jsonld.compact', *aa['@graph'], sep='\n')
+    aa = ld.jsonld.compact(jsonld11, context_10)     # Load graph from json-ld file as non 1.1 JSON-LD
     dataaa = json.dumps(aa, indent=2)  # , sort_keys=True)
 
     g = (rl.ConjunctiveGraph())  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
     g.parse(data=dataaa, format="json-ld")
-    # print("G .serial\n\n", "==" * 15, g.serialize(format='turtle'))
     viz_turtle(content=g.serialize(format="turtle"), img_file=img_file)
-
-    # TODO remove pyld dependency and get rdflib parsing directly
-    #   https://github.com/digitalbazaar/pyld/blob/316fbc2c9e25b3cf718b4ee189012a64b91f17e7/lib/pyld/jsonld.py#L660
-
-    # jsonld11['@context'] = context_10
-    # data11 = json.dumps(jsonld11, indent=2, sort_keys=True)
-    # print("dataa=data11", dataaa == data11)
-    # g2 = rl.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
-    # g2.parse(data=json.dumps(jsonld11, indent=2), format='json-ld')
-    # print("G2 .serial\n\n", "==" * 15, g2.serialize(format='turtle'))
-    # # viz_turtle(content=g.serialize(format='turtle'), img_file=img_file)
-    # print("g.serial", "=="*15, g.serialize(format='turtle', context=context_10))
-    # # viz_turtle(content=g.serialize(format='json-ld', context=context_10), img_file=img_file)
-
-    # v = g.serialize(format="xml") https://rdflib.readthedocs.io/en/stable/intro_to_parsing.html
-
 
 def join_jsonld(lds: list, graph_key="records", omit_details=True) ->dict :
     """
