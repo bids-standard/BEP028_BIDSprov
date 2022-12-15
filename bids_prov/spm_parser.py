@@ -6,13 +6,13 @@ import re
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
 from bids_prov import get_id
+
 def format_activity_name(activity_name: str) -> str:
     """Function to get name of activity
 
     Parameters
     ----------
     activity_name : name of activity
-
 
     Examples
     --------
@@ -39,6 +39,7 @@ def get_input_entity(right: str, verbose=False) ->  list:
     ----------
     right : right side of ' = '
     verbose : boolean to have more verbosity
+
     Returns
     -------
      dict[str, str]
@@ -56,12 +57,15 @@ def get_input_entity(right: str, verbose=False) ->  list:
             file_location= re.sub(r"\,1", "", file_drop_quotes) # ds000052/RESULTS/Sub01/con_0001.nii
             entity_label_short = "_".join(file_location.split("/")[-2:]) # Sub01_con_0001.nii
             entity = {
-                "@id": "niiri:" + entity_label_short + get_id(),
+                "@id": "niiri:" + get_id(),
                 "label": entity_label_short,
                 "prov:atLocation": file_location
             }
-            if os.path.exists(file_location):
-                sha256_value = conf.get_sha256(file_location)
+            relative_path = os.path.abspath('./tests/to_test'+ file_location)
+            this_path = os.path.abspath(__file__)
+
+            if os.path.exists(relative_path):
+                sha256_value = conf.get_sha256(relative_path)
                 checksum_name = "sha256_"+ entity["@id"]
                 entity['digest'] = {checksum_name: sha256_value}
 
@@ -106,6 +110,7 @@ def group_lines(lines: list) -> dict:
     -------
     dict[int, str]
         a mapping from activity id to lines belonging to this activity
+
     Example
     -------
     >>> from bids_prov.spm_parser import group_lines
@@ -374,8 +379,7 @@ if __name__ == "__main__":
                  '../nidm-examples/spm_non_sphericity/batch.m',
                  '../nidm-examples/spm_HRF_informed_basis/batch.m',
                  '../nidm-examples/spm_covariate/batch.m',
-                 './tests/to_test/batch_example_spm_forDigest.m',
-                 ]
+                 './tests/to_test/batch_example_spm_forDigest.m',]
     output_file = '../res_temp.jsonld'
     # # # for filename in filenames[-2:]:
     filename = filenames[-1]
