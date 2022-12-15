@@ -358,33 +358,33 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
 
 if __name__ == "__main__":
 
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-    #                     help="data dir where batch.m are researched")
-    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    # parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
-    # parser.add_argument("--verbose", action="store_true", help="more print")
-    # opt = parser.parse_args()
-    #
-    # spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
-    #  # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+                        help="data dir where batch.m are researched")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--verbose", action="store_true", help="more print")
+    opt = parser.parse_args()
+
+    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+     # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
     # TEMPORY TEST FOR DEBUGGER
 
-    filenames = ['./tests/samples_test/batch_example_spm.m',
-                 './tests/samples_test/partial_conjunction.m',
-                 '../nidm-examples/spm_default/batch.m',
-                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
-                 '../nidm-examples/spm_explicit_mask/batch.m',
-                 '../nidm-examples/spm_full_example001/batch.m',  # fr closest None
-                 '../nidm-examples/spm_non_sphericity/batch.m',
-                 '../nidm-examples/spm_HRF_informed_basis/batch.m',
-                 '../nidm-examples/spm_covariate/batch.m',
-                 './tests/to_test/batch_example_spm_forDigest.m',]
-    output_file = '../res_temp.jsonld'
-    # # # for filename in filenames[-2:]:
-    filename = filenames[-1]
-    # print('\n' + filename + '\n')
-    spm_to_bids_prov(filename, output_file=output_file, verbose=True)
+    # filenames = ['./tests/samples_test/batch_example_spm.m',
+    #              './tests/samples_test/partial_conjunction.m',
+    #              '../nidm-examples/spm_default/batch.m',
+    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
+    #              '../nidm-examples/spm_explicit_mask/batch.m',
+    #              '../nidm-examples/spm_full_example001/batch.m',  # fr closest None
+    #              '../nidm-examples/spm_non_sphericity/batch.m',
+    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
+    #              '../nidm-examples/spm_covariate/batch.m',
+    #              './tests/to_test/batch_example_spm_forDigest.m',]
+    # output_file = '../res_temp.jsonld'
+    # # # # for filename in filenames[-2:]:
+    # filename = filenames[-1]
+    # # print('\n' + filename + '\n')
+    # spm_to_bids_prov(filename, output_file=output_file, verbose=True)
 
     # nidm_samples = os.listdir('../nidm-examples/')
     # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
