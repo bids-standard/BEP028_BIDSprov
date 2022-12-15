@@ -12,7 +12,7 @@ from ..spm_parser import get_records, group_lines, get_input_entity, format_acti
 from .. import init_random_state
 
 
-def test_spm_to_bids_prov(verbose=False):
+def test_spm_to_bids_prov(verbose=True):
     """
     Test spm_to_bids_prov.py parser with a previous reference name_ref.jsonld.
     batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
@@ -61,8 +61,9 @@ def test_group_lines():
 
 def test_format_activity_name():
     s = "cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(s) == "file_dir.file_ops.file_move._1"
-
+    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
+    s = "spm.cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
 
 def test_get_input_entity():
     init_random_state()
@@ -70,7 +71,7 @@ def test_get_input_entity():
     right = "{'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};"
     # entity label : sub-01_task-tonecounting_bold.nii.gz
     entities = [{
-        "@id": "niiri:func_sub-01_task-tonecounting_bold.nii.gzgNSWPHprVq",
+        "@id": "niiri:gNSWPH8prVqsUeQCtDR3",
         "label": "func_sub-01_task-tonecounting_bold.nii.gz",
         "prov:atLocation": "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
     }]

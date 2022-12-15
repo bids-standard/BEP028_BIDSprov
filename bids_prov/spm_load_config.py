@@ -6,9 +6,9 @@ import hashlib
 # contains the path from home to the directory where this script is located
 this_path = os.path.dirname(os.path.abspath(__file__))
 
-PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
 PARAM_REGEX = r"[^\.]+\(\d+\)"  # example: some_activity.function(53)
-FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"  #the string does not contain a filename so this is not an input_entity
+PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
+FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
 DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in match
 CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
 
