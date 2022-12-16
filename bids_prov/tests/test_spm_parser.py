@@ -39,6 +39,7 @@ def test_spm_to_bids_prov(verbose=True):
 
     dir_sample_test = os.path.abspath('./bids_prov/tests/samples_test')
     if verbose:
+        print('\n-> SEED init state', INIT_STATE)
         print("\n test_spm_to_bids_prov: Compare .m to a reference jsonld in directory:\n", dir_sample_test)
 
     all_files = os.listdir(dir_sample_test)
