@@ -25,7 +25,7 @@ def init_random_state():  # force init to initial state
     random.setstate(INIT_STATE)
 
 
-def test_spm_to_bids_prov(verbose=False):
+def test_spm_to_bids_prov(verbose=True):
     """
     Test spm_to_bids_prov.py parser if a previous reference name_ref.jsonld is included in rdflib graph sense
     in the jsonld output of the parse
@@ -39,7 +39,7 @@ def test_spm_to_bids_prov(verbose=False):
 
     dir_sample_test = os.path.abspath('./bids_prov/tests/samples_test')
     if verbose:
-        print('\n-> SEED init state', INIT_STATE)
+        print('\n-> SEED init state[0]', INIT_STATE[0])
         print("\n test_spm_to_bids_prov: Compare .m to a reference jsonld in directory:\n", dir_sample_test)
 
     all_files = os.listdir(dir_sample_test)
@@ -51,6 +51,8 @@ def test_spm_to_bids_prov(verbose=False):
         ref_jsonld = os.path.join(dir_sample_test, name + '_ref.jsonld')
 
         if os.path.exists(ref_jsonld):
+            if verbose:
+                print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld")
             new_jsonld = os.path.join(dir_sample_test, name + '.jsonld')
             spm_batch = os.path.join(dir_sample_test, sample_spm)
             spm_to_bids_prov(spm_batch, CONTEXT_URL, output_file=new_jsonld)
@@ -68,11 +70,10 @@ def test_spm_to_bids_prov(verbose=False):
             res_compare = is_included_rdf_graph(graph_ref, graph_new, verbose=verbose)
 
             if verbose:
-                print(
-                    f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
-                if not os.path.exists(ref_jsonld):
-                    print(
-                        f"TEST n°{idx}: reference {name}_ref.jsonld not found")
+                print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
+
+        if verbose and  not os.path.exists(ref_jsonld):
+            print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
 
             assert res_compare
 
