@@ -114,7 +114,7 @@ def graph_to_str(graph: rdflib.Graph) -> str:
 if __name__ == '__main__':
 
     ref_jsonld = os.path.abspath("./to_test/batch_example_spm_seed14.jsonld")
-    new_jsonld = os.path.abspath("./to_test/batch_example_spm_seed14.jsonld")
+    new_jsonld = os.path.abspath("./to_test/batch_example_spm_seed17.jsonld")
 
     jsonld11_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
     graph_ref = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
@@ -127,7 +127,7 @@ if __name__ == '__main__':
     # print(graph_to_str(graph_new))
     # print("___"*30)
     # print(graph_to_str(graph_ref))
-    res = is_included_rdf_graph(graph_new, graph_ref, verbose=False)
+    res = is_included_rdf_graph(graph_ref, graph_new, verbose=False)
     # # iso1 = rdflib.compare.to_isomorphic(g)
     # # iso2 = rdflib.compare.to_isomorphic(g2)
     # cmp = compare_rdf_graph(graph_new, graph_ref, verbose=True)
