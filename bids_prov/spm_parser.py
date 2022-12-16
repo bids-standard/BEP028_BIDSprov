@@ -90,7 +90,7 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
     return entities
 
 
-def readlines(filename: str) -> Generator[str]: #from https://docs.python.org/3/library/typing.html
+def readlines(filename: str) -> Generator[str, None, None]: #from https://docs.python.org/3/library/typing.html
     """Read lines from the original batch.m file. A multiline matlabbatch instructions should be associated
     with a single line in the output
 
