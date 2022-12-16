@@ -5,13 +5,20 @@ from deepdiff import DeepDiff
 from collections import defaultdict
 import rdflib
 from bids_prov.spm_load_config import CONTEXT_URL
-from .compare_graph import load_jsonld11_for_rdf, compare_rdf_graph
+from .compare_graph import load_jsonld11_for_rdf, is_similar_rdf_graph, is_included_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
-from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov
+from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256
 from .. import random
 
 random.seed(14)  # Control random generation for test, init at each import
 INIT_STATE = random.getstate()
+
+
+def test_get_sha256(verbose=False):
+    sha256= get_sha256("./bids_prov/tests/samples_test/to_test_checksum.txt")
+    if verbose:
+        print(sha256)
+    assert sha256=="b061ec87afbcf3f4b74d43bc295acf768d9d59b343ae42370efc972f73d8a51b"
 
 
 def init_random_state():  # force init to initial state
@@ -20,7 +27,9 @@ def init_random_state():  # force init to initial state
 
 def test_spm_to_bids_prov(verbose=False):
     """
-    Test spm_to_bids_prov.py parser with a previous reference name_ref.jsonld.
+    Test spm_to_bids_prov.py parser if a previous reference name_ref.jsonld is included in rdflib graph sense
+    in the jsonld output of the parse
+
     batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
 
     """
@@ -57,15 +66,12 @@ def test_spm_to_bids_prov(verbose=False):
             graph_new.parse(data=json.dumps(
                 jsonld11_new, indent=2), format='json-ld')
 
-            res_compare = compare_rdf_graph(
-                graph_ref, graph_new, verbose=verbose)
+            res_compare = is_included_rdf_graph(graph_ref, graph_new, verbose=verbose)
 
             if verbose:
-                print(
-                    f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
+                print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
                 if not os.path.exists(ref_jsonld):
-                    print(
-                        f"TEST n°{idx}: reference {name}_ref.jsonld not found")
+                    print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
 
             assert res_compare
 
@@ -77,11 +83,9 @@ def test_group_lines():
 
 def test_format_activity_name():
     s = "cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(
-        s) == "cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
     s = "spm.cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(
-        s) == "cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
 
 
 def test_get_input_entity():
