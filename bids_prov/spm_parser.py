@@ -70,15 +70,13 @@ def get_input_entity(right: str, verbose=False) -> list:
             file_drop_quotes = re.sub(r"\'", "", file_str)
             # ds000052/RESULTS/Sub01/con_0001.nii
             file_location = re.sub(r"\,1", "", file_drop_quotes)
-            entity_label_short = "_".join(
-                file_location.split("/")[-2:])  # Sub01_con_0001.nii
+            entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
                 "@id": "niiri:" + get_id(),
                 "label": entity_label_short,
                 "prov:atLocation": file_location
             }
-            relative_path = os.path.abspath(
-                './bids_prov/tests/samples_test/' + file_location)
+            relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + file_location)
             # this_path = os.path.abspath(__file__)
 
             if os.path.exists(relative_path):
@@ -156,8 +154,7 @@ def group_lines(lines: list) -> dict:
     # res = {..., '3', "spm.stats.con.consess{1}.tcon.name = 'mr vs plain covariate';", ...}
     new_res = dict()  # keys : common prefix shared by the functions of an activity, values : rest of each line
     for act_id, right_part_act_id_list in res.items():
-        left_egal_list = [right_part_act_id.split(
-            " = ")[0] for right_part_act_id in right_part_act_id_list]
+        left_egal_list = [right_part_act_id.split(" = ")[0] for right_part_act_id in right_part_act_id_list]
         common_prefix = os.path.commonprefix(left_egal_list)
         after_common_list = [right_part_act_id[len(
             common_prefix):] for right_part_act_id in right_part_act_id_list]
@@ -223,8 +220,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
 
     """
 
-    dependency = re.search(conf.DEPENDENCY_REGEX, right,
-                           re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
+    dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
     # check if the line call cfg_dep and retrieve the first parameter retrieve all digits between parenthesis
     output_entity = dict()
     # and retrieve the first parameter,  all digits between parenthesis
@@ -240,8 +236,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
             if verbose:
                 print(f"closest_activity : {closest_activity}")
             # example : "niiri:oved/CopiedFiles1
-            output_id = (
-                "niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
+            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
 
             # adds to the current activity the fact that it has used the previous entity
             activity["used"].append(output_id)
@@ -284,8 +279,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
         output_entities, input_entities = list(), list()
         params = {}
 
-        output_ext_entity = get_entities_from_ext_config(
-            conf.static["activities"], common_prefix_act, activity_id)
+        output_ext_entity = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
         output_entities.extend(output_ext_entity)
 
         for end_line in end_line_list:
@@ -293,8 +287,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
             # split in 2 at the level of the equal the rest of the action
             split = end_line.split(" = ")
             if len(split) != 2:
-                print(
-                    f"could not parse with more than 2 '=' in end line : ' {end_line}'")
+                print(f"could not parse with more than 2 '=' in end line : ' {end_line}'")
                 continue  # skip end of loop for end_line in end_line_list:
 
             left, right = split
@@ -313,15 +306,13 @@ def get_records(task_groups: dict, verbose=False) -> dict:
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
                     and any(["substruct" in l for l in [common_prefix_act, left, right]]):
                 # cfg_dep\(['"]([^'"]*)['"]\,.*
-                dependency = re.search(
-                    conf.DEPENDENCY_REGEX, right, re.IGNORECASE)
+                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)
                 # check if the line call cfg_dep
                 # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
                 # to a function, the common part will be full and so left will be empty
 
                 if dependency is not None:
-                    output_entity = dependency_process(
-                        records["prov:Activity"],  activity, right, verbose=False)
+                    output_entity = dependency_process(records["prov:Activity"],  activity, right, verbose=False)
                     output_entities.append(output_entity)
                     if verbose:
                         print('-> output  entity: ', output_entity)
@@ -334,8 +325,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
                 param_name = left.strip()
                 right_ = right[:-1]  # remove ";" at the end of right
-                param_value = right_ if not right_.startswith(
-                    "[") else right_.replace(" ", ", ")
+                param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
                 # example : [4 2] becomes [4, 2]
                 params[param_name] = param_value
                 if verbose:
