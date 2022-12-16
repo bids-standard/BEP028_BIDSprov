@@ -25,7 +25,7 @@ def init_random_state():  # force init to initial state
     random.setstate(INIT_STATE)
 
 
-def test_spm_to_bids_prov(verbose=True):
+def test_spm_to_bids_prov(verbose=False):
     """
     Test spm_to_bids_prov.py parser if a previous reference name_ref.jsonld is included in rdflib graph sense
     in the jsonld output of the parse
