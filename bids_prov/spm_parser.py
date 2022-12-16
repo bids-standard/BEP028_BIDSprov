@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -6,6 +7,16 @@ import re
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
 from bids_prov import get_id
+
+
+def get_sha256(file_path):
+    m = hashlib.sha256()
+    with open(file_path,'rb') as f:
+        lines = f.read()
+        m.update(lines)
+    md5code = m.hexdigest()
+    return md5code
+
 
 def format_activity_name(activity_name: str) -> str:
     """Function to get name of activity
@@ -62,10 +73,10 @@ def get_input_entity(right: str, verbose=False) ->  list:
                 "prov:atLocation": file_location
             }
             relative_path = os.path.abspath('./tests/to_test'+ file_location)
-            this_path = os.path.abspath(__file__)
+            # this_path = os.path.abspath(__file__)
 
             if os.path.exists(relative_path):
-                sha256_value = conf.get_sha256(relative_path)
+                sha256_value = get_sha256(relative_path)
                 checksum_name = "sha256_"+ entity["@id"]
                 entity['digest'] = {checksum_name: sha256_value}
 
@@ -382,7 +393,7 @@ if __name__ == "__main__":
     #              './tests/to_test/batch_example_spm_forDigest.m',]
     # output_file = '../res_temp.jsonld'
     # # # # for filename in filenames[-2:]:
-    # filename = filenames[-1]
+    # filename = filenames[0]
     # # print('\n' + filename + '\n')
     # spm_to_bids_prov(filename, output_file=output_file, verbose=True)
 

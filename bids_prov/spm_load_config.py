@@ -1,7 +1,6 @@
 import re
 import yaml
 import os
-import hashlib
 
 # contains the path from home to the directory where this script is located
 this_path = os.path.dirname(os.path.abspath(__file__))
@@ -18,15 +17,6 @@ has_parameter = lambda line: re.search(PARAM_REGEX, line) is not None
 
 with open(this_path + "/spm_config.yml", "r") as fd:
     static = yaml.load(fd, Loader=yaml.CLoader)
-
-
-def get_sha256(file_path):
-    m = hashlib.sha256()
-    with open(file_path,'rb') as f:
-        lines = f.read()
-        m.update(lines)
-    md5code = m.hexdigest()
-    return md5code
 
 
 def get_empty_graph(context_url=CONTEXT_URL, spm_ver="dev"):
