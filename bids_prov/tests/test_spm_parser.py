@@ -18,7 +18,7 @@ def test_get_sha256(verbose=False):
     sha256= get_sha256("./bids_prov/tests/samples_test/to_test_checksum.txt")
     if verbose:
         print(sha256)
-    assert sha256=="b061ec87afbcf3f4b74d43bc295acf768d9d59b343ae42370efc972f73d8a51b"
+    assert sha256=="a02a994951ef1910e1591901066faea27d8c136a795eeeb6f3df467b9fcbd718"
 
 
 def init_random_state():  # force init to initial state
