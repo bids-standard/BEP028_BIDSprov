@@ -15,10 +15,10 @@ INIT_STATE = random.getstate()
 
 
 def test_get_sha256(verbose=False):
-    sha256= get_sha256("./bids_prov/tests/samples_test/to_test_checksum.txt")
+    sha256 = get_sha256("./bids_prov/tests/samples_test/to_test_checksum.txt")
     if verbose:
         print(sha256)
-    assert sha256=="b061ec87afbcf3f4b74d43bc295acf768d9d59b343ae42370efc972f73d8a51b"
+    assert sha256 == "b061ec87afbcf3f4b74d43bc295acf768d9d59b343ae42370efc972f73d8a51b"
 
 
 def init_random_state():  # force init to initial state
@@ -66,12 +66,15 @@ def test_spm_to_bids_prov(verbose=False):
             graph_new.parse(data=json.dumps(
                 jsonld11_new, indent=2), format='json-ld')
 
-            res_compare = is_included_rdf_graph(graph_ref, graph_new, verbose=verbose)
+            res_compare = is_included_rdf_graph(
+                graph_ref, graph_new, verbose=verbose)
 
             if verbose:
-                print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
+                print(
+                    f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
                 if not os.path.exists(ref_jsonld):
-                    print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
+                    print(
+                        f"TEST n°{idx}: reference {name}_ref.jsonld not found")
 
             assert res_compare
 
@@ -83,21 +86,25 @@ def test_group_lines():
 
 def test_format_activity_name():
     s = "cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(
+        s) == "cfg_basicio.file_dir.file_ops.file_move._1"
     s = "spm.cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(
+        s) == "cfg_basicio.file_dir.file_ops.file_move._1"
 
 
 def test_get_input_entity():
     init_random_state()
     left = "files"
-    right = "{'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};"
+    right = "{'ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs'};"
     # entity label : sub-01_task-tonecounting_bold.nii.gz
     entities = [{
         "@id": "niiri:gNSWPH8prVqsUeQCtDR3",
-        "label": "func_sub-01_task-tonecounting_bold.nii.gz",
-        "prov:atLocation": "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
+        "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
+        "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
+        'digest': {'sha256_niiri:gNSWPH8prVqsUeQCtDR3': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
     }]
+
     assert get_input_entity(right)[0] == entities[0]
 
 
