@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import re
+from typing import List, Dict, Generator
 
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
@@ -41,7 +42,7 @@ def format_activity_name(activity_name: str) -> str:
     return activity_name
 
 
-def get_input_entity(right: str, verbose=False) -> list:
+def get_input_entity(right: str, verbose=False) -> List[dict]:
     """Get input Entity if possible else return None
 
     # called if left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX, example :
@@ -89,7 +90,7 @@ def get_input_entity(right: str, verbose=False) -> list:
     return entities
 
 
-def readlines(filename: str):  # -> Generator  from https://docs.python.org/3/library/typing.html
+def readlines(filename: str) -> Generator[str]: #from https://docs.python.org/3/library/typing.html
     """Read lines from the original batch.m file. A multiline matlabbatch instructions should be associated
     with a single line in the output
 
@@ -115,7 +116,7 @@ def readlines(filename: str):  # -> Generator  from https://docs.python.org/3/li
                 yield _line
 
 
-def group_lines(lines: list) -> dict:
+def group_lines(lines: list) -> Dict[str, list]:
     """Group line by their activity id.  The activity id is between curly brackets, for every line
 
     Parameters
@@ -125,7 +126,7 @@ def group_lines(lines: list) -> dict:
 
     Returns
     -------
-    dict[int, str]
+    dict[str, list]
         a mapping from activity id to lines belonging to this activity
 
     Example
@@ -135,8 +136,7 @@ def group_lines(lines: list) -> dict:
     >>> group_lines(lines)
     {'file_ops.file_move._1': ['call', 'different.call']}
     """
-    res = defaultdict(
-        list)  # KEYS : activity number (act_id), VALUES : rest of the line without matlabbatch{3}.
+    res = defaultdict(list)  # KEYS : activity number (act_id), VALUES : rest of the line without matlabbatch{3}.
     # example: in batch_covariate.m of spm12:
     # matlabbatch{3}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));
     # matlabbatch{3}.spm.stats.con.consess{1}.tcon.name = 'mr vs plain covariate';
@@ -156,8 +156,7 @@ def group_lines(lines: list) -> dict:
     for act_id, right_part_act_id_list in res.items():
         left_egal_list = [right_part_act_id.split(" = ")[0] for right_part_act_id in right_part_act_id_list]
         common_prefix = os.path.commonprefix(left_egal_list)
-        after_common_list = [right_part_act_id[len(
-            common_prefix):] for right_part_act_id in right_part_act_id_list]
+        after_common_list = [right_part_act_id[len(common_prefix):] for right_part_act_id in right_part_act_id_list]
         # add to the common prefix the activity number
         new_key = f"{common_prefix}_{act_id}"
         new_res[new_key] = after_common_list  # keep the rest of the line
@@ -167,7 +166,7 @@ def group_lines(lines: list) -> dict:
     return new_res
 
 
-def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id: str) -> list:
+def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id: str) -> List[dict]:
     """ Get entities from external conf_dic (import yaml file)
 
     For example : spatial.preproc is contained in activity_name
@@ -293,8 +292,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
             left, right = split
 
             if verbose:
-                print(
-                    f'MATLAB common_prefix_act: {common_prefix_act}: left: ', left, '= right: ', right)
+                print(f'MATLAB common_prefix_act: {common_prefix_act}: left: ', left, '= right: ', right)
 
             if not conf.has_parameter(left) and re.search(conf.PATH_REGEX, right) and re.search(conf.FILE_REGEX, right):
                 # left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX
@@ -329,8 +327,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                 # example : [4 2] becomes [4, 2]
                 params[param_name] = param_value
                 if verbose:
-                    print(
-                        f"param_name: {param_name}, param_value: {param_value}")
+                    print(f"param_name: {param_name}, param_value: {param_value}")
                 # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
                 # if param_value.startswith("struct"):
                 #     continue  # TODO handle dictionary-like parameters
@@ -373,7 +370,6 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
     indent : int, optional
         2, number of indentation in jsonfile between each object
 
-
     """
     graph = conf.get_empty_graph(context_url=context_url, spm_ver=spm_ver)
 
@@ -393,12 +389,9 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-                        help="data dir where batch.m are researched")
-    parser.add_argument("--output_file", type=str, default="res.jsonld",
-                        help="output dir where results are written")
-    parser.add_argument(
-        "--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m", help="data dir where batch.m are researched")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
