@@ -57,17 +57,14 @@ def test_spm_to_bids_prov(verbose=False):
             jsonld11_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
             # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
             graph_ref = rdflib.ConjunctiveGraph()
-            graph_ref.parse(data=json.dumps(
-                jsonld11_ref, indent=2), format='json-ld')
+            graph_ref.parse(data=json.dumps(jsonld11_ref, indent=2), format='json-ld')
 
             jsonld11_new = load_jsonld11_for_rdf(new_jsonld, pyld_convert=True)
             # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
             graph_new = rdflib.ConjunctiveGraph()
-            graph_new.parse(data=json.dumps(
-                jsonld11_new, indent=2), format='json-ld')
+            graph_new.parse(data=json.dumps(jsonld11_new, indent=2), format='json-ld')
 
-            res_compare = is_included_rdf_graph(
-                graph_ref, graph_new, verbose=verbose)
+            res_compare = is_included_rdf_graph(graph_ref, graph_new, verbose=verbose)
 
             if verbose:
                 print(
