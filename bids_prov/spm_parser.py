@@ -354,11 +354,13 @@ def get_records(task_groups: dict, verbose=False) -> dict:
     return records
 
 
-def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False, indent=2) -> None:
+def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None,
+                     spm_ver="SPM12r7224", verbose=False, indent=2) -> None:
     """ Exporter from batch.m to an output jsonld
 
     Parameters
     ----------
+    spm_ver : version of SPM , SPM 12 release 7224 by default
     filename : str
         input file of batch.m; example filename = "/test/spm_batch.m"
     context_url : str, optional
