@@ -10,6 +10,8 @@ from typing import List, Mapping, Tuple
 import random
 import string
 
+import argparse
+
 from . import fsl_config as conf
 
 
@@ -242,16 +244,21 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
     return dict(records)
 
 
-@click.command()
-@click.argument("filenames", nargs=-1)
-@click.option("--output-file", "-o", required=True)
-@click.option(
-    "--context-url",
-    "-c",
-    default=conf.DEFAULT_CONTEXT_URL,
-)
-def fsl_to_bids_pros(filenames, output_file, context_url):
-    filename = filenames[0]  # FIXME
+# @click.command()
+# @click.argument("filenames", nargs=-1)
+# @click.option("--output-file", "-o", required=True)
+# @click.option(
+#     "--context-url",
+#     "-c",
+#     default=conf.DEFAULT_CONTEXT_URL,
+# )
+
+
+def fsl_to_bids_pros(filename: str, context_url=conf.DEFAULT_CONTEXT_URL, output_file=None,
+                     fsl_ver="**************", verbose=False, indent=2) -> None:  # TODO : add fsl version
+
+    # def fsl_to_bids_pros(filenames, output_file, context_url):
+    # filename = filenames[0]  # FIXME
 
     graph = conf.get_default_graph(context_url)
 
@@ -264,4 +271,20 @@ def fsl_to_bids_pros(filenames, output_file, context_url):
 
 
 if __name__ == "__main__":
-    sys.exit(fsl_to_bids_pros())
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+                        help="data dir where batch.m are researched")
+    parser.add_argument("--output_file", type=str, default="res.jsonld",
+                        help="output dir where results are written")
+    parser.add_argument("--context_url", default=conf.DEFAULT_CONTEXT_URL,
+                        help="DEFAULT_CONTEXT_URL")
+    parser.add_argument("--verbose", action="store_true", help="more print")
+    opt = parser.parse_args()
+
+    fsl_to_bids_pros(opt.input_file, context_url=opt.context_url,
+                     output_file=opt.output_file, verbose=opt.verbose)
+
+
+# if __name__ == "__main__":
+#     sys.exit(fsl_to_bids_pros())
