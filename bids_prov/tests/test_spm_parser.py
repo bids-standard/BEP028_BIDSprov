@@ -48,9 +48,9 @@ def test_spm_to_bids_prov(verbose=False):
 
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
-                if not os.path.exists(ref_jsonld):
-                    print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
 
+        if verbose and  not os.path.exists(ref_jsonld):
+            print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
             assert res_compare
 
 
