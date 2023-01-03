@@ -48,6 +48,8 @@ def test_spm_to_bids_prov(verbose=True):
 
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
+                print("graph_ref", graph_ref)
+                print("graph_new", graph_new)
 
         if verbose and  not os.path.exists(ref_jsonld):
             print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
