@@ -4,17 +4,12 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-
-      - if: github.event_name != 'pull_request'
-        uses: actions/checkout@v3
-      - if: github.event_name == 'pull_request'
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.MY_TOKEN || github.token }}
-          # repo-token: ${{ secrets.GITHUB_TOKEN }}
-      # - uses: actions/checkout@v3
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
