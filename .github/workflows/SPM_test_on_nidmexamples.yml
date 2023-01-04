@@ -39,11 +39,13 @@ jobs:
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_temporal_derivative/batch.m -O nidmresults-examples/spm_temporal_derivative_batch.m
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_non_sphericity/batch.m -O nidmresults-examples/spm_non_sphericity_batch.m
           python launch_multiple_spm.py --input_dir nidmresults-examples
-      - name: push on the repo the dir "results/" 
+      - name: get branch
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
           git branch
+      - name: push on the repo the dir "results/" 
+        run: |
           # git switch -c temp_branch
           git add results/
           git commit -m "automated nidm example computation from github action "
