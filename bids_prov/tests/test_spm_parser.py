@@ -27,7 +27,7 @@ def test_spm_to_bids_prov(verbose=True):
 
 
     for idx, sample_spm in enumerate(sample_spm_list):
-
+        init_random_state() # random seed initialisation for each batch.m
         name = os.path.splitext(sample_spm)[0]
         ref_jsonld = os.path.join(dir_sample_test , name + '_ref.jsonld')
 
@@ -48,11 +48,9 @@ def test_spm_to_bids_prov(verbose=True):
 
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
-                print("graph_ref", graph_ref)
-                print("graph_new", graph_new)
+                if not os.path.exists(ref_jsonld):
+                    print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
 
-        if verbose and  not os.path.exists(ref_jsonld):
-            print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
             assert res_compare
 
 
