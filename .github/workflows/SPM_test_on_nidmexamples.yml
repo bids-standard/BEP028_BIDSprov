@@ -4,13 +4,14 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Setup Python
-        uses: actions/setup-python@master
+        uses: actions/setup-python@v4
         with:
           python-version: 3.10.6
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.ref_name }}
+          # ref: ${{ github.ref_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -44,11 +45,9 @@ jobs:
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
-          git branch temp_bot
-          git switch temp_bot
           git add results/
           git commit -m "automated nidm example computation from github action"
-          git push --set-upstream origin temp_bot
+          git push
       - name: create an artifact 
         uses: actions/upload-artifact@v3
         with:
