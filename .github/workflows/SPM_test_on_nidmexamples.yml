@@ -56,14 +56,11 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git branch temp_bot
-          git switch temp_bot
       - name: push on the repo the dir "results/" 
         run: |
           git add results/
           git commit -m "automated nidm example computation from github action"
-          git push --set-upstream origin temp_bot
-          git branch -D temp_bot
+          git push
       - name: create an artifact 
         uses: actions/upload-artifact@v3
         with:
