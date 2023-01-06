@@ -234,8 +234,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
             closest_activity = act
             if verbose:
                 print(f"closest_activity : {closest_activity}")
-            # example : "urn:oved/CopiedFiles1
-            # output_id = ("urn:" + parts[-1].replace(" ", "") + dep_number.group(1))
+
             output_id = get_id()
 
             # adds to the current activity the fact that it has used the previous entity
