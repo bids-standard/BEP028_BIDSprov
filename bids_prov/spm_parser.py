@@ -190,7 +190,7 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
             for output in conf_dic[activity]['outputs']:
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
-                entity = {"@id": get_id(),
+                entity = {"@id": "urn:" + get_id(),
                           "label": name,
                           "prov:atLocation": output,
                           "wasGeneratedBy": activity_id,
@@ -235,7 +235,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
             if verbose:
                 print(f"closest_activity : {closest_activity}")
 
-            output_id = get_id()
+            output_id = "urn:" + get_id()
 
             # adds to the current activity the fact that it has used the previous entity
             activity["used"].append(output_id)
