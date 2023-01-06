@@ -1,19 +1,30 @@
 import argparse
+import hashlib
 import json
 import os
 import re
+from typing import List, Dict, Generator
 
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
 from bids_prov import get_id
-def format_activity_name(activity_name: str, l_max=30) -> str:
+
+
+def get_sha256(file_path):
+    m = hashlib.sha256()
+    with open(file_path, 'rb') as f:
+        lines = f.read()
+        m.update(lines)
+    md5code = m.hexdigest()
+    return md5code
+
+
+def format_activity_name(activity_name: str) -> str:
     """Function to get name of activity
 
     Parameters
     ----------
     activity_name : name of activity
-    l_max : maximal length with cuts in words between dots
-
 
     Examples
     --------
@@ -24,13 +35,14 @@ def format_activity_name(activity_name: str, l_max=30) -> str:
     # s example : cfg_basicio.file_dir.file_ops.file_move._1
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
-    act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
-    while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
-        act_split = act_split[1:]
-    return ".".join(act_split)  # file_dir.file_ops.file_move._1
+    # act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
+    # while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
+    #     act_split = act_split[1:]
+    # ".".join(act_split)  # file_dir.file_ops.file_move._1
+    return activity_name
 
 
-def get_input_entity(right: str, verbose=False) ->  list:
+def get_input_entity(right: str, verbose=False) -> List[dict]:
     """Get input Entity if possible else return None
 
     # called if left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX, example :
@@ -40,6 +52,7 @@ def get_input_entity(right: str, verbose=False) ->  list:
     ----------
     right : right side of ' = '
     verbose : boolean to have more verbosity
+
     Returns
     -------
      dict[str, str]
@@ -47,23 +60,29 @@ def get_input_entity(right: str, verbose=False) ->  list:
 
     """
 
-    drop_brace = re.sub(r"[{};]", "", right)  # removes "{'" at the beginning and "'};" at the end
-    file_list = drop_brace.split("',") # split if multiple files
+    # removes "{'" at the beginning and "'};" at the end
+    drop_brace = re.sub(r"[{};]", "", right)
+    file_list = drop_brace.split("',")  # split if multiple files
     entities = list()
 
     for file_str in file_list:
         if not file_str == "":
-            file_drop_quotes = re.sub(r"\'", "", file_str)  # 'ds000052/RESULTS/Sub01/con_0001.nii,1'
-            file_location= re.sub(r"\,1", "", file_drop_quotes) # ds000052/RESULTS/Sub01/con_0001.nii
-            entity_label_short = "_".join(file_location.split("/")[-2:]) # Sub01_con_0001.nii
+            # 'ds000052/RESULTS/Sub01/con_0001.nii,1'
+            file_drop_quotes = re.sub(r"\'", "", file_str)
+            # ds000052/RESULTS/Sub01/con_0001.nii
+            file_location = re.sub(r"\,1", "", file_drop_quotes)
+            entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
-                "@id": "niiri:" + entity_label_short + get_id(),
+                "@id": "niiri:" + get_id(),
                 "label": entity_label_short,
                 "prov:atLocation": file_location
             }
-            if os.path.exists(file_location):
-                sha256_value = conf.get_sha256(file_location)
-                checksum_name = "sha256_"+ entity["@id"]
+            relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + file_location)
+            # this_path = os.path.abspath(__file__)
+
+            if os.path.exists(relative_path):
+                sha256_value = get_sha256(relative_path)
+                checksum_name = "sha256_" + entity["@id"]
                 entity['digest'] = {checksum_name: sha256_value}
 
             entities.append(entity)
@@ -71,7 +90,7 @@ def get_input_entity(right: str, verbose=False) ->  list:
     return entities
 
 
-def readlines(filename: str):  # -> Generator  from https://docs.python.org/3/library/typing.html
+def readlines(filename: str) -> Generator[str, None, None]: #from https://docs.python.org/3/library/typing.html
     """Read lines from the original batch.m file. A multiline matlabbatch instructions should be associated
     with a single line in the output
 
@@ -89,13 +108,15 @@ def readlines(filename: str):  # -> Generator  from https://docs.python.org/3/li
                     brace_with_multiline = True
                     _line += next(fd)[:-1].lstrip() + ","  #
                 if brace_with_multiline:
-                    _line = _line[:-1] #drop last in case of multiline,
-                while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
-                    _line = _line.strip() + " " + next(fd)[:-1].lstrip()  # append
+                    _line = _line[:-1]  # drop last in case of multiline,
+                # case of multiline for 1 instruction  matlabbatch
+                while _line.count("[") != _line.count("]"):
+                    _line = _line.strip() + " " + \
+                        next(fd)[:-1].lstrip()  # append
                 yield _line
 
 
-def group_lines(lines: list) -> dict:
+def group_lines(lines: list) -> Dict[str, list]:
     """Group line by their activity id.  The activity id is between curly brackets, for every line
 
     Parameters
@@ -105,8 +126,9 @@ def group_lines(lines: list) -> dict:
 
     Returns
     -------
-    dict[int, str]
+    dict[str, list]
         a mapping from activity id to lines belonging to this activity
+
     Example
     -------
     >>> from bids_prov.spm_parser import group_lines
@@ -124,7 +146,8 @@ def group_lines(lines: list) -> dict:
     for line in lines:
         a = re.search(r"\{\d+\}", line)
         if a:
-            g = a.group()[1:-1]  # retrieves the batch number without the braces , here '3'
+            # retrieves the batch number without the braces , here '3'
+            g = a.group()[1:-1]
             res[g].append(line[a.end() + 1:])
             # retrieves the rest of the line without the dot after the brace of the activity number
 
@@ -134,7 +157,8 @@ def group_lines(lines: list) -> dict:
         left_egal_list = [right_part_act_id.split(" = ")[0] for right_part_act_id in right_part_act_id_list]
         common_prefix = os.path.commonprefix(left_egal_list)
         after_common_list = [right_part_act_id[len(common_prefix):] for right_part_act_id in right_part_act_id_list]
-        new_key = f"{common_prefix}_{act_id}"  # add to the common prefix the activity number
+        # add to the common prefix the activity number
+        new_key = f"{common_prefix}_{act_id}"
         new_res[new_key] = after_common_list  # keep the rest of the line
     # newres = {..., 'spm.stats.con._3':["spmmat(1) = cfg_dep('Model estimation: SP...;",
     #                                    "consess{1}.tcon.name = 'mr vs plain covariate';"
@@ -142,7 +166,7 @@ def group_lines(lines: list) -> dict:
     return new_res
 
 
-def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id: str) -> list:
+def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id: str) -> List[dict]:
     """ Get entities from external conf_dic (import yaml file)
 
     For example : spatial.preproc is contained in activity_name
@@ -162,18 +186,21 @@ def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id
     output_entities = list()
     for activity in conf_dic.keys():
         if activity in activity_name:
-            for output in conf_dic[activity]['outputs']: #{'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
+            # {'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
+            for output in conf_dic[activity]['outputs']:
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
-                entity = {"@id": name + '_'+  output + get_id(),
-                     "label": name,
-                     "prov:atLocation": output,
-                     "wasGeneratedBy": activity_id,
-                     }
+                entity = {"@id": name + '_' + output + get_id(),
+                          "label": name,
+                          "prov:atLocation": output,
+                          "wasGeneratedBy": activity_id,
+                          }
                 output_entities.append(entity)
-            break  # stop for loop at first math in if statement (match activity in conf_dic)
+            # stop for loop at first math in if statement (match activity in conf_dic)
+            break
 
     return output_entities  # empty list [] if no match,
+
 
 def dependency_process(records_activities: list, activity: dict, right: str, verbose=False) -> dict:
     """Function to search dependent activity in right line. If found, find the corresponding activity
@@ -195,8 +222,10 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
     dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
     # check if the line call cfg_dep and retrieve the first parameter retrieve all digits between parenthesis
     output_entity = dict()
-    dep_number = re.search(r"{(\d+)}", right) #and retrieve the first parameter,  all digits between parenthesis
-    parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
+    # and retrieve the first parameter,  all digits between parenthesis
+    dep_number = re.search(r"{(\d+)}", right)
+    # retrieve name of the output_entity
+    parts = dependency.group(1).split(": ")
     # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
     # return : ['Move/Delete Files', 'Moved/Copied Files'
     for act in records_activities:
@@ -205,17 +234,19 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
             closest_activity = act
             if verbose:
                 print(f"closest_activity : {closest_activity}")
-            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))  # example : "niiri:oved/CopiedFiles1
+            # example : "niiri:oved/CopiedFiles1
+            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
 
-            activity["used"].append(output_id)  # adds to the current activity the fact that it has used the previous entity
+            # adds to the current activity the fact that it has used the previous entity
+            activity["used"].append(output_id)
             output_entity = {"@id": output_id,
                              "label": parts[-1],
                              # "prov:atLocation": TODO
                              "wasGeneratedBy": closest_activity["@id"],
-            }
-
+                             }
 
     return output_entity
+
 
 def get_records(task_groups: dict, verbose=False) -> dict:
     """Take the result of `group_lines` and output the corresponding  JSON-ld graph as a python dict
@@ -237,12 +268,12 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
     for common_prefix_act, end_line_list in task_groups.items():
 
-        activity_id = "niiri:" + common_prefix_act + get_id()
+        activity_id = "niiri:" + get_id()
         activity = {"@id": activity_id,
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
-                    "wasAssociatedWith": "RRID:SCR_007037",
-        }
+                    "AssociatedWith": "RRID:SCR_007037",
+                    }
 
         output_entities, input_entities = list(), list()
         params = {}
@@ -252,16 +283,16 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
         for end_line in end_line_list:
 
-            split = end_line.split(" = ")  # split in 2 at the level of the equal the rest of the action
+            # split in 2 at the level of the equal the rest of the action
+            split = end_line.split(" = ")
             if len(split) != 2:
-                print(f"could not parse with more than 2 '=' in end line : ' {end_line}'") #
+                print(f"could not parse with more than 2 '=' in end line : ' {end_line}'")
                 continue  # skip end of loop for end_line in end_line_list:
 
             left, right = split
 
             if verbose:
                 print(f'MATLAB common_prefix_act: {common_prefix_act}: left: ', left, '= right: ', right)
-
 
             if not conf.has_parameter(left) and re.search(conf.PATH_REGEX, right) and re.search(conf.FILE_REGEX, right):
                 # left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX
@@ -272,7 +303,8 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
                     and any(["substruct" in l for l in [common_prefix_act, left, right]]):
-                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
+                # cfg_dep\(['"]([^'"]*)['"]\,.*
+                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)
                 # check if the line call cfg_dep
                 # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
                 # to a function, the common part will be full and so left will be empty
@@ -285,21 +317,25 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
                 else:  # dependency is None no r"(d+)"
                     Warning(f"Could not parse line with dependency {right}")
-                    continue # break to for common_prefix_act,
+                    continue  # break to for common_prefix_act,
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
 
-                # param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 param_name = left.strip()
-                right_= right[:-1]  # remove ";" at the end of right
+                right_ = right[:-1]  # remove ";" at the end of right
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
-                params[param_name] = param_value # example : [4 2] becomes [4, 2]
+                # example : [4 2] becomes [4, 2]
+                params[param_name] = param_value
                 if verbose:
                     print(f"param_name: {param_name}, param_value: {param_value}")
+                # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
+                # if param_value.startswith("struct"):
+                #     continue  # TODO handle dictionary-like parameters
 
         if input_entities:
             used_entities = [entity["@id"] for entity in input_entities]
-            activity["used"] = (activity["used"] + used_entities)  # we add entities from input_entities
+            # we add entities from input_entities
+            activity["used"] = (activity["used"] + used_entities)
             if verbose:
                 print(f'activity["used"] : {activity["used"]}')
 
@@ -317,11 +353,14 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
     return records
 
-def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False, indent=2) -> None:
+
+def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None,
+                     spm_ver="SPM12r7224", verbose=False, indent=2) -> None:
     """ Exporter from batch.m to an output jsonld
 
     Parameters
     ----------
+    spm_ver : version of SPM , SPM 12 release 7224 by default
     filename : str
         input file of batch.m; example filename = "/test/spm_batch.m"
     context_url : str, optional
@@ -333,7 +372,6 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
     indent : int, optional
         2, number of indentation in jsonfile between each object
 
-
     """
     graph = conf.get_empty_graph(context_url=context_url, spm_ver=spm_ver)
 
@@ -343,7 +381,8 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
     graph["records"].update(records)
 
     if output_file is None:
-        output_file = os.path.splitext(filename)[0] + '.jsonld'  # replace extension .m by .jsonld
+        # replace extension .m by .jsonld
+        output_file = os.path.splitext(filename)[0] + '.jsonld'
 
     with open(output_file, "w") as fd:
         json.dump(graph, fd, indent=indent)
@@ -352,14 +391,35 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-                        help="data dir where batch.m are researched")
+    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m", help="data dir where batch.m are researched")
     parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
     parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
-    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
-     # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
+    spm_to_bids_prov(opt.input_file, context_url=opt.context_url,
+                     output_file=opt.output_file, verbose=opt.verbose)
+    # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
+    # TEMPORY TEST FOR DEBUGGER
 
+    # filenames = ['./tests/samples_test/batch_example_spm.m',
+    #              './tests/samples_test/partial_conjunction.m',
+    #              '../nidm-examples/spm_default/batch.m',
+    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
+    #              '../nidm-examples/spm_explicit_mask/batch.m',
+    #              '../nidm-examples/spm_full_example001/batch.m',  # fr closest None
+    #              '../nidm-examples/spm_non_sphericity/batch.m',
+    #              '../nidm-examples/spm_HRF_informed_basis/batch.m',
+    #              '../nidm-examples/spm_covariate/batch.m',
+    #              './tests/to_test/batch_example_spm_forDigest.m',]
+    # output_file = '../res_temp.jsonld'
+    # # # # for filename in filenames[-2:]:
+    # filename = filenames[0]
+    # # print('\n' + filename + '\n')
+    # spm_to_bids_prov(filename, output_file=output_file, verbose=True)
 
+    # nidm_samples = os.listdir('../nidm-examples/')
+    # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
+    # # for spm_sample in spm_samples:
+    #     print('\n' + spm_sample + '\n')
+    #     spm_to_bids_prov(f"../nidm-examples/{spm_sample}/batch.m", output_file=output_file)
