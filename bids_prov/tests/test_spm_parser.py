@@ -6,10 +6,6 @@ import uuid
 from unittest.mock import Mock
 
 import pytest
-import pytest_mock
-
-import bids_prov
-from bids_prov import get_id
 from deepdiff import DeepDiff
 from collections import defaultdict
 import rdflib
