@@ -2,6 +2,8 @@ import re
 import yaml
 import os
 
+from bids_prov import get_id
+
 # contains the path from home to the directory where this script is located
 this_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -20,23 +22,15 @@ with open(this_path + "/spm_config.yml", "r") as fd:
 
 
 def get_empty_graph(context_url=CONTEXT_URL, spm_ver="dev"):
+    agent_id = get_id()
     return {
         "@context": context_url,
         "BIDSProvVersion": "dev",  # TODO ?
         "@id": "http://example.org/ds00000X",  # TODO ?
-        "wasGeneratedBy": {
-            "@id": "INRIA",
-            "@type": "Project",
-            "wasAssociatedWith": {
-                "@id": "NIH",
-                "@type": "Organization",
-                "hadRole": "Funding",
-            },
-        },
         "records": {
             "prov:Agent": [
                 {
-                    "@id": "exampleAgentID",
+                    "@id": "urn:" + agent_id,
                     "RRID": "RRID:SCR_007037",
                     "@type": "prov:SoftwareAgent",
                     "label": "SPM",
@@ -46,5 +40,5 @@ def get_empty_graph(context_url=CONTEXT_URL, spm_ver="dev"):
             "prov:Activity": [],
             "prov:Entity": [],
         },
-    }
+    }, agent_id
 
