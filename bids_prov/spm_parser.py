@@ -73,7 +73,7 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
             file_location = re.sub(r"\,1", "", file_drop_quotes)
             entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
-                "@id": "niiri:" + get_id(),
+                "@id": "urn:" + get_id(),
                 "label": entity_label_short,
                 "prov:atLocation": file_location
             }
@@ -234,8 +234,8 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
             closest_activity = act
             if verbose:
                 print(f"closest_activity : {closest_activity}")
-            # example : "niiri:oved/CopiedFiles1
-            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
+            # example : "urn:oved/CopiedFiles1
+            output_id = ("urn:" + parts[-1].replace(" ", "") + dep_number.group(1))
 
             # adds to the current activity the fact that it has used the previous entity
             activity["used"].append(output_id)
@@ -248,12 +248,13 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
     return output_entity
 
 
-def get_records(task_groups: dict, verbose=False) -> dict:
+def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
     """Take the result of `group_lines` and output the corresponding  JSON-ld graph as a python dict
 
     Parameters
     ----------
     task_groups : task activities grouped by activity number
+    agent_id : agent's uuid
     verbose : True to have more verbosity
 
     Returns
@@ -268,11 +269,11 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
     for common_prefix_act, end_line_list in task_groups.items():
 
-        activity_id = "niiri:" + get_id()
+        activity_id = "urn:" + get_id()
         activity = {"@id": activity_id,
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
-                    "AssociatedWith": "RRID:SCR_007037",
+                    "AssociatedWith": agent_id,
                     }
 
         output_entities, input_entities = list(), list()
@@ -373,11 +374,11 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
         2, number of indentation in jsonfile between each object
 
     """
-    graph = conf.get_empty_graph(context_url=context_url, spm_ver=spm_ver)
+    graph, agent_id = conf.get_empty_graph(context_url=context_url, spm_ver=spm_ver)
 
     lines = readlines(filename)
     tasks = group_lines(lines)  # same as list(lines) to expand generator
-    records = get_records(tasks, verbose=verbose)
+    records = get_records(tasks, agent_id, verbose=verbose)
     graph["records"].update(records)
 
     if output_file is None:
@@ -400,6 +401,7 @@ if __name__ == "__main__":
     spm_to_bids_prov(opt.input_file, context_url=opt.context_url,
                      output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
+
     # TEMPORY TEST FOR DEBUGGER
 
     # filenames = ['./tests/samples_test/batch_example_spm.m',
@@ -417,7 +419,7 @@ if __name__ == "__main__":
     # filename = filenames[0]
     # # print('\n' + filename + '\n')
     # spm_to_bids_prov(filename, output_file=output_file, verbose=True)
-
+    #
     # nidm_samples = os.listdir('../nidm-examples/')
     # spm_samples = [s for s in nidm_samples if s.startswith('spm')]
     # # for spm_sample in spm_samples:
