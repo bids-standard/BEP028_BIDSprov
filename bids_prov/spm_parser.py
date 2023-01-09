@@ -202,7 +202,7 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
     return output_entities  # empty list [] if no match,
 
 
-def dependency_process(records_activities: list, activity: dict, right: str, verbose=False) -> dict:
+def dependency_process(records_activities: list, activity: dict, right: str, records: list, verbose=False) -> dict:
     """Function to search dependent activity in right line. If found, find the corresponding activity
     in records_activities, update id in activity["used"], and return output_entity
 
@@ -235,7 +235,9 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
             if verbose:
                 print(f"closest_activity : {closest_activity}")
 
-            output_id = "urn:" + get_id()
+            output_id = next((entity["@id"] for entity in records["prov:Entity"]
+                              if parts[-1] == entity["label"] and entity["wasGeneratedBy"] == closest_activity["@id"]),
+                             "urn:" + get_id())
 
             # adds to the current activity the fact that it has used the previous entity
             activity["used"].append(output_id)
@@ -311,7 +313,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                 # to a function, the common part will be full and so left will be empty
 
                 if dependency is not None:
-                    output_entity = dependency_process(records["prov:Activity"],  activity, right, verbose=False)
+                    output_entity = dependency_process(records["prov:Activity"],  activity, right, records, verbose=False)
                     output_entities.append(output_entity)
                     if verbose:
                         print('-> output  entity: ', output_entity)
