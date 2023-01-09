@@ -273,7 +273,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
         activity = {"@id": activity_id,
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
-                    "AssociatedWith": "RRID:SCR_007037",  # or agent_id ?
+                    "wasAssociatedWith": "urn:" + agent_id,
                     }
 
         output_entities, input_entities = list(), list()
