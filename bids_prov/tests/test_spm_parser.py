@@ -1,9 +1,7 @@
 import json
 import re
 import os
-import unittest
 import uuid
-from unittest.mock import Mock
 import random
 
 import pytest
@@ -138,7 +136,7 @@ def test_get_records_copy_attributes():
                                    ".action.copyto = {'$PATH-TO-PREPROCESSING/FUNCTIONAL'};",
                                    ]
                        )
-    recs = get_records(task_groups, uuid.uuid4())
+    recs = get_records(task_groups, str(uuid.uuid4()))
     attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
     assert "action.copyto" in json.dumps(attrs)
 
