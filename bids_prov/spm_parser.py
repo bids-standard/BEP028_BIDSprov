@@ -6,6 +6,8 @@ import re
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
 from bids_prov import get_id
+
+
 def format_activity_name(activity_name: str, l_max=30) -> str:
     """Function to get name of activity
 
@@ -30,7 +32,7 @@ def format_activity_name(activity_name: str, l_max=30) -> str:
     return ".".join(act_split)  # file_dir.file_ops.file_move._1
 
 
-def get_input_entity(right: str, verbose=False) ->  list:
+def get_input_entity(right: str, verbose=False) -> list:
     """Get input Entity if possible else return None
 
     # called if left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX, example :
@@ -48,22 +50,22 @@ def get_input_entity(right: str, verbose=False) ->  list:
     """
 
     drop_brace = re.sub(r"[{};]", "", right)  # removes "{'" at the beginning and "'};" at the end
-    file_list = drop_brace.split("',") # split if multiple files
+    file_list = drop_brace.split("',")  # split if multiple files
     entities = list()
 
     for file_str in file_list:
         if not file_str == "":
             file_drop_quotes = re.sub(r"\'", "", file_str)  # 'ds000052/RESULTS/Sub01/con_0001.nii,1'
-            file_location= re.sub(r"\,1", "", file_drop_quotes) # ds000052/RESULTS/Sub01/con_0001.nii
-            entity_label_short = "_".join(file_location.split("/")[-2:]) # Sub01_con_0001.nii
+            file_location = re.sub(r"\,1", "", file_drop_quotes)  # ds000052/RESULTS/Sub01/con_0001.nii
+            entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
                 "@id": "niiri:" + entity_label_short + get_id(),
-                "label": entity_label_short,
+                "label": label_mapping(entity_label_short),
                 "prov:atLocation": file_location
             }
             if os.path.exists(file_location):
                 sha256_value = conf.get_sha256(file_location)
-                checksum_name = "sha256_"+ entity["@id"]
+                checksum_name = "sha256_" + entity["@id"]
                 entity['digest'] = {checksum_name: sha256_value}
 
             entities.append(entity)
@@ -89,7 +91,7 @@ def readlines(filename: str):  # -> Generator  from https://docs.python.org/3/li
                     brace_with_multiline = True
                     _line += next(fd)[:-1].lstrip() + ","  #
                 if brace_with_multiline:
-                    _line = _line[:-1] #drop last in case of multiline,
+                    _line = _line[:-1]  # drop last in case of multiline,
                 while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
                     _line = _line.strip() + " " + next(fd)[:-1].lstrip()  # append
                 yield _line
@@ -142,7 +144,7 @@ def group_lines(lines: list) -> dict:
     return new_res
 
 
-def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id: str) -> list:
+def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id: str) -> list:
     """ Get entities from external conf_dic (import yaml file)
 
     For example : spatial.preproc is contained in activity_name
@@ -162,18 +164,20 @@ def get_entities_from_ext_config(conf_dic :dict, activity_name: str, activity_id
     output_entities = list()
     for activity in conf_dic.keys():
         if activity in activity_name:
-            for output in conf_dic[activity]['outputs']: #{'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
+            for output in conf_dic[activity][
+                'outputs']:  # {'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
-                entity = {"@id": name + '_'+  output + get_id(),
-                     "label": name,
-                     "prov:atLocation": output,
-                     "wasGeneratedBy": activity_id,
-                     }
+                entity = {"@id": name + '_' + output + get_id(),
+                          "label": label_mapping(name),
+                          "prov:atLocation": output,
+                          "wasGeneratedBy": activity_id,
+                          }
                 output_entities.append(entity)
             break  # stop for loop at first math in if statement (match activity in conf_dic)
 
     return output_entities  # empty list [] if no match,
+
 
 def dependency_process(records_activities: list, activity: dict, right: str, verbose=False) -> dict:
     """Function to search dependent activity in right line. If found, find the corresponding activity
@@ -195,7 +199,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
     dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
     # check if the line call cfg_dep and retrieve the first parameter retrieve all digits between parenthesis
     output_entity = dict()
-    dep_number = re.search(r"{(\d+)}", right) #and retrieve the first parameter,  all digits between parenthesis
+    dep_number = re.search(r"{(\d+)}", right)  # and retrieve the first parameter,  all digits between parenthesis
     parts = dependency.group(1).split(": ")  # retrieve name of the output_entity
     # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
     # return : ['Move/Delete Files', 'Moved/Copied Files'
@@ -205,17 +209,19 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
             closest_activity = act
             if verbose:
                 print(f"closest_activity : {closest_activity}")
-            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))  # example : "niiri:oved/CopiedFiles1
+            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(
+                1))  # example : "niiri:oved/CopiedFiles1
 
-            activity["used"].append(output_id)  # adds to the current activity the fact that it has used the previous entity
+            activity["used"].append(
+                output_id)  # adds to the current activity the fact that it has used the previous entity
             output_entity = {"@id": output_id,
-                             "label": parts[-1],
+                             "label": label_mapping(parts[-1]),
                              # "prov:atLocation": TODO
                              "wasGeneratedBy": closest_activity["@id"],
-            }
-
+                             }
 
     return output_entity
+
 
 def get_records(task_groups: dict, verbose=False) -> dict:
     """Take the result of `group_lines` and output the corresponding  JSON-ld graph as a python dict
@@ -239,10 +245,10 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
         activity_id = "niiri:" + common_prefix_act + get_id()
         activity = {"@id": activity_id,
-                    "label": format_activity_name(common_prefix_act),
+                    "label": label_mapping(format_activity_name(common_prefix_act)),
                     "used": list(),
                     "wasAssociatedWith": "RRID:SCR_007037",
-        }
+                    }
 
         output_entities, input_entities = list(), list()
         params = {}
@@ -254,14 +260,13 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
             split = end_line.split(" = ")  # split in 2 at the level of the equal the rest of the action
             if len(split) != 2:
-                print(f"could not parse with more than 2 '=' in end line : ' {end_line}'") #
+                print(f"could not parse with more than 2 '=' in end line : ' {end_line}'")  #
                 continue  # skip end of loop for end_line in end_line_list:
 
             left, right = split
 
             if verbose:
                 print(f'MATLAB common_prefix_act: {common_prefix_act}: left: ', left, '= right: ', right)
-
 
             if not conf.has_parameter(left) and re.search(conf.PATH_REGEX, right) and re.search(conf.FILE_REGEX, right):
                 # left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX
@@ -278,22 +283,22 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                 # to a function, the common part will be full and so left will be empty
 
                 if dependency is not None:
-                    output_entity = dependency_process(records["prov:Activity"],  activity, right, verbose=False)
+                    output_entity = dependency_process(records["prov:Activity"], activity, right, verbose=False)
                     output_entities.append(output_entity)
                     if verbose:
                         print('-> output  entity: ', output_entity)
 
                 else:  # dependency is None no r"(d+)"
                     Warning(f"Could not parse line with dependency {right}")
-                    continue # break to for common_prefix_act,
+                    continue  # break to for common_prefix_act,
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
 
                 # param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 param_name = left.strip()
-                right_= right[:-1]  # remove ";" at the end of right
+                right_ = right[:-1]  # remove ";" at the end of right
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
-                params[param_name] = param_value # example : [4 2] becomes [4, 2]
+                params[param_name] = param_value  # example : [4 2] becomes [4, 2]
                 if verbose:
                     print(f"param_name: {param_name}, param_value: {param_value}")
 
@@ -317,7 +322,9 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
     return records
 
-def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False, indent=2) -> None:
+
+def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False,
+                     indent=2) -> None:
     """ Exporter from batch.m to an output jsonld
 
     Parameters
@@ -349,8 +356,31 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
         json.dump(graph, fd, indent=indent)
 
 
-if __name__ == "__main__":
+def label_mapping(label: str) -> str:
+    """
+    A function that takes a label from matlab as a parameter and maps it if it is present in the json mapping file.
 
+    Parameters
+    ----------
+    label : the label to be mapped
+
+    Returns
+    -------
+    str
+        Returns either the mapped label or the label if not present in the mapping file
+
+    """
+    print(label)
+    with open("./mapping_labels/spm_labels.json") as f:
+        mappings = json.load(f)
+
+    for k_matlab, v_bids_prov in mappings.items():
+        if k_matlab in label:
+            return v_bids_prov
+    return label
+
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
                         help="data dir where batch.m are researched")
@@ -360,6 +390,4 @@ if __name__ == "__main__":
     opt = parser.parse_args()
 
     spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
-     # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
-
-
+    # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
