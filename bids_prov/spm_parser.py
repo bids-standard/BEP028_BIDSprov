@@ -7,7 +7,7 @@ from typing import List, Dict, Generator
 
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
-from bids_prov import get_id
+from bids_prov.utils import get_id
 
 
 def get_sha256(file_path):

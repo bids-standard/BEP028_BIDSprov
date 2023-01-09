@@ -1,10 +1,10 @@
 from typing import Mapping, Union
+from bids_prov.utils import get_or_load
 
 from boutiques.searcher import Searcher
 from boutiques.puller import Puller
 
 import json
-from bids_prov import get_or_load
 
 DEFAULT_CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
 
