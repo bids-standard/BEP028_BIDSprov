@@ -4,6 +4,7 @@ import os
 import unittest
 import uuid
 from unittest.mock import Mock
+import random
 
 import pytest
 from deepdiff import DeepDiff
@@ -13,7 +14,6 @@ from bids_prov.spm_load_config import CONTEXT_URL
 from .compare_graph import load_jsonld11_for_rdf, is_similar_rdf_graph, is_included_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
 from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256
-from .. import random
 
 random.seed(14)  # Control random generation for test, init at each import
 INIT_STATE = random.getstate()

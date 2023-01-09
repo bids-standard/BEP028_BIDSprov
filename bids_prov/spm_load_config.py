@@ -2,7 +2,7 @@ import re
 import yaml
 import os
 
-from bids_prov import get_id
+from bids_prov.utils import get_id
 
 # contains the path from home to the directory where this script is located
 this_path = os.path.dirname(os.path.abspath(__file__))
