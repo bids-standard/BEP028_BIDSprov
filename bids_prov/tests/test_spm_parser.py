@@ -265,10 +265,10 @@ TASKS = {
         "files = {'/home/remiadon/nidmresults-examples/spm_default/ds011/sub-01/anat/sub-01_T1w.nii.gz'};",
         "action.copyto = {'/home/remiadon/nidmresults-examples/spm_default/ds011/PREPROCESSING/ANATOMICAL'};",
     ],
-    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_3": [
+    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)._3": [
         " = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));"
     ],
-    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_4": [
+    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)._4": [
         " = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));"
     ],
     "spm.spatial.realign.estwrite._5": [

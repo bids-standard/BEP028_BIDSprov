@@ -27,9 +27,15 @@ def format_activity_name(activity_name: str, l_max=30) -> str:
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
     act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
+    print(act_split)
     while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
         act_split = act_split[1:]
-    return label_mapping(".".join(act_split)) + "." + re.search(r'_\d+', act_split[-1]).group()
+
+    label_mapped = label_mapping(".".join(act_split))
+    if label_mapped == ".".join(act_split):
+        return label_mapped
+    else:
+        return label_mapping(".".join(act_split)) + "." + re.search(r'_\d+', act_split[-1]).group()
 
 def get_input_entity(right: str, verbose=False) -> list:
     """Get input Entity if possible else return None
