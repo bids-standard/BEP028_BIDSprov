@@ -29,8 +29,7 @@ def format_activity_name(activity_name: str, l_max=30) -> str:
     act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
     while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
         act_split = act_split[1:]
-    return ".".join(act_split)  # file_dir.file_ops.file_move._1
-
+    return label_mapping(".".join(act_split)) + "." + re.search(r'_\d+', act_split[-1]).group()
 
 def get_input_entity(right: str, verbose=False) -> list:
     """Get input Entity if possible else return None
@@ -136,7 +135,8 @@ def group_lines(lines: list) -> dict:
         left_egal_list = [right_part_act_id.split(" = ")[0] for right_part_act_id in right_part_act_id_list]
         common_prefix = os.path.commonprefix(left_egal_list)
         after_common_list = [right_part_act_id[len(common_prefix):] for right_part_act_id in right_part_act_id_list]
-        new_key = f"{common_prefix}_{act_id}"  # add to the common prefix the activity number
+        new_key = f"{common_prefix}_{act_id}" if common_prefix[-1] == "." else f"{common_prefix}._{act_id}"  # add to
+        # the common prefix the activity number
         new_res[new_key] = after_common_list  # keep the rest of the line
     # newres = {..., 'spm.stats.con._3':["spmmat(1) = cfg_dep('Model estimation: SP...;",
     #                                    "consess{1}.tcon.name = 'mr vs plain covariate';"
@@ -164,8 +164,8 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
     output_entities = list()
     for activity in conf_dic.keys():
         if activity in activity_name:
-            for output in conf_dic[activity][
-                'outputs']:  # {'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
+            for output in conf_dic[activity]['outputs']:
+                # {'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
                 entity = {"@id": name + '_' + output + get_id(),
@@ -245,7 +245,7 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
         activity_id = "niiri:" + common_prefix_act + get_id()
         activity = {"@id": activity_id,
-                    "label": label_mapping(format_activity_name(common_prefix_act)),
+                    "label": format_activity_name(common_prefix_act),
                     "used": list(),
                     "wasAssociatedWith": "RRID:SCR_007037",
                     }
