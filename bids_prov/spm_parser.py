@@ -27,7 +27,6 @@ def format_activity_name(activity_name: str, l_max=30) -> str:
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
     act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
-    print(act_split)
     while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
         act_split = act_split[1:]
 
@@ -215,11 +214,11 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
             closest_activity = act
             if verbose:
                 print(f"closest_activity : {closest_activity}")
-            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(
-                1))  # example : "niiri:oved/CopiedFiles1
+            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
+            # example : "niiri:oved/CopiedFiles1
 
-            activity["used"].append(
-                output_id)  # adds to the current activity the fact that it has used the previous entity
+            activity["used"].append(output_id)
+            # adds to the current activity the fact that it has used the previous entity
             output_entity = {"@id": output_id,
                              "label": label_mapping(parts[-1]),
                              # "prov:atLocation": TODO
@@ -354,6 +353,10 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
     tasks = group_lines(lines)  # same as list(lines) to expand generator
     records = get_records(tasks, verbose=verbose)
     graph["records"].update(records)
+
+    # Remove each activity number from the activity labels
+    for activity in records["prov:Activity"]:
+        activity["label"] = re.sub(r'._\d+$', '', activity["label"])
 
     if output_file is None:
         output_file = os.path.splitext(filename)[0] + '.jsonld'  # replace extension .m by .jsonld
