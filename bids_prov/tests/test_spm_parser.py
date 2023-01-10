@@ -8,7 +8,7 @@ import rdflib
 from bids_prov.spm_load_config import CONTEXT_URL
 from .compare_graph import load_jsonld11_for_rdf, compare_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
-from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov
+from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, label_mapping
 from .. import init_random_state
 
 
@@ -125,6 +125,17 @@ def test_dep_regex():
     '{}',{1}), substruct('()',{1}, '.','files'));
     """
     assert re.search(DEPENDENCY_REGEX, s, re.IGNORECASE) is not None
+
+
+def test_mapping_labels():
+    # Mapping file contains : {"coreg": "Coregistration"}
+    coreg_mapping = label_mapping("spm.spatial.coreg.estimate.ref(1)")
+    # "coreg" is contained in "spm.spatial.coreg.estimate.ref(1)" so it must return "Coregistration"
+    assert coreg_mapping == "Coregistration"
+
+    coreg_mapping = label_mapping("azerty")
+    # no mapping dictionary key is contained in azerty so it must return the word without transformation ("azerty")
+    assert coreg_mapping == "azerty"
 
 
 LIST_READLINES = [
