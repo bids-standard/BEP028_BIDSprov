@@ -371,8 +371,8 @@ def label_mapping(label: str) -> str:
 
     """
     filedir = os.path.dirname(__file__)
-    filename = os.path.join(filedir, "mapping_labels/spm_labels.json")
-    with open(filename) as f:
+    filepath = os.path.join(filedir, "mapping_labels/spm_labels.json")
+    with open(filepath) as f:
         mappings = json.load(f)
 
     for k_matlab, v_bids_prov in mappings.items():
