@@ -370,8 +370,9 @@ def label_mapping(label: str) -> str:
         Returns either the mapped label or the label if not present in the mapping file
 
     """
-    print(label)
-    with open("./mapping_labels/spm_labels.json") as f:
+    filedir = os.path.dirname(__file__)
+    filename = os.path.join(filedir, "mapping_labels/spm_labels.json")
+    with open(filename) as f:
         mappings = json.load(f)
 
     for k_matlab, v_bids_prov in mappings.items():
@@ -390,4 +391,5 @@ if __name__ == "__main__":
     opt = parser.parse_args()
 
     spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
-    # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file ./res_temp.jsonld
+    # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file
+    # ./res_temp.jsonld
