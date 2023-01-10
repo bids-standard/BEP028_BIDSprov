@@ -370,7 +370,7 @@ def label_mapping(label: str) -> str:
         Returns either the mapped label or the label if not present in the mapping file
 
     """
-    filedir = os.path.dirname(__file__)
+    filedir = os.path.dirname(os.path.abspath(__file__))
     filename = os.path.join(filedir, "mapping_labels/spm_labels.json")
     with open(filename) as f:
         mappings = json.load(f)
