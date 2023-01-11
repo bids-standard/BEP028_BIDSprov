@@ -4,7 +4,7 @@ import argparse
 from bids_prov import spm_load_config as conf
 from bids_prov.spm_parser import spm_to_bids_prov
 from bids_prov.visualize import main as visualize
-from bids_prov.fsl_parser import fsl_to_bids_pros
+from bids_prov.fsl_parser import fsl_to_bids_prov
 from datetime import datetime
 import markdownify
 import re
@@ -95,7 +95,7 @@ def main():
                              "_" + filename_ss_ext + "_log.md"
                 html_to_logmd_file(filename, logmd_file)
 
-                fsl_to_bids_pros(logmd_file, conf.CONTEXT_URL, output_file=output_jsonld,
+                fsl_to_bids_prov(logmd_file, conf.CONTEXT_URL, output_file=output_jsonld,
                                  verbose=opt.verbose)
                 output_png = output_dir_fsl + "/" + \
                              output_file_base + "_" + filename_ss_ext + ".png"
