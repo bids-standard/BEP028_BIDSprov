@@ -28,9 +28,10 @@ def get_id(size=10):
 # [\w]{2,} : match at least 2 times a word character
 INPUT_RE = r"([\/\w\.\?-]{3,}\.?[\w]{2,})"
 
-# ATTRIBUTE_RE :
-# (-+[a-zA-Z_]+) : match `-` between one and unlimited times and match between one and unlimited times a character in
-# this list : [`A-Za-z`, `_`]
+# ATTRIBUTE_RE : (-+[a-zA-Z_]+) : match `-` between one and unlimited times and match between one and unlimited times
+# a character in this list : [`A-Za-z`, `_`] [\s|=]? : match between 0 and 1 time a character included in this list [
+# `\s`, `|`, `=`] ([\/a-zA-Z._\d]+)? :  match between one and unlimited times a character included in this list [`/`,
+# `a-zA-Z`, `.`, `_`, `\d`(digit)]
 ATTRIBUTE_RE = r"(-+[a-zA-Z_]+)[\s|=]?([\/a-zA-Z._\d]+)?"
 
 # tags used to detect inputs from command lines
@@ -46,7 +47,7 @@ INPUT_TAGS = frozenset(
 
 # tags used to detect outputs from cammand lines
 # eg. convert_xfm -inverse -omat highres2example_func.mat example_func2highres.mat
-OUPUT_TAGS = frozenset(
+OUTPUT_TAGS = frozenset(
     [
         "-o",
         "-omat",
@@ -169,7 +170,10 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             cmd_s = cmd.split(" ")
             a_name = cmd_s[0]
             if a_name.endswith(":"):  # result of `echo`
-                continue
+                # Example :
+                # echo 45081 > thresh_zfstat1.vol
+                # zfstat1: DLH=0.387734 VOLUME=45081 RESELS=11.9468
+                continue  # go to next element in the loop
 
             attributes = defaultdict(list)
 
@@ -180,14 +184,16 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             # make sure attributes are not considered as entities
             cmd = re.sub(ATTRIBUTE_RE, "", cmd)
 
+            # if a key of attributes is in INPUT_TAGS, we add her value in inputs
             inputs = list(
                 chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS))
             )
+            # same process with OUTPUT_TAGS
             outputs = list(
-                chain(*(attributes.pop(k) for k in attributes.keys() & OUPUT_TAGS))
+                chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS))
             )
             entity_names = [_ for _ in re.findall(INPUT_RE, cmd[len(a_name):])]
-            cmd_conf = get_closest_config(a_name)
+            cmd_conf = get_closest_config(a_name)  # with the module boutiques
             if cmd_conf:
                 pos_args = filter(
                     lambda e: not e.startswith("-"), cmd_s
@@ -200,7 +206,8 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
                 if len(entity_names) > 1:
                     inputs.append(entity_names[0])
 
-            label = f"{group_name}_{os.path.split(a_name)[1]}"
+            label = f"{group_name}_{os.path.split(a_name)[1]}"  # split at the last / in 2 parts : the head (the
+            # directory path of the file) and the tail (the file name and possible extension)
             a = {
                 "@id": f"urn:{label}_{get_id(5)}",
                 "label": label,
@@ -242,7 +249,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
                     {
                         "@id": f"urn:{get_id(size=5)}_{output_name}",
                         "label": os.path.split(output_path)[1],
-                        "prov:atLocation": output_name,
+                        "prov:atLocation": output_path,
                         "wasGeneratedBy": a["@id"],
                         "derivedFrom": input_id,  # FIXME currently last input ID
                     }

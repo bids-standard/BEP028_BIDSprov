@@ -10,19 +10,14 @@ import markdownify
 import re
 
 
-def html_to_mdlog(htlm_str):
-    htlm_str = re.sub("<TITLE>FSL</TITLE>", "", htlm_str)
-    md = markdownify.markdownify(htlm_str, heading_style="ATX")
-    logmd = re.sub("---\n\n(.*)", "## \g<1>", md)
-    logmd = re.sub("Feat main script", "## Feat main script", logmd)
-    logmd = re.sub("```", "", logmd)
-    return logmd
-
-
 def html_to_logmd_file(htlm_file, logmd_file):
     with open(htlm_file, "r") as f:
         htlm_str = f.read()
-    logmd = html_to_mdlog(htlm_str)
+        htlm_str = re.sub("<TITLE>FSL</TITLE>", "", htlm_str)
+        md = markdownify.markdownify(htlm_str, heading_style="ATX")
+        logmd = re.sub("---\n\n(.*)", "## \g<1>", md)
+        logmd = re.sub("Feat main script", "## Feat main script", logmd)
+        logmd = re.sub("```", "", logmd)
     with open(logmd_file, "w") as f:
         f.write(logmd)
     return logmd
