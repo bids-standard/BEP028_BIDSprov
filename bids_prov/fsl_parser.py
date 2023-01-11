@@ -22,7 +22,15 @@ def get_id(size=10):
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
+# INPUT_RE:
+# ([\/\w\.\?-]{3,} : match at least 3 times tokens included in this list [`/`, `\w`, `.`, `?`, `-`]
+# \.? : match the character `.` between zero and once
+# [\w]{2,} : match at least 2 times a word character
 INPUT_RE = r"([\/\w\.\?-]{3,}\.?[\w]{2,})"
+
+# ATTRIBUTE_RE :
+# (-+[a-zA-Z_]+) : match `-` between one and unlimited times and match between one and unlimited times a character in
+# this list : [`A-Za-z`, `_`]
 ATTRIBUTE_RE = r"(-+[a-zA-Z_]+)[\s|=]?([\/a-zA-Z._\d]+)?"
 
 # tags used to detect inputs from command lines
@@ -77,12 +85,12 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
         lines = fd.readlines()
         n_line = 0
         while n_line < len(lines):
-            line = lines[n_line][:-1]
+            line = lines[n_line][:-1]  # -1 to exclude \n
             # TODO : add </pre> as in
             # https://github.com/incf-nidash/nidmresults-examples/blob/master/fsl_gamma_basis/logs/feat2_pre
             if line.startswith("#"):
                 key = line.replace("#", "")
-                cmds, i = read_commands(lines[n_line + 1 :])
+                cmds, i = read_commands(lines[n_line + 1:])
                 n_line += i
                 if cmds:
                     res[key].extend(cmds)
@@ -105,8 +113,8 @@ def read_commands(lines: List[str]) -> Tuple[List[str], int]:
     res = list()
     i = 0
     for line in lines:
-        if re.match(r"^[a-z/].*$", line):
-            res.extend(line[:-1].split(";"))
+        if re.match(r"^[a-z/].*$", line):  # the line must begin with a lowercase word or a / followed by 0 or more dots
+            res.extend(line[:-1].split(";"))  # remove the `\n`, split on a possible `;` and add to the end of the list
         elif line == "\n":
             pass
         else:
@@ -122,7 +130,7 @@ def get_closest_config(key):
 
     Example
     -------
-    ```pytthon
+    ```python
     >>> stats_conf = get_closest_confif("fslstats")
     >>> stats_conf["version"]
     5.0.9
@@ -148,7 +156,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
     """
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
-        group_activity_id = f"niiri:{group_name}_{get_id(5)}"
+        group_activity_id = f"urn:{group_name}_{get_id(5)}"
         records["prov:Activity"].append(
             {
                 "@id": group_activity_id,
@@ -178,7 +186,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             outputs = list(
                 chain(*(attributes.pop(k) for k in attributes.keys() & OUPUT_TAGS))
             )
-            entity_names = [_ for _ in re.findall(INPUT_RE, cmd[len(a_name) :])]
+            entity_names = [_ for _ in re.findall(INPUT_RE, cmd[len(a_name):])]
             cmd_conf = get_closest_config(a_name)
             if cmd_conf:
                 pos_args = filter(
@@ -194,7 +202,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
 
             label = f"{group_name}_{os.path.split(a_name)[1]}"
             a = {
-                "@id": f"niiri:{label}_{get_id(5)}",
+                "@id": f"urn:{label}_{get_id(5)}",
                 "label": label,
                 "wasAssociatedWith": "RRID:SCR_002823",
                 "attributes": [
@@ -207,7 +215,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             input_id = ""
             for input_path in inputs:
                 input_name = input_path.replace("/", "_")
-                input_id = f"niiri:{get_id(size=5)}_{input_name}"  # def format_id
+                input_id = f"urn:{get_id(size=5)}_{input_name}"  # def format_id
 
                 existing_input = next(
                     (
@@ -232,7 +240,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
                 output_name = output_path.replace("/", "_")
                 records["prov:Entity"].append(
                     {
-                        "@id": f"niiri:{get_id(size=5)}_{output_name}",
+                        "@id": f"urn:{get_id(size=5)}_{output_name}",
                         "label": os.path.split(output_path)[1],
                         "prov:atLocation": output_name,
                         "wasGeneratedBy": a["@id"],
@@ -254,7 +262,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
 # )
 
 
-def fsl_to_bids_pros(filename: str, context_url=conf.DEFAULT_CONTEXT_URL, output_file=None,
+def fsl_to_bids_prov(filename: str, context_url=conf.DEFAULT_CONTEXT_URL, output_file=None,
                      fsl_ver="**************", verbose=False, indent=2) -> None:  # TODO : add fsl version
 
     # def fsl_to_bids_pros(filenames, output_file, context_url):
@@ -271,10 +279,9 @@ def fsl_to_bids_pros(filename: str, context_url=conf.DEFAULT_CONTEXT_URL, output
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-                        help="data dir where batch.m are researched")
+    parser.add_argument("--input_file", type=str, default="./examples/fsl_default/logs.md",
+                        help="fsl execution log file")
     parser.add_argument("--output_file", type=str, default="res.jsonld",
                         help="output dir where results are written")
     parser.add_argument("--context_url", default=conf.DEFAULT_CONTEXT_URL,
@@ -282,9 +289,8 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
-    fsl_to_bids_pros(opt.input_file, context_url=opt.context_url,
+    fsl_to_bids_prov(opt.input_file, context_url=opt.context_url,
                      output_file=opt.output_file, verbose=opt.verbose)
-
 
 # if __name__ == "__main__":
 #     sys.exit(fsl_to_bids_pros())

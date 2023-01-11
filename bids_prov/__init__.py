@@ -4,6 +4,7 @@ import os
 import json
 from os.path import expanduser
 
+
 # TODO uuid from special library (20 alpha num)
 # https://stackoverflow.com/questions/41186818/how-to-generate-a-random-uuid-which-is-reproducible-with-a-seed-in-python
 
@@ -12,6 +13,7 @@ from os.path import expanduser
 
 def get_id():
     return "".join(random.choice(string.ascii_letters + string.digits) for i in range(20))
+
 
 def get_or_load(fn):
     """

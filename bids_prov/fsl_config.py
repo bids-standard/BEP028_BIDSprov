@@ -47,16 +47,6 @@ def get_default_graph(context_url: str) -> Mapping[str, Union[str, Mapping]]:
         "@context": context_url,
         "@id": "http://example.org/ds00000X",
         "generatedAt": "2020-03-10T10:00:00",
-        "wasGeneratedBy": {
-            "@id": "INRIA",
-            "@type": "Project",
-            "startedAt": "2016-09-01T10:00:00",
-            "wasAssociatedWith": {
-                "@id": "NIH",
-                "@type": "Organization",
-                "hadRole": "Funding",
-            },
-        },
         "records": {
             "prov:Agent": [
                 {
