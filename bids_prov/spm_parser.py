@@ -19,7 +19,7 @@ def get_sha256(file_path):
     return md5code
 
 
-def format_activity_name(activity_name: str, l_max=30) -> str:
+def format_activity_name(activity_name: str) -> str:
     """Function to get name of activity
 
     Parameters
@@ -29,21 +29,19 @@ def format_activity_name(activity_name: str, l_max=30) -> str:
     Examples
     --------
     >>> print(format_activity_name("cfg_basicio.file_dir.file_ops.file_move._1"))
-    file_dir.file_ops.file_move._1
+    cfg_basicio.file_dir.file_ops.file_move._1
 
     """
     # s example : cfg_basicio.file_dir.file_ops.file_move._1
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
-    act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
-    while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
-        act_split = act_split[1:]
 
-    label_mapped = label_mapping(".".join(act_split))
-    if label_mapped == ".".join(act_split):
+    label_mapped = label_mapping(activity_name)
+    if label_mapped == activity_name:
         return label_mapped
     else:
-        return label_mapped + "." + re.search(r'_\d+', act_split[-1]).group()
+        return label_mapped + "." + re.search(r'_\d+', activity_name.split()[-1]).group()
+
 
 def get_input_entity(right: str, verbose=False) -> List[dict]:
     """Get input Entity if possible else return None
@@ -90,7 +88,7 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
     return entities
 
 
-def readlines(filename: str) -> Generator[str, None, None]: #from https://docs.python.org/3/library/typing.html
+def readlines(filename: str) -> Generator[str, None, None]:  # from https://docs.python.org/3/library/typing.html
     """Read lines from the original batch.m file. A multiline matlabbatch instructions should be associated
     with a single line in the output
 
@@ -311,7 +309,8 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                 # to a function, the common part will be full and so left will be empty
 
                 if dependency is not None:
-                    output_entity = dependency_process(records["prov:Activity"],  activity, right, records, verbose=False)
+                    output_entity = dependency_process(records["prov:Activity"], activity, right, records,
+                                                       verbose=False)
                     output_entities.append(output_entity)
                     if verbose:
                         print('-> output  entity: ', output_entity)
@@ -414,7 +413,6 @@ def label_mapping(label: str) -> str:
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
                         help="data dir where batch.m are researched")
