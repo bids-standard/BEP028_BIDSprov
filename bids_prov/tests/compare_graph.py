@@ -20,8 +20,7 @@ def load_jsonld11_for_rdf(jsonld11_file: str, pyld_convert=True) -> dict:
 
     req_context_11 = requests.get(url=jsonld11['@context'])
     context_11 = req_context_11.json()
-    context_10 = {
-        k: v for k, v in context_11['@context'].items() if k not in {'@version', 'records'}}
+    context_10 = {k: v for k, v in context_11['@context'].items() if k not in {'@version', 'records'}}
 
     if pyld_convert:
         pyld_jsonld11 = pyld.jsonld.compact(jsonld11, context_10)
@@ -32,7 +31,7 @@ def load_jsonld11_for_rdf(jsonld11_file: str, pyld_convert=True) -> dict:
     return jsonld11
 
 
-def is_similar_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=True) -> bool:
+def compare_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=False) -> bool:
     """ A wrapping function that compare rdf graph, and if they are not similar show differences
 
     Parameters
@@ -42,8 +41,7 @@ def is_similar_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=True) -> bo
     verbose : boolean to have more verbosity
 
     """
-    cmp = rdflib.compare.similar(
-        g1, g2)  # Checks if the two graphs are “similar”.
+    cmp = rdflib.compare.similar(g1, g2) # Checks if the two graphs are “similar”.
     # Checks if the two graphs are “similar”, by comparing sorted triples where all bnodes have been replaced by a
     # singular mock bnode (the _MOCK_BNODE).
 
@@ -78,29 +76,6 @@ def show_diff(g1: rdflib.Graph, g2: rdflib.Graph) -> None:
         print('=' * 10, text, ' end')
 
 
-def is_included_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=True) -> bool:
-    """ A wrapping function that print differences between 2 graph
-
-    Parameters
-    ----------
-    g1 : first rdf graph
-    g2 : second rdf graph
-    verbose : boolean to have more verbosity
-
-    """
-    in_both, in_g1, in_g2 = rdflib.compare.graph_diff(
-        g1, g2)  # in_g1 is a list of elements only in g1
-
-    if verbose:
-        for graph, text in zip([in_both, in_g1, in_g2],
-                               ["common part", "only in_g1", "only in_g2"]):
-            print('=' * 10, text, ' begin')
-            print(graph_to_str(graph))
-            print('=' * 10, text, ' end')
-
-    return len(in_g1) == 0
-
-
 def graph_to_str(graph: rdflib.Graph) -> str:
     """ A tool function to print enumerate triplet in rdf graph under turtle format
 
@@ -114,24 +89,19 @@ def graph_to_str(graph: rdflib.Graph) -> str:
 
 
 if __name__ == '__main__':
-
-    ref_jsonld = os.path.abspath("./to_test/batch_example_spm_seed14.jsonld")
-    new_jsonld = os.path.abspath("./to_test/batch_example_spm_seed17.jsonld")
+    filenames = ['./samples_test/batch_example_spm_ref.jsonld',
+                 '../nidm-examples/spm_covariate/batch_ref.jsonld']
+    new_jsonld = os.path.abspath("./samples_test/batch_example_spm.jsonld")
+    ref_jsonld = os.path.abspath("./samples_test/batch_example_spm_ref.jsonld")
 
     jsonld11_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
-    # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
-    graph_ref = rdflib.ConjunctiveGraph()
+    graph_ref = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
     graph_ref.parse(data=json.dumps(jsonld11_ref, indent=2), format='json-ld')
 
     jsonld11_new = load_jsonld11_for_rdf(new_jsonld, pyld_convert=True)
-    # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
-    graph_new = rdflib.ConjunctiveGraph()
+    graph_new = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
     graph_new.parse(data=json.dumps(jsonld11_new, indent=2), format='json-ld')
 
-    # print(graph_to_str(graph_new))
-    # print("___"*30)
-    # print(graph_to_str(graph_ref))
-    res = is_included_rdf_graph(graph_ref, graph_new, verbose=True)
-    # # iso1 = rdflib.compare.to_isomorphic(g)
-    # # iso2 = rdflib.compare.to_isomorphic(g2)
-    # cmp = compare_rdf_graph(graph_new, graph_ref, verbose=True)
+    # iso1 = rdflib.compare.to_isomorphic(g)
+    # iso2 = rdflib.compare.to_isomorphic(g2)
+    cmp = compare_rdf_graph(graph_new, graph_ref, verbose=True)

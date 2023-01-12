@@ -10,9 +10,9 @@ from deepdiff import DeepDiff
 from collections import defaultdict
 
 from bids_prov.spm_load_config import CONTEXT_URL
-from .compare_graph import load_jsonld11_for_rdf, is_similar_rdf_graph, is_included_rdf_graph
+from .compare_graph import load_jsonld11_for_rdf, compare_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
-from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256
+from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256, label_mapping
 
 random.seed(14)  # Control random generation for test, init at each import
 INIT_STATE = random.getstate()
@@ -45,7 +45,7 @@ def test_spm_to_bids_prov(verbose=False):
 
     for idx, sample_spm in enumerate(sample_spm_list):
         name = os.path.splitext(sample_spm)[0]
-        ref_jsonld = os.path.join(dir_sample_test , name + '_ref.jsonld')
+        ref_jsonld = os.path.join(dir_sample_test, name + '_ref.jsonld')
 
         if os.path.exists(ref_jsonld):
             if verbose:
@@ -64,7 +64,7 @@ def test_spm_to_bids_prov(verbose=False):
             graph_new = rdflib.ConjunctiveGraph()
             graph_new.parse(data=json.dumps(jsonld11_new, indent=2), format='json-ld')
 
-            res_compare = is_included_rdf_graph(graph_ref, graph_new, verbose=verbose)
+            res_compare = compare_rdf_graph(graph_ref, graph_new, verbose=verbose)
 
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
@@ -82,7 +82,7 @@ def test_group_lines():
 
 def test_format_activity_name():
     s = "cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "file_dir.file_ops.file_move._1"
 
 
 # def test_get_input_entity():
@@ -115,13 +115,13 @@ def test_has_parameter():
 
 
 # def test_get_records(): #
+#     init_random_state()
 #
 #     tasks = group_lines(LIST_READLINES)
 #     records = get_records(tasks) # FIXME in get record testing
 #     assert DeepDiff(records, RECORDS)== {}
 
 
-# PB in test
 def test_get_records_copy_attributes():
     task_groups = dict(file_ops_1=[".files = {'$PATH-TO-NII-FILES/tonecounting_bold.nii.gz'};",
                                    ".action.copyto = {'$PATH-TO-PREPROCESSING/FUNCTIONAL'};",
@@ -148,6 +148,17 @@ def test_dep_regex():
     '{}',{1}), substruct('()',{1}, '.','files'));
     """
     assert re.search(DEPENDENCY_REGEX, s, re.IGNORECASE) is not None
+
+
+def test_mapping_labels():
+    # Mapping file contains : {"coreg": "Coregistration"}
+    coreg_mapping = label_mapping("spm.spatial.coreg.estimate.ref(1)")
+    # "coreg" is contained in "spm.spatial.coreg.estimate.ref(1)" so it must return "Coregistration"
+    assert coreg_mapping == "Coregistration"
+
+    coreg_mapping = label_mapping("azerty")
+    # no mapping dictionary key is contained in azerty so it must return the word without transformation ("azerty")
+    assert coreg_mapping == "azerty"
 
 
 LIST_READLINES = [
@@ -277,10 +288,10 @@ TASKS = {
         "files = {'/home/remiadon/nidmresults-examples/spm_default/ds011/sub-01/anat/sub-01_T1w.nii.gz'};",
         "action.copyto = {'/home/remiadon/nidmresults-examples/spm_default/ds011/PREPROCESSING/ANATOMICAL'};",
     ],
-    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_3": [
+    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)._3": [
         " = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));"
     ],
-    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_4": [
+    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)._4": [
         " = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));"
     ],
     "spm.spatial.realign.estwrite._5": [
@@ -732,4 +743,4 @@ RECORDS = defaultdict(list, {
         },
     ],
 },
-                      )
+)
