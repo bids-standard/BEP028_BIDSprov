@@ -94,19 +94,26 @@ def test_format_activity_name():
     assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
 
 
-# def test_get_input_entity():
-#     left = "files"
-#     right = "{'ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs'};"
-#     # entity label : sub-01_task-tonecounting_bold.nii.gz
-#     entities = [{
-#         "@id": "urn:gNSWPH8prVqsUeQCtDR3",
-#         "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
-#         "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
-#         'digest': {
-#             'sha256_urn:gNSWPH8prVqsUeQCtDR3': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
-#     }]
-#
-#     assert get_input_entity(right)[0] == entities[0]
+def test_get_input_entity():
+    left = "files"
+    right = "{'ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs'};"
+    # entity label : sub-01_task-tonecounting_bold.nii.gz
+    entities = [{
+        "@id": "urn:gNSWPH8prVqsUeQCtDR3",
+        "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
+        "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
+        'digest': {
+            'sha256_urn:gNSWPH8prVqsUeQCtDR3': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
+    }]
+    right_entity = get_input_entity(right)[0]
+    assert right_entity.keys() == entities[0].keys()
+    assert right_entity["@id"][:4] == "urn:"
+    assert uuid.UUID(right_entity["@id"][4:])  # test uuid format
+    assert list(right_entity["digest"].values())[0] == \
+           "9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b"  # test computation sha256
+    del right_entity["@id"], entities[0]["@id"]  # deleting keys containing uuids to test the equality of the remainder
+    del right_entity["digest"], entities[0]["digest"]
+    assert right_entity == entities[0]
 
 
 def test_has_parameter():
