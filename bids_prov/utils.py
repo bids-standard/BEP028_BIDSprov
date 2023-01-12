@@ -2,10 +2,11 @@ import os
 import json
 from os.path import expanduser
 import uuid
+import random
 
 
 def get_id():
-    return str(uuid.uuid4())
+    return str(uuid.UUID(int=random.getrandbits(128), version=4))
 
 
 def get_or_load(fn):
