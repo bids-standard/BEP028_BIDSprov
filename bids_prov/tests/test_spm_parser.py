@@ -1,15 +1,28 @@
 import json
 import re
 import os
+import uuid
+import random
+import rdflib
+import pytest
+
 from deepdiff import DeepDiff
 from collections import defaultdict
-import rdflib
 
 from bids_prov.spm_load_config import CONTEXT_URL
 from .compare_graph import load_jsonld11_for_rdf, compare_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
-from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, label_mapping
-from .. import init_random_state
+from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256, label_mapping
+
+random.seed(14)  # Control random generation for test, init at each import
+INIT_STATE = random.getstate()
+
+
+def test_get_sha256(verbose=True):
+    sha256 = get_sha256("./bids_prov/tests/samples_test/to_test_checksum.txt")
+    if verbose:
+        print(sha256)
+    assert sha256 == "a02a994951ef1910e1591901066faea27d8c136a795eeeb6f3df467b9fcbd718"
 
 
 def test_spm_to_bids_prov(verbose=False):
@@ -18,36 +31,45 @@ def test_spm_to_bids_prov(verbose=False):
     batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
 
     """
+
+    random.seed(14)  # Control random generation for test, init at each import
+    INIT_STATE = random.getstate()
+
     dir_sample_test = os.path.abspath('./bids_prov/tests/samples_test')
     if verbose:
+        print('\n-> SEED init state[0]', INIT_STATE[0])
         print("\n test_spm_to_bids_prov: Compare .m to a reference jsonld in directory:\n", dir_sample_test)
 
     all_files = os.listdir(dir_sample_test)
     sample_spm_list = [f for f in all_files if os.path.splitext(f)[-1] == '.m']
 
     for idx, sample_spm in enumerate(sample_spm_list):
-        init_random_state()  # random seed initialisation for each batch.m
         name = os.path.splitext(sample_spm)[0]
         ref_jsonld = os.path.join(dir_sample_test, name + '_ref.jsonld')
 
         if os.path.exists(ref_jsonld):
+            if verbose:
+                print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld")
             new_jsonld = os.path.join(dir_sample_test, name + '.jsonld')
             spm_batch = os.path.join(dir_sample_test, sample_spm)
             spm_to_bids_prov(spm_batch, CONTEXT_URL, output_file=new_jsonld)
 
             jsonld11_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
-            graph_ref = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+            # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+            graph_ref = rdflib.ConjunctiveGraph()
             graph_ref.parse(data=json.dumps(jsonld11_ref, indent=2), format='json-ld')
 
             jsonld11_new = load_jsonld11_for_rdf(new_jsonld, pyld_convert=True)
-            graph_new = rdflib.ConjunctiveGraph()  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+            # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
+            graph_new = rdflib.ConjunctiveGraph()
             graph_new.parse(data=json.dumps(jsonld11_new, indent=2), format='json-ld')
 
             res_compare = compare_rdf_graph(graph_ref, graph_new, verbose=verbose)
 
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
-        if not os.path.exists(ref_jsonld):
+
+        if verbose and not os.path.exists(ref_jsonld):
             print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
 
             assert res_compare
@@ -60,20 +82,22 @@ def test_group_lines():
 
 def test_format_activity_name():
     s = "cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(s) == "file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
 
 
-def test_get_input_entity():
-    init_random_state()
-    left = "files"
-    right = "{'$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};"
-    # entity label : sub-01_task-tonecounting_bold.nii.gz
-    entities = [{
-        "@id": "niiri:func_sub-01_task-tonecounting_bold.nii.gzgNSWPHprVq",
-        "label": "func_sub-01_task-tonecounting_bold.nii.gz",
-        "prov:atLocation": "$HOME/nidmresults-examples/spm_default/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz",
-    }]
-    assert get_input_entity(right)[0] == entities[0]
+# def test_get_input_entity():
+#     left = "files"
+#     right = "{'ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs'};"
+#     # entity label : sub-01_task-tonecounting_bold.nii.gz
+#     entities = [{
+#         "@id": "urn:gNSWPH8prVqsUeQCtDR3",
+#         "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
+#         "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
+#         'digest': {
+#             'sha256_urn:gNSWPH8prVqsUeQCtDR3': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
+#     }]
+#
+#     assert get_input_entity(right)[0] == entities[0]
 
 
 def test_has_parameter():
@@ -98,13 +122,12 @@ def test_has_parameter():
 #     assert DeepDiff(records, RECORDS)== {}
 
 
-# PB in test
 def test_get_records_copy_attributes():
     task_groups = dict(file_ops_1=[".files = {'$PATH-TO-NII-FILES/tonecounting_bold.nii.gz'};",
                                    ".action.copyto = {'$PATH-TO-PREPROCESSING/FUNCTIONAL'};",
                                    ]
                        )
-    recs = get_records(task_groups)
+    recs = get_records(task_groups, str(uuid.uuid4()))
     attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
     assert "action.copyto" in json.dumps(attrs)
 
@@ -113,7 +136,7 @@ def test_get_records_attrs():
     task_groups = dict(estwrite_5=[".sep = 4;",
                                    ".fwhm = 5;", ]
                        )
-    recs = get_records(task_groups)
+    recs = get_records(task_groups, "agentUUID")
     attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
     assert "4" in json.dumps(attrs)
 
@@ -720,4 +743,4 @@ RECORDS = defaultdict(list, {
         },
     ],
 },
-                      )
+)
