@@ -20,8 +20,7 @@ def load_jsonld11_for_rdf(jsonld11_file: str, pyld_convert=True) -> dict:
 
     req_context_11 = requests.get(url=jsonld11['@context'])
     context_11 = req_context_11.json()
-    context_10 = {
-        k: v for k, v in context_11['@context'].items() if k not in {'@version', 'records'}}
+    context_10 = {k: v for k, v in context_11['@context'].items() if k not in {'@version', 'records'}}
 
     if pyld_convert:
         pyld_jsonld11 = pyld.jsonld.compact(jsonld11, context_10)
@@ -42,8 +41,7 @@ def is_similar_rdf_graph(g1: rdflib.Graph, g2: rdflib.Graph, verbose=True) -> bo
     verbose : boolean to have more verbosity
 
     """
-    cmp = rdflib.compare.similar(
-        g1, g2)  # Checks if the two graphs are “similar”.
+    cmp = rdflib.compare.similar(g1, g2) # Checks if the two graphs are “similar”.
     # Checks if the two graphs are “similar”, by comparing sorted triples where all bnodes have been replaced by a
     # singular mock bnode (the _MOCK_BNODE).
 
