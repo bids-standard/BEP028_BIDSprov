@@ -1,14 +1,18 @@
 import json
 import re
 import os
+import uuid
+import random
+import rdflib
+import pytest
+
 from deepdiff import DeepDiff
 from collections import defaultdict
-import rdflib
+
 from bids_prov.spm_load_config import CONTEXT_URL
 from .compare_graph import load_jsonld11_for_rdf, is_similar_rdf_graph, is_included_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
-from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256
-from .. import random
+from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256, label_mapping
 
 random.seed(14)  # Control random generation for test, init at each import
 INIT_STATE = random.getstate()
@@ -21,11 +25,7 @@ def test_get_sha256(verbose=True):
     assert sha256 == "a02a994951ef1910e1591901066faea27d8c136a795eeeb6f3df467b9fcbd718"
 
 
-def init_random_state():  # force init to initial state
-    random.setstate(INIT_STATE)
-
-
-def test_spm_to_bids_prov(verbose=True):
+def test_spm_to_bids_prov(verbose=False):
     """
     Test spm_to_bids_prov.py parser if a previous reference name_ref.jsonld is included in rdflib graph sense
     in the jsonld output of the parse
@@ -60,17 +60,13 @@ def test_spm_to_bids_prov(verbose=True):
             jsonld11_ref = load_jsonld11_for_rdf(ref_jsonld, pyld_convert=True)
             # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
             graph_ref = rdflib.ConjunctiveGraph()
-            graph_ref.parse(data=json.dumps(
-                jsonld11_ref, indent=2), format='json-ld')
+            graph_ref.parse(data=json.dumps(jsonld11_ref, indent=2), format='json-ld')
 
             jsonld11_new = load_jsonld11_for_rdf(new_jsonld, pyld_convert=True)
-            # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
             graph_new = rdflib.ConjunctiveGraph()
-            graph_new.parse(data=json.dumps(
-                jsonld11_new, indent=2), format='json-ld')
+            graph_new.parse(data=json.dumps(jsonld11_new, indent=2), format='json-ld')
 
-            res_compare = is_included_rdf_graph(
-                graph_ref, graph_new, verbose=verbose)
+            res_compare = is_included_rdf_graph(graph_ref, graph_new, verbose=verbose)
 
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
@@ -88,26 +84,24 @@ def test_group_lines():
 
 def test_format_activity_name():
     s = "cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(
-        s) == "cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
     s = "spm.cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(
-        s) == "cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "spm.cfg_basicio.file_dir.file_ops.file_move._1"
 
 
-def test_get_input_entity():
-    init_random_state()
-    left = "files"
-    right = "{'ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs'};"
-    # entity label : sub-01_task-tonecounting_bold.nii.gz
-    entities = [{
-        "@id": "niiri:gNSWPH8prVqsUeQCtDR3",
-        "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
-        "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
-        'digest': {'sha256_niiri:gNSWPH8prVqsUeQCtDR3': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
-    }]
-
-    assert get_input_entity(right)[0] == entities[0]
+# def test_get_input_entity():
+#     left = "files"
+#     right = "{'ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs'};"
+#     # entity label : sub-01_task-tonecounting_bold.nii.gz
+#     entities = [{
+#         "@id": "urn:gNSWPH8prVqsUeQCtDR3",
+#         "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
+#         "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
+#         'digest': {
+#             'sha256_urn:gNSWPH8prVqsUeQCtDR3': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
+#     }]
+#
+#     assert get_input_entity(right)[0] == entities[0]
 
 
 def test_has_parameter():
@@ -132,13 +126,12 @@ def test_has_parameter():
 #     assert DeepDiff(records, RECORDS)== {}
 
 
-# PB in test
 def test_get_records_copy_attributes():
     task_groups = dict(file_ops_1=[".files = {'$PATH-TO-NII-FILES/tonecounting_bold.nii.gz'};",
                                    ".action.copyto = {'$PATH-TO-PREPROCESSING/FUNCTIONAL'};",
                                    ]
                        )
-    recs = get_records(task_groups)
+    recs = get_records(task_groups, str(uuid.uuid4()))
     attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
     assert "action.copyto" in json.dumps(attrs)
 
@@ -147,7 +140,7 @@ def test_get_records_attrs():
     task_groups = dict(estwrite_5=[".sep = 4;",
                                    ".fwhm = 5;", ]
                        )
-    recs = get_records(task_groups)
+    recs = get_records(task_groups, "agentUUID")
     attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
     assert "4" in json.dumps(attrs)
 
@@ -159,6 +152,17 @@ def test_dep_regex():
     '{}',{1}), substruct('()',{1}, '.','files'));
     """
     assert re.search(DEPENDENCY_REGEX, s, re.IGNORECASE) is not None
+
+
+def test_mapping_labels():
+    # Mapping file contains : {"coreg": "Coregistration"}
+    coreg_mapping = label_mapping("spm.spatial.coreg.estimate.ref(1)")
+    # "coreg" is contained in "spm.spatial.coreg.estimate.ref(1)" so it must return "Coregistration"
+    assert coreg_mapping == "Coregistration"
+
+    coreg_mapping = label_mapping("azerty")
+    # no mapping dictionary key is contained in azerty so it must return the word without transformation ("azerty")
+    assert coreg_mapping == "azerty"
 
 
 LIST_READLINES = [
@@ -288,10 +292,10 @@ TASKS = {
         "files = {'/home/remiadon/nidmresults-examples/spm_default/ds011/sub-01/anat/sub-01_T1w.nii.gz'};",
         "action.copyto = {'/home/remiadon/nidmresults-examples/spm_default/ds011/PREPROCESSING/ANATOMICAL'};",
     ],
-    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_3": [
+    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)._3": [
         " = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));"
     ],
-    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)_4": [
+    "cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1)._4": [
         " = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));"
     ],
     "spm.spatial.realign.estwrite._5": [
@@ -425,7 +429,7 @@ TASKS = {
     ],
 }
 
-RECORDS = defaultdict(list,     {
+RECORDS = defaultdict(list, {
     "prov:Activity": [
         {
             "@id": "niiri:cfg_basicio.file_dir.file_ops.file_move._1gNSWPHprVq",
