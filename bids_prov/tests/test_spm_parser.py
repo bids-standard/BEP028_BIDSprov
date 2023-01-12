@@ -36,7 +36,6 @@ def test_spm_to_bids_prov(verbose=False):
     in the jsonld output of the parse
 
     batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
-
     """
 
     random.seed(14)  # Control random generation for test, init at each import
@@ -76,10 +75,10 @@ def test_spm_to_bids_prov(verbose=False):
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
 
+            assert res_compare
+
         if verbose and not os.path.exists(ref_jsonld):
             print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
-
-            assert res_compare
 
 
 def test_group_lines():
@@ -99,20 +98,14 @@ def test_get_input_entity():
     right = "{'ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs'};"
     # entity label : sub-01_task-tonecounting_bold.nii.gz
     entities = [{
-        "@id": "urn:gNSWPH8prVqsUeQCtDR3",
+        "@id": "urn:c15521b1-b3dc-450a-9daa-37e51b591d75",
         "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
         "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
         'digest': {
-            'sha256_urn:gNSWPH8prVqsUeQCtDR3': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
+            'sha256_urn:c15521b1-b3dc-450a-9daa-37e51b591d75': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
     }]
+    init_random_state()
     right_entity = get_input_entity(right)[0]
-    assert right_entity.keys() == entities[0].keys()
-    assert right_entity["@id"][:4] == "urn:"
-    assert uuid.UUID(right_entity["@id"][4:])  # test uuid format
-    assert list(right_entity["digest"].values())[0] == \
-           "9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b"  # test computation sha256
-    del right_entity["@id"], entities[0]["@id"]  # deleting keys containing uuids to test the equality of the remainder
-    del right_entity["digest"], entities[0]["digest"]
     assert right_entity == entities[0]
 
 
