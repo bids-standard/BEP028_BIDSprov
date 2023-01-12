@@ -11,7 +11,7 @@ PARAM_REGEX = r"[^\.]+\(\d+\)"  # example: some_activity.function(53)
 PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+)"
 FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
 DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in match
-CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
+CONTEXT_URL = "https://raw.githubusercontent.com/Inria-Empenn/BEP028_BIDSprov/issues_6_7_8_9/context.json"
 
 
 has_parameter = lambda line: re.search(PARAM_REGEX, line) is not None
