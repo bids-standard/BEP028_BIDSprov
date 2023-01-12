@@ -12,10 +12,15 @@ from collections import defaultdict
 from bids_prov.spm_load_config import CONTEXT_URL
 from .compare_graph import load_jsonld11_for_rdf, is_similar_rdf_graph, is_included_rdf_graph
 from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
-from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256, label_mapping
+from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256, \
+    label_mapping
 
 random.seed(14)  # Control random generation for test, init at each import
 INIT_STATE = random.getstate()
+
+
+def init_random_state():  # force init to initial state
+    random.setstate(INIT_STATE)
 
 
 def test_get_sha256(verbose=True):
@@ -46,7 +51,7 @@ def test_spm_to_bids_prov(verbose=False):
     sample_spm_list = [f for f in all_files if os.path.splitext(f)[-1] == '.m']
 
     for idx, sample_spm in enumerate(sample_spm_list):
-        init_random_state() # random seed initialisation for each batch.m
+        init_random_state()  # random seed initialisation for each batch.m
         name = os.path.splitext(sample_spm)[0]
         ref_jsonld = os.path.join(dir_sample_test, name + '_ref.jsonld')
 
@@ -71,7 +76,7 @@ def test_spm_to_bids_prov(verbose=False):
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
 
-        if verbose and  not os.path.exists(ref_jsonld):
+        if verbose and not os.path.exists(ref_jsonld):
             print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
 
             assert res_compare
@@ -86,7 +91,7 @@ def test_format_activity_name():
     s = "cfg_basicio.file_dir.file_ops.file_move._1"
     assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
     s = "spm.cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(s) == "spm.cfg_basicio.file_dir.file_ops.file_move._1"
+    assert format_activity_name(s) == "cfg_basicio.file_dir.file_ops.file_move._1"
 
 
 # def test_get_input_entity():
@@ -747,4 +752,4 @@ RECORDS = defaultdict(list, {
         },
     ],
 },
-)
+                      )
