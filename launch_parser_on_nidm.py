@@ -31,7 +31,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--input_dir", type=str, default="nidmresults-examples",
-                        help="data dir where batch.m are researched")
+                        help="data dir where .m and .html are researched")
     parser.add_argument("--output_dir", type=str, default="results",
                         help="output dir where results are written")
     parser.add_argument("--verbose", action="store_true", help="more print")
@@ -52,7 +52,6 @@ def main():
     context_write = open(context_file, "w")
     context_write.write(f"Date : {local_time}\n")
 
-    print("Processing files...")
     context_write.write("Processing files...\n")
 
     # SPM parser on nidm_examples
@@ -75,7 +74,7 @@ def main():
                              output_file_base + "_" + filename_ss_ext + ".png"
                 visualize(output_jsonld, output_file=output_png)
 
-            if file == "report_log.html":
+            if file.endswith("report_log.html"):
                 print(f"    file= {root}/{str(file)}")
                 context_write.write(f"    file= {root}/{str(file)}\n")
                 output_file_base = root.split("/")[-1]
