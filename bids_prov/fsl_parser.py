@@ -154,6 +154,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
     -------
     dict: a set of records compliant with the BIDS-prov standard
     """
+    records=defaultdict(list)
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
         group_activity_id = f"urn:{group_name}_{get_id(5)}"
