@@ -46,7 +46,7 @@ def test_spm_to_bids_prov(verbose=True):
     sample_spm_list = [f for f in all_files if os.path.splitext(f)[-1] == '.m']
 
     for idx, sample_spm in enumerate(sample_spm_list):
-        init_random_state() # random seed initialisation for each batch.m
+        init_random_state()  # random seed initialisation for each batch.m
         name = os.path.splitext(sample_spm)[0]
         ref_jsonld = os.path.join(dir_sample_test, name + '_ref.jsonld')
 
@@ -75,7 +75,7 @@ def test_spm_to_bids_prov(verbose=True):
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
 
-        if verbose and  not os.path.exists(ref_jsonld):
+        if verbose and not os.path.exists(ref_jsonld):
             print(f"TEST n°{idx}: reference {name}_ref.jsonld not found")
 
             assert res_compare
@@ -104,7 +104,8 @@ def test_get_input_entity():
         "@id": "niiri:gNSWPH8prVqsUeQCtDR3",
         "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
         "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
-        'digest': {'sha256_niiri:gNSWPH8prVqsUeQCtDR3': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
+        'digest': {
+            'sha256_niiri:gNSWPH8prVqsUeQCtDR3': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
     }]
 
     assert get_input_entity(right)[0] == entities[0]
@@ -425,7 +426,7 @@ TASKS = {
     ],
 }
 
-RECORDS = defaultdict(list,     {
+RECORDS = defaultdict(list, {
     "prov:Activity": [
         {
             "@id": "niiri:cfg_basicio.file_dir.file_ops.file_move._1gNSWPHprVq",
@@ -743,4 +744,4 @@ RECORDS = defaultdict(list,     {
         },
     ],
 },
-)
+                      )
