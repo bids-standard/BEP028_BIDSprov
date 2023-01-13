@@ -21,14 +21,15 @@ import json
 from collections import defaultdict
 import warnings
 
-OPTIONAL_FIELDS = { 'Activity':("startedAtTime", "endedAtTime"),
-                    'Entity': ("atLocation", "generatedAt")} # fields to omit if `--high-level` flag activated
+OPTIONAL_FIELDS = {'Activity': ("startedAtTime", "endedAtTime"),
+                   'Entity': ("atLocation", "generatedAt")}  # fields to omit if `--high-level` flag activated
+
 
 def viz_turtle(content=None, img_file=None, source=None, **kwargs) -> None:
 
     prov_doc = ProvDocument.deserialize(content=content, format="rdf", rdf_format="turtle", source=source )
     # TODO : show attributes has optional arg
-    dot = prov_to_dot(prov_doc, use_labels=True, show_element_attributes=False, show_relation_attributes=False,)
+    dot = prov_to_dot(prov_doc, use_labels=True, show_element_attributes=False, show_relation_attributes=False)
     dot.write_png(img_file)
 
 
@@ -53,9 +54,7 @@ def viz_jsonld11(jsonld11: dict, img_file: str) -> None:
     g = (rl.ConjunctiveGraph())  # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
     g.parse(data=dataaa, format="json-ld")
     viz_turtle(content=g.serialize(format="turtle"), img_file=img_file)
-    # TODO remove pyld dependency and get rdflib parsing directly
-    #   https://github.com/digitalbazaar/pyld/blob/316fbc2c9e25b3cf718b4ee189012a64b91f17e7/lib/pyld/jsonld.py#L660
-    
+
 def join_jsonld(lds: list, graph_key="records", omit_details=True) ->dict :
     """
     lds: list of dict
@@ -90,6 +89,7 @@ def join_jsonld(lds: list, graph_key="records", omit_details=True) ->dict :
         warnings.warn(f"could not found any {graph_key} section in the jsonlds")
     # payload[graph_key]] = dict(payload[graph_key]])
     return payload
+
 
 def main(filename: str, output_file=None, omit_details=True) -> None:
     jsonld11s = list()

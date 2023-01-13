@@ -19,7 +19,6 @@ jobs:
       - name: SPM parsing on nidm-examples
         run: |
           mkdir -p nidmresults-examples
-#         SPM 12
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_group_ols/batch.m -O nidmresults-examples/spm_group_ols_batch.m
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_voxelunct4/batch.m -O nidmresults-examples/spm_thr_voxelunct4_batch.m
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_clustfwep05/batch.m -O nidmresults-examples/spm_thr_clustfwep05_batch.m
@@ -39,29 +38,7 @@ jobs:
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_voxelfdrp05/batch.m -O nidmresults-examples/spm_thr_voxelfdrp05_batch.m
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_temporal_derivative/batch.m -O nidmresults-examples/spm_temporal_derivative_batch.m
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_non_sphericity/batch.m -O nidmresults-examples/spm_non_sphericity_batch.m
-          
-#         FSL
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_group_ols/report_log.html -O nidmresults-examples/spm_group_ols_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_voxelunct4/report_log.html -O nidmresults-examples/spm_thr_voxelunct4_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_clustfwep05/report_log.html -O nidmresults-examples/spm_thr_clustfwep05_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_covariate/report_log.html -O nidmresults-examples/spm_covariate_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_group_wls/report_log.html -O nidmresults-examples/spm_group_wls_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_contrast_mask/report_log.html -O nidmresults-examples/spm_contrast_mask_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_clustunck10/report_log.html -O nidmresults-examples/spm_thr_clustunck10_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_voxelfwep05/report_log.html -O nidmresults-examples/spm_thr_voxelfwep05_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_hrf_fir/report_log.html -O nidmresults-examples/spm_hrf_fir_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_explicit_mask/report_log.html -O nidmresults-examples/spm_explicit_mask_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_2_t_test/report_log.html -O nidmresults-examples/spm_2_t_test_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_conjunction/report_log.html -O nidmresults-examples/spm_conjunction_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_con_f/report_log.html -O nidmresults-examples/spm_con_f_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_default/report_log.html -O nidmresults-examples/spm_default_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_HRF_informed_basis/report_log.html -O nidmresults-examples/spm_HRF_informed_basis_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_partial_conjunction/report_log.html -O nidmresults-examples/spm_partial_conjunction_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_thr_voxelfdrp05/report_log.html -O nidmresults-examples/spm_thr_voxelfdrp05_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_temporal_derivative/report_log.html -O nidmresults-examples/spm_temporal_derivative_report_log.html
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_non_sphericity/report_log.html -O nidmresults-examples/spm_non_sphericity_report_log.html
-          
-          python launch_parser_on_nidm.py --input_dir nidmresults-examples
+          python launch_multiple_spm.py --input_dir nidmresults-examples
       - name: push on the repo the dir "results/"
         run: |
           git config user.name "GitHub Actions Bot"
