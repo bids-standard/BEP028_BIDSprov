@@ -259,16 +259,6 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
     return dict(records)
 
 
-# @click.command()
-# @click.argument("filenames", nargs=-1)
-# @click.option("--output-file", "-o", required=True)
-# @click.option(
-#     "--context-url",
-#     "-c",
-#     default=conf.DEFAULT_CONTEXT_URL,
-# )
-
-
 def fsl_to_bids_prov(filename: str, context_url=conf.DEFAULT_CONTEXT_URL, output_file=None,
                      fsl_ver="**************", verbose=False, indent=2) -> None:  # TODO : add fsl version
 
