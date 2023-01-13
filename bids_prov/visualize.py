@@ -55,6 +55,7 @@ def viz_jsonld11(jsonld11: dict, img_file: str) -> None:
     g.parse(data=dataaa, format="json-ld")
     viz_turtle(content=g.serialize(format="turtle"), img_file=img_file)
 
+
 def join_jsonld(lds: list, graph_key="records", omit_details=True) ->dict :
     """
     lds: list of dict

@@ -11,7 +11,6 @@ FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"
 DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in match
 CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
 
-
 has_parameter = lambda line: re.search(PARAM_REGEX, line) is not None
 # has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
 
@@ -47,4 +46,3 @@ def get_empty_graph(context_url=CONTEXT_URL, spm_ver="dev"):
             "prov:Entity": [],
         },
     }
-
