@@ -8,6 +8,7 @@ from bids_prov.fsl_parser import fsl_to_bids_prov
 from datetime import datetime
 import markdownify
 import re
+from bids_prov.fsl_config import DEFAULT_CONTEXT_URL
 
 
 def html_to_logmd_file(htlm_file, logmd_file):
@@ -119,7 +120,7 @@ def main():
                 logmd_file = output_dir_fsl + "/" + output_file_base + "_" + filename_ss_ext + ".md"
                 html_to_logmd_file(filename, logmd_file)
 
-                fsl_to_bids_prov(logmd_file, conf.CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
+                fsl_to_bids_prov(logmd_file, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_fsl + "/" + output_file_base + "_" + filename_ss_ext + ".png"
                 visualize(output_jsonld, output_file=output_png)
 

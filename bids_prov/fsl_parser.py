@@ -14,7 +14,6 @@ import argparse
 
 from . import fsl_config as conf
 
-
 def get_id(size=10):
     """get a random id as a string of `size` characters"""
     return "".join(random.choice(string.ascii_letters) for i in range(size))
