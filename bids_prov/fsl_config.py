@@ -7,7 +7,6 @@ import json
 from bids_prov import get_or_load
 
 DEFAULT_CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
-
 TYPES = (
     "File",
     # "String",
