@@ -32,8 +32,8 @@ def test_get_sha256(verbose=True):
 
 def test_spm_to_bids_prov(verbose=False):
     """
-    Test spm_to_bids_prov.py parser if a previous reference name_ref.jsonld is included in rdflib graph sense
-    in the jsonld output of the parse
+    Test if {batch_name}_ref.jsonld (which has been defined in advance) is included in the result of the input file parser
+    {batch_name}.m
 
     batch file name.m  and reference name_ref.jsonld should be present in BEP028_BIDSprov/bids_prov/tests/samples_test
     """
