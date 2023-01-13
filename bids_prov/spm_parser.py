@@ -142,8 +142,7 @@ def group_lines(lines: list) -> Dict[str, list]:
     for line in lines:
         a = re.search(r"\{\d+\}", line)
         if a:
-            # retrieves the batch number without the braces , here '3'
-            g = a.group()[1:-1]
+            g = a.group()[1:-1]  # retrieves the batch number without the braces , here '3'
             res[g].append(line[a.end() + 1:])
             # retrieves the rest of the line without the dot after the brace of the activity number
 
@@ -237,11 +236,12 @@ def dependency_process(records_activities: list, activity: dict, right: str, rec
 
             # adds to the current activity the fact that it has used the previous entity
             activity["used"].append(output_id)
-            output_entity = {"@id": output_id,
-                             "label": label_mapping(parts[-1]),
-                             # "prov:atLocation": TODO
-                             "wasGeneratedBy": closest_activity["@id"],
-                             }
+            output_entity = {
+                "@id": output_id,
+                "label": label_mapping(parts[-1]),
+                # "prov:atLocation": TODO
+                "wasGeneratedBy": closest_activity["@id"],
+            }
 
     return output_entity
 
@@ -321,7 +321,6 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
 
             else:  # Not if in_entity and Not   (conf.has_parameter(left) ....)
 
-                # param_name = ".".join(left.split(".")[-2:])  # split left by "." and keep the two last elements
                 param_name = left.strip()
                 right_ = right[:-1]  # remove ";" at the end of right
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
