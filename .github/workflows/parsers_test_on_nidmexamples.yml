@@ -1,4 +1,4 @@
-name: Parsing nidm_examples from SPM exporter
+name: nidm_examples parsed to bids-prov from spm and fsl parser
 on: push
 jobs:
   run:
@@ -16,7 +16,7 @@ jobs:
           pip install pytest
           pip install -r dev-requirements.txt
           sudo apt-get install graphviz
-      - name: SPM parsing on nidm-examples
+      - name: SPM/FSL parsing on nidm-examples
         run: |
           mkdir -p nidmresults-examples
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_group_ols/batch.m -O nidmresults-examples/spm_group_ols_batch.m
@@ -67,5 +67,5 @@ jobs:
       - name: create an artifact
         uses: actions/upload-artifact@v3
         with:
-          name: SPM_on_nidm_examples
+          name: parsers_on_nidm_examples
           path: results/
