@@ -7,7 +7,7 @@ from typing import List, Dict, Generator
 
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
-from bids_prov import get_id
+from bids_prov.utils import get_id
 
 
 def get_sha256(file_path):
@@ -29,17 +29,18 @@ def format_activity_name(activity_name: str) -> str:
     Examples
     --------
     >>> print(format_activity_name("cfg_basicio.file_dir.file_ops.file_move._1"))
-    file_dir.file_ops.file_move._1
+    cfg_basicio.file_dir.file_ops.file_move._1
 
     """
     # s example : cfg_basicio.file_dir.file_ops.file_move._1
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
-    # act_split = activity_name.split(".")  # ['cfg_basicio', 'file_dir', 'file_ops', 'file_move', '_1']
-    # while sum(map(len, act_split)) > l_max:  # sum of the lengths of each element of tmp
-    #     act_split = act_split[1:]
-    # ".".join(act_split)  # file_dir.file_ops.file_move._1
-    return activity_name
+
+    label_mapped = label_mapping(activity_name)
+    if label_mapped == activity_name:
+        return label_mapped
+    else:
+        return label_mapped + "." + re.search(r'_\d+', activity_name.split()[-1]).group()
 
 
 def get_input_entity(right: str, verbose=False) -> List[dict]:
@@ -60,21 +61,18 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
 
     """
 
-    # removes "{'" at the beginning and "'};" at the end
-    drop_brace = re.sub(r"[{};]", "", right)
+    drop_brace = re.sub(r"[{};]", "", right)  # removes "{'" at the beginning and "'};" at the end
     file_list = drop_brace.split("',")  # split if multiple files
     entities = list()
 
     for file_str in file_list:
         if not file_str == "":
-            # 'ds000052/RESULTS/Sub01/con_0001.nii,1'
-            file_drop_quotes = re.sub(r"\'", "", file_str)
-            # ds000052/RESULTS/Sub01/con_0001.nii
-            file_location = re.sub(r"\,1", "", file_drop_quotes)
+            file_drop_quotes = re.sub(r"\'", "", file_str)  # 'ds000052/RESULTS/Sub01/con_0001.nii,1'
+            file_location = re.sub(r"\,1", "", file_drop_quotes)  # ds000052/RESULTS/Sub01/con_0001.nii
             entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
-                "@id": "niiri:" + get_id(),
-                "label": entity_label_short,
+                "@id": "urn:" + get_id(),
+                "label": label_mapping(entity_label_short),
                 "prov:atLocation": file_location
             }
             relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + file_location)
@@ -90,7 +88,7 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
     return entities
 
 
-def readlines(filename: str) -> Generator[str, None, None]: #from https://docs.python.org/3/library/typing.html
+def readlines(filename: str) -> Generator[str, None, None]:  # from https://docs.python.org/3/library/typing.html
     """Read lines from the original batch.m file. A multiline matlabbatch instructions should be associated
     with a single line in the output
 
@@ -109,10 +107,8 @@ def readlines(filename: str) -> Generator[str, None, None]: #from https://docs.p
                     _line += next(fd)[:-1].lstrip() + ","  #
                 if brace_with_multiline:
                     _line = _line[:-1]  # drop last in case of multiline,
-                # case of multiline for 1 instruction  matlabbatch
-                while _line.count("[") != _line.count("]"):
-                    _line = _line.strip() + " " + \
-                        next(fd)[:-1].lstrip()  # append
+                while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
+                    _line = _line.strip() + " " + next(fd)[:-1].lstrip()  # append
                 yield _line
 
 
@@ -146,8 +142,7 @@ def group_lines(lines: list) -> Dict[str, list]:
     for line in lines:
         a = re.search(r"\{\d+\}", line)
         if a:
-            # retrieves the batch number without the braces , here '3'
-            g = a.group()[1:-1]
+            g = a.group()[1:-1]  # retrieves the batch number without the braces , here '3'
             res[g].append(line[a.end() + 1:])
             # retrieves the rest of the line without the dot after the brace of the activity number
 
@@ -157,8 +152,8 @@ def group_lines(lines: list) -> Dict[str, list]:
         left_egal_list = [right_part_act_id.split(" = ")[0] for right_part_act_id in right_part_act_id_list]
         common_prefix = os.path.commonprefix(left_egal_list)
         after_common_list = [right_part_act_id[len(common_prefix):] for right_part_act_id in right_part_act_id_list]
-        # add to the common prefix the activity number
-        new_key = f"{common_prefix}_{act_id}"
+        new_key = f"{common_prefix}_{act_id}" if common_prefix[-1] == "." else f"{common_prefix}._{act_id}"  # add to
+        # the common prefix the activity number
         new_res[new_key] = after_common_list  # keep the rest of the line
     # newres = {..., 'spm.stats.con._3':["spmmat(1) = cfg_dep('Model estimation: SP...;",
     #                                    "consess{1}.tcon.name = 'mr vs plain covariate';"
@@ -190,19 +185,19 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
             for output in conf_dic[activity]['outputs']:
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
-                entity = {"@id": name + '_' + output + get_id(),
-                          "label": name,
+                entity = {"@id": "urn:" + get_id(),
+                          "label": label_mapping(name),
                           "prov:atLocation": output,
                           "wasGeneratedBy": activity_id,
                           }
                 output_entities.append(entity)
-            # stop for loop at first math in if statement (match activity in conf_dic)
+            # stop for loop at first match in if statement (match activity in conf_dic)
             break
 
     return output_entities  # empty list [] if no match,
 
 
-def dependency_process(records_activities: list, activity: dict, right: str, verbose=False) -> dict:
+def dependency_process(records_activities: list, activity: dict, right: str, records: list, verbose=False) -> dict:
     """Function to search dependent activity in right line. If found, find the corresponding activity
     in records_activities, update id in activity["used"], and return output_entity
 
@@ -234,26 +229,30 @@ def dependency_process(records_activities: list, activity: dict, right: str, ver
             closest_activity = act
             if verbose:
                 print(f"closest_activity : {closest_activity}")
-            # example : "niiri:oved/CopiedFiles1
-            output_id = ("niiri:" + parts[-1].replace(" ", "") + dep_number.group(1))
+
+            output_id = next((entity["@id"] for entity in records["prov:Entity"]
+                              if parts[-1] == entity["label"] and entity["wasGeneratedBy"] == closest_activity["@id"]),
+                             "urn:" + get_id())
 
             # adds to the current activity the fact that it has used the previous entity
             activity["used"].append(output_id)
-            output_entity = {"@id": output_id,
-                             "label": parts[-1],
-                             # "prov:atLocation": TODO
-                             "wasGeneratedBy": closest_activity["@id"],
-                             }
+            output_entity = {
+                "@id": output_id,
+                "label": label_mapping(parts[-1]),
+                # "prov:atLocation": TODO
+                "wasGeneratedBy": closest_activity["@id"],
+            }
 
     return output_entity
 
 
-def get_records(task_groups: dict, verbose=False) -> dict:
+def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
     """Take the result of `group_lines` and output the corresponding  JSON-ld graph as a python dict
 
     Parameters
     ----------
     task_groups : task activities grouped by activity number
+    agent_id : agent's uuid
     verbose : True to have more verbosity
 
     Returns
@@ -268,11 +267,11 @@ def get_records(task_groups: dict, verbose=False) -> dict:
 
     for common_prefix_act, end_line_list in task_groups.items():
 
-        activity_id = "niiri:" + get_id()
+        activity_id = "urn:" + get_id()
         activity = {"@id": activity_id,
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
-                    "AssociatedWith": "RRID:SCR_007037",
+                    "wasAssociatedWith": "urn:" + agent_id,
                     }
 
         output_entities, input_entities = list(), list()
@@ -310,7 +309,8 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                 # to a function, the common part will be full and so left will be empty
 
                 if dependency is not None:
-                    output_entity = dependency_process(records["prov:Activity"],  activity, right, verbose=False)
+                    output_entity = dependency_process(records["prov:Activity"], activity, right, records,
+                                                       verbose=False)
                     output_entities.append(output_entity)
                     if verbose:
                         print('-> output  entity: ', output_entity)
@@ -324,18 +324,13 @@ def get_records(task_groups: dict, verbose=False) -> dict:
                 param_name = left.strip()
                 right_ = right[:-1]  # remove ";" at the end of right
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
-                # example : [4 2] becomes [4, 2]
-                params[param_name] = param_value
+                params[param_name] = param_value  # example : [4 2] becomes [4, 2]
                 if verbose:
                     print(f"param_name: {param_name}, param_value: {param_value}")
-                # HANDLE STRUCTS eg. struct('name', {}, 'onset', {}, 'duration', {})
-                # if param_value.startswith("struct"):
-                #     continue  # TODO handle dictionary-like parameters
 
         if input_entities:
             used_entities = [entity["@id"] for entity in input_entities]
-            # we add entities from input_entities
-            activity["used"] = (activity["used"] + used_entities)
+            activity["used"] = (activity["used"] + used_entities)  # we add entities from input_entities
             if verbose:
                 print(f'activity["used"] : {activity["used"]}')
 
@@ -354,8 +349,8 @@ def get_records(task_groups: dict, verbose=False) -> dict:
     return records
 
 
-def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None,
-                     spm_ver="SPM12r7224", verbose=False, indent=2) -> None:
+def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False,
+                     indent=2) -> None:
     """ Exporter from batch.m to an output jsonld
 
     Parameters
@@ -373,29 +368,58 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
         2, number of indentation in jsonfile between each object
 
     """
-    graph = conf.get_empty_graph(context_url=context_url, spm_ver=spm_ver)
+    graph, agent_id = conf.get_empty_graph(context_url=context_url, spm_ver=spm_ver)
 
     lines = readlines(filename)
     tasks = group_lines(lines)  # same as list(lines) to expand generator
-    records = get_records(tasks, verbose=verbose)
+    records = get_records(tasks, agent_id, verbose=verbose)
     graph["records"].update(records)
 
+    # Remove each activity number from the activity labels
+    for activity in records["prov:Activity"]:
+        activity["label"] = re.sub(r'._\d+$', '', activity["label"])
+
     if output_file is None:
-        # replace extension .m by .jsonld
-        output_file = os.path.splitext(filename)[0] + '.jsonld'
+        output_file = os.path.splitext(filename)[0] + '.jsonld'  # replace extension .m by .jsonld
 
     with open(output_file, "w") as fd:
         json.dump(graph, fd, indent=indent)
 
 
-if __name__ == "__main__":
+def label_mapping(label: str) -> str:
+    """
+    A function that takes a label from matlab as a parameter and maps it if it is present in the json mapping file.
 
+    Parameters
+    ----------
+    label : the label to be mapped
+
+    Returns
+    -------
+    str
+        Returns either the mapped label or the label if not present in the mapping file
+
+    """
+    filedir = os.path.dirname(__file__)
+    filepath = os.path.join(filedir, "mapping_labels/spm_labels.json")
+    with open(filepath) as f:
+        mappings = json.load(f)
+
+    for k_matlab, v_bids_prov in mappings.items():
+        if k_matlab in label:
+            return v_bids_prov
+    return label
+
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m", help="data dir where batch.m are researched")
+    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+                        help="data dir where batch.m are researched")
     parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
     parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
-    spm_to_bids_prov(opt.input_file, context_url=opt.context_url,
-                     output_file=opt.output_file, verbose=opt.verbose)
+    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file
+    # ./res_temp.jsonld
