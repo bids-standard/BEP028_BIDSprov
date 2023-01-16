@@ -14,6 +14,7 @@ import argparse
 
 from . import fsl_config as conf
 
+
 def get_id(size=10):
     """get a random id as a string of `size` characters"""
     return "".join(random.choice(string.ascii_letters) for i in range(size))
@@ -154,7 +155,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
     -------
     dict: a set of records compliant with the BIDS-prov standard
     """
-    records=defaultdict(list)
+    records = defaultdict(list)
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
         group_activity_id = f"urn:{group_name}_{get_id(5)}"
@@ -288,6 +289,3 @@ if __name__ == "__main__":
 
     fsl_to_bids_prov(opt.input_file, context_url=opt.context_url,
                      output_file=opt.output_file, verbose=opt.verbose)
-
-# if __name__ == "__main__":
-#     sys.exit(fsl_to_bids_pros())
