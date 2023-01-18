@@ -1,18 +1,43 @@
-from typing import Mapping, Union
+import json
+import os
 
+from typing import Mapping, Union
+from os.path import expanduser
 from boutiques.searcher import Searcher
 from boutiques.puller import Puller
 
-import json
-from bids_prov.utils import get_or_load
 
-DEFAULT_CONTEXT_URL = "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json"
 TYPES = (
     "File",
     # "String",
     "Number",
     "Flag",
 )
+
+
+def get_or_load(fn):
+    """
+    fn should return a json serializable object
+
+    results will be stored in the home directory ('~')
+    """
+
+    def wrapper(*args, **kwargs):
+        filename = os.path.join(expanduser("~"), fn.__name__)
+        filename += "_".join(args)
+        filename += ".json"
+        if os.path.exists(filename):
+            print(f"loading dumped results from {filename}")
+            with open(filename, "r") as fd:
+                d = json.load(fd)
+                return d
+        else:
+            d = fn(*args, **kwargs)
+            with open(filename, "w") as fd:
+                json.dump(d, fd)
+            return d
+
+    return wrapper
 
 
 @get_or_load
@@ -39,22 +64,3 @@ def get_config(agent: str) -> Mapping[str, Mapping[str, object]]:
 
 
 bosh_config = get_config("fsl")
-
-
-def get_default_graph(context_url: str) -> Mapping[str, Union[str, Mapping]]:
-    return {
-        "@context": context_url,
-        "@id": "http://example.org/ds00000X",
-        "generatedAt": "2020-03-10T10:00:00",
-        "records": {
-            "prov:Agent": [
-                {
-                    "@id": "RRID:SCR_002823",  # TODO query for version
-                    "@type": "prov:SoftwareAgent",
-                    "label": "FSL",
-                }
-            ],
-            "prov:Activity": [],
-            "prov:Entity": [],
-        },
-    }

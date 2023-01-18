@@ -13,6 +13,7 @@ import string
 import argparse
 
 from . import fsl_config as conf
+from bids_prov.utils import get_default_graph, CONTEXT_URL
 
 
 def get_id(size=10):
@@ -40,8 +41,8 @@ INPUT_TAGS = frozenset(
     [
         "-in",
         "-i",
-        "[INPUT_FILE]",  # sepcific to bet2
-        # "-r",  # `cp -r` --> recursrive ???
+        "[INPUT_FILE]",  # specific to bet2
+        # "-r",  # `cp -r` --> recursive ???
     ]
 )
 
@@ -132,7 +133,7 @@ def get_closest_config(key):
     Example
     -------
     ```python
-    >>> stats_conf = get_closest_confif("fslstats")
+    >>> stats_conf = get_closest_config("fslstats")
     >>> stats_conf["version"]
     5.0.9
     ```
@@ -140,7 +141,7 @@ def get_closest_config(key):
     key = re.sub("\d", "", key)
     if not key:
         return None
-    key = next((k for k in conf.bosh_config.keys() if (k in key or key in k)), None)
+    key = next((k for k in conf.bosh_config.keys() if (k.casefold() in key.casefold() or key.casefold() in k.casefold())), None)
     if key is not None:
         return conf.bosh_config[key]
     return None
@@ -260,13 +261,13 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
     return dict(records)
 
 
-def fsl_to_bids_prov(filename: str, context_url=conf.DEFAULT_CONTEXT_URL, output_file=None,
+def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
                      fsl_ver="**************", verbose=False, indent=2) -> None:  # TODO : add fsl version
 
     # def fsl_to_bids_pros(filenames, output_file, context_url):
     # filename = filenames[0]  # FIXME
 
-    graph = conf.get_default_graph(context_url)
+    graph, agent_id = get_default_graph(context_url)
 
     lines = readlines(filename)
     records = build_records(lines)
@@ -282,8 +283,8 @@ if __name__ == "__main__":
                         help="fsl execution log file")
     parser.add_argument("--output_file", type=str, default="res.jsonld",
                         help="output dir where results are written")
-    parser.add_argument("--context_url", default=conf.DEFAULT_CONTEXT_URL,
-                        help="DEFAULT_CONTEXT_URL")
+    parser.add_argument("--context_url", default=conf.CONTEXT_URL,
+                        help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 

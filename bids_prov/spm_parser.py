@@ -7,16 +7,7 @@ from typing import List, Dict, Generator
 
 from collections import defaultdict
 from bids_prov import spm_load_config as conf
-from bids_prov.utils import get_id
-
-
-def get_sha256(file_path):
-    m = hashlib.sha256()
-    with open(file_path, 'rb') as f:
-        lines = f.read()
-        m.update(lines)
-    md5code = m.hexdigest()
-    return md5code
+from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL
 
 
 def format_activity_name(activity_name: str) -> str:
@@ -349,7 +340,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
     return records
 
 
-def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False,
+def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False,
                      indent=2) -> None:
     """ Exporter from batch.m to an output jsonld
 
@@ -359,7 +350,7 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
     filename : str
         input file of batch.m; example filename = "/test/spm_batch.m"
     context_url : str, optional
-        url of context, by default conf.CONTEXT_URL=
+        url of context, by default CONTEXT_URL
     output_file : str, optional
         if None, default is filename with jsonld extension = "/test/spm_batch.jsonld"
     verbose : bool, optional
@@ -368,7 +359,7 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
         2, number of indentation in jsonfile between each object
 
     """
-    graph, agent_id = conf.get_empty_graph(context_url=context_url, spm_ver=spm_ver)
+    graph, agent_id = get_default_graph(context_url=context_url, spm_ver=spm_ver)
 
     lines = readlines(filename)
     tasks = group_lines(lines)  # same as list(lines) to expand generator
