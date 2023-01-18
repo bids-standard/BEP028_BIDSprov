@@ -1,12 +1,11 @@
 import argparse
-import hashlib
 import json
 import os
 import re
 from typing import List, Dict, Generator
 
 from collections import defaultdict
-from bids_prov import spm_config as conf
+from bids_prov.spm import spm_config as conf
 from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL, label_mapping
 
 
@@ -27,7 +26,7 @@ def format_activity_name(activity_name: str) -> str:
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
 
-    label_mapped = label_mapping(activity_name, "spm_labels.json")
+    label_mapped = label_mapping(activity_name, "spm/spm_labels.json")
     if label_mapped == activity_name:
         return label_mapped
     else:
@@ -63,7 +62,7 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
             entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
                 "@id": "urn:" + get_id(),
-                "label": label_mapping(entity_label_short, "spm_labels.json"),
+                "label": label_mapping(entity_label_short, "spm/spm_labels.json"),
                 "prov:atLocation": file_location
             }
             relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + file_location)
@@ -177,7 +176,7 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
                 entity = {"@id": "urn:" + get_id(),
-                          "label": label_mapping(name, "spm_labels.json"),
+                          "label": label_mapping(name, "spm/spm_labels.json"),
                           "prov:atLocation": output,
                           "wasGeneratedBy": activity_id,
                           }
@@ -229,7 +228,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, rec
             activity["used"].append(output_id)
             output_entity = {
                 "@id": output_id,
-                "label": label_mapping(parts[-1], "spm_labels.json"),
+                "label": label_mapping(parts[-1], "spm/spm_labels.json"),
                 # "prov:atLocation": TODO
                 "wasGeneratedBy": closest_activity["@id"],
             }

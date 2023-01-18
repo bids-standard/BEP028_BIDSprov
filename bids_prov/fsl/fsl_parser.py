@@ -1,18 +1,13 @@
-import click
 import re
-import sys
 from collections import defaultdict
 from itertools import chain
 import json
 import os
 from typing import List, Mapping, Tuple
 
-import random
-import string
-
 import argparse
 
-from . import fsl_config as conf
+from bids_prov.fsl import fsl_config as conf
 from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
 
 # regex to catch inputs
@@ -161,7 +156,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
         records["prov:Activity"].append(
             {
                 "@id": group_activity_id,
-                "label": label_mapping(group_name, "fsl_labels.json"),
+                "label": label_mapping(group_name, "fsl/fsl_labels.json"),
                 "wasAssociatedWith": "urn:" + agent_id,
             }
         )
@@ -210,7 +205,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             # directory path of the file) and the tail (the file name and possible extension)
             a = {
                 "@id": f"urn:{get_id()}",
-                "label": label_mapping(label, "fsl_labels.json"),
+                "label": label_mapping(label, "fsl/fsl_labels.json"),
                 "wasAssociatedWith": "urn:" + agent_id,
                 "attributes": [
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
@@ -235,7 +230,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 if existing_input is None:
                     e = {
                         "@id": input_id,  # TODO : uuid
-                        "label": label_mapping(os.path.split(input_path)[1], "fsl_labels.json"),
+                        "label": label_mapping(os.path.split(input_path)[1], "fsl/fsl_labels.json"),
                         "prov:atLocation": input_path,
                     }
                     records["prov:Entity"].append(e)
@@ -248,7 +243,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 records["prov:Entity"].append(
                     {
                         "@id": f"urn:{get_id()}",
-                        "label": label_mapping(os.path.split(output_path)[1], "fsl_labels.json"),
+                        "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
                         "prov:atLocation": output_path,
                         "wasGeneratedBy": a["@id"],
                         "derivedFrom": input_id,  # FIXME currently last input ID
