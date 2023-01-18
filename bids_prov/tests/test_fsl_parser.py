@@ -1,4 +1,4 @@
-from ..fsl_parser import INPUT_RE, ATTRIBUTE_RE
+from ..fsl_parser import INPUT_RE, ATTRIBUTE_RE, readlines
 import re
 
 import pytest
@@ -37,4 +37,35 @@ def test_match_attrs(attr_to_match):
         assert re.match(ATTRIBUTE_RE, s)
 
 
-# TODO : attributes
+from collections import defaultdict
+from unittest.mock import mock_open, patch
+import pytest
+
+
+def test_readlines():
+    # Test valid file
+    m = mock_open(read_data="""#### Feat main script
+
+/bin/cp /tmp/feat_oJmMLg.fsf design.fsf
+/usr/share/fsl/5.0/bin/feat_model design
+mkdir .files;cp /usr/share/fsl/5.0/doc/fsl.css .files""")
+    with patch("builtins.open", m, create=True):
+        filename = "file.txt"
+        lines = readlines(filename)
+        expected_output = {
+            ' Feat main script': [
+                '/bin/cp /tmp/feat_oJmMLg.fsf design.fsf',
+                '/usr/share/fsl/5.0/bin/feat_model design',
+                'mkdir .files',
+                'cp /usr/share/fsl/5.0/doc/fsl.css .files'
+            ]
+        }
+        assert lines == expected_output
+
+    # Test invalid file path
+    with pytest.raises(FileNotFoundError):
+        filename = "invalid_file.txt"
+        lines = readlines(filename)
+
+
+
