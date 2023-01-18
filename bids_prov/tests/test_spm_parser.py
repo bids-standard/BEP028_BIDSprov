@@ -11,7 +11,7 @@ from collections import defaultdict
 
 from bids_prov.utils import CONTEXT_URL
 from .compare_graph import load_jsonld11_for_rdf, is_similar_rdf_graph, is_included_rdf_graph
-from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
+from ..spm_config import has_parameter, DEPENDENCY_REGEX
 from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256, \
     label_mapping
 
