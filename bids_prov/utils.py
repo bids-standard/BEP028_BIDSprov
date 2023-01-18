@@ -11,7 +11,7 @@ def get_id():
     return str(uuid.UUID(int=random.getrandbits(128), version=4))
 
 
-def get_default_graph(context_url: str = CONTEXT_URL, spm_ver: str = "dev") \
+def get_default_graph(label: str, context_url: str = CONTEXT_URL, spm_ver: str = "dev",) \
         -> Tuple[Mapping[str, Union[str, Mapping]], str]:
     agent_id = get_id()
     return {
@@ -24,7 +24,7 @@ def get_default_graph(context_url: str = CONTEXT_URL, spm_ver: str = "dev") \
                            "@id": "urn:" + agent_id,
                            "RRID": "RRID:SCR_007037",
                            "@type": "prov:SoftwareAgent",
-                           "label": "SPM",
+                           "label": label,
                            "version": spm_ver
                        }
                    ],

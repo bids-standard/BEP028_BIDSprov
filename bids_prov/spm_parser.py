@@ -359,7 +359,7 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
         2, number of indentation in jsonfile between each object
 
     """
-    graph, agent_id = get_default_graph(context_url=context_url, spm_ver=spm_ver)
+    graph, agent_id = get_default_graph(label="SPM", context_url=context_url, spm_ver=spm_ver)
 
     lines = readlines(filename)
     tasks = group_lines(lines)  # same as list(lines) to expand generator

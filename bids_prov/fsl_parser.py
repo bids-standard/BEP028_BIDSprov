@@ -267,7 +267,7 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     # def fsl_to_bids_pros(filenames, output_file, context_url):
     # filename = filenames[0]  # FIXME
 
-    graph, agent_id = get_default_graph(context_url)
+    graph, agent_id = get_default_graph(label="FSL", context_url=context_url)
 
     lines = readlines(filename)
     records = build_records(lines)
