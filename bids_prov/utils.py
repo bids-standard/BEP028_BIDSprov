@@ -53,7 +53,7 @@ def label_mapping(label: str, mapping_filename: str) -> str:
 
     """
     filedir = os.path.dirname(__file__)
-    filepath = os.path.join(filedir, "mapping_labels/", mapping_filename)
+    filepath = os.path.join(filedir, mapping_filename)
     with open(filepath) as f:
         mappings = json.load(f)
 

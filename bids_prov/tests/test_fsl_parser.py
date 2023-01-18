@@ -1,4 +1,4 @@
-from ..fsl_parser import INPUT_RE, ATTRIBUTE_RE, readlines
+from bids_prov.fsl.fsl_parser import INPUT_RE, ATTRIBUTE_RE, readlines
 import re
 
 import pytest
@@ -37,7 +37,6 @@ def test_match_attrs(attr_to_match):
         assert re.match(ATTRIBUTE_RE, s)
 
 
-from collections import defaultdict
 from unittest.mock import mock_open, patch
 import pytest
 

@@ -1,9 +1,9 @@
 import os
 import shutil
 import argparse
-from bids_prov.spm_parser import spm_to_bids_prov
+from bids_prov.spm.spm_parser import spm_to_bids_prov
 from bids_prov.visualize import main as visualize
-from bids_prov.fsl_parser import fsl_to_bids_prov
+from bids_prov.fsl.fsl_parser import fsl_to_bids_prov
 from bids_prov.utils import CONTEXT_URL
 from datetime import datetime
 import markdownify
