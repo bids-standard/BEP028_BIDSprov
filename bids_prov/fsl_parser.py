@@ -111,7 +111,8 @@ def read_commands(lines: List[str]) -> Tuple[List[str], int]:
     i = 0
     for line in lines:
         if re.match(r"^[a-z/].*$", line):  # the line must begin with a lowercase word or a / followed by 0 or more dots
-            res.extend(line[:-1].split(";"))  # remove the `\n`, split on a possible `;` and add to the end of the list
+            res.extend(line.rstrip("\n").split(";"))  # rstrip remove the `\n`, split on a possible `;` and add to
+            # the end of the list
         elif line == "\n":
             pass
         else:
@@ -258,9 +259,6 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
 def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
                      fsl_ver="**************", verbose=False, indent=2) -> None:  # TODO : add fsl version
-
-    # def fsl_to_bids_pros(filenames, output_file, context_url):
-    # filename = filenames[0]  # FIXME
 
     graph, agent_id = get_default_graph(label="FSL", context_url=context_url)
 
