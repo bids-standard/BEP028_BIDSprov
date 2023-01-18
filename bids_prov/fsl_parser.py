@@ -142,7 +142,7 @@ def get_closest_config(key):
     return None
 
 
-def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
+def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (eg. `Registration`, `Post-stats`)
@@ -159,7 +159,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             {
                 "@id": group_activity_id,
                 "label": group_name,
-                "wasAssociatedWith": "RRID:SCR_002823",
+                "wasAssociatedWith": agent_id,
             }
         )
 
@@ -208,7 +208,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             a = {
                 "@id": f"urn:{get_id()}",
                 "label": label,
-                "wasAssociatedWith": "RRID:SCR_002823",
+                "wasAssociatedWith": agent_id,
                 "attributes": [
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
                 ],
@@ -265,7 +265,7 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     graph, agent_id = get_default_graph(label="FSL", context_url=context_url)
 
     lines = readlines(filename)
-    records = build_records(lines)
+    records = build_records(lines, agent_id)
     graph["records"].update(records)
 
     with open(output_file, "w") as fd:
