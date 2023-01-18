@@ -159,7 +159,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             {
                 "@id": group_activity_id,
                 "label": group_name,
-                "wasAssociatedWith": agent_id,
+                "wasAssociatedWith": "urn" + agent_id,
             }
         )
 
@@ -208,7 +208,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             a = {
                 "@id": f"urn:{get_id()}",
                 "label": label,
-                "wasAssociatedWith": agent_id,
+                "wasAssociatedWith": "urn" + agent_id,
                 "attributes": [
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
                 ],
