@@ -1,6 +1,8 @@
 import uuid
 import random
 import hashlib
+import os
+import json
 
 from typing import Mapping, Union, Tuple
 
@@ -32,6 +34,33 @@ def get_default_graph(label: str, context_url: str = CONTEXT_URL, spm_ver: str =
                    "prov:Entity": [],
                },
            }, agent_id
+
+
+def label_mapping(label: str, mapping_filename: str) -> str:
+    """
+    A function that takes a label from matlab as a parameter and maps it if it is present in the json mapping file.
+
+    Parameters
+    ----------
+    label : the label to be mapped
+
+    mapping_filename : the name of the mapping file with its extension
+
+    Returns
+    -------
+    str
+        Returns either the mapped label or the label if not present in the mapping file
+
+    """
+    filedir = os.path.dirname(__file__)
+    filepath = os.path.join(filedir, "mapping_labels/", mapping_filename)
+    with open(filepath) as f:
+        mappings = json.load(f)
+
+    for k_matlab, v_bids_prov in mappings.items():
+        if k_matlab in label:
+            return v_bids_prov
+    return label
 
 
 def get_sha256(file_path: str):
