@@ -13,12 +13,7 @@ import string
 import argparse
 
 from . import fsl_config as conf
-from bids_prov.utils import get_default_graph, CONTEXT_URL
-
-
-def get_id(size=10):
-    """get a random id as a string of `size` characters"""
-    return "".join(random.choice(string.ascii_letters) for i in range(size))
+from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id
 
 
 # regex to catch inputs
@@ -159,7 +154,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
     records = defaultdict(list)
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
-        group_activity_id = f"urn:{group_name}_{get_id(5)}"
+        group_activity_id = f"urn:{get_id()}"
         records["prov:Activity"].append(
             {
                 "@id": group_activity_id,
@@ -211,7 +206,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             label = f"{group_name}_{os.path.split(a_name)[1]}"  # split at the last / in 2 parts : the head (the
             # directory path of the file) and the tail (the file name and possible extension)
             a = {
-                "@id": f"urn:{label}_{get_id(5)}",
+                "@id": f"urn:{get_id()}",
                 "label": label,
                 "wasAssociatedWith": "RRID:SCR_002823",
                 "attributes": [
@@ -224,7 +219,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             input_id = ""
             for input_path in inputs:
                 input_name = input_path.replace("/", "_")
-                input_id = f"urn:{get_id(size=5)}_{input_name}"  # def format_id
+                input_id = f"urn:{get_id()}"  # def format_id
 
                 existing_input = next(
                     (
@@ -249,7 +244,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
                 output_name = output_path.replace("/", "_")
                 records["prov:Entity"].append(
                     {
-                        "@id": f"urn:{get_id(size=5)}_{output_name}",
+                        "@id": f"urn:{get_id()}",
                         "label": os.path.split(output_path)[1],
                         "prov:atLocation": output_path,
                         "wasGeneratedBy": a["@id"],
