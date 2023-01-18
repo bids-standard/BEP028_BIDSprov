@@ -15,7 +15,6 @@ import argparse
 from . import fsl_config as conf
 from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
 
-
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
 # INPUT_RE:
@@ -86,7 +85,7 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
             # TODO : add </pre> as in
             # https://github.com/incf-nidash/nidmresults-examples/blob/master/fsl_gamma_basis/logs/feat2_pre
             if line.startswith("#"):
-                key = line.replace("#", "")
+                key = line.replace("#", "").lstrip()
                 cmds, i = read_commands(lines[n_line + 1:])
                 n_line += i
                 if cmds:
@@ -110,10 +109,11 @@ def read_commands(lines: List[str]) -> Tuple[List[str], int]:
     res = list()
     i = 0
     for line in lines:
-        if re.match(r"^[a-z/].*$", line):  # the line must begin with a lowercase word or a / followed by 0 or more dots
+        if re.match(r"^[a-z/].*$", line) and not line.startswith("did"):  # the line must begin with a lowercase word
+            # or a / followed by 0 or more dots
             res.extend(line.rstrip("\n").split(";"))  # rstrip remove the `\n`, split on a possible `;` and add to
             # the end of the list
-        elif line == "\n":
+        elif re.match(r"^[\n\dA-Z]", line) or line.startswith("did"):
             pass
         else:
             break
@@ -137,7 +137,9 @@ def get_closest_config(key):
     key = re.sub("\d", "", key)
     if not key:
         return None
-    key = next((k for k in conf.bosh_config.keys() if (k.casefold() in key.casefold() or key.casefold() in k.casefold())), None)
+    key = next(
+        (k for k in conf.bosh_config.keys() if (k.casefold() in key.casefold() or key.casefold() in k.casefold())),
+        None)
     if key is not None:
         return conf.bosh_config[key]
     return None
