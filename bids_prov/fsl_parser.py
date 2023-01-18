@@ -283,7 +283,7 @@ if __name__ == "__main__":
                         help="fsl execution log file")
     parser.add_argument("--output_file", type=str, default="res.jsonld",
                         help="output dir where results are written")
-    parser.add_argument("--context_url", default=conf.CONTEXT_URL,
+    parser.add_argument("--context_url", default=CONTEXT_URL,
                         help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
