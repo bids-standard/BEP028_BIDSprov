@@ -53,7 +53,7 @@ mkdir .files;cp /usr/share/fsl/5.0/doc/fsl.css .files""")
         filename = "file.txt"
         lines = readlines(filename)
         expected_output = {
-            ' Feat main script': [
+            'Feat main script': [
                 '/bin/cp /tmp/feat_oJmMLg.fsf design.fsf',
                 '/usr/share/fsl/5.0/bin/feat_model design',
                 'mkdir .files',
