@@ -6,7 +6,7 @@ import re
 from typing import List, Dict, Generator
 
 from collections import defaultdict
-from bids_prov import spm_load_config as conf
+from bids_prov import spm_config as conf
 from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL
 
 
