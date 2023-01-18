@@ -14,9 +14,8 @@ DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in ma
 
 def has_parameter(line):
     return re.search(PARAM_REGEX, line) is not None
-
-
 # has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
+
 
 with open(this_path + "/spm_config.yml", "r") as fd:
     static = yaml.load(fd, Loader=yaml.CLoader)
