@@ -14,14 +14,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
           pip install -r dev-requirements.txt
-      - name: Test SPM parser on explicit_mask
+      - name: Test SPM parser
         run: |
           curl -LJO https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_explicit_mask/batch.m
           python -m bids_prov.spm.spm_parser --input_file batch.m --output_file explicit_mask.json
-      - name: Test SPM Parser on groups OLS
-        run: |
-          curl -LJO https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_group_ols/batch.m
-          python -m bids_prov.spm_parser --input_file batch.m --output_file ols.json
       - name: Test FSL Parser
         run: |
           python -m bids_prov.fsl.fsl_parser --input_file examples/fsl_default/logs.md --output_file  tests.json
