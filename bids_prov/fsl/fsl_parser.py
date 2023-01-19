@@ -177,7 +177,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 attributes[key].append(value)
 
             # make sure attributes are not considered as entities
-            cmd = re.sub(ATTRIBUTE_RE, "", cmd)
+            cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
 
             # if a key of attributes is in INPUT_TAGS, we add her value in inputs
             inputs = list(
@@ -187,7 +187,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             outputs = list(
                 chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS))
             )
-            entity_names = [_ for _ in re.findall(INPUT_RE, cmd[len(a_name):])]
+            entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
             cmd_conf = get_closest_config(a_name)  # with the module boutiques
             if cmd_conf:
                 pos_args = filter(
@@ -196,7 +196,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 _map = dict(zip(cmd_conf["command-line"].split(" "), pos_args))
                 inputs += [_map[i] for i in INPUT_TAGS if i in _map]
 
-            elif entity_names and entity_names[0] in cmd:
+            elif entity_names and entity_names[0] in cmd_without_attributes:
                 outputs.append(entity_names[-1])
                 if len(entity_names) > 1:
                     inputs.append(entity_names[0])
@@ -207,6 +207,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 "@id": f"urn:{get_id()}",
                 "label": label_mapping(label, "fsl/fsl_labels.json"),
                 "wasAssociatedWith": "urn:" + agent_id,
+                "command": cmd,
                 "attributes": [
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
                 ],
