@@ -163,7 +163,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             {
                 "@id": group_activity_id,
                 "label": group_name,
-                "wasAssociatedWith": "RRID:SCR_002823",
+                "associatedWith": "RRID:SCR_002823",
             }
         )
 
@@ -212,7 +212,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             a = {
                 "@id": f"urn:{label}_{get_id(5)}",
                 "label": label,
-                "wasAssociatedWith": "RRID:SCR_002823",
+                "associatedWith": "RRID:SCR_002823",
                 "attributes": [
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
                 ],
@@ -251,7 +251,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
                         "@id": f"urn:{get_id(size=5)}_{output_name}",
                         "label": os.path.split(output_path)[1],
                         "prov:atLocation": output_path,
-                        "wasGeneratedBy": a["@id"],
+                        "generatedBy": a["@id"],
                         "derivedFrom": input_id,  # FIXME currently last input ID
                     }
                 )
