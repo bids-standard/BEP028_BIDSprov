@@ -1,0 +1,349 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "SPM",
+        "version": "SPM12r7224"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:130744ae-f78d-4277-83ff-d03f2b87c19a",
+        "label": "cfg_basicio.file_dir.file_ops.file_move",
+        "used": [
+          "urn:f37107a3-377f-4859-a933-782a2c8483d1"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "action.copyto": "{'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/FUNCTIONAL'}"
+        }
+      },
+      {
+        "@id": "urn:6be8057d-1eaf-4801-bc55-85cd7261044b",
+        "label": "cfg_basicio.file_dir.file_ops.file_move",
+        "used": [
+          "urn:155e66da-06c5-4cdb-9305-f6349debd034"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "action.copyto": "{'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL'}"
+        }
+      },
+      {
+        "@id": "urn:471e1711-1037-4774-a72e-bba9a79d3c8b",
+        "label": "Gunzip",
+        "used": [
+          "urn:eece6b2e-4a8a-4e73-b2cc-302020fcca02"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d"
+      },
+      {
+        "@id": "urn:23cc989e-9516-417c-9ed0-01583a630a4a",
+        "label": "Gunzip",
+        "used": [
+          "urn:6c5635c4-87aa-4738-b0c0-07f1a276b761"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d"
+      },
+      {
+        "@id": "urn:f2d069c5-0780-4613-bcb8-fdd07cb79019",
+        "label": "Realignment",
+        "used": [
+          "urn:13a4c1cc-87b7-4210-9997-ba1316e937dc"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "eoptions.quality": "0.9",
+          "eoptions.sep": "4",
+          "eoptions.fwhm": "5",
+          "eoptions.rtm": "1",
+          "eoptions.interp": "2",
+          "eoptions.wrap": "[0, 0, 0]",
+          "eoptions.weight": "''",
+          "roptions.which": "[0, 1]",
+          "roptions.interp": "4",
+          "roptions.wrap": "[0, 0, 0]",
+          "roptions.mask": "1",
+          "roptions.prefix": "'r'"
+        }
+      },
+      {
+        "@id": "urn:be52f3d6-cec9-4fb6-8e77-f4733a6a307d",
+        "label": "Coregistration",
+        "used": [
+          "urn:c8af30d1-f5bf-418a-bf94-cad6cb9d5d46",
+          "urn:3537358e-c01c-445f-a8a4-fcb9fbf9aa6b"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "other": "{''}",
+          "eoptions.cost_fun": "'nmi'",
+          "eoptions.sep": "[4, 2]",
+          "eoptions.tol": "[0.02, 0.02, 0.02, 0.001, 0.001, 0.001, 0.01, 0.01, 0.01, 0.001, 0.001, 0.001]",
+          "eoptions.fwhm": "[7, 7]"
+        }
+      },
+      {
+        "@id": "urn:e52f0a89-d118-4ed4-9174-344a77f2c26e",
+        "label": "Segmentation",
+        "used": [
+          "urn:3537358e-c01c-445f-a8a4-fcb9fbf9aa6b"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "channel.biasreg": "0.001",
+          "channel.biasfwhm": "60",
+          "channel.write": "[0, 1]",
+          "tissue(1).tpm": "{'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,1'}",
+          "tissue(1).ngaus": "1",
+          "tissue(1).native": "[1, 0]",
+          "tissue(1).warped": "[0, 0]",
+          "tissue(2).tpm": "{'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,2'}",
+          "tissue(2).ngaus": "1",
+          "tissue(2).native": "[1, 0]",
+          "tissue(2).warped": "[0, 0]",
+          "tissue(3).tpm": "{'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,3'}",
+          "tissue(3).ngaus": "2",
+          "tissue(3).native": "[1, 0]",
+          "tissue(3).warped": "[0, 0]",
+          "tissue(4).tpm": "{'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,4'}",
+          "tissue(4).ngaus": "3",
+          "tissue(4).native": "[1, 0]",
+          "tissue(4).warped": "[0, 0]",
+          "tissue(5).tpm": "{'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,5'}",
+          "tissue(5).ngaus": "4",
+          "tissue(5).native": "[1, 0]",
+          "tissue(5).warped": "[0, 0]",
+          "tissue(6).tpm": "{'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,6'}",
+          "tissue(6).ngaus": "2",
+          "tissue(6).native": "[0, 0]",
+          "tissue(6).warped": "[0, 0]",
+          "warp.mrf": "1",
+          "warp.cleanup": "1",
+          "warp.reg": "[0, 0.001, 0.5, 0.05, 0.2]",
+          "warp.affreg": "'mni'",
+          "warp.fwhm": "0",
+          "warp.samp": "3",
+          "warp.write": "[0, 1]"
+        }
+      },
+      {
+        "@id": "urn:0b4196da-6d56-4d33-9d26-75fd528a840b",
+        "label": "Normalization",
+        "used": [
+          "urn:541ebb7f-d322-4f60-80bb-33aa5d5c2b68",
+          "urn:0241d643-c26c-4c12-b7fc-c597fb028ac4"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "woptions.bb": "[-78, -112, -70, 78, 76, 85]",
+          "woptions.vox": "[2, 2, 2]",
+          "woptions.interp": "4",
+          "woptions.prefix": "'w'"
+        }
+      },
+      {
+        "@id": "urn:172dffaa-5285-4978-b456-c904e496ef80",
+        "label": "Normalization",
+        "used": [
+          "urn:541ebb7f-d322-4f60-80bb-33aa5d5c2b68",
+          "urn:c8a06f7f-87d8-49fc-ae16-de98a71578ba"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "woptions.bb": "[-78, -112, -70, 78, 76, 85]",
+          "woptions.vox": "[2, 2, 2]",
+          "woptions.interp": "4",
+          "woptions.prefix": "'w'"
+        }
+      },
+      {
+        "@id": "urn:151d06cc-d31a-4822-9483-39ccaf7c7c69",
+        "label": "Smoothing",
+        "used": [
+          "urn:e93914aa-78e7-42e0-a41a-af58c5986d33"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "fwhm": "[6, 6, 6]",
+          "dtype": "0",
+          "im": "0",
+          "prefix": "'s'"
+        }
+      },
+      {
+        "@id": "urn:cc557a99-e2d2-4d4d-a048-886fa8066182",
+        "label": "Stat Design",
+        "used": [
+          "urn:4d4fbcc9-fe7b-40ac-ad91-d7f47df77213",
+          "urn:24f168f5-fb03-4d4d-ad13-54e84783d266"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "dir": "{'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/spm_voxelwise_p0001'}",
+          "timing.units": "'secs'",
+          "timing.RT": "2",
+          "timing.fmri_t": "16",
+          "timing.fmri_t0": "8",
+          "sess.cond": "struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {})",
+          "sess.regress": "struct('name', {}, 'val', {})",
+          "sess.multi_reg": "{''}",
+          "sess.hpf": "128",
+          "fact": "struct('name', {}, 'levels', {})",
+          "bases.hrf.derivs": "[0, 0]",
+          "volt": "1",
+          "global": "'None'",
+          "mthresh": "0.8",
+          "mask": "{''}",
+          "cvi": "'AR(1)'"
+        }
+      },
+      {
+        "@id": "urn:61526929-0bd8-42a9-a940-c7b21d9583d5",
+        "label": "Stat Estimation",
+        "used": [
+          "urn:fe839174-4f71-47a6-a6b0-cd3db78f29d7"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "write_residuals": "0",
+          "method.Classical": "1"
+        }
+      },
+      {
+        "@id": "urn:9f8dfe6b-c0d6-4d1f-b44f-35f1038ced64",
+        "label": "stats.con",
+        "used": [
+          "urn:0e15cddf-230c-42f2-9afe-2586c0865a81"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "consess{1}.tcon.name": "'tone counting vs baseline'",
+          "consess{1}.tcon.weights": "[1, 0]",
+          "consess{1}.tcon.sessrep": "'none'",
+          "delete": "0"
+        }
+      },
+      {
+        "@id": "urn:134a7aee-34e8-4b5d-be70-30d879ec2ec8",
+        "label": "Thresholding",
+        "used": [
+          "urn:c8a06fe0-2b2d-43e4-b963-c91e8d51f471"
+        ],
+        "associatedWith": "urn:71419a98-c2c7-4a16-be0e-9cfffdd9150d",
+        "parameters": {
+          "conspec.titlestr": "''",
+          "conspec.contrasts": "Inf",
+          "conspec.threshdesc": "'none'",
+          "conspec.thresh": "0.001",
+          "conspec.extent": "0",
+          "conspec.conjunction": "1",
+          "conspec.mask.none": "1",
+          "units": "1",
+          "print": "'pdf'",
+          "write.tspm.basename": "'thresh'"
+        }
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:f37107a3-377f-4859-a933-782a2c8483d1",
+        "label": "func_sub-01_task-tonecounting_bold.nii.gz",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz"
+      },
+      {
+        "@id": "urn:155e66da-06c5-4cdb-9305-f6349debd034",
+        "label": "anat_sub-01_T1w.nii.gz",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/sub-01/anat/sub-01_T1w.nii.gz"
+      },
+      {
+        "@id": "urn:eece6b2e-4a8a-4e73-b2cc-302020fcca02",
+        "label": "Moved/Copied Files",
+        "generatedBy": "urn:130744ae-f78d-4277-83ff-d03f2b87c19a"
+      },
+      {
+        "@id": "urn:6c5635c4-87aa-4738-b0c0-07f1a276b761",
+        "label": "Moved/Copied Files",
+        "generatedBy": "urn:6be8057d-1eaf-4801-bc55-85cd7261044b"
+      },
+      {
+        "@id": "urn:13a4c1cc-87b7-4210-9997-ba1316e937dc",
+        "label": "GunZipped Files",
+        "generatedBy": "urn:471e1711-1037-4774-a72e-bba9a79d3c8b"
+      },
+      {
+        "@id": "urn:c8af30d1-f5bf-418a-bf94-cad6cb9d5d46",
+        "label": "Mean Image",
+        "generatedBy": "urn:f2d069c5-0780-4613-bcb8-fdd07cb79019"
+      },
+      {
+        "@id": "urn:3537358e-c01c-445f-a8a4-fcb9fbf9aa6b",
+        "label": "GunZipped Files",
+        "generatedBy": "urn:23cc989e-9516-417c-9ed0-01583a630a4a"
+      },
+      {
+        "@id": "urn:399029a2-7f3c-49ed-90e2-3c906ffbaba7",
+        "label": "segment",
+        "prov:atLocation": "c1xxx.nii.gz",
+        "generatedBy": "urn:e52f0a89-d118-4ed4-9174-344a77f2c26e"
+      },
+      {
+        "@id": "urn:12eb163a-837b-4932-8964-5f1ccb5d9edf",
+        "label": "segment",
+        "prov:atLocation": "c2xxx.nii.gz",
+        "generatedBy": "urn:e52f0a89-d118-4ed4-9174-344a77f2c26e"
+      },
+      {
+        "@id": "urn:541ebb7f-d322-4f60-80bb-33aa5d5c2b68",
+        "label": "Forward Deformations",
+        "generatedBy": "urn:e52f0a89-d118-4ed4-9174-344a77f2c26e"
+      },
+      {
+        "@id": "urn:0241d643-c26c-4c12-b7fc-c597fb028ac4",
+        "label": "Realigned Images (Sess 1)",
+        "generatedBy": "urn:f2d069c5-0780-4613-bcb8-fdd07cb79019"
+      },
+      {
+        "@id": "urn:c8a06f7f-87d8-49fc-ae16-de98a71578ba",
+        "label": "Bias Corrected (1)",
+        "generatedBy": "urn:e52f0a89-d118-4ed4-9174-344a77f2c26e"
+      },
+      {
+        "@id": "urn:e93914aa-78e7-42e0-a41a-af58c5986d33",
+        "label": "Normalised Images (Subj 1)",
+        "generatedBy": "urn:0b4196da-6d56-4d33-9d26-75fd528a840b"
+      },
+      {
+        "@id": "urn:24f168f5-fb03-4d4d-ad13-54e84783d266",
+        "label": "ONSETS_sub-01-MultiCond.mat",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat"
+      },
+      {
+        "@id": "urn:4d4fbcc9-fe7b-40ac-ad91-d7f47df77213",
+        "label": "Smoothed Images",
+        "generatedBy": "urn:151d06cc-d31a-4822-9483-39ccaf7c7c69"
+      },
+      {
+        "@id": "urn:fe839174-4f71-47a6-a6b0-cd3db78f29d7",
+        "label": "SPM.mat File",
+        "generatedBy": "urn:cc557a99-e2d2-4d4d-a048-886fa8066182"
+      },
+      {
+        "@id": "urn:0e15cddf-230c-42f2-9afe-2586c0865a81",
+        "label": "SPM.mat File",
+        "generatedBy": "urn:61526929-0bd8-42a9-a940-c7b21d9583d5"
+      },
+      {
+        "@id": "urn:c8a06fe0-2b2d-43e4-b963-c91e8d51f471",
+        "label": "SPM.mat File",
+        "generatedBy": "urn:9f8dfe6b-c0d6-4d1f-b44f-35f1038ced64"
+      }
+    ]
+  }
+}
