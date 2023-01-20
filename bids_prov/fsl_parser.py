@@ -263,9 +263,31 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
 def fsl_to_bids_prov(filename: str, context_url=conf.DEFAULT_CONTEXT_URL, output_file=None,
                      fsl_ver="**************", verbose=False, indent=2) -> None:  # TODO : add fsl version
 
-    # def fsl_to_bids_pros(filenames, output_file, context_url):
-    # filename = filenames[0]  # FIXME
+    """
+        Convert FSL log file (report_log.md) to bids-prov format. The html (report_log.html) file must have been
+        converted to markdown before with the function html_to_logmd_file.
 
+        Parameters
+        ---
+        filename: str
+           The path to the FSL markdown report_log file
+
+        context_url: str, optional
+           The URL of the context file to use
+
+        output_file: str, optional
+           The path to the output file
+
+        fsl_ver: str, optional
+           The version of FSL used
+
+        verbose: bool, optional
+           Whether to print verbose output, by default False
+
+        indent: int, optional
+           The number of spaces to use for indentation in the output file, by default 2
+
+    """
     graph = conf.get_default_graph(context_url)
 
     lines = readlines(filename)
