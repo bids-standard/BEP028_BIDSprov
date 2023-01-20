@@ -12,8 +12,7 @@ PATH_REGEX = r"([A-Za-z]:|[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*)((/[A-Za-z0-9_.-]+)+
 PARAM_REGEX = r"[^\.]+\(\d+\)"  # example: some_activity.function(53)
 FILE_REGEX = r"(\.[a-z]{1,3}){1,2}"  # the string does not contain a filename so this is not an input_entity
 DEPENDENCY_REGEX = r"""cfg_dep\(['"]([^'"]*)['"]\,.*"""  # TODO : add ": " in match
-# CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
-CONTEXT_URL = "https://raw.githubusercontent.com/Inria-Empenn/BEP028_BIDSprov/wasKeyBy/context.json"
+CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
 
 has_parameter = lambda line: re.search(PARAM_REGEX, line) is not None
 # has_entity = lambda line: not has_parameter(line) and next(re.finditer(PATH_REGEX, line), None) is not None
