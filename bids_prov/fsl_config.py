@@ -41,6 +41,14 @@ bosh_config = get_config("fsl")
 
 
 def get_default_graph(context_url: str) -> Mapping[str, Union[str, Mapping]]:
+    """
+       Initialize the file structure to bids-prov jsonld
+
+       Parameter
+       ---
+       context_url : str
+          The URL of the context file to use
+    """
     return {
         "@context": context_url,
         "@id": "http://example.org/ds00000X",
