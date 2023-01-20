@@ -157,7 +157,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             {
                 "@id": group_activity_id,
                 "label": label_mapping(group_name, "fsl/fsl_labels.json"),
-                "wasAssociatedWith": "urn:" + agent_id,
+                "associatedWith": "urn:" + agent_id,
             }
         )
 
@@ -206,7 +206,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             a = {
                 "@id": f"urn:{get_id()}",
                 "label": label_mapping(label, "fsl/fsl_labels.json"),
-                "wasAssociatedWith": "urn:" + agent_id,
+                "associatedWith": "urn:" + agent_id,
                 "attributes": [
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
                 ],
@@ -245,7 +245,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         "@id": f"urn:{get_id()}",
                         "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
                         "prov:atLocation": output_path,
-                        "wasGeneratedBy": a["@id"],
+                        "generatedBy": a["@id"],
                         "derivedFrom": input_id,  # FIXME currently last input ID
                     }
                 )
