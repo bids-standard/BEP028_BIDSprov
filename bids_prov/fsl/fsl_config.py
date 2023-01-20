@@ -42,8 +42,7 @@ def get_or_load(fn):
 
 @get_or_load
 def get_config(agent: str) -> Mapping[str, Mapping[str, object]]:
-    """get a config by querying bosh with `agent`
-
+    """get a config by querying bosh (tool to access Boutiques documents, see https://boutiques.github.io/) with `agent`
     eq to running ```bosh search``` from the command-line
     """
     searcher = Searcher(agent)

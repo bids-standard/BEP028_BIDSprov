@@ -178,7 +178,7 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
                 entity = {"@id": "urn:" + get_id(),
                           "label": label_mapping(name, "spm/spm_labels.json"),
                           "prov:atLocation": output,
-                          "wasGeneratedBy": activity_id,
+                          "generatedBy": activity_id,
                           }
                 output_entities.append(entity)
             # stop for loop at first match in if statement (match activity in conf_dic)
@@ -221,7 +221,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, rec
                 print(f"closest_activity : {closest_activity}")
 
             output_id = next((entity["@id"] for entity in records["prov:Entity"]
-                              if parts[-1] == entity["label"] and entity["wasGeneratedBy"] == closest_activity["@id"]),
+                              if parts[-1] == entity["label"] and entity["generatedBy"] == closest_activity["@id"]),
                              "urn:" + get_id())
 
             # adds to the current activity the fact that it has used the previous entity
@@ -230,7 +230,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, rec
                 "@id": output_id,
                 "label": label_mapping(parts[-1], "spm/spm_labels.json"),
                 # "prov:atLocation": TODO
-                "wasGeneratedBy": closest_activity["@id"],
+                "generatedBy": closest_activity["@id"],
             }
 
     return output_entity
@@ -261,7 +261,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
         activity = {"@id": activity_id,
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
-                    "wasAssociatedWith": "urn:" + agent_id,
+                    "associatedWith": "urn:" + agent_id,
                     }
 
         output_entities, input_entities = list(), list()
