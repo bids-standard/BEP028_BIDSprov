@@ -46,7 +46,9 @@ def test_readlines():
     m = mock_open(read_data="""#### Feat main script
 
 /bin/cp /tmp/feat_oJmMLg.fsf design.fsf
+
 /usr/share/fsl/5.0/bin/feat_model design
+
 mkdir .files;cp /usr/share/fsl/5.0/doc/fsl.css .files""")
     with patch("builtins.open", m, create=True):
         filename = "file.txt"

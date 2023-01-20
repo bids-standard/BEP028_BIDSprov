@@ -20,9 +20,10 @@ INPUT_RE = r"([\/\w\.\?-]{3,}\.?[\w]{2,})"
 
 # ATTRIBUTE_RE : (-+[a-zA-Z_]+) : match `-` between one and unlimited times and match between one and unlimited times
 # a character in this list : [`A-Za-z`, `_`] [\s|=]? : match between 0 and 1 time a character included in this list [
-# `\s`, `|`, `=`] ([\/a-zA-Z._\d]+)? :  match between one and unlimited times a character included in this list [`/`,
-# `a-zA-Z`, `.`, `_`, `\d`(digit)]
-ATTRIBUTE_RE = r"(-+[a-zA-Z_]+)[\s|=]?([\/a-zA-Z._\d]+)?"
+# `\s`, `|`, `=`]
+# ([\/a-zA-Z._\d]+)? :  match between one and unlimited times a character included in this list
+# [`/`, `a-zA-Z`, `.`, `_`, `\d`(digit)]
+ATTRIBUTE_RE = r"(-+[a-zA-Z_]+)[\s|=]+([^-\s]+)?"
 
 # tags used to detect inputs from command lines
 # eg. `/usr/share/fsl/5.0/bin/film_gls --in=filtered_func_data`
@@ -31,7 +32,7 @@ INPUT_TAGS = frozenset(
         "-in",
         "-i",
         "[INPUT_FILE]",  # specific to bet2
-        # "-r",  # `cp -r` --> recursive ???
+        "-r",  # `cp -r` --> recursive ???
     ]
 )
 
@@ -80,7 +81,7 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
             # TODO : add </pre> as in
             # https://github.com/incf-nidash/nidmresults-examples/blob/master/fsl_gamma_basis/logs/feat2_pre
             if line.startswith("#"):
-                key = line.replace("#", "").lstrip()
+                key = line.replace("#", "").strip()
                 cmds, i = read_commands(lines[n_line + 1:])
                 n_line += i
                 if cmds:
@@ -103,10 +104,10 @@ def read_commands(lines: List[str]) -> Tuple[List[str], int]:
     """
     res = list()
     i = 0
-    for line in lines:
-        if re.match(r"^[a-z/].*$", line) and not line.startswith("did"):  # the line must begin with a lowercase word
+    for i, line in enumerate(lines):
+        if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and lines[i-1] == "\n":  # the line must begin with a lowercase word
             # or a / followed by 0 or more dots
-            res.extend(line.rstrip("\n").split(";"))  # rstrip remove the `\n`, split on a possible `;` and add to
+            res.extend(function.strip() for function in line.rstrip("\n").split(";"))  # rstrip remove the `\n`, split on a possible `;` and add to
             # the end of the list
         elif re.match(r"^[\n\dA-Z]", line) or line.startswith("did"):
             pass
@@ -150,6 +151,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
     dict: a set of records compliant with the BIDS-prov standard
     """
     records = defaultdict(list)
+
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
         group_activity_id = f"urn:{get_id()}"
