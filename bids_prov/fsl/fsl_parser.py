@@ -1,24 +1,14 @@
-import click
 import re
-import sys
 from collections import defaultdict
 from itertools import chain
 import json
 import os
 from typing import List, Mapping, Tuple
 
-import random
-import string
-
 import argparse
 
-from . import fsl_config as conf
-
-
-def get_id(size=10):
-    """get a random id as a string of `size` characters"""
-    return "".join(random.choice(string.ascii_letters) for i in range(size))
-
+from bids_prov.fsl import fsl_config as conf
+from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
@@ -40,8 +30,8 @@ INPUT_TAGS = frozenset(
     [
         "-in",
         "-i",
-        "[INPUT_FILE]",  # sepcific to bet2
-        # "-r",  # `cp -r` --> recursrive ???
+        "[INPUT_FILE]",  # specific to bet2
+        # "-r",  # `cp -r` --> recursive ???
     ]
 )
 
@@ -90,7 +80,7 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
             # TODO : add </pre> as in
             # https://github.com/incf-nidash/nidmresults-examples/blob/master/fsl_gamma_basis/logs/feat2_pre
             if line.startswith("#"):
-                key = line.replace("#", "")
+                key = line.replace("#", "").lstrip()
                 cmds, i = read_commands(lines[n_line + 1:])
                 n_line += i
                 if cmds:
@@ -114,9 +104,11 @@ def read_commands(lines: List[str]) -> Tuple[List[str], int]:
     res = list()
     i = 0
     for line in lines:
-        if re.match(r"^[a-z/].*$", line):  # the line must begin with a lowercase word or a / followed by 0 or more dots
-            res.extend(line[:-1].split(";"))  # remove the `\n`, split on a possible `;` and add to the end of the list
-        elif line == "\n":
+        if re.match(r"^[a-z/].*$", line) and not line.startswith("did"):  # the line must begin with a lowercase word
+            # or a / followed by 0 or more dots
+            res.extend(line.rstrip("\n").split(";"))  # rstrip remove the `\n`, split on a possible `;` and add to
+            # the end of the list
+        elif re.match(r"^[\n\dA-Z]", line) or line.startswith("did"):
             pass
         else:
             break
@@ -132,7 +124,7 @@ def get_closest_config(key):
     Example
     -------
     ```python
-    >>> stats_conf = get_closest_confif("fslstats")
+    >>> stats_conf = get_closest_config("fslstats")
     >>> stats_conf["version"]
     5.0.9
     ```
@@ -140,13 +132,15 @@ def get_closest_config(key):
     key = re.sub("\d", "", key)
     if not key:
         return None
-    key = next((k for k in conf.bosh_config.keys() if (k in key or key in k)), None)
+    key = next(
+        (k for k in conf.bosh_config.keys() if (k.casefold() in key.casefold() or key.casefold() in k.casefold())),
+        None)
     if key is not None:
         return conf.bosh_config[key]
     return None
 
 
-def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
+def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (eg. `Registration`, `Post-stats`)
@@ -158,12 +152,12 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
     records = defaultdict(list)
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
-        group_activity_id = f"urn:{group_name}_{get_id(5)}"
+        group_activity_id = f"urn:{get_id()}"
         records["prov:Activity"].append(
             {
                 "@id": group_activity_id,
-                "label": group_name,
-                "associatedWith": "RRID:SCR_002823",
+                "label": label_mapping(group_name, "fsl/fsl_labels.json"),
+                "associatedWith": "urn:" + agent_id,
             }
         )
 
@@ -210,9 +204,9 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             label = f"{group_name}_{os.path.split(a_name)[1]}"  # split at the last / in 2 parts : the head (the
             # directory path of the file) and the tail (the file name and possible extension)
             a = {
-                "@id": f"urn:{label}_{get_id(5)}",
-                "label": label,
-                "associatedWith": "RRID:SCR_002823",
+                "@id": f"urn:{get_id()}",
+                "label": label_mapping(label, "fsl/fsl_labels.json"),
+                "associatedWith": "urn:" + agent_id,
                 "attributes": [
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
                 ],
@@ -223,7 +217,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
             input_id = ""
             for input_path in inputs:
                 input_name = input_path.replace("/", "_")
-                input_id = f"urn:{get_id(size=5)}_{input_name}"  # def format_id
+                input_id = f"urn:{get_id()}"  # def format_id
 
                 existing_input = next(
                     (
@@ -236,7 +230,7 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
                 if existing_input is None:
                     e = {
                         "@id": input_id,  # TODO : uuid
-                        "label": os.path.split(input_path)[1],
+                        "label": label_mapping(os.path.split(input_path)[1], "fsl/fsl_labels.json"),
                         "prov:atLocation": input_path,
                     }
                     records["prov:Entity"].append(e)
@@ -248,8 +242,8 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
                 output_name = output_path.replace("/", "_")
                 records["prov:Entity"].append(
                     {
-                        "@id": f"urn:{get_id(size=5)}_{output_name}",
-                        "label": os.path.split(output_path)[1],
+                        "@id": f"urn:{get_id()}",
+                        "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
                         "prov:atLocation": output_path,
                         "generatedBy": a["@id"],
                         "derivedFrom": input_id,  # FIXME currently last input ID
@@ -260,38 +254,13 @@ def build_records(groups: Mapping[str, List[str]], records=defaultdict(list)):
     return dict(records)
 
 
-def fsl_to_bids_prov(filename: str, context_url=conf.DEFAULT_CONTEXT_URL, output_file=None,
+def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
                      fsl_ver="**************", verbose=False, indent=2) -> None:  # TODO : add fsl version
 
-    """
-        Convert FSL log file (report_log.md) to bids-prov format. The html (report_log.html) file must have been
-        converted to markdown before with the function html_to_logmd_file.
-
-        Parameters
-        ---
-        filename: str
-           The path to the FSL markdown report_log file
-
-        context_url: str, optional
-           The URL of the context file to use
-
-        output_file: str, optional
-           The path to the output file
-
-        fsl_ver: str, optional
-           The version of FSL used
-
-        verbose: bool, optional
-           Whether to print verbose output, by default False
-
-        indent: int, optional
-           The number of spaces to use for indentation in the output file, by default 2
-
-    """
-    graph = conf.get_default_graph(context_url)
+    graph, agent_id = get_default_graph(label="FSL", context_url=context_url)
 
     lines = readlines(filename)
-    records = build_records(lines)
+    records = build_records(lines, agent_id)
     graph["records"].update(records)
 
     with open(output_file, "w") as fd:
@@ -304,8 +273,8 @@ if __name__ == "__main__":
                         help="fsl execution log file")
     parser.add_argument("--output_file", type=str, default="res.jsonld",
                         help="output dir where results are written")
-    parser.add_argument("--context_url", default=conf.DEFAULT_CONTEXT_URL,
-                        help="DEFAULT_CONTEXT_URL")
+    parser.add_argument("--context_url", default=CONTEXT_URL,
+                        help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 

@@ -1,10 +1,10 @@
 import os
 import shutil
 import argparse
-from bids_prov import spm_load_config as conf
-from bids_prov.spm_parser import spm_to_bids_prov
+from bids_prov.spm.spm_parser import spm_to_bids_prov
 from bids_prov.visualize import main as visualize
-from bids_prov.fsl_parser import fsl_to_bids_prov
+from bids_prov.fsl.fsl_parser import fsl_to_bids_prov
+from bids_prov.utils import CONTEXT_URL
 from datetime import datetime
 import markdownify
 import re
@@ -103,7 +103,7 @@ def main():
                 filename_ss_ext = file.split(".m")[0]
                 shutil.copyfile(filename, output_dir_spm + "/" + output_file_base + "_" + str(file))
                 output_jsonld = output_dir_spm + "/" + output_file_base + "_" + filename_ss_ext + ".jsonld"
-                spm_to_bids_prov(root + "/" + str(file), conf.CONTEXT_URL, output_file=output_jsonld,
+                spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld,
                                  verbose=opt.verbose)
                 output_png = output_dir_spm + "/" + output_file_base + "_" + filename_ss_ext + ".png"
                 visualize(output_jsonld, output_file=output_png)
@@ -119,7 +119,7 @@ def main():
                 logmd_file = output_dir_fsl + "/" + output_file_base + "_" + filename_ss_ext + ".md"
                 html_to_logmd_file(filename, logmd_file)
 
-                fsl_to_bids_prov(logmd_file, conf.CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
+                fsl_to_bids_prov(logmd_file, CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_fsl + "/" + output_file_base + "_" + filename_ss_ext + ".png"
                 visualize(output_jsonld, output_file=output_png)
 

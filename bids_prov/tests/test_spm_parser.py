@@ -4,16 +4,13 @@ import os
 import uuid
 import random
 import rdflib
-import pytest
 
 from deepdiff import DeepDiff
-from collections import defaultdict
 
-from bids_prov.spm_load_config import CONTEXT_URL
-from .compare_graph import load_jsonld11_for_rdf, is_similar_rdf_graph, is_included_rdf_graph
-from ..spm_load_config import has_parameter, DEPENDENCY_REGEX
-from ..spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov, get_sha256, \
-    label_mapping
+from bids_prov.utils import CONTEXT_URL
+from .compare_graph import load_jsonld11_for_rdf, is_included_rdf_graph
+from bids_prov.spm.spm_config import has_parameter, DEPENDENCY_REGEX
+from bids_prov.spm.spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov
 
 random.seed(14)  # Control random generation for test, init at each import
 INIT_STATE = random.getstate()
@@ -21,13 +18,6 @@ INIT_STATE = random.getstate()
 
 def init_random_state():  # force init to initial state
     random.setstate(INIT_STATE)
-
-
-def test_get_sha256(verbose=True):
-    sha256 = get_sha256("./bids_prov/tests/samples_test/to_test_checksum.txt")
-    if verbose:
-        print(sha256)
-    assert sha256 == "a02a994951ef1910e1591901066faea27d8c136a795eeeb6f3df467b9fcbd718"
 
 
 def test_spm_to_bids_prov(verbose=False):
@@ -149,17 +139,6 @@ def test_dep_regex():
     '{}',{1}), substruct('()',{1}, '.','files'));
     """
     assert re.search(DEPENDENCY_REGEX, s, re.IGNORECASE) is not None
-
-
-def test_mapping_labels():
-    # Mapping file contains : {"coreg": "Coregistration"}
-    coreg_mapping = label_mapping("spm.spatial.coreg.estimate.ref(1)")
-    # "coreg" is contained in "spm.spatial.coreg.estimate.ref(1)" so it must return "Coregistration"
-    assert coreg_mapping == "Coregistration"
-
-    coreg_mapping = label_mapping("azerty")
-    # no mapping dictionary key is contained in azerty so it must return the word without transformation ("azerty")
-    assert coreg_mapping == "azerty"
 
 
 LIST_READLINES = [

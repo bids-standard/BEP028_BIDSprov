@@ -1,22 +1,12 @@
 import argparse
-import hashlib
 import json
 import os
 import re
 from typing import List, Dict, Generator
 
 from collections import defaultdict
-from bids_prov import spm_load_config as conf
-from bids_prov.utils import get_id
-
-
-def get_sha256(file_path):
-    m = hashlib.sha256()
-    with open(file_path, 'rb') as f:
-        lines = f.read()
-        m.update(lines)
-    md5code = m.hexdigest()
-    return md5code
+from bids_prov.spm import spm_config as conf
+from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL, label_mapping
 
 
 def format_activity_name(activity_name: str) -> str:
@@ -36,7 +26,7 @@ def format_activity_name(activity_name: str) -> str:
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
 
-    label_mapped = label_mapping(activity_name)
+    label_mapped = label_mapping(activity_name, "spm/spm_labels.json")
     if label_mapped == activity_name:
         return label_mapped
     else:
@@ -72,7 +62,7 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
             entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
                 "@id": "urn:" + get_id(),
-                "label": label_mapping(entity_label_short),
+                "label": label_mapping(entity_label_short, "spm/spm_labels.json"),
                 "prov:atLocation": file_location
             }
             relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + file_location)
@@ -186,7 +176,7 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
                 entity = {"@id": "urn:" + get_id(),
-                          "label": label_mapping(name),
+                          "label": label_mapping(name, "spm/spm_labels.json"),
                           "prov:atLocation": output,
                           "generatedBy": activity_id,
                           }
@@ -238,7 +228,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, rec
             activity["used"].append(output_id)
             output_entity = {
                 "@id": output_id,
-                "label": label_mapping(parts[-1]),
+                "label": label_mapping(parts[-1], "spm/spm_labels.json"),
                 # "prov:atLocation": TODO
                 "generatedBy": closest_activity["@id"],
             }
@@ -349,7 +339,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
     return records
 
 
-def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False,
+def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False,
                      indent=2) -> None:
     """ Exporter from batch.m to an output jsonld
 
@@ -359,7 +349,7 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
     filename : str
         input file of batch.m; example filename = "/test/spm_batch.m"
     context_url : str, optional
-        url of context, by default conf.CONTEXT_URL=
+        url of context, by default CONTEXT_URL
     output_file : str, optional
         if None, default is filename with jsonld extension = "/test/spm_batch.jsonld"
     verbose : bool, optional
@@ -368,7 +358,7 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
         2, number of indentation in jsonfile between each object
 
     """
-    graph, agent_id = conf.get_empty_graph(context_url=context_url, spm_ver=spm_ver)
+    graph, agent_id = get_default_graph(label="SPM", context_url=context_url, spm_ver=spm_ver)
 
     lines = readlines(filename)
     tasks = group_lines(lines)  # same as list(lines) to expand generator
@@ -386,37 +376,12 @@ def spm_to_bids_prov(filename: str, context_url=conf.CONTEXT_URL, output_file=No
         json.dump(graph, fd, indent=indent)
 
 
-def label_mapping(label: str) -> str:
-    """
-    A function that takes a label from matlab as a parameter and maps it if it is present in the json mapping file.
-
-    Parameters
-    ----------
-    label : the label to be mapped
-
-    Returns
-    -------
-    str
-        Returns either the mapped label or the label if not present in the mapping file
-
-    """
-    filedir = os.path.dirname(__file__)
-    filepath = os.path.join(filedir, "mapping_labels/spm_labels.json")
-    with open(filepath) as f:
-        mappings = json.load(f)
-
-    for k_matlab, v_bids_prov in mappings.items():
-        if k_matlab in label:
-            return v_bids_prov
-    return label
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
                         help="data dir where batch.m are researched")
     parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    parser.add_argument("--context_url", default=conf.CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
