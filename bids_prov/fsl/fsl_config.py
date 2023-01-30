@@ -18,7 +18,7 @@ TYPES = (
 def get_or_load(fn):
     """
     A decorator that takes another function as a parameter, in this case `get_config`. Its purpose is to check whether
-    we already have the desired shop functions in local memory. If so, we open the file,
+    we already have the desired boutiques description functions in local memory. If so, we open the file,
     otherwise we call the fn function and store the results in memory.
 
     fn should return a json serializable object
