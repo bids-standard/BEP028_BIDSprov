@@ -105,10 +105,10 @@ def read_commands(lines: List[str]) -> Tuple[List[str], int]:
     res = list()
     i = 0
     for i, line in enumerate(lines):
-        if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and lines[i-1] == "\n":  # the line must begin with a lowercase word
-            # or a / followed by 0 or more dots
-            res.extend(function.strip() for function in line.rstrip("\n").split(";"))  # rstrip remove the `\n`, split on a possible `;` and add to
-            # the end of the list
+        if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and lines[i-1] == "\n":  # the line must begin
+            # with a lowercase word or a / followed by 0 or more dots
+            res.extend(function.strip() for function in line.rstrip("\n").split(";"))  # rstrip remove the `\n`, split
+            # on a possible `;` and add to the end of the list
         elif re.match(r"^[\n\dA-Z]", line) or line.startswith("did"):
             pass
         else:
