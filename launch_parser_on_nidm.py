@@ -75,8 +75,8 @@ def main():
 
     opt = parser.parse_args()
 
-    # if os.path.exists(opt.output_dir):
-    #     shutil.rmtree(opt.output_dir)
+    if os.path.exists(opt.output_dir):
+        shutil.rmtree(opt.output_dir)
     os.makedirs(opt.output_dir, exist_ok=True)
 
     output_dir_spm = opt.output_dir + "/spm"
@@ -86,7 +86,7 @@ def main():
 
     start_time = datetime.now()
     start_time_format = "{:%Y_%m_%d_%Hh%Mm%Ss}".format(start_time)
-    context_file = f"{opt.output_dir}/context_spm_{start_time_format}.txt"
+    context_file = f"{opt.output_dir}/context_{start_time_format}.txt"
     context_write = open(context_file, "w")
     context_write.write(f"Date : {start_time_format}\n")
 
