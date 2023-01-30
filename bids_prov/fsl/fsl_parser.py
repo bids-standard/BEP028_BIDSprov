@@ -190,7 +190,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS))
             )
             entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
-            cmd_conf = get_closest_config(a_name)  # with the module boutiques
+
+            # cmd_conf = get_closest_config(a_name)  # with the module boutiques
+            cmd_conf = None
             if cmd_conf:
                 pos_args = filter(
                     lambda e: not e.startswith("-"), cmd_s
