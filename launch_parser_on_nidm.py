@@ -69,7 +69,7 @@ def main():
 
     parser.add_argument("--input_dir", type=str, default="nidmresults-examples",
                         help="data dir where .m and .html are researched")
-    parser.add_argument("--output_dir", type=str, default="results",
+    parser.add_argument("--output_dir", type=str, default="examples",
                         help="output dir where results are written")
     parser.add_argument("--verbose", action="store_true", help="more print")
 
@@ -121,7 +121,7 @@ def main():
                 visualize(output_jsonld, output_file=output_png)
 
     context_write.write(f"End of processed files. Results in dir : '{opt.output_dir}'. "
-                        f"Time required: {datetime.now()-start_time}\n")
+                        f"Time required: {datetime.now() - start_time}\n")
 
     context_write.close()
 
