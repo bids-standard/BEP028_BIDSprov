@@ -2,9 +2,10 @@ import argparse
 import json
 import os
 import re
-from typing import List, Dict, Generator
-
 from collections import defaultdict
+from typing import List, Dict, Generator
+import random
+
 from bids_prov.spm import spm_config as conf
 from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL, label_mapping
 
@@ -117,7 +118,7 @@ def group_lines(lines: list) -> Dict[str, list]:
 
     Example
     -------
-    >>> from bids_prov.spm_parser import group_lines
+    >>> from bids_prov.spm.spm_parser import group_lines
     >>> lines = ["batch{1}.file_ops.file_move.call", "batch{1}.file_ops.file_move.different.call"]
     >>> group_lines(lines)
     {'file_ops.file_move._1': ['call', 'different.call']}
@@ -151,7 +152,7 @@ def group_lines(lines: list) -> Dict[str, list]:
     return new_res
 
 
-def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id: str) -> List[dict]:
+def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id: str, records) -> List[dict]:
     """ Get entities from external conf_dic (import yaml file)
 
     For example : spatial.preproc is contained in activity_name
@@ -172,6 +173,8 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
     for activity in conf_dic.keys():
         if activity in activity_name:
             # {'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
+            act_preproc = next((activity for activity in records["prov:Activity"] if activity['@id'] == activity_id), None)
+            print(act_preproc)
             for output in conf_dic[activity]['outputs']:
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
@@ -187,13 +190,13 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
     return output_entities  # empty list [] if no match,
 
 
-def dependency_process(records_activities: list, activity: dict, right: str, records: list, verbose=False) -> dict:
+def dependency_process(records: dict, activity: dict, right: str, verbose=False) -> tuple:
     """Function to search dependent activity in right line. If found, find the corresponding activity
     in records_activities, update id in activity["used"], and return output_entity
 
     Parameters
     ----------
-    records_activities : list of the previous recorded activities
+    records : All previous records
     activity :  current activity
     right : current right end of line
     verbose : True to have more verbosity
@@ -203,17 +206,17 @@ def dependency_process(records_activities: list, activity: dict, right: str, rec
     output_entity : it is the generated entity with the  corresponding closest activity
 
     """
-
+    activities = records["prov:Activity"]
     dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
     # check if the line call cfg_dep and retrieve the first parameter retrieve all digits between parenthesis
     output_entity = dict()
     # and retrieve the first parameter,  all digits between parenthesis
     dep_number = re.search(r"{(\d+)}", right)
     # retrieve name of the output_entity
-    parts = dependency.group(1).split(": ")
+    parts = str(dependency.group(1)).split(": ")
     # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
     # return : ['Move/Delete Files', 'Moved/Copied Files'
-    for act in records_activities:
+    for act in activities:
 
         if act["label"].endswith(dep_number.group(1)):
             closest_activity = act
@@ -221,8 +224,10 @@ def dependency_process(records_activities: list, activity: dict, right: str, rec
                 print(f"closest_activity : {closest_activity}")
 
             output_id = next((entity["@id"] for entity in records["prov:Entity"]
-                              if parts[-1] == entity["label"] and entity["generatedBy"] == closest_activity["@id"]),
-                             "urn:" + get_id())
+                              if parts[-1] == entity["label"] and entity["generatedBy"] == closest_activity["@id"]
+                             ),
+                             "urn:" + get_id()
+                             )
 
             # adds to the current activity the fact that it has used the previous entity
             activity["used"].append(output_id)
@@ -233,7 +238,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, rec
                 "generatedBy": closest_activity["@id"],
             }
 
-    return output_entity
+    return closest_activity, output_entity
 
 
 def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
@@ -263,11 +268,14 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                     "used": list(),
                     "associatedWith": "urn:" + agent_id,
                     }
-
+        number = common_prefix_act[-1]
+        if number == '1' :
+            print("FIRST ID activity : ", activity_id)
+            print("FIRST LABEL activity : ", format_activity_name(common_prefix_act) )
         output_entities, input_entities = list(), list()
         params = {}
 
-        output_ext_entity = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
+        output_ext_entity = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id, records)
         output_entities.extend(output_ext_entity)
 
         for end_line in end_line_list:
@@ -283,7 +291,9 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
             if verbose:
                 print(f'MATLAB common_prefix_act: {common_prefix_act}: left: ', left, '= right: ', right)
 
-            if not conf.has_parameter(left) and re.search(conf.PATH_REGEX, right) and re.search(conf.FILE_REGEX, right):
+            if not conf.has_parameter(left) \
+                and re.search(conf.PATH_REGEX, right) \
+                and re.search(conf.FILE_REGEX, right):
                 # left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX
                 in_entity = get_input_entity(right, verbose=verbose)
                 input_entities.extend(in_entity)
@@ -299,9 +309,9 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                 # to a function, the common part will be full and so left will be empty
 
                 if dependency is not None:
-                    output_entity = dependency_process(records["prov:Activity"], activity, right, records,
-                                                       verbose=False)
+                    closest_activity, output_entity = dependency_process(records, activity, right, verbose=False)
                     output_entities.append(output_entity)
+                    print(f"Activitity: { format_activity_name(common_prefix_act)}", " closest_activity: ", closest_activity['label'])
                     if verbose:
                         print('-> output  entity: ', output_entity)
 
@@ -315,26 +325,24 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                 right_ = right[:-1]  # remove ";" at the end of right
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
                 params[param_name] = param_value  # example : [4 2] becomes [4, 2]
-                if verbose:
-                    print(f"param_name: {param_name}, param_value: {param_value}")
-
-        if input_entities:
-            used_entities = [entity["@id"] for entity in input_entities]
-            activity["used"] = (activity["used"] + used_entities)  # we add entities from input_entities
-            if verbose:
-                print(f'activity["used"] : {activity["used"]}')
-
-        entities = input_entities + output_entities
 
         if params:
             activity["parameters"] = params
 
-        records["prov:Activity"].append(activity)
+        if input_entities:
+            used_entities = [entity["@id"] for entity in input_entities]
+            activity["used"].append(used_entities) # we add entities from input_entities
+
+        entities = input_entities + output_entities
 
         for entity in entities:
             if entity["@id"] not in entities_ids:
-                records["prov:Entity"].append(entity)
+                records["prov:Entity"].append(entity) # ADD entity if not present
             entities_ids.add(entity["@id"])
+
+        records["prov:Activity"].append(activity) # ADD activity
+
+
 
     return records
 
@@ -358,8 +366,9 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
         2, number of indentation in jsonfile between each object
 
     """
-    graph, agent_id = get_default_graph(label="SPM", context_url=context_url, spm_ver=spm_ver)
 
+    graph, agent_id = get_default_graph(label="SPM", context_url=context_url, spm_ver=spm_ver)
+    print("AGENT ID ", agent_id)
     lines = readlines(filename)
     tasks = group_lines(lines)  # same as list(lines) to expand generator
     records = get_records(tasks, agent_id, verbose=verbose)
@@ -377,14 +386,18 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-                        help="data dir where batch.m are researched")
-    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
-    parser.add_argument("--verbose", action="store_true", help="more print")
-    opt = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+    #                     help="data dir where batch.m are researched")
+    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    # parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    # parser.add_argument("--verbose", action="store_true", help="more print")
+    # opt = parser.parse_args()
+    #
+    # spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_2_t_test/batch.m --output_file  ./spm_2_t_test.jsonld
+    input_file = '../../nidm-examples/spm_2_t_test/batch.m'
+    output_file = '../../spm_2_t_test_batch.jsonld'
+    random.seed(14)
 
-    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
-    # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_covariate/batch.m --output_file
-    # ./res_temp.jsonld
+    spm_to_bids_prov(input_file, output_file=output_file, verbose=False)
