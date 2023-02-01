@@ -113,10 +113,7 @@ def main():
                 shutil.copyfile(filename, output_dir_fsl + "/" + str(file))
                 output_jsonld = output_dir_fsl + "/" + filename_ss_ext + ".jsonld"
 
-                logmd_file = output_dir_fsl + "/" + filename_ss_ext + ".md"
-                html_to_logmd_file(filename, logmd_file)
-
-                fsl_to_bids_prov(logmd_file, CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
+                fsl_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_fsl + "/" + filename_ss_ext + ".png"
                 visualize(output_jsonld, output_file=output_png)
 

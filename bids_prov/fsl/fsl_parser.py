@@ -4,6 +4,7 @@ from itertools import chain
 import json
 import os
 from typing import List, Mapping, Tuple
+from bs4 import BeautifulSoup
 
 import argparse
 
@@ -72,49 +73,30 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
     }
     ```
     """
-    res = defaultdict(list)
-    with open(filename) as fd:
-        lines = fd.readlines()
-        n_line = 0
-        while n_line < len(lines):
-            line = lines[n_line][:-1]  # -1 to exclude \n
-            # TODO : add </pre> as in
-            # https://github.com/incf-nidash/nidmresults-examples/blob/master/fsl_gamma_basis/logs/feat2_pre
-            if line.startswith("#"):
-                key = line.replace("#", "").strip()
-                cmds, i = read_commands(lines[n_line + 1:])
-                n_line += i
-                if cmds:
-                    res[key].extend(cmds)
+    # Read the HTML code from file
+    with open(filename, "r") as file:
+        html_code = file.read()
+
+    html_code_splitted = html_code.splitlines()
+    soup = BeautifulSoup(html_code, 'html.parser')
+    pre_tags = soup.find_all('pre')
+
+    result = {}
+    for tag in pre_tags:
+        section = re.sub("<.*?>", "", html_code_splitted[tag.sourceline - 1])
+        tag_text = tag.text.splitlines()
+        commands = []
+        for i, line in enumerate(tag_text):
+            if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and tag_text[
+                i - 1] == "":  # the line must begin
+                # with a lowercase word or a / followed by 0 or more dots and the line must be after a newline
+                commands.extend(function.strip() for function in line.split(";"))  # rstrip remove the `\n`, split
+                # on a possible `;` and add to the end of the list
             else:
-                n_line += 1
-    return dict(res)
+                pass
+        result[section] = commands
 
-
-def read_commands(lines: List[str]) -> Tuple[List[str], int]:
-    """group_commands
-
-    Mainly does
-    1. Iter on `lines`, until it reaches a `\n`
-    2. Explode commands defined on the same line, so they can be treated separately
-
-    Returns
-    -------
-    The next group of commands, and the index at which it stops
-    """
-    res = list()
-    i = 0
-    for i, line in enumerate(lines):
-        if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and lines[i-1] == "\n":  # the line must begin
-            # with a lowercase word or a / followed by 0 or more dots and the line must be after a newline
-            res.extend(function.strip() for function in line.rstrip("\n").split(";"))  # rstrip remove the `\n`, split
-            # on a possible `;` and add to the end of the list
-        elif re.match(r"^[\n\dA-Z]", line) or line.startswith("did"):
-            pass
-        else:
-            break
-        i += 1
-    return res, i
+    return result
 
 
 def get_closest_config(key):
