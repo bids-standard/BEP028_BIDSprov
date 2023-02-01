@@ -97,15 +97,15 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 
     result = {}
     for tag in pre_tags:
-        # Extract the section name from the line where pre tag appeared
+        # Extract the section name from the line where pre tag appeared and remove html tags
         section = re.sub("<.*?>", "", html_code_splitted[tag.sourceline - 1])
         # Get the text content within the pre tag and split it into lines
         tag_text = tag.text.splitlines()
         commands = []
         for i, line in enumerate(tag_text):
-            if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and tag_text[
-                i - 1] == "":  # the line must begin
-                # with a lowercase word or a / followed by 0 or more dots and the line must be after a newline
+            if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and tag_text[i - 1] == "":
+                # the line must begin with a lowercase word or a / followed by 0 or more dots
+                # and the line must be after a newline
                 commands.extend(function.strip() for function in line.split(";"))  # rstrip remove the `\n`, split
                 # on a possible `;` and add to the end of the list
             else:
