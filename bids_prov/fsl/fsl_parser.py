@@ -48,17 +48,28 @@ OUTPUT_TAGS = frozenset(
 
 
 def readlines(filename: str) -> Mapping[str, List[str]]:
-    """read a file containing command lines
+    """read an HTML file containing command lines
 
     Example
     -------
     with a file containing
-    ```bash
-    #### Feat main script
+    ```html
+    <HTML><HEAD>
+    <!--refreshstart-->
+
+    <!--refreshstop-->
+    <link REL=stylesheet TYPE=text/css href=.files/fsl.css>
+    <TITLE>FSL</TITLE></HEAD><BODY><OBJECT data=report.html></OBJECT>
+    <h2>Progress Report / Log</h2>
+    Started at Wed  7 Mar 13:35:14 GMT 2018<p>
+    Feat main script<br><pre>
 
     /bin/cp /tmp/feat_oJmMLg.fsf design.fsf
-    /usr/share/fsl/5.0/bin/feat_model design
-    mkdir .files;cp /usr/share/fsl/5.0/doc/fsl.css .files
+
+    /usr/share/fsl-5.0/bin/feat_model design
+
+    mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
+    </pre></BODY></HTML>
     ```
 
     we will obtain
@@ -73,17 +84,22 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
     }
     ```
     """
-    # Read the HTML code from file
+    # Read the HTML report_log file
     with open(filename, "r") as file:
         html_code = file.read()
 
+    # Split the HTML code into lines
     html_code_splitted = html_code.splitlines()
+    # BeautifulSoup object to parse the HTML code more easily
     soup = BeautifulSoup(html_code, 'html.parser')
+    # Find all pre tags in the HTML code
     pre_tags = soup.find_all('pre')
 
     result = {}
     for tag in pre_tags:
+        # Extract the section name from the line where pre tag appeared
         section = re.sub("<.*?>", "", html_code_splitted[tag.sourceline - 1])
+        # Get the text content within the pre tag and split it into lines
         tag_text = tag.text.splitlines()
         commands = []
         for i, line in enumerate(tag_text):
