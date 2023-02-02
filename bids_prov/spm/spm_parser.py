@@ -417,8 +417,7 @@ if __name__ == "__main__":
     # output_file = '../../spm_2_t_test_batch.jsonld'
     # output_png = '../../spm_2_t_test_batch.png'
     # random.seed(14)
-    #
+
     # spm_to_bids_prov(input_file, output_file=output_file, verbose=False)
     # from bids_prov.visualize import main
-    #
     # main(output_file, output_file=output_png, omit_details=True)
