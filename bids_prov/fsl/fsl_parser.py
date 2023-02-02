@@ -153,13 +153,13 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
         group_activity_id = f"urn:{get_id()}"
-        records["prov:Activity"].append(
-            {
-                "@id": group_activity_id,
-                "label": label_mapping(group_name, "fsl/fsl_labels.json"),
-                "associatedWith": "urn:" + agent_id,
-            }
-        )
+        # records["prov:Activity"].append(
+        #     {
+        #         "@id": group_activity_id,
+        #         "label": label_mapping(group_name, "fsl/fsl_labels.json"),
+        #         "associatedWith": "urn:" + agent_id,
+        #     }
+        # )
 
         for cmd in v:
             cmd_s = cmd.split(" ")
@@ -214,7 +214,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
                 ],
                 "used": list(),
-                "prov:wasInfluencedBy": group_activity_id,
+                # "prov:wasInfluencedBy": group_activity_id,
             }
 
             input_id = ""
@@ -232,7 +232,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 )
                 if existing_input is None:
                     e = {
-                        "@id": input_id,  # TODO : uuid
+                        "@id": input_id,
                         "label": label_mapping(os.path.split(input_path)[1], "fsl/fsl_labels.json"),
                         "prov:atLocation": input_path,
                     }

@@ -6,49 +6,6 @@ from bids_prov.visualize import main as visualize
 from bids_prov.fsl.fsl_parser import fsl_to_bids_prov
 from bids_prov.utils import CONTEXT_URL
 from datetime import datetime
-import markdownify
-import re
-
-
-def html_to_logmd_file(htlm_file, logmd_file):
-    """
-    Convert an HTML file to a log markdown file.
-
-    Parameters
-    -----
-    htlm_file : str
-        The path of the HTML file to be converted.
-    logmd_file : str
-        The path of the log markdown file to be created.
-
-    Returns
-    -----
-    str
-    The log markdown string.
-
-    Notes
-    -----
-    This function uses the markdownify package to convert the HTML to markdown.
-    It also uses regular expressions to replace specific text patterns in the markdown string.
-
-    Warning
-    -----
-    This function will overwrite the contents of the log markdown file if it already exists.
-
-    Examples
-    -----
-    html_to_logmd_file("index.html", "log.md")
-    """
-    with open(htlm_file, "r") as f:
-        htlm_str = f.read()
-        htlm_str = re.sub("<TITLE>FSL</TITLE>", "", htlm_str)
-        md = markdownify.markdownify(htlm_str, heading_style="ATX")
-        logmd = re.sub("---\n\n(.*)", "## \g<1>", md)
-        logmd = re.sub("Feat main script", "## Feat main script", logmd)
-        logmd = re.sub("```", "", logmd)
-    with open(logmd_file, "w") as f:
-        f.write(logmd)
-    return logmd
 
 
 def main():
