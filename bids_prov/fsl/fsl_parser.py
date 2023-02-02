@@ -24,7 +24,7 @@ INPUT_RE = r"([\/\w\.\?-]{3,}\.?[\w]{2,})"
 # `\s`, `|`, `=`]
 # ([\/a-zA-Z._\d]+)? :  match between one and unlimited times a character included in this list
 # [`/`, `a-zA-Z`, `.`, `_`, `\d`(digit)]
-ATTRIBUTE_RE = r"(-+[a-zA-Z_]+)[\s|=]+([^-\s]+)?"
+ATTRIBUTE_RE = r"\s(-+[a-zA-Z_]+)[\s|=]+([^-\s]+)?"
 
 # tags used to detect inputs from command lines
 # eg. `/usr/share/fsl/5.0/bin/film_gls --in=filtered_func_data`
@@ -152,14 +152,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
-        group_activity_id = f"urn:{get_id()}"
-        # records["prov:Activity"].append(
-        #     {
-        #         "@id": group_activity_id,
-        #         "label": label_mapping(group_name, "fsl/fsl_labels.json"),
-        #         "associatedWith": "urn:" + agent_id,
-        #     }
-        # )
+
+        e_cpt = 0
 
         for cmd in v:
             cmd_s = cmd.split(" ")
@@ -214,7 +208,6 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
                 ],
                 "used": list(),
-                # "prov:wasInfluencedBy": group_activity_id,
             }
 
             input_id = ""
@@ -237,6 +230,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         "prov:atLocation": input_path,
                     }
                     records["prov:Entity"].append(e)
+                    print(e["label"])
+                    e_cpt += 1
                     a["used"].append(input_id)
                 else:
                     a["used"].append(existing_input["@id"])
@@ -252,8 +247,11 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         "derivedFrom": input_id,  # FIXME currently last input ID
                     }
                 )
+                print(label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"))
+                e_cpt += 1
 
             records["prov:Activity"].append(a)
+        print(f"{k} : {e_cpt}\n")
     return dict(records)
 
 
