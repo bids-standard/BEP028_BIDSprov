@@ -1,6 +1,7 @@
 from bids_prov.fsl.fsl_parser import INPUT_RE, ATTRIBUTE_RE, readlines
-import re
+from unittest.mock import mock_open, patch
 
+import re
 import pytest
 
 
@@ -35,10 +36,6 @@ def test_match_paths(path_to_match, path_not_to_match):
 def test_match_attrs(attr_to_match):
     for s in attr_to_match:
         assert re.match(ATTRIBUTE_RE, s)
-
-
-from unittest.mock import mock_open, patch
-import pytest
 
 
 def test_readlines():
