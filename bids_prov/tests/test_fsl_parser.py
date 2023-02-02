@@ -20,8 +20,8 @@ def path_not_to_match():
 @pytest.fixture
 def attr_to_match():
     return [
-        "-p 2",
-        "-p    98",
+        " -p 2",
+        " -p    98",
     ]
 
 
