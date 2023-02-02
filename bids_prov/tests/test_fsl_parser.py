@@ -43,22 +43,31 @@ import pytest
 
 def test_readlines():
     # Test valid file
-    m = mock_open(read_data="""#### Feat main script
+    m = mock_open(read_data="""<HTML><HEAD>
+<!--refreshstart-->
+
+<!--refreshstop-->
+<link REL=stylesheet TYPE=text/css href=.files/fsl.css>
+<TITLE>FSL</TITLE></HEAD><BODY><OBJECT data=report.html></OBJECT>
+<h2>Progress Report / Log</h2>
+Started at Wed  7 Mar 13:35:14 GMT 2018<p>
+Feat main script<br><pre>
 
 /bin/cp /tmp/feat_oJmMLg.fsf design.fsf
 
-/usr/share/fsl/5.0/bin/feat_model design
+/usr/share/fsl-5.0/bin/feat_model design
 
-mkdir .files;cp /usr/share/fsl/5.0/doc/fsl.css .files""")
+mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
+</pre></BODY></HTML>""")
     with patch("builtins.open", m, create=True):
-        filename = "file.txt"
+        filename = "file.html"
         lines = readlines(filename)
         expected_output = {
             'Feat main script': [
                 '/bin/cp /tmp/feat_oJmMLg.fsf design.fsf',
-                '/usr/share/fsl/5.0/bin/feat_model design',
+                '/usr/share/fsl-5.0/bin/feat_model design',
                 'mkdir .files',
-                'cp /usr/share/fsl/5.0/doc/fsl.css .files'
+                'cp /usr/share/fsl-5.0/doc/fsl.css .files'
             ]
         }
         assert lines == expected_output
