@@ -403,22 +403,22 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
-    #                     help="data dir where batch.m are researched")
-    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    # parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
-    # parser.add_argument("--verbose", action="store_true", help="more print")
-    # opt = parser.parse_args()
-    #
-    # spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_file", type=str, default="./examples/spm_default/batch.m",
+                        help="data dir where batch.m are researched")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--verbose", action="store_true", help="more print")
+    opt = parser.parse_args()
+
+    spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_2_t_test/batch.m --output_file  ./spm_2_t_test.jsonld
-    input_file = '../../nidm-examples/spm_2_t_test/batch.m'
-    output_file = '../../spm_2_t_test_batch.jsonld'
-    output_png = '../../spm_2_t_test_batch.png'
-    random.seed(14)
-
-    spm_to_bids_prov(input_file, output_file=output_file, verbose=False)
-    from bids_prov.visualize import main
-
-    main(output_file, output_file=output_png, omit_details=True)
+    # input_file = '../../nidm-examples/spm_2_t_test/batch.m'
+    # output_file = '../../spm_2_t_test_batch.jsonld'
+    # output_png = '../../spm_2_t_test_batch.png'
+    # random.seed(14)
+    #
+    # spm_to_bids_prov(input_file, output_file=output_file, verbose=False)
+    # from bids_prov.visualize import main
+    #
+    # main(output_file, output_file=output_png, omit_details=True)
