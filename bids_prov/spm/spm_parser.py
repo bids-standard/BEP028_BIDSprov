@@ -27,11 +27,13 @@ def format_activity_name(activity_name: str) -> str:
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
 
-    label_mapped = label_mapping(activity_name, "spm/spm_labels.json")
-    if label_mapped == activity_name:
-        return label_mapped
-    else:
+    label_mapped = label_mapping(activity_name, "spm/spm_activity_labels.json")
+    if label_mapped != activity_name:
         return label_mapped + "." + re.search(r'_\d+', activity_name.split()[-1]).group()
+    else:
+        return activity_name
+
+
 
 
 def get_input_entity(right: str, verbose=False) -> List[dict]:
@@ -63,7 +65,7 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
             entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
                 "@id": "urn:" + get_id(),
-                "label": label_mapping(entity_label_short, "spm/spm_labels.json"),
+                "label": label_mapping(entity_label_short, "spm/spm_activity_labels.json"),
                 "prov:atLocation": file_location
             }
             relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + file_location)
@@ -152,7 +154,7 @@ def group_lines(lines: list) -> Dict[str, list]:
     return new_res
 
 
-def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id: str, records) -> List[dict]:
+def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id: str) -> List[dict]:
     """ Get entities from external conf_dic (import yaml file)
 
     For example : spatial.preproc is contained in activity_name
@@ -173,13 +175,11 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
     for activity in conf_dic.keys():
         if activity in activity_name:
             # {'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
-            act_preproc = next((activity for activity in records["prov:Activity"] if activity['@id'] == activity_id), None)
-            print(act_preproc)
+            # act_preproc = next((activity for activity in records["prov:Activity"] if activity['@id'] == activity_id), None)
             for output in conf_dic[activity]['outputs']:
                 name = conf_dic[activity]['name']
-                # print(f"    OOOO output {output} name {name}")
                 entity = {"@id": "urn:" + get_id(),
-                          "label": label_mapping(name, "spm/spm_labels.json"),
+                          "label": label_mapping(name, "spm/spm_activity_labels.json"),
                           "prov:atLocation": output,
                           "generatedBy": activity_id,
                           }
@@ -190,55 +190,72 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
     return output_entities  # empty list [] if no match,
 
 
-def dependency_process(records: dict, activity: dict, right: str, verbose=False) -> tuple:
+def find_closest_activity(activities: list, right: str) -> tuple:
     """Function to search dependent activity in right line. If found, find the corresponding activity
     in records_activities, update id in activity["used"], and return output_entity
 
     Parameters
     ----------
-    records : All previous records
-    activity :  current activity
+    activities : All previous activities
     right : current right end of line
-    verbose : True to have more verbosity
 
     Returns
     -------
     output_entity : it is the generated entity with the  corresponding closest activity
 
     """
-    activities = records["prov:Activity"]
-    dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
-    # check if the line call cfg_dep and retrieve the first parameter retrieve all digits between parenthesis
-    output_entity = dict()
     # and retrieve the first parameter,  all digits between parenthesis
-    dep_number = re.search(r"{(\d+)}", right)
-    # retrieve name of the output_entity
-    parts = str(dependency.group(1)).split(": ")
-    # if right = "cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.',...));"
-    # return : ['Move/Delete Files', 'Moved/Copied Files'
+    dep_number = re.search(r"{(\d+)}", right) # retrieve name of the output_entity
+    closest_activity = None
     for act in activities:
-
         if act["label"].endswith(dep_number.group(1)):
             closest_activity = act
-            if verbose:
-                print(f"closest_activity : {closest_activity}")
+            break
 
-            output_id = next((entity["@id"] for entity in records["prov:Entity"]
-                              if parts[-1] == entity["label"] and entity["generatedBy"] == closest_activity["@id"]
-                             ),
-                             "urn:" + get_id()
-                             )
+    return closest_activity
 
-            # adds to the current activity the fact that it has used the previous entity
-            activity["used"].append(output_id)
-            output_entity = {
-                "@id": output_id,
-                "label": label_mapping(parts[-1], "spm/spm_labels.json"),
-                # "prov:atLocation": TODO
-                "generatedBy": closest_activity["@id"],
-            }
+def find_output_id_from_closest(closest_activity,records):
+    for entity in records["prov:Entity"]:
+        if "generatedBy" in entity:
+            if entity["generatedBy"] == closest_activity["@id"]: # entity["label"] == parts[-1]
+                output_id = entity["@id"]
+                break
+    else:
+        output_id = "urn:" + get_id()
+    # output_id = next(
+    #     (entity["@id"] for entity in records["prov:Entity"]
+    #                   if parts[-1] == entity["label"] and entity["generatedBy"] == closest_activity["@id"]
+    #     ), "urn:" + get_id()
+    #     ) # find entity id generated by closest activity, if None new get_id
 
-    return closest_activity, output_entity
+    return output_id
+
+def mapping_label_entity(key, filename):
+    mapping = {
+        'Move/Delete Files: Moved/Copied Files': filename,
+        'GunZip Files: GunZipped Files': re.sub(".gz", '', filename),
+        'Realign: Estimate & Reslice: Mean Image' : 'mean_'+filename,
+        'Segment: Bias Corrected (1)' : 'm_' + filename,
+        'Normalise: Write: Normalised Images (Subj 1)' : 'w_' + filename,
+        'Smooth: Smoothed Images' : 's_' + filename,
+        'Realign: Estimate & Reslice: Realigned Images (Sess 1)' : 'r_'+ filename,
+        'fMRI model specification: SPM.mat File' : 'SPM.mat',
+        'Model estimation: SPM.mat File' : 'SPM.mat',
+        'Contrast Manager: SPM.mat File' : 'SPM.mat',
+        'Factorial design specification: SPM.mat File' : 'SPM.mat',
+        'Segment: Forward Deformations' : 'def_'+filename
+    }
+    return mapping[key]
+
+def find_entity_from_id(idx, entities):
+
+    input_entity = None # next((entity for entity in entities ), None)
+    for entity in entities:
+        if entity["@id"] == idx:
+            input_entity = entity
+            break
+
+    return input_entity
 
 
 def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
@@ -268,52 +285,52 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                     "used": list(),
                     "associatedWith": "urn:" + agent_id,
                     }
-        number = common_prefix_act[-1]
-        if number == '1' :
-            print("FIRST ID activity : ", activity_id)
-            print("FIRST LABEL activity : ", format_activity_name(common_prefix_act) )
-        output_entities, input_entities = list(), list()
-        params = {}
 
-        output_ext_entity = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id, records)
-        output_entities.extend(output_ext_entity)
+        output_entities, input_entities, params = list(), list(), {}
+        output_ext_entities = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
+        output_entities.extend(output_ext_entities)
 
         for end_line in end_line_list:
-
             # split in 2 at the level of the equal the rest of the action
-            split = end_line.split(" = ")
-            if len(split) != 2:
-                print(f"could not parse with more than 2 '=' in end line : ' {end_line}'")
-                continue  # skip end of loop for end_line in end_line_list:
+            left, right = end_line.split(" = ")
 
-            left, right = split
+            if not conf.has_parameter(left)  and re.search(conf.PATH_REGEX, right) and re.search(conf.FILE_REGEX, right):
 
-            if verbose:
-                print(f'MATLAB common_prefix_act: {common_prefix_act}: left: ', left, '= right: ', right)
-
-            if not conf.has_parameter(left) \
-                and re.search(conf.PATH_REGEX, right) \
-                and re.search(conf.FILE_REGEX, right):
                 # left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX
                 in_entity = get_input_entity(right, verbose=verbose)
                 input_entities.extend(in_entity)
-                if verbose:
-                    print('-> input  entity: ', in_entity)
 
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
                     and any(["substruct" in l for l in [common_prefix_act, left, right]]):
-                # cfg_dep\(['"]([^'"]*)['"]\,.*
-                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)
-                # check if the line call cfg_dep
+
+                dependency = re.search(conf.DEPENDENCY_REGEX, right, re.IGNORECASE)  # cfg_dep\(['"]([^'"]*)['"]\,.*
+                # check if the line call cfg_dep and retrieve the first parameter retrieve all digits between parenthesis
                 # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
                 # to a function, the common part will be full and so left will be empty
-
                 if dependency is not None:
-                    closest_activity, output_entity = dependency_process(records, activity, right, verbose=False)
+                    name_cfg_dep = str(dependency.group(1))
+                    closest_activity = find_closest_activity(records["prov:Activity"], right)
+                    output_id = find_output_id_from_closest(closest_activity, records)
+                    activity["used"].append(output_id)
+                    # adds to the current activity the fact that it has used the previous entity
+
+                    if output_ext_entities:
+                        for idx, entity in enumerate(output_ext_entities):
+                            input_ent = find_entity_from_id(output_id, records["prov:Entity"])
+                            entity['label'] = f"{entity['label']}_{str(idx + 1)}"
+                            entity['prov:atLocation'] = f"c{str(idx+1)}_{input_ent['label']}"
+
+
+                    id_closest = closest_activity["used"][0] # TO DO whatif multiple
+                    input_entity = find_entity_from_id(id_closest, records["prov:Entity"])
+
+                    output_entity = { # output for closest activity but input for current one
+                        "@id": output_id,
+                        "label":  mapping_label_entity(name_cfg_dep, input_entity['label'])  , #label_mapping(parts[-1], "spm/spm_labels.json"),
+                        # "prov:atLocation": TODO
+                        "generatedBy": closest_activity["@id"],
+                    }
                     output_entities.append(output_entity)
-                    print(f"Activitity: { format_activity_name(common_prefix_act)}", " closest_activity: ", closest_activity['label'])
-                    if verbose:
-                        print('-> output  entity: ', output_entity)
 
                 else:  # dependency is None no r"(d+)"
                     Warning(f"Could not parse line with dependency {right}")
@@ -331,7 +348,8 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
 
         if input_entities:
             used_entities = [entity["@id"] for entity in input_entities]
-            activity["used"].append(used_entities) # we add entities from input_entities
+            activity["used"].extend(used_entities) # we add entities from input_entities
+
 
         entities = input_entities + output_entities
 
@@ -368,14 +386,13 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
     """
 
     graph, agent_id = get_default_graph(label="SPM", context_url=context_url, spm_ver=spm_ver)
-    print("AGENT ID ", agent_id)
     lines = readlines(filename)
     tasks = group_lines(lines)  # same as list(lines) to expand generator
     records = get_records(tasks, agent_id, verbose=verbose)
     graph["records"].update(records)
 
-    # Remove each activity number from the activity labels
-    for activity in records["prov:Activity"]:
+
+    for activity in records["prov:Activity"]:  # Remove each activity number from the activity labels
         activity["label"] = re.sub(r'._\d+$', '', activity["label"])
 
     if output_file is None:
@@ -398,6 +415,10 @@ if __name__ == "__main__":
     # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_2_t_test/batch.m --output_file  ./spm_2_t_test.jsonld
     input_file = '../../nidm-examples/spm_2_t_test/batch.m'
     output_file = '../../spm_2_t_test_batch.jsonld'
+    output_png = '../../spm_2_t_test_batch.png'
     random.seed(14)
 
     spm_to_bids_prov(input_file, output_file=output_file, verbose=False)
+    from bids_prov.visualize import main
+
+    main(output_file, output_file=output_png, omit_details=True)
