@@ -199,13 +199,14 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             label = f"{group_name}_{os.path.split(a_name)[1]}"  # split at the last / in 2 parts : the head (the
             # directory path of the file) and the tail (the file name and possible extension)
+
             a = {
                 "@id": f"urn:{get_id()}",
                 "label": label_mapping(label, "fsl/fsl_labels.json"),
                 "associatedWith": "urn:" + agent_id,
                 "command": cmd,
                 "attributes": [
-                    (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
+                    {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
                 ],
                 "used": list(),
             }
@@ -230,7 +231,6 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         "prov:atLocation": input_path,
                     }
                     records["prov:Entity"].append(e)
-                    print(e["label"])
                     e_cpt += 1
                     a["used"].append(input_id)
                 else:
@@ -247,11 +247,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         "derivedFrom": input_id,  # FIXME currently last input ID
                     }
                 )
-                print(label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"))
                 e_cpt += 1
 
             records["prov:Activity"].append(a)
-        print(f"{k} : {e_cpt}\n")
     return dict(records)
 
 
