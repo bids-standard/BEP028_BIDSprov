@@ -4,6 +4,7 @@ from itertools import chain
 import json
 import os
 from typing import List, Mapping, Tuple
+from bs4 import BeautifulSoup
 
 import argparse
 
@@ -20,9 +21,10 @@ INPUT_RE = r"([\/\w\.\?-]{3,}\.?[\w]{2,})"
 
 # ATTRIBUTE_RE : (-+[a-zA-Z_]+) : match `-` between one and unlimited times and match between one and unlimited times
 # a character in this list : [`A-Za-z`, `_`] [\s|=]? : match between 0 and 1 time a character included in this list [
-# `\s`, `|`, `=`] ([\/a-zA-Z._\d]+)? :  match between one and unlimited times a character included in this list [`/`,
-# `a-zA-Z`, `.`, `_`, `\d`(digit)]
-ATTRIBUTE_RE = r"(-+[a-zA-Z_]+)[\s|=]?([\/a-zA-Z._\d]+)?"
+# `\s`, `|`, `=`]
+# ([\/a-zA-Z._\d]+)? :  match between one and unlimited times a character included in this list
+# [`/`, `a-zA-Z`, `.`, `_`, `\d`(digit)]
+ATTRIBUTE_RE = r"(-+[a-zA-Z_]+)[\s|=]+([^-\s]+)?"
 
 # tags used to detect inputs from command lines
 # eg. `/usr/share/fsl/5.0/bin/film_gls --in=filtered_func_data`
@@ -31,7 +33,7 @@ INPUT_TAGS = frozenset(
         "-in",
         "-i",
         "[INPUT_FILE]",  # specific to bet2
-        # "-r",  # `cp -r` --> recursive ???
+        "-r",  # `cp -r` --> recursive ???
     ]
 )
 
@@ -46,17 +48,28 @@ OUTPUT_TAGS = frozenset(
 
 
 def readlines(filename: str) -> Mapping[str, List[str]]:
-    """read a file containing command lines
+    """read an HTML file containing command lines
 
     Example
     -------
     with a file containing
-    ```bash
-    #### Feat main script
+    ```html
+    <HTML><HEAD>
+    <!--refreshstart-->
+
+    <!--refreshstop-->
+    <link REL=stylesheet TYPE=text/css href=.files/fsl.css>
+    <TITLE>FSL</TITLE></HEAD><BODY><OBJECT data=report.html></OBJECT>
+    <h2>Progress Report / Log</h2>
+    Started at Wed  7 Mar 13:35:14 GMT 2018<p>
+    Feat main script<br><pre>
 
     /bin/cp /tmp/feat_oJmMLg.fsf design.fsf
-    /usr/share/fsl/5.0/bin/feat_model design
-    mkdir .files;cp /usr/share/fsl/5.0/doc/fsl.css .files
+
+    /usr/share/fsl-5.0/bin/feat_model design
+
+    mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
+    </pre></BODY></HTML>
     ```
 
     we will obtain
@@ -71,49 +84,35 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
     }
     ```
     """
-    res = defaultdict(list)
-    with open(filename) as fd:
-        lines = fd.readlines()
-        n_line = 0
-        while n_line < len(lines):
-            line = lines[n_line][:-1]  # -1 to exclude \n
-            # TODO : add </pre> as in
-            # https://github.com/incf-nidash/nidmresults-examples/blob/master/fsl_gamma_basis/logs/feat2_pre
-            if line.startswith("#"):
-                key = line.replace("#", "").lstrip()
-                cmds, i = read_commands(lines[n_line + 1:])
-                n_line += i
-                if cmds:
-                    res[key].extend(cmds)
+    # Read the HTML report_log file
+    with open(filename, "r") as file:
+        html_code = file.read()
+
+    # Split the HTML code into lines
+    html_code_splitted = html_code.splitlines()
+    # BeautifulSoup object to parse the HTML code more easily
+    soup = BeautifulSoup(html_code, 'html.parser')
+    # Find all pre tags in the HTML code
+    pre_tags = soup.find_all('pre')
+
+    result = {}
+    for tag in pre_tags:
+        # Extract the section name from the line where pre tag appeared and remove html tags
+        section = re.sub("<.*?>", "", html_code_splitted[tag.sourceline - 1])
+        # Get the text content within the pre tag and split it into lines
+        tag_text = tag.text.splitlines()
+        commands = []
+        for i, line in enumerate(tag_text):
+            if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and tag_text[i - 1] == "":
+                # the line must begin with a lowercase word or a / followed by 0 or more dots
+                # and the line must be after a newline
+                commands.extend(function.strip() for function in line.split(";"))  # rstrip remove the `\n`, split
+                # on a possible `;` and add to the end of the list
             else:
-                n_line += 1
-    return dict(res)
+                pass
+        result[section] = commands
 
-
-def read_commands(lines: List[str]) -> Tuple[List[str], int]:
-    """group_commands
-
-    Mainly does
-    1. Iter on `lines`, until it reaches a `\n`
-    2. Explode commands defined on the same line, so they can be treated separately
-
-    Returns
-    -------
-    The next group of commands, and the index at which it stops
-    """
-    res = list()
-    i = 0
-    for line in lines:
-        if re.match(r"^[a-z/].*$", line) and not line.startswith("did"):  # the line must begin with a lowercase word
-            # or a / followed by 0 or more dots
-            res.extend(line.rstrip("\n").split(";"))  # rstrip remove the `\n`, split on a possible `;` and add to
-            # the end of the list
-        elif re.match(r"^[\n\dA-Z]", line) or line.startswith("did"):
-            pass
-        else:
-            break
-        i += 1
-    return res, i
+    return result
 
 
 def get_closest_config(key):
@@ -150,6 +149,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
     dict: a set of records compliant with the BIDS-prov standard
     """
     records = defaultdict(list)
+
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
         group_activity_id = f"urn:{get_id()}"
@@ -177,7 +177,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 attributes[key].append(value)
 
             # make sure attributes are not considered as entities
-            cmd = re.sub(ATTRIBUTE_RE, "", cmd)
+            cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
 
             # if a key of attributes is in INPUT_TAGS, we add her value in inputs
             inputs = list(
@@ -187,8 +187,10 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             outputs = list(
                 chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS))
             )
-            entity_names = [_ for _ in re.findall(INPUT_RE, cmd[len(a_name):])]
-            cmd_conf = get_closest_config(a_name)  # with the module boutiques
+            entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
+
+            # cmd_conf = get_closest_config(a_name)  # with the module boutiques
+            cmd_conf = None
             if cmd_conf:
                 pos_args = filter(
                     lambda e: not e.startswith("-"), cmd_s
@@ -196,7 +198,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 _map = dict(zip(cmd_conf["command-line"].split(" "), pos_args))
                 inputs += [_map[i] for i in INPUT_TAGS if i in _map]
 
-            elif entity_names and entity_names[0] in cmd:
+            elif entity_names and entity_names[0] in cmd_without_attributes:
                 outputs.append(entity_names[-1])
                 if len(entity_names) > 1:
                     inputs.append(entity_names[0])
@@ -207,6 +209,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 "@id": f"urn:{get_id()}",
                 "label": label_mapping(label, "fsl/fsl_labels.json"),
                 "associatedWith": "urn:" + agent_id,
+                "command": cmd,
                 "attributes": [
                     (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
                 ],
