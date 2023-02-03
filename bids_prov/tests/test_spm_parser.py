@@ -78,9 +78,9 @@ def test_group_lines():
 
 def test_format_activity_name():
     s = "cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(s) == 'Move File._1'
+    assert format_activity_name(s) == 'Move file._1'
     s = "spm.cfg_basicio.file_dir.file_ops.file_move._1"
-    assert format_activity_name(s) == 'Move File._1'
+    assert format_activity_name(s) == 'Move file._1'
 
 
 def test_get_input_entity():
