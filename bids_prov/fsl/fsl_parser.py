@@ -244,7 +244,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
                         "prov:atLocation": output_path,
                         "generatedBy": a["@id"],
-                        "derivedFrom": input_id,  # FIXME currently last input ID
+                        # "derivedFrom": input_id,
                     }
                 )
                 e_cpt += 1
