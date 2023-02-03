@@ -239,11 +239,13 @@ def mapping_label_entity(key, filename):
         'Normalise: Write: Normalised Images (Subj 1)' : 'w_' + filename,
         'Smooth: Smoothed Images' : 's_' + filename,
         'Realign: Estimate & Reslice: Realigned Images (Sess 1)' : 'r_'+ filename,
-        'fMRI model specification: SPM.mat File' : 'SPM.mat',
-        'Model estimation: SPM.mat File' : 'SPM.mat',
-        'Contrast Manager: SPM.mat File' : 'SPM.mat',
-        'Factorial design specification: SPM.mat File' : 'SPM.mat',
-        'Segment: Forward Deformations' : 'def_'+filename
+        'Segment: Forward Deformations' : 'def_'+filename,
+        'fMRI model specification: SPM.mat File': 'SPM.mat',
+        'Model estimation: SPM.mat File': 'SPM.mat',
+        'Contrast Manager: SPM.mat File': 'SPM.mat',
+        'Factorial design specification: SPM.mat File': 'SPM.mat',
+        'FFX Specification: SPM.mat File': 'SPM.mat',
+        'MFX Specification: SPM.mat File': 'SPM.mat',
     }
     return mapping[key]
 
@@ -256,7 +258,6 @@ def find_entity_from_id(idx, entities):
             break
 
     return input_entity
-
 
 def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
     """Take the result of `group_lines` and output the corresponding  JSON-ld graph as a python dict
@@ -289,7 +290,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
         output_entities, input_entities, params = list(), list(), {}
         output_ext_entities = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
         output_entities.extend(output_ext_entities)
-
+        add_ext_entity=add_entity= 0
         for end_line in end_line_list:
             # split in 2 at the level of the equal the rest of the action
             left, right = end_line.split(" = ")
@@ -307,26 +308,32 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                 # check if the line call cfg_dep and retrieve the first parameter retrieve all digits between parenthesis
                 # or has_parameter(common_prefix_act) is mandatory because if in our activity we have only one call
                 # to a function, the common part will be full and so left will be empty
-                if dependency is not None:
+                if dependency is not None :
                     name_cfg_dep = str(dependency.group(1))
                     closest_activity = find_closest_activity(records["prov:Activity"], right)
                     output_id = find_output_id_from_closest(closest_activity, records)
                     activity["used"].append(output_id)
                     # adds to the current activity the fact that it has used the previous entity
-
-                    if output_ext_entities:
+                    #
+                    if output_ext_entities and add_ext_entity == 0:
                         for idx, entity in enumerate(output_ext_entities):
                             input_ent = find_entity_from_id(output_id, records["prov:Entity"])
                             entity['label'] = f"{entity['label']}_{str(idx + 1)}"
                             entity['prov:atLocation'] = f"c{str(idx+1)}_{input_ent['label']}"
+                        add_ext_entity = 1
 
-
-                    id_closest = closest_activity["used"][0] # TO DO whatif multiple
-                    input_entity = find_entity_from_id(id_closest, records["prov:Entity"])
+                 # TO DO whatif multiple
+                    if closest_activity["used"]:
+                        id_closest = closest_activity["used"][0]
+                        input_entity = find_entity_from_id(id_closest, records["prov:Entity"])
+                        filename = input_entity['label']
+                    else:
+                        filename = '' # for activity that creates SPM.mat
+                    out_label = mapping_label_entity(name_cfg_dep, filename)
 
                     output_entity = { # output for closest activity but input for current one
                         "@id": output_id,
-                        "label":  mapping_label_entity(name_cfg_dep, input_entity['label'])  , #label_mapping(parts[-1], "spm/spm_labels.json"),
+                        "label":  out_label , #label_mapping(parts[-1], "spm/spm_labels.json"),
                         # "prov:atLocation": TODO
                         "generatedBy": closest_activity["@id"],
                     }
@@ -412,12 +419,4 @@ if __name__ == "__main__":
     opt = parser.parse_args()
 
     spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
-    # > python -m   bids_prov.spm_parser --input_file ./nidm-examples/spm_2_t_test/batch.m --output_file  ./spm_2_t_test.jsonld
-    # input_file = '../../nidm-examples/spm_2_t_test/batch.m'
-    # output_file = '../../spm_2_t_test_batch.jsonld'
-    # output_png = '../../spm_2_t_test_batch.png'
-    # random.seed(14)
-
-    # spm_to_bids_prov(input_file, output_file=output_file, verbose=False)
-    # from bids_prov.visualize import main
-    # main(output_file, output_file=output_png, omit_details=True)
+    # > python -m   bids_prov.spm.ls spm_parser --input_file ./nidm-examples/spm_2_t_test/batch.m --output_file  ./spm_2_t_test.jsonld

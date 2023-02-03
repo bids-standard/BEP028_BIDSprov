@@ -67,7 +67,7 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--input_dir", type=str, default="nidmresults-examples",
+    parser.add_argument("--input_dir", type=str, default="nidm-examples", # TODO"nidmresults-examples",
                         help="data dir where .m and .html are researched")
     parser.add_argument("--output_dir", type=str, default="results",
                         help="output dir where results are written")
