@@ -197,6 +197,10 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     else:
                         outputs.append(cmd_s[cmd_s.index(df["generatedBy"]) + 1])
                     break
+                if "rm" in a_name:
+                    function_in_description_functions = True
+                    inputs.extend(cmd_s[2:] if re.search(r"(-f|-rf)", cmd_s[1]) else cmd_s[1:])
+                    break
 
             if function_in_description_functions is False:
                 # if a key of attributes is in INPUT_TAGS, we add her value in inputs
@@ -232,9 +236,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 "label": label_mapping(label, "fsl/fsl_labels.json"),
                 "associatedWith": "urn:" + agent_id,
                 "command": cmd,
-                "attributes": [
-                    {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
-                ],
+                # "attributes": [
+                #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
+                # ],
                 "used": list(),
             }
 
