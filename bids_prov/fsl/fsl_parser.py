@@ -24,7 +24,7 @@ INPUT_RE = r"([\/\w\.\?-]{3,}\.?[\w]{2,})"
 # `\s`, `|`, `=`]
 # ([\/a-zA-Z._\d]+)? :  match between one and unlimited times a character included in this list
 # [`/`, `a-zA-Z`, `.`, `_`, `\d`(digit)]
-ATTRIBUTE_RE = r"\s(-+[a-zA-Z_]+)[\s|=]+([^-\s]+)?"
+ATTRIBUTE_RE = r"\s(-+[a-zA-Z_-]+)[\s|=]+([^\s]+)?"
 
 # tags used to detect inputs from command lines
 # eg. `/usr/share/fsl/5.0/bin/film_gls --in=filtered_func_data`
@@ -33,7 +33,7 @@ INPUT_TAGS = frozenset(
         "-in",
         "-i",
         "[INPUT_FILE]",  # specific to bet2
-        "-r",  # `cp -r` --> recursive ???
+        "-r",  # `cp -r` --> recursive ??? also used in featreg in a different context
     ]
 )
 
@@ -150,10 +150,12 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     records = defaultdict(list)
 
+    filepath = os.path.join(os.path.dirname(__file__), "functions/config_functions.json")
+    with open(filepath) as f:
+        description_functions = json.load(f)
+
     for k, v in groups.items():
         group_name = k.lower().replace(" ", "_")
-
-        e_cpt = 0
 
         for cmd in v:
             cmd_s = cmd.split(" ")
@@ -183,6 +185,25 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             )
             entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
 
+            function_in_description_functions = False
+            index_add_one = 0
+
+            for df in description_functions:
+                if df["name"] in a_name:
+                    function_in_description_functions = True
+                    if type(df["used"]) == int:
+                        if cmd_s[df["used"]].startswith("-"):
+                            index_add_one = 1
+                        inputs.append(cmd_s[df["used"] + index_add_one])
+                    else:
+                        inputs.append(cmd_s[cmd_s.index(df["used"]) + 1])
+
+                    if type(df["generatedBy"]) == int:
+                        outputs.append(cmd_s[df["generatedBy"] + index_add_one])
+                    else:
+                        outputs.append(cmd_s[cmd_s.index(df["generatedBy"]) + 1])
+                    break
+
             # cmd_conf = get_closest_config(a_name)  # with the module boutiques
             cmd_conf = None
             if cmd_conf:
@@ -192,7 +213,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 _map = dict(zip(cmd_conf["command-line"].split(" "), pos_args))
                 inputs += [_map[i] for i in INPUT_TAGS if i in _map]
 
-            elif entity_names and entity_names[0] in cmd_without_attributes:
+            elif entity_names and entity_names[0] in cmd_without_attributes \
+                    and function_in_description_functions is False:
                 outputs.append(entity_names[-1])
                 if len(entity_names) > 1:
                     inputs.append(entity_names[0])
@@ -205,9 +227,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 "label": label_mapping(label, "fsl/fsl_labels.json"),
                 "associatedWith": "urn:" + agent_id,
                 "command": cmd,
-                # "attributes": [
-                #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
-                # ],
+                "attributes": [
+                    {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
+                ],
                 "used": list(),
             }
 
@@ -231,7 +253,6 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         "prov:atLocation": input_path,
                     }
                     records["prov:Entity"].append(e)
-                    e_cpt += 1
                     a["used"].append(input_id)
                 else:
                     a["used"].append(existing_input["@id"])
@@ -247,7 +268,6 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         # "derivedFrom": input_id,
                     }
                 )
-                e_cpt += 1
 
             records["prov:Activity"].append(a)
     return dict(records)
