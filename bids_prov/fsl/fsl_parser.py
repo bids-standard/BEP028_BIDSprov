@@ -175,15 +175,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             # make sure attributes are not considered as entities
             cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
 
-            # if a key of attributes is in INPUT_TAGS, we add her value in inputs
-            inputs = list(
-                chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS))
-            )
-            # same process with OUTPUT_TAGS
-            outputs = list(
-                chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS))
-            )
-            entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
+            inputs = []
+            outputs = []
+            entity_names = []
 
             function_in_description_functions = False
             index_add_one = 0
@@ -203,6 +197,17 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     else:
                         outputs.append(cmd_s[cmd_s.index(df["generatedBy"]) + 1])
                     break
+
+            if function_in_description_functions is False:
+                # if a key of attributes is in INPUT_TAGS, we add her value in inputs
+                inputs = list(
+                    chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS))
+                )
+                # same process with OUTPUT_TAGS
+                outputs = list(
+                    chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS))
+                )
+                entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
 
             # cmd_conf = get_closest_config(a_name)  # with the module boutiques
             cmd_conf = None
