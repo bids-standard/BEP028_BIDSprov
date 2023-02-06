@@ -180,22 +180,27 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             entity_names = []
 
             function_in_description_functions = False
-            index_add_one = 0
 
             for df in description_functions:
                 if df["name"] in a_name:
                     function_in_description_functions = True
-                    if type(df["used"]) == int:
-                        if cmd_s[df["used"]].startswith("-"):
-                            index_add_one = 1
-                        inputs.append(cmd_s[df["used"] + index_add_one])
-                    else:
-                        inputs.append(cmd_s[cmd_s.index(df["used"]) + 1])
+                    if "used" in df:
+                        index_add_one = 0
+                        if type(df["used"]) == int:
+                            if cmd_s[df["used"]].startswith("-"):
+                                index_add_one = 1
+                            inputs.append(cmd_s[df["used"] + index_add_one])
+                        else:
+                            inputs.append(cmd_s[cmd_s.index(df["used"]) + 1])
 
-                    if type(df["generatedBy"]) == int:
-                        outputs.append(cmd_s[df["generatedBy"] + index_add_one])
-                    else:
-                        outputs.append(cmd_s[cmd_s.index(df["generatedBy"]) + 1])
+                    if "generatedBy" in df:
+                        if type(df["generatedBy"]) == int:
+                            index_add_one = 0
+                            if cmd_s[df["generatedBy"]].startswith("-"):
+                                index_add_one = 1
+                            outputs.append(cmd_s[df["generatedBy"] + index_add_one])
+                        else:
+                            outputs.append(cmd_s[cmd_s.index(df["generatedBy"]) + 1])
                     break
                 if "rm" in a_name:
                     function_in_description_functions = True
