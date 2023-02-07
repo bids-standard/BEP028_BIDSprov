@@ -158,7 +158,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
         group_name = k.lower().replace(" ", "_")
 
         for cmd in v:
-            cmd_s = cmd.split(" ")
+            cmd_s = re.split(" |=", cmd)
             a_name = cmd_s[0]
             if a_name.endswith(":"):  # result of `echo`
                 # Example :
@@ -181,30 +181,40 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             function_in_description_functions = False
 
+            command_name_end = os.path.split(a_name)[1]
             for df in description_functions:
-                if df["name"] in a_name:
+                if df["name"] == command_name_end:
                     function_in_description_functions = True
                     if "used" in df:
-                        index_add_one = 0
-                        if type(df["used"]) == int:
-                            if cmd_s[df["used"]].startswith("-"):
-                                index_add_one = 1
-                            inputs.append(cmd_s[df["used"] + index_add_one])
-                        else:
-                            inputs.append(cmd_s[cmd_s.index(df["used"]) + 1])
+                        for u_arg in df["used"]:
+                            index_add_one = 0
+                            if type(u_arg) == int:
+                                if cmd_s[u_arg].startswith("-"):
+                                    index_add_one = 1
+                                inputs.append(cmd_s[u_arg + index_add_one])
+                            else:
+                                if u_arg in cmd_s:
+                                    inputs.append(cmd_s[cmd_s.index(u_arg) + 1])
 
                     if "generatedBy" in df:
-                        if type(df["generatedBy"]) == int:
-                            index_add_one = 0
-                            if cmd_s[df["generatedBy"]].startswith("-"):
-                                index_add_one = 1
-                            outputs.append(cmd_s[df["generatedBy"] + index_add_one])
-                        else:
-                            outputs.append(cmd_s[cmd_s.index(df["generatedBy"]) + 1])
+                        for u_arg in df["generatedBy"]:
+                            if type(u_arg) == int:
+                                index_add_one = 0
+                                if cmd_s[u_arg].startswith("-"):
+                                    index_add_one = 1
+                                outputs.append(cmd_s[u_arg + index_add_one])
+                            else:
+                                if u_arg in cmd_s:
+                                    outputs.append(cmd_s[cmd_s.index(u_arg) + 1])
                     break
-                if "rm" in a_name:
+                if "rm" == command_name_end:
                     function_in_description_functions = True
                     inputs.extend(cmd_s[2:] if re.search(r"(-f|-rf)", cmd_s[1]) else cmd_s[1:])
+                    break
+                if "mv" == command_name_end:
+                    function_in_description_functions = True
+                    inputs.extend(cmd_s[2:-1] if re.search(r"-f", cmd_s[1]) else cmd_s[1:-1])
+                    outputs.append(cmd_s[-1])
                     break
 
             if function_in_description_functions is False:
@@ -229,9 +239,13 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             elif entity_names and entity_names[0] in cmd_without_attributes \
                     and function_in_description_functions is False:
-                outputs.append(entity_names[-1])
-                if len(entity_names) > 1:
-                    inputs.append(entity_names[0])
+                if "pngappend" in a_name:
+                    inputs.extend(entity_names[:-1])
+                    outputs.append(entity_names[-1])
+                else:
+                    outputs.append(entity_names[-1])
+                    if len(entity_names) > 1:
+                        inputs.append(entity_names[0])
 
             label = f"{group_name}_{os.path.split(a_name)[1]}"  # split at the last / in 2 parts : the head (the
             # directory path of the file) and the tail (the file name and possible extension)
