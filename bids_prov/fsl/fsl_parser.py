@@ -139,6 +139,45 @@ def get_closest_config(key):
     return None
 
 
+def get_entities(cmd_s, parameters):
+    """
+    Given a list of command arguments `cmd_s` and a list of `parameters`, this function returns the entities associated
+    with the parameters.
+
+    Parameters
+    ----------
+    cmd_s : list of str
+        A list of command arguments.
+    parameters : list
+        A list of parameters to search for in `cmd_s`. Each parameter can either be an integer or a string.
+        If the parameter is an integer, the entity will be the string in `cmd_s` at that index.
+        If the parameter is a string, the entity will be the next argument in `cmd_s` after the parameter.
+
+    Returns
+    -------
+    list of str
+        A list of entities associated with the parameters.
+
+    Example
+    -------
+    >>> cmd_s = ["command", "-a", "input1", "-b", "input2"]
+    >>> parameters = [1, 3, "input1"]
+    >>> get_entities(cmd_s, parameters)
+    ['input1', 'input2', 'input1']
+    """
+    entities = []
+    for u_arg in parameters:
+        index_add_one = 0
+        if type(u_arg) == int:
+            if cmd_s[u_arg].startswith("-"):
+                index_add_one = 1
+            entities.append(cmd_s[u_arg + index_add_one])
+        else:
+            if u_arg in cmd_s:
+                entities.append(cmd_s[cmd_s.index(u_arg) + 1])
+    return entities
+
+
 def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     Build the `records` field for the final .jsonld file,
@@ -150,7 +189,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     records = defaultdict(list)
 
-    filepath = os.path.join(os.path.dirname(__file__), "functions/config_functions.json")
+    filepath = os.path.join(os.path.dirname(__file__), "config_functions.json")
     with open(filepath) as f:
         description_functions = json.load(f)
 
@@ -183,39 +222,23 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             command_name_end = os.path.split(a_name)[1]
             for df in description_functions:
-                if df["name"] == command_name_end:
-                    function_in_description_functions = True
-                    if "used" in df:
-                        for u_arg in df["used"]:
-                            index_add_one = 0
-                            if type(u_arg) == int:
-                                if cmd_s[u_arg].startswith("-"):
-                                    index_add_one = 1
-                                inputs.append(cmd_s[u_arg + index_add_one])
-                            else:
-                                if u_arg in cmd_s:
-                                    inputs.append(cmd_s[cmd_s.index(u_arg) + 1])
+                if df["name"] != command_name_end and df["name"] not in ["rm", "mv"]:
+                    continue
 
-                    if "generatedBy" in df:
-                        for u_arg in df["generatedBy"]:
-                            if type(u_arg) == int:
-                                index_add_one = 0
-                                if cmd_s[u_arg].startswith("-"):
-                                    index_add_one = 1
-                                outputs.append(cmd_s[u_arg + index_add_one])
-                            else:
-                                if u_arg in cmd_s:
-                                    outputs.append(cmd_s[cmd_s.index(u_arg) + 1])
-                    break
-                if "rm" == command_name_end:
-                    function_in_description_functions = True
+                function_in_description_functions = True
+
+                if "used" in df:
+                    inputs.extend(get_entities(cmd_s, df["used"]))
+                if "generatedBy" in df:
+                    outputs.extend(get_entities(cmd_s, df["generatedBy"]))
+
+                if df["name"] == "rm":
                     inputs.extend(cmd_s[2:] if re.search(r"(-f|-rf)", cmd_s[1]) else cmd_s[1:])
-                    break
-                if "mv" == command_name_end:
-                    function_in_description_functions = True
+                elif df["name"] == "mv":
                     inputs.extend(cmd_s[2:-1] if re.search(r"-f", cmd_s[1]) else cmd_s[1:-1])
                     outputs.append(cmd_s[-1])
-                    break
+
+                break
 
             if function_in_description_functions is False:
                 # if a key of attributes is in INPUT_TAGS, we add her value in inputs
@@ -287,15 +310,28 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             for output_path in outputs:
                 output_name = output_path.replace("/", "_")
-                records["prov:Entity"].append(
-                    {
-                        "@id": f"urn:{get_id()}",
-                        "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
-                        "prov:atLocation": output_path,
-                        "generatedBy": a["@id"],
-                        # "derivedFrom": input_id,
-                    }
+
+                existing_output = next(
+                    (
+                        _
+                        for _ in records["prov:Entity"]
+                        if _["prov:atLocation"] == output_path
+                    ),
+                    None,
                 )
+
+                if existing_output is None:
+                    records["prov:Entity"].append(
+                        {
+                            "@id": f"urn:{get_id()}",
+                            "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
+                            "prov:atLocation": output_path,
+                            "generatedBy": a["@id"],
+                            # "derivedFrom": input_id,
+                        }
+                    )
+                else:
+                    a["used"].append(existing_output["@id"])
 
             records["prov:Activity"].append(a)
     return dict(records)
