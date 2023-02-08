@@ -1,4 +1,4 @@
-from bids_prov.fsl.fsl_parser import INPUT_RE, ATTRIBUTE_RE, readlines
+from bids_prov.fsl.fsl_parser import INPUT_RE, ATTRIBUTE_RE, readlines, get_entities
 from unittest.mock import mock_open, patch
 
 import re
@@ -73,6 +73,23 @@ mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
     with pytest.raises(FileNotFoundError):
         filename = "invalid_file.txt"
         lines = readlines(filename)
+
+
+def test_get_entities():
+    cmd_s = ["command", "-a", "input1", "-b", "input2"]
+    parameters = [1, 3, "-b"]
+    expected_output = ['input1', 'input2', 'input2']
+    assert get_entities(cmd_s, parameters) == expected_output
+
+    cmd_s = ["command", "input1", "-b", "input2"]
+    parameters = [0, 1, "-b"]
+    expected_output = ['command', 'input1', 'input2']
+    assert get_entities(cmd_s, parameters) == expected_output
+
+    cmd_s = ["command", "-a", "input1", "-b", "input2"]
+    parameters = ["-a", "-b"]
+    expected_output = ['input1', 'input2']
+    assert get_entities(cmd_s, parameters) == expected_output
 
 
 
