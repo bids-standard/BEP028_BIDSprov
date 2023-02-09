@@ -1,4 +1,4 @@
-from bids_prov.fsl.fsl_parser import INPUT_RE, ATTRIBUTE_RE, readlines
+from bids_prov.fsl.fsl_parser import INPUT_RE, ATTRIBUTE_RE, readlines, get_entities
 from unittest.mock import mock_open, patch
 
 import re
@@ -20,8 +20,8 @@ def path_not_to_match():
 @pytest.fixture
 def attr_to_match():
     return [
-        "-p 2",
-        "-p    98",
+        " -p 2",
+        " -p    98",
     ]
 
 
@@ -73,6 +73,47 @@ mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
     with pytest.raises(FileNotFoundError):
         filename = "invalid_file.txt"
         lines = readlines(filename)
+
+
+def test_get_entities():
+    cmd_s = ["command", "-a", "input1", "-b", "input2"]
+    parameters = [1, 3, "-b"]
+    expected_output = ['input1', 'input2', 'input2']
+    assert get_entities(cmd_s, parameters) == expected_output
+
+    cmd_s = ["command", "input1", "-b", "input2"]
+    parameters = [0, 1, "-b"]
+    expected_output = ['command', 'input1', 'input2']
+    assert get_entities(cmd_s, parameters) == expected_output
+
+    cmd_s = ["command", "-a", "input1", "-b", "input2"]
+    parameters = ["-a", "-b"]
+    expected_output = ['input1', 'input2']
+    assert get_entities(cmd_s, parameters) == expected_output
+
+
+def test_get_entities_rm():
+    cmd = "/bin/rm -f sl?.png highres2standard2.png"
+    cmd_s = cmd.split(" ")
+    parameters = ["1:"]
+    expected_output = ["sl?.png", "highres2standard2.png"]
+    assert get_entities(cmd_s, parameters) == expected_output
+
+
+def test_get_entities_mv():
+    cmd = "/bin/mv -f prefiltered_func_data_mcf.mat prefiltered_func_data_mcf.par prefiltered_func_data_mcf_abs.rms " \
+          "prefiltered_func_data_mcf_abs_mean.rms prefiltered_func_data_mcf_rel.rms " \
+          "prefiltered_func_data_mcf_rel_mean.rms mc"
+    cmd_s = cmd.split(" ")
+    parameters = ["1:-1"]
+    expected_inputs = ["prefiltered_func_data_mcf.mat", "prefiltered_func_data_mcf.par",
+                       "prefiltered_func_data_mcf_abs.rms", "prefiltered_func_data_mcf_abs_mean.rms",
+                       "prefiltered_func_data_mcf_rel.rms", "prefiltered_func_data_mcf_rel_mean.rms"]
+    assert get_entities(cmd_s, parameters) == expected_inputs
+
+    parameters = [-1]
+    expected_outputs = ["mc"]
+    assert get_entities(cmd_s, parameters) == expected_outputs
 
 
 
