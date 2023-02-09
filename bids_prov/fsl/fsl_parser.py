@@ -206,11 +206,6 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             cmd = cmd.replace(" + ", " ").replace(" - ", " ")  # process to remove + and - in pngappend command
             cmd_s = re.split(" |=", cmd)
             a_name = cmd_s[0]
-            if a_name.endswith(":"):  # result of `echo`
-                # Example :
-                # echo 45081 > thresh_zfstat1.vol
-                # zfstat1: DLH=0.387734 VOLUME=45081 RESELS=11.9468
-                continue  # go to next element in the loop
 
             inputs = []
             outputs = []
