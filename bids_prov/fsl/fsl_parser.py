@@ -95,7 +95,6 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
     # Find all pre tags in the HTML code
     pre_tags = soup.find_all('pre')
 
-    fslmaths_lines = []
     result = {}
     for tag in pre_tags:
         # Extract the section name from the line where pre tag appeared and remove html tags
@@ -104,8 +103,6 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
         tag_text = tag.text.splitlines()
         commands = []
         for i, line in enumerate(tag_text):
-            if "fslmaths" in line:
-                fslmaths_lines.append(line)
             if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and tag_text[i - 1] == "":
                 # the line must begin with a lowercase word or a / followed by 0 or more dots
                 # and the line must be after a newline
@@ -115,9 +112,6 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
                 pass
         result[section] = commands
 
-    with open("./fslmaths_lines", "a") as f:
-        for line in fslmaths_lines:
-            f.write(line + "\n")
     return result
 
 
