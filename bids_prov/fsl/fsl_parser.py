@@ -167,14 +167,18 @@ def get_entities(cmd_s, parameters):
     """
     entities = []
     for u_arg in parameters:
-        index_add_one = 0
         if type(u_arg) == int:
-            if cmd_s[u_arg].startswith("-"):
-                index_add_one = 1
-            entities.append(cmd_s[u_arg + index_add_one])
+            entities.append(cmd_s[u_arg + (cmd_s[u_arg].startswith("-") != 0)])
         else:
             if u_arg in cmd_s:
                 entities.append(cmd_s[cmd_s.index(u_arg) + 1])
+            elif not u_arg.startswith("-"):
+                u_arg_splitted = u_arg.split(":")
+                start = int(u_arg_splitted[0])
+                stop = None if u_arg_splitted[1] == "" else int(u_arg_splitted[-1])
+                entities.extend(cmd_s[slice(start+1, stop)]
+                                if re.search(r"(-f|-rf)", cmd_s[1])
+                                else cmd_s[slice(start, stop)])
     return entities
 
 
@@ -194,6 +198,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
         description_functions = json.load(f)
 
     for k, v in groups.items():
+        if k == "Feat main script":  # skip "Feat main script" section
+            continue
         group_name = k.lower().replace(" ", "_")
 
         for cmd in v:
@@ -205,15 +211,6 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 # zfstat1: DLH=0.387734 VOLUME=45081 RESELS=11.9468
                 continue  # go to next element in the loop
 
-            attributes = defaultdict(list)
-
-            # same key can have multiple value
-            for key, value in re.findall(ATTRIBUTE_RE, cmd):
-                attributes[key].append(value)
-
-            # make sure attributes are not considered as entities
-            cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
-
             inputs = []
             outputs = []
             entity_names = []
@@ -222,25 +219,27 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             command_name_end = os.path.split(a_name)[1]
             for df in description_functions:
-                if df["name"] != command_name_end and df["name"] not in ["rm", "mv"]:
+                if df["name"] != command_name_end:
                     continue
 
                 function_in_description_functions = True
-
                 if "used" in df:
                     inputs.extend(get_entities(cmd_s, df["used"]))
                 if "generatedBy" in df:
                     outputs.extend(get_entities(cmd_s, df["generatedBy"]))
-
-                if df["name"] == "rm":
-                    inputs.extend(cmd_s[2:] if re.search(r"(-f|-rf)", cmd_s[1]) else cmd_s[1:])
-                elif df["name"] == "mv":
-                    inputs.extend(cmd_s[2:-1] if re.search(r"-f", cmd_s[1]) else cmd_s[1:-1])
-                    outputs.append(cmd_s[-1])
-
                 break
 
             if function_in_description_functions is False:
+                # if the function is not in our description file, the process is based on regex
+                attributes = defaultdict(list)
+
+                # same key can have multiple value
+                for key, value in re.findall(ATTRIBUTE_RE, cmd):
+                    attributes[key].append(value)
+
+                # make sure attributes are not considered as entities
+                cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
+
                 # if a key of attributes is in INPUT_TAGS, we add her value in inputs
                 inputs = list(
                     chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS))
@@ -252,7 +251,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
 
             # cmd_conf = get_closest_config(a_name)  # with the module boutiques
-            cmd_conf = None
+            cmd_conf = None  # None because boutiques is not used at this time
             if cmd_conf:
                 pos_args = filter(
                     lambda e: not e.startswith("-"), cmd_s
@@ -310,28 +309,15 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             for output_path in outputs:
                 output_name = output_path.replace("/", "_")
-
-                existing_output = next(
-                    (
-                        _
-                        for _ in records["prov:Entity"]
-                        if _["prov:atLocation"] == output_path
-                    ),
-                    None,
+                records["prov:Entity"].append(
+                    {
+                        "@id": f"urn:{get_id()}",
+                        "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
+                        "prov:atLocation": output_path,
+                        "generatedBy": a["@id"],
+                        # "derivedFrom": input_id,
+                    }
                 )
-
-                if existing_output is None:
-                    records["prov:Entity"].append(
-                        {
-                            "@id": f"urn:{get_id()}",
-                            "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
-                            "prov:atLocation": output_path,
-                            "generatedBy": a["@id"],
-                            # "derivedFrom": input_id,
-                        }
-                    )
-                else:
-                    a["used"].append(existing_output["@id"])
 
             records["prov:Activity"].append(a)
     return dict(records)
