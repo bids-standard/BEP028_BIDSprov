@@ -203,7 +203,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
         group_name = k.lower().replace(" ", "_")
 
         for cmd in v:
-            cmd = cmd.replace(" + ", " ")
+            cmd = cmd.replace(" + ", " ").replace(" - ", " ")  # process to remove + and - in pngappend command
             cmd_s = re.split(" |=", cmd)
             a_name = cmd_s[0]
             if a_name.endswith(":"):  # result of `echo`
