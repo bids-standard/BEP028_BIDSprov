@@ -24,7 +24,7 @@ INPUT_RE = r"([\/\w\.\?-]{3,}\.?[\w]{2,})"
 # `\s`, `|`, `=`]
 # ([\/a-zA-Z._\d]+)? :  match between one and unlimited times a character included in this list
 # [`/`, `a-zA-Z`, `.`, `_`, `\d`(digit)]
-ATTRIBUTE_RE = r"(-+[a-zA-Z_]+)[\s|=]+([^-\s]+)?"
+ATTRIBUTE_RE = r"\s(-+[a-zA-Z_-]+)[\s|=]+([^\s]+)?"
 
 # tags used to detect inputs from command lines
 # eg. `/usr/share/fsl/5.0/bin/film_gls --in=filtered_func_data`
@@ -33,7 +33,7 @@ INPUT_TAGS = frozenset(
         "-in",
         "-i",
         "[INPUT_FILE]",  # specific to bet2
-        "-r",  # `cp -r` --> recursive ???
+        "-r",  # `cp -r` --> recursive ??? also used in featreg in a different context
     ]
 )
 
@@ -139,6 +139,49 @@ def get_closest_config(key):
     return None
 
 
+def get_entities(cmd_s, parameters):
+    """
+    Given a list of command arguments `cmd_s` and a list of `parameters`, this function returns the entities associated
+    with the parameters.
+
+    Parameters
+    ----------
+    cmd_s : list of str
+        A list of command arguments.
+    parameters : list
+        A list of parameters to search for in `cmd_s`. Each parameter can either be an integer or a string.
+        If the parameter is an integer, the entity will be the string in `cmd_s` at that index.
+        If the parameter is a string, the entity will be the next argument in `cmd_s` after the parameter.
+
+    Returns
+    -------
+    list of str
+        A list of entities associated with the parameters.
+
+    Example
+    -------
+    >>> cmd_s = ["command", "-a", "input1", "-b", "input2"]
+    >>> parameters = [1, 3, "input1"]
+    >>> get_entities(cmd_s, parameters)
+    ['input1', 'input2', 'input1']
+    """
+    entities = []
+    for u_arg in parameters:
+        if type(u_arg) == int:
+            entities.append(cmd_s[u_arg + (cmd_s[u_arg].startswith("-") != 0)])
+        else:
+            if u_arg in cmd_s:
+                entities.append(cmd_s[cmd_s.index(u_arg) + 1])
+            elif not u_arg.startswith("-"):
+                u_arg_splitted = u_arg.split(":")
+                start = int(u_arg_splitted[0])
+                stop = None if u_arg_splitted[1] == "" else int(u_arg_splitted[-1])
+                entities.extend(cmd_s[slice(start+1, stop)]
+                                if re.search(r"(-f|-rf)", cmd_s[1])
+                                else cmd_s[slice(start, stop)])
+    return entities
+
+
 def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     Build the `records` field for the final .jsonld file,
@@ -150,47 +193,61 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     records = defaultdict(list)
 
+    filepath = os.path.join(os.path.dirname(__file__), "description_functions.json")
+    with open(filepath) as f:
+        description_functions = json.load(f)
+
     for k, v in groups.items():
+        if k == "Feat main script":  # skip "Feat main script" section
+            continue
         group_name = k.lower().replace(" ", "_")
-        group_activity_id = f"urn:{get_id()}"
-        records["prov:Activity"].append(
-            {
-                "@id": group_activity_id,
-                "label": label_mapping(group_name, "fsl/fsl_labels.json"),
-                "associatedWith": "urn:" + agent_id,
-            }
-        )
 
         for cmd in v:
-            cmd_s = cmd.split(" ")
+            cmd = cmd.replace(" + ", " ").replace(" - ", " ")  # process to remove + and - in pngappend command
+            cmd_s = re.split(" |=", cmd)
             a_name = cmd_s[0]
-            if a_name.endswith(":"):  # result of `echo`
-                # Example :
-                # echo 45081 > thresh_zfstat1.vol
-                # zfstat1: DLH=0.387734 VOLUME=45081 RESELS=11.9468
-                continue  # go to next element in the loop
 
-            attributes = defaultdict(list)
+            inputs = []
+            outputs = []
+            entity_names = []
 
-            # same key can have multiple value
-            for key, value in re.findall(ATTRIBUTE_RE, cmd):
-                attributes[key].append(value)
+            function_in_description_functions = False
 
-            # make sure attributes are not considered as entities
-            cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
+            command_name_end = os.path.split(a_name)[1]
+            for df in description_functions:
+                if df["name"] != command_name_end:
+                    continue
 
-            # if a key of attributes is in INPUT_TAGS, we add her value in inputs
-            inputs = list(
-                chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS))
-            )
-            # same process with OUTPUT_TAGS
-            outputs = list(
-                chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS))
-            )
-            entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
+                function_in_description_functions = True
+                if "used" in df:
+                    inputs.extend(get_entities(cmd_s, df["used"]))
+                if "generatedBy" in df:
+                    outputs.extend(get_entities(cmd_s, df["generatedBy"]))
+                break
+
+            if function_in_description_functions is False:
+                # if the function is not in our description file, the process is based on regex
+                attributes = defaultdict(list)
+
+                # same key can have multiple value
+                for key, value in re.findall(ATTRIBUTE_RE, cmd):
+                    attributes[key].append(value)
+
+                # make sure attributes are not considered as entities
+                cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
+
+                # if a key of attributes is in INPUT_TAGS, we add her value in inputs
+                inputs = list(
+                    chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS))
+                )
+                # same process with OUTPUT_TAGS
+                outputs = list(
+                    chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS))
+                )
+                entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
 
             # cmd_conf = get_closest_config(a_name)  # with the module boutiques
-            cmd_conf = None
+            cmd_conf = None  # None because boutiques is not used at this time
             if cmd_conf:
                 pos_args = filter(
                     lambda e: not e.startswith("-"), cmd_s
@@ -198,23 +255,24 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 _map = dict(zip(cmd_conf["command-line"].split(" "), pos_args))
                 inputs += [_map[i] for i in INPUT_TAGS if i in _map]
 
-            elif entity_names and entity_names[0] in cmd_without_attributes:
+            elif entity_names and entity_names[0] in cmd_without_attributes \
+                    and function_in_description_functions is False:
                 outputs.append(entity_names[-1])
                 if len(entity_names) > 1:
                     inputs.append(entity_names[0])
 
             label = f"{group_name}_{os.path.split(a_name)[1]}"  # split at the last / in 2 parts : the head (the
             # directory path of the file) and the tail (the file name and possible extension)
+
             a = {
                 "@id": f"urn:{get_id()}",
                 "label": label_mapping(label, "fsl/fsl_labels.json"),
                 "associatedWith": "urn:" + agent_id,
                 "command": cmd,
-                "attributes": [
-                    (k, v if len(v) > 1 else v[0]) for k, v in attributes.items()
-                ],
+                # "attributes": [
+                #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
+                # ],
                 "used": list(),
-                "prov:wasInfluencedBy": group_activity_id,
             }
 
             input_id = ""
@@ -232,7 +290,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 )
                 if existing_input is None:
                     e = {
-                        "@id": input_id,  # TODO : uuid
+                        "@id": input_id,
                         "label": label_mapping(os.path.split(input_path)[1], "fsl/fsl_labels.json"),
                         "prov:atLocation": input_path,
                     }
@@ -249,7 +307,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
                         "prov:atLocation": output_path,
                         "generatedBy": a["@id"],
-                        "derivedFrom": input_id,  # FIXME currently last input ID
+                        # "derivedFrom": input_id,
                     }
                 )
 
