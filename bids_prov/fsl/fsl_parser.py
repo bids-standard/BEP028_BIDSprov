@@ -189,7 +189,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     records = defaultdict(list)
 
-    filepath = os.path.join(os.path.dirname(__file__), "config_functions.json")
+    filepath = os.path.join(os.path.dirname(__file__), "description_functions.json")
     with open(filepath) as f:
         description_functions = json.load(f)
 
