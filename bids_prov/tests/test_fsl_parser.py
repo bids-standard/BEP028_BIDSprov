@@ -92,4 +92,28 @@ def test_get_entities():
     assert get_entities(cmd_s, parameters) == expected_output
 
 
+def test_get_entities_rm():
+    cmd = "/bin/rm -f sl?.png highres2standard2.png"
+    cmd_s = cmd.split(" ")
+    parameters = ["1:"]
+    expected_output = ["sl?.png", "highres2standard2.png"]
+    assert get_entities(cmd_s, parameters) == expected_output
+
+
+def test_get_entities_mv():
+    cmd = "/bin/mv -f prefiltered_func_data_mcf.mat prefiltered_func_data_mcf.par prefiltered_func_data_mcf_abs.rms " \
+          "prefiltered_func_data_mcf_abs_mean.rms prefiltered_func_data_mcf_rel.rms " \
+          "prefiltered_func_data_mcf_rel_mean.rms mc"
+    cmd_s = cmd.split(" ")
+    parameters = ["1:-1"]
+    expected_inputs = ["prefiltered_func_data_mcf.mat", "prefiltered_func_data_mcf.par",
+                       "prefiltered_func_data_mcf_abs.rms", "prefiltered_func_data_mcf_abs_mean.rms",
+                       "prefiltered_func_data_mcf_rel.rms", "prefiltered_func_data_mcf_rel_mean.rms"]
+    assert get_entities(cmd_s, parameters) == expected_inputs
+
+    parameters = [-1]
+    expected_outputs = ["mc"]
+    assert get_entities(cmd_s, parameters) == expected_outputs
+
+
 
