@@ -203,6 +203,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
         group_name = k.lower().replace(" ", "_")
 
         for cmd in v:
+            cmd = cmd.replace(" + ", " ")
             cmd_s = re.split(" |=", cmd)
             a_name = cmd_s[0]
             if a_name.endswith(":"):  # result of `echo`
@@ -261,13 +262,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             elif entity_names and entity_names[0] in cmd_without_attributes \
                     and function_in_description_functions is False:
-                if "pngappend" in a_name:
-                    inputs.extend(entity_names[:-1])
-                    outputs.append(entity_names[-1])
-                else:
-                    outputs.append(entity_names[-1])
-                    if len(entity_names) > 1:
-                        inputs.append(entity_names[0])
+                outputs.append(entity_names[-1])
+                if len(entity_names) > 1:
+                    inputs.append(entity_names[0])
 
             label = f"{group_name}_{os.path.split(a_name)[1]}"  # split at the last / in 2 parts : the head (the
             # directory path of the file) and the tail (the file name and possible extension)
