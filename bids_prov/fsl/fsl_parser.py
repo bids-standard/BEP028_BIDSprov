@@ -261,8 +261,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 if len(entity_names) > 1:
                     inputs.append(entity_names[0])
 
-            label = f"{group_name}_{os.path.split(a_name)[1]}"  # split at the last / in 2 parts : the head (the
-            # directory path of the file) and the tail (the file name and possible extension)
+            label = f"{os.path.split(a_name)[1]}"  # the file name and possible extension
 
             a = {
                 "@id": f"urn:{get_id()}",
@@ -291,7 +290,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 if existing_input is None:
                     e = {
                         "@id": input_id,
-                        "label": label_mapping(os.path.split(input_path)[1], "fsl/fsl_labels.json"),
+                        "label": os.path.split(input_path)[1],
                         "prov:atLocation": input_path,
                     }
                     records["prov:Entity"].append(e)
@@ -304,7 +303,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 records["prov:Entity"].append(
                     {
                         "@id": f"urn:{get_id()}",
-                        "label": label_mapping(os.path.split(output_path)[1], "fsl/fsl_labels.json"),
+                        "label": os.path.split(output_path)[1],
                         "prov:atLocation": output_path,
                         "generatedBy": a["@id"],
                         # "derivedFrom": input_id,
