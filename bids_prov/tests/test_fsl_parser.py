@@ -77,7 +77,7 @@ mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
 
 def test_get_entities():
     cmd_s = ["command", "-a", "input1", "-b", "input2"]
-    parameters = [1, 3, "-b"]
+    parameters = ["-a", 4, "-b"]
     expected_output = ['input1', 'input2', 'input2']
     assert get_entities(cmd_s, parameters) == expected_output
 
@@ -87,8 +87,8 @@ def test_get_entities():
     assert get_entities(cmd_s, parameters) == expected_output
 
     cmd_s = ["command", "-a", "input1", "-b", "input2"]
-    parameters = ["-a", "-b"]
-    expected_output = ['input1', 'input2']
+    parameters = [1]
+    expected_output = []
     assert get_entities(cmd_s, parameters) == expected_output
 
 
