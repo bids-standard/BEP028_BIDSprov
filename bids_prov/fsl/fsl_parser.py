@@ -169,7 +169,10 @@ def get_entities(cmd_s, parameters):
     entities = []
     for u_arg in parameters:
         if type(u_arg) == int:
-            entities.append(cmd_s[u_arg + (cmd_s[u_arg].startswith("-") != 0)])
+            entities.append(cmd_s[u_arg]) if not cmd_s[u_arg].startswith("-") else None  # the "if" is useful for
+            # Entities that are optional but indicated in the description file
+            # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "used": [1, 2]
+            # Sometimes, 2 is present. In the previous command, this is not the case
         else:
             if u_arg in cmd_s:
                 entities.append(cmd_s[cmd_s.index(u_arg) + 1])
