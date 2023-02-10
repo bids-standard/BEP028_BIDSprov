@@ -145,19 +145,12 @@ def get_entities(cmd_s, parameters):
     Given a list of command arguments `cmd_s` and a list of `parameters`, this function returns the entities associated
     with the parameters.
 
-    Parameters
-    ----------
-    cmd_s : list of str
-        A list of command arguments.
-    parameters : list
-        A list of parameters to search for in `cmd_s`. Each parameter can either be an integer or a string.
-        If the parameter is an integer, the entity will be the string in `cmd_s` at that index.
-        If the parameter is a string, the entity will be the next argument in `cmd_s` after the parameter.
-
-    Returns
-    -------
-    list of str
-        A list of entities associated with the parameters.
+    Parameters ---------- cmd_s : list of str A list of command arguments. parameters : list A list of parameters to
+    search for in `cmd_s`. Each parameter can either be an integer or a string. If the parameter is an integer,
+    the entity will be the string in `cmd_s` at that index. If the parameter is a string, the entity will be the next
+    argument in `cmd_s` after the parameter. If the parameter is a dict, the entity (or entities) will be obtained
+    with the position of the argument and an offset index Returns ------- list of str A list of entities associated
+    with the parameters.
 
     Example
     -------
@@ -173,6 +166,15 @@ def get_entities(cmd_s, parameters):
             # Entities that are optional but indicated in the description file
             # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "used": [1, 2]
             # Sometimes, 2 is present. In the previous command, this is not the case
+        elif type(u_arg) == dict:
+            # Allows us to retrieve entities not directly attached to the parameter name
+            # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "generatedBy":
+            # [{"name": "-A", "index": 2}]
+            if u_arg["name"] in cmd_s:
+                entities.extend([cmd_s[i + u_arg["index"]] for i, cmd_part in enumerate(cmd_s)
+                                 if cmd_part == u_arg["name"]])
+                # The for loop allows to retrieve the entities of the parameters appearing several times
+                # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
         else:
             if u_arg in cmd_s:
                 entities.append(cmd_s[cmd_s.index(u_arg) + 1])
