@@ -6,6 +6,7 @@ import os
 from typing import List, Mapping, Tuple
 from bs4 import BeautifulSoup
 
+
 import argparse
 
 from bids_prov.fsl import fsl_config as conf
