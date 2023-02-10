@@ -62,7 +62,7 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
             entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
                 "@id": "urn:" + get_id(),
-                "label": label_mapping(entity_label_short, "spm/spm_labels.json"),
+                "label": entity_label_short,
                 "prov:atLocation": file_location
             }
             relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + file_location)
@@ -176,7 +176,7 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
                 name = conf_dic[activity]['name']
                 # print(f"    OOOO output {output} name {name}")
                 entity = {"@id": "urn:" + get_id(),
-                          "label": label_mapping(name, "spm/spm_labels.json"),
+                          "label": name,
                           "prov:atLocation": output,
                           "generatedBy": activity_id,
                           }
@@ -228,7 +228,7 @@ def dependency_process(records_activities: list, activity: dict, right: str, rec
             activity["used"].append(output_id)
             output_entity = {
                 "@id": output_id,
-                "label": label_mapping(parts[-1], "spm/spm_labels.json"),
+                "label": parts[-1],
                 # "prov:atLocation": TODO
                 "generatedBy": closest_activity["@id"],
             }
