@@ -116,4 +116,11 @@ def test_get_entities_mv():
     assert get_entities(cmd_s, parameters) == expected_outputs
 
 
+def test_get_entities_dict():
+    cmd = "/slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png"
+    cmd_s = cmd.split(" ")
+    parameters = [{"name": "-x", "index": 2}]
+    expected_outputs = ["sla.png", "slb.png", "slc.png"]
+    assert get_entities(cmd_s, parameters) == expected_outputs
+
 
