@@ -176,14 +176,15 @@ def get_entities(cmd_s, parameters):
                 # The for loop allows to retrieve the entities of the parameters appearing several times
                 # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
         else:
+            # type(u_arg) == str
             if u_arg in cmd_s:
-                entities.append(cmd_s[cmd_s.index(u_arg) + 1])
-            elif not u_arg.startswith("-"):
+                entities.append(cmd_s[cmd_s.index(u_arg) + 1])  # we add the entity located just after the parameter
+            elif not u_arg.startswith("-"):  # case of slicing
                 u_arg_splitted = u_arg.split(":")
                 start = int(u_arg_splitted[0])
                 stop = None if u_arg_splitted[1] == "" else int(u_arg_splitted[-1])
                 entities.extend(cmd_s[slice(start+1, stop)]
-                                if re.search(r"(-f|-rf)", cmd_s[1])
+                                if re.search(r"(-f|-rf)", cmd_s[1])  # to skip -r or -rf option
                                 else cmd_s[slice(start, stop)])
     return entities
 
