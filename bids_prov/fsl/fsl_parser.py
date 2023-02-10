@@ -224,6 +224,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     inputs.extend(get_entities(cmd_s, df["used"]))
                 if "generatedBy" in df:
                     outputs.extend(get_entities(cmd_s, df["generatedBy"]))
+                if command_name_end == "fslmaths" and "-odt" not in cmd_s:
+                    outputs.append(cmd_s[-1])
                 break
 
             if function_in_description_functions is False:
