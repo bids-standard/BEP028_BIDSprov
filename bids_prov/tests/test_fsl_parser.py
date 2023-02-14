@@ -77,7 +77,7 @@ mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
 
 def test_get_entities():
     cmd_s = ["command", "-a", "input1", "-b", "input2"]
-    parameters = [1, 3, "-b"]
+    parameters = ["-a", 4, "-b"]
     expected_output = ['input1', 'input2', 'input2']
     assert get_entities(cmd_s, parameters) == expected_output
 
@@ -87,8 +87,8 @@ def test_get_entities():
     assert get_entities(cmd_s, parameters) == expected_output
 
     cmd_s = ["command", "-a", "input1", "-b", "input2"]
-    parameters = ["-a", "-b"]
-    expected_output = ['input1', 'input2']
+    parameters = [1]
+    expected_output = []
     assert get_entities(cmd_s, parameters) == expected_output
 
 
@@ -115,5 +115,12 @@ def test_get_entities_mv():
     expected_outputs = ["mc"]
     assert get_entities(cmd_s, parameters) == expected_outputs
 
+
+def test_get_entities_dict():
+    cmd = "/slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png"
+    cmd_s = cmd.split(" ")
+    parameters = [{"name": "-x", "index": 2}]
+    expected_outputs = ["sla.png", "slb.png", "slc.png"]
+    assert get_entities(cmd_s, parameters) == expected_outputs
 
 
