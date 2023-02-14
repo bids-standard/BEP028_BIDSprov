@@ -60,7 +60,8 @@ def label_mapping(label: str, mapping_filename: str) -> str:
     for k_matlab, v_bids_prov in mappings.items():
         if k_matlab in label:
             return v_bids_prov
-    return label
+    else:
+        return label
 
 
 def get_sha256(file_path: str):

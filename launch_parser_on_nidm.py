@@ -1,13 +1,14 @@
 import os
 import shutil
 import argparse
+import markdownify
+import re
+
 from bids_prov.spm.spm_parser import spm_to_bids_prov
 from bids_prov.visualize import main as visualize
 from bids_prov.fsl.fsl_parser import fsl_to_bids_prov
 from bids_prov.utils import CONTEXT_URL
 from datetime import datetime
-import markdownify
-import re
 
 
 def html_to_logmd_file(htlm_file, logmd_file):
@@ -69,8 +70,7 @@ def main():
 
     parser.add_argument("--input_dir", type=str, default="nidm-examples", # TODO"nidmresults-examples",
                         help="data dir where .m and .html are researched")
-    parser.add_argument("--output_dir", type=str, default="examples",
-                        help="output dir where results are written")
+    parser.add_argument("--output_dir", type=str, default="examples", help="output dir where results are written")
     parser.add_argument("--verbose", action="store_true", help="more print")
 
     opt = parser.parse_args()
@@ -101,8 +101,7 @@ def main():
                 filename_ss_ext = file.split(".m")[0]
                 shutil.copyfile(filename, output_dir_spm + "/" + str(file))
                 output_jsonld = output_dir_spm + "/" + filename_ss_ext + ".jsonld"
-                spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld,
-                                 verbose=opt.verbose)
+                spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_spm + "/" + filename_ss_ext + ".png"
                 visualize(output_jsonld, output_file=output_png)
 
