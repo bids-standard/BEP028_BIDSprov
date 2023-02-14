@@ -4,7 +4,7 @@ import hashlib
 import os
 import json
 
-from typing import Mapping, Union, Tuple
+from typing import Mapping, Union, Tuple, Dict
 
 CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
 
@@ -14,7 +14,7 @@ def get_id():
 
 
 def get_default_graph(label: str, context_url: str = CONTEXT_URL, spm_ver: str = "dev",) \
-        -> Tuple[Mapping[str, Union[str, Mapping]], str]:
+        -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["records"].update
     agent_id = get_id()
     return {
                "@context": context_url,
@@ -60,7 +60,8 @@ def label_mapping(label: str, mapping_filename: str) -> str:
     for k_matlab, v_bids_prov in mappings.items():
         if k_matlab in label:
             return v_bids_prov
-    return label
+    else:
+        return label
 
 
 def get_sha256(file_path: str):
