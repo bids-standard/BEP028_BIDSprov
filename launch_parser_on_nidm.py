@@ -1,55 +1,11 @@
 import os
 import shutil
 import argparse
-import markdownify
-import re
-
 from bids_prov.spm.spm_parser import spm_to_bids_prov
 from bids_prov.visualize import main as visualize
 from bids_prov.fsl.fsl_parser import fsl_to_bids_prov
 from bids_prov.utils import CONTEXT_URL
 from datetime import datetime
-
-
-def html_to_logmd_file(htlm_file, logmd_file):
-    """
-    Convert an HTML file to a log markdown file.
-
-    Parameters
-    -----
-    htlm_file : str
-        The path of the HTML file to be converted.
-    logmd_file : str
-        The path of the log markdown file to be created.
-
-    Returns
-    -----
-    str
-    The log markdown string.
-
-    Notes
-    -----
-    This function uses the markdownify package to convert the HTML to markdown.
-    It also uses regular expressions to replace specific text patterns in the markdown string.
-
-    Warning
-    -----
-    This function will overwrite the contents of the log markdown file if it already exists.
-
-    Examples
-    -----
-    html_to_logmd_file("index.html", "log.md")
-    """
-    with open(htlm_file, "r") as f:
-        htlm_str = f.read()
-        htlm_str = re.sub("<TITLE>FSL</TITLE>", "", htlm_str)
-        md = markdownify.markdownify(htlm_str, heading_style="ATX")
-        logmd = re.sub("---\n\n(.*)", "## \g<1>", md)
-        logmd = re.sub("Feat main script", "## Feat main script", logmd)
-        logmd = re.sub("```", "", logmd)
-    with open(logmd_file, "w") as f:
-        f.write(logmd)
-    return logmd
 
 
 def main():
@@ -68,9 +24,10 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--input_dir", type=str, default="nidm-examples", # TODO"nidmresults-examples",
+    parser.add_argument("--input_dir", type=str, default="nidmresults-examples",
                         help="data dir where .m and .html are researched")
-    parser.add_argument("--output_dir", type=str, default="examples", help="output dir where results are written")
+    parser.add_argument("--output_dir", type=str, default="examples",
+                        help="output dir where results are written")
     parser.add_argument("--verbose", action="store_true", help="more print")
 
     opt = parser.parse_args()
@@ -101,7 +58,8 @@ def main():
                 filename_ss_ext = file.split(".m")[0]
                 shutil.copyfile(filename, output_dir_spm + "/" + str(file))
                 output_jsonld = output_dir_spm + "/" + filename_ss_ext + ".jsonld"
-                spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
+                spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld,
+                                 verbose=opt.verbose)
                 output_png = output_dir_spm + "/" + filename_ss_ext + ".png"
                 visualize(output_jsonld, output_file=output_png)
 
