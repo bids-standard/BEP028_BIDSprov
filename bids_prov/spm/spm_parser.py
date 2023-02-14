@@ -4,7 +4,6 @@ import os
 import re
 from collections import defaultdict
 from typing import List, Dict, Generator
-import random
 
 from bids_prov.spm import spm_config as conf
 from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL, label_mapping
@@ -266,25 +265,6 @@ def mapping_label_entity(name_action,filename):
     return label_entity
 
 
-# def mapping_label_entity(key, filename):
-#     mapping = {
-#         'Move/Delete Files: Moved/Copied Files': filename,
-#         'GunZip Files: GunZipped Files': re.sub(".gz", '', filename),
-#         'Realign: Estimate & Reslice: Mean Image' : 'mean_'+filename,
-#         'Segment: Bias Corrected (1)' : 'm_' + filename,
-#         'Normalise: Write: Normalised Images (Subj 1)' : 'w_' + filename,
-#         'Smooth: Smoothed Images' : 's_' + filename,
-#         'Realign: Estimate & Reslice: Realigned Images (Sess 1)' : 'r_'+ filename,
-#         'Segment: Forward Deformations' : 'def_'+filename,
-#         'fMRI model specification: SPM.mat File': 'SPM.mat',
-#         'Model estimation: SPM.mat File': 'SPM.mat',
-#         'Contrast Manager: SPM.mat File': 'SPM.mat',
-#         'Factorial design specification: SPM.mat File': 'SPM.mat',
-#         'FFX Specification: SPM.mat File': 'SPM.mat',
-#         'MFX Specification: SPM.mat File': 'SPM.mat',
-#     }
-#     return mapping[key]
-
 def find_entity_from_id(idx, entities):
     """ Function to find entity by id from the list of all entities"
 
@@ -295,7 +275,7 @@ def find_entity_from_id(idx, entities):
 
       Returns
       -------
-      input_entity :  input entity if exist, else None
+      input_entity :  input entity if it exists, else None
 
       """
     input_entity = None # next((entity for entity in entities ), None)
@@ -467,9 +447,3 @@ if __name__ == "__main__":
 
     spm_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.spm.ls spm_parser --input_file ./nidm-examples/spm_2_t_test/batch.m --output_file  ./spm_2_t_test.jsonld
-    # input_file = os.path.abspath("../../examples/from_parsers/spm/spm_2_t_test_batch.m")
-    # output_file = "../../spm_2_t_test.jsonld"
-    # filedir = os.path.dirname(__file__)
-    # # filepath = os.path.join(filedir, mapping_filename)
-    #
-    # spm_to_bids_prov(input_file, context_url=CONTEXT_URL, output_file=output_file, verbose=False)
