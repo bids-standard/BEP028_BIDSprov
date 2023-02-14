@@ -26,7 +26,7 @@ def format_activity_name(activity_name: str) -> str:
     if activity_name.startswith("spm."):
         activity_name = activity_name[4:]
 
-    label_mapped = label_mapping(activity_name, "spm/spm_labels.json")
+    label_mapped = label_mapping(activity_name, "spm/spm_activity_labels.json")
     if label_mapped == activity_name:
         return label_mapped
     else:
