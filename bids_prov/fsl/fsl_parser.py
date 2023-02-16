@@ -322,15 +322,15 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--input_file", type=str, default="./examples/from_parsers/fsl/fsl_full_examples001_report_log.html.", help="fsl execution log file")
-    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    # parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
-    # parser.add_argument("--verbose", action="store_true", help="more print")
-    # opt = parser.parse_args()
-    #
-    # fsl_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_file", type=str, default="./examples/from_parsers/fsl/fsl_full_examples001_report_log.html.", help="fsl execution log file")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--verbose", action="store_true", help="more print")
+    opt = parser.parse_args()
+
+    fsl_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
     # #
-    input_file = os.path.abspath("../../examples/from_parsers/fsl/fsl_full_examples001_report_log.html")
-    output_file = "../../res.jsonld"
-    fsl_to_bids_prov(input_file, context_url=CONTEXT_URL, output_file=output_file, verbose=False)
+    # input_file = os.path.abspath("../../examples/from_parsers/fsl/fsl_full_examples001_report_log.html")
+    # output_file = "../../res.jsonld"
+    # fsl_to_bids_prov(input_file, context_url=CONTEXT_URL, output_file=output_file, verbose=False)
