@@ -4,9 +4,7 @@ import os
 
 from collections import defaultdict
 from itertools import chain
-from typing import List, Mapping
 
-# from bids_prov.fsl import fsl_config as conf
 from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
 
 # regex to catch inputs
@@ -35,7 +33,7 @@ INPUT_TAGS = frozenset(
     ]
 )
 
-# tags used to detect outputs from cammand lines
+# tags used to detect outputs from command lines
 # eg. convert_xfm -inverse -omat highres2example_func.mat example_func2highres.mat
 OUTPUT_TAGS = frozenset(
     [
@@ -131,8 +129,8 @@ def build_records(commands: list, agent_id: str):
                 inputs.extend(get_entities(cmd_s, df["used"]))
             if "generatedBy" in df:
                 outputs.extend(get_entities(cmd_s, df["generatedBy"]))
-            if command_name_end == "fslmaths" and "-odt" not in cmd_s:
-                outputs.append(cmd_s[-1])
+            # if command_name_end == "fslmaths" and "-odt" not in cmd_s:
+            #     outputs.append(cmd_s[-1])
             break
 
         if function_in_description_functions is False:
@@ -159,8 +157,9 @@ def build_records(commands: list, agent_id: str):
             _map = dict(zip(cmd_conf["command-line"].split(" "), pos_args))
             inputs += [_map[i] for i in INPUT_TAGS if i in _map]
 
-        elif (entity_names and entity_names[
-            0] in cmd_without_attributes) and function_in_description_functions is False:
+        elif (entity_names and entity_names[0] in cmd_without_attributes) and\
+                function_in_description_functions is False:
+
             outputs.append(entity_names[-1])
             if len(entity_names) > 1:
                 inputs.append(entity_names[0])
@@ -169,7 +168,7 @@ def build_records(commands: list, agent_id: str):
 
         a = {
             "@id": f"urn:{get_id()}",
-            "label": label_mapping(label, "fsl/fsl_labels.json"),
+            "label": label_mapping(label, "afni/afni_labels.json"),
             "associatedWith": "urn:" + agent_id,
             "command": cmd,
             # "attributes": [
@@ -178,9 +177,9 @@ def build_records(commands: list, agent_id: str):
             "used": list(),
         }
 
-        input_id = ""
+        # input_id = ""
         for input_path in inputs:
-            input_name = input_path.replace("/", "_")  # TODO
+            # input_name = input_path.replace("/", "_")  # TODO
             input_id = f"urn:{get_id()}"  # def format_id
 
             existing_input = next(
@@ -197,7 +196,7 @@ def build_records(commands: list, agent_id: str):
                 a["used"].append(existing_input["@id"])
 
         for output_path in outputs:
-            output_name = output_path.replace("/", "_")  # TODO
+            # output_name = output_path.replace("/", "_")  # TODO
             records["prov:Entity"].append(
                 {
                     "@id": f"urn:{get_id()}",
@@ -209,6 +208,7 @@ def build_records(commands: list, agent_id: str):
             )
 
         records["prov:Activity"].append(a)
+
     return dict(records)
 
 
@@ -237,12 +237,13 @@ if __name__ == "__main__":
 
     input_file = os.path.abspath("../../examples/from_parsers/afni/afni_default_proc.sub_001")
     output_file = "../../res.jsonld"
-    # afni_to_bids_prov(input_file, context_url=CONTEXT_URL, output_file=output_file, verbose=False)
+
     with open(input_file, "r") as file:
         all_lines= file.readlines()
     all_lines = [line.strip() for line in all_lines]
     idx_line_set_runs = all_lines.index('set runs = (`count -digits 2 1 1`)')
     preambule, main_part = all_lines[:idx_line_set_runs+1], all_lines[idx_line_set_runs+1:]
+
     # print('\n'.join(preambule))
     # print("="*50)
     # print("END PREAMBULE")
@@ -263,9 +264,8 @@ if __name__ == "__main__":
     commands = readlines(input_file)
     filtered = "\n".join(commands)
     print(filtered)
-                #     # whole_line + (whole_line[i+1])
-    soft_ver = 'afni24'
-    graph, agent_id = get_default_graph(label="AFNI", context_url=CONTEXT_URL, soft_ver=soft_ver)
+
+    graph, agent_id = get_default_graph(label="AFNI", context_url=CONTEXT_URL, soft_ver='afni24')
     records = build_records(commands, agent_id)
     graph["records"].update(records)
     with open(output_file, "w") as fd:
