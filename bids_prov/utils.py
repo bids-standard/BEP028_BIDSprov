@@ -13,7 +13,7 @@ def get_id():
     return str(uuid.UUID(int=random.getrandbits(128), version=4))
 
 
-def get_default_graph(label: str, context_url: str = CONTEXT_URL, spm_ver: str = "dev",) \
+def get_default_graph(label: str, context_url: str = CONTEXT_URL, soft_ver: str = "dev", ) \
         -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["records"].update
     agent_id = get_id()
     return {
@@ -27,7 +27,7 @@ def get_default_graph(label: str, context_url: str = CONTEXT_URL, spm_ver: str =
                            "RRID": "RRID:SCR_007037",
                            "@type": "prov:SoftwareAgent",
                            "label": label,
-                           "version": spm_ver
+                           "version": soft_ver
                        }
                    ],
                    "prov:Activity": [],

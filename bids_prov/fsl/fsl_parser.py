@@ -3,10 +3,8 @@ from collections import defaultdict
 from itertools import chain
 import json
 import os
-from typing import List, Mapping, Tuple
+from typing import List, Mapping
 from bs4 import BeautifulSoup
-
-
 import argparse
 
 from bids_prov.fsl import fsl_config as conf
@@ -171,8 +169,7 @@ def get_entities(cmd_s, parameters):
             # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "generatedBy":
             # [{"name": "-A", "index": 2}]
             if u_arg["name"] in cmd_s:
-                entities.extend([cmd_s[i + u_arg["index"]] for i, cmd_part in enumerate(cmd_s)
-                                 if cmd_part == u_arg["name"]])
+                entities.extend([cmd_s[i + u_arg["index"]] for i, cmd_part in enumerate(cmd_s) if cmd_part == u_arg["name"]])
                 # The for loop allows to retrieve the entities of the parameters appearing several times
                 # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
         else:
@@ -192,7 +189,7 @@ def get_entities(cmd_s, parameters):
 def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     Build the `records` field for the final .jsonld file,
-    from commands lines grouped by stage (eg. `Registration`, `Post-stats`)
+    from commands lines grouped by stage (e.g. `Registration`, `Post-stats`)
 
     Returns
     -------
@@ -205,9 +202,10 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
         description_functions = json.load(f)
 
     for k, v in groups.items():
+        print(k,":", v)
         if k == "Feat main script":  # skip "Feat main script" section
             continue
-        group_name = k.lower().replace(" ", "_")
+        group_name = k.lower().replace(" ", "_")  # TODO
 
         for cmd in v:
             cmd = cmd.replace(" + ", " ").replace(" - ", " ")  # process to remove + and - in pngappend command
@@ -246,26 +244,19 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
 
                 # if a key of attributes is in INPUT_TAGS, we add her value in inputs
-                inputs = list(
-                    chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS))
-                )
+                inputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS)))
                 # same process with OUTPUT_TAGS
-                outputs = list(
-                    chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS))
-                )
+                outputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS)))
                 entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
 
             # cmd_conf = get_closest_config(a_name)  # with the module boutiques
             cmd_conf = None  # None because boutiques is not used at this time
             if cmd_conf:
-                pos_args = filter(
-                    lambda e: not e.startswith("-"), cmd_s
-                )  # TODO use "-key value" mappings
+                pos_args = filter(lambda e: not e.startswith("-"), cmd_s)  # TODO use "-key value" mappings
                 _map = dict(zip(cmd_conf["command-line"].split(" "), pos_args))
                 inputs += [_map[i] for i in INPUT_TAGS if i in _map]
 
-            elif entity_names and entity_names[0] in cmd_without_attributes \
-                    and function_in_description_functions is False:
+            elif (entity_names and entity_names[0] in cmd_without_attributes) and function_in_description_functions is False:
                 outputs.append(entity_names[-1])
                 if len(entity_names) > 1:
                     inputs.append(entity_names[0])
@@ -285,17 +276,11 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             input_id = ""
             for input_path in inputs:
-                input_name = input_path.replace("/", "_")
+                input_name = input_path.replace("/", "_") # TODO
                 input_id = f"urn:{get_id()}"  # def format_id
 
                 existing_input = next(
-                    (
-                        _
-                        for _ in records["prov:Entity"]
-                        if _["prov:atLocation"] == input_path
-                    ),
-                    None,
-                )
+                    (entity for entity in records["prov:Entity"] if entity["prov:atLocation"] == input_path), None)
                 if existing_input is None:
                     e = {
                         "@id": input_id,
@@ -308,7 +293,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     a["used"].append(existing_input["@id"])
 
             for output_path in outputs:
-                output_name = output_path.replace("/", "_")
+                output_name = output_path.replace("/", "_") # TODO
                 records["prov:Entity"].append(
                     {
                         "@id": f"urn:{get_id()}",
@@ -324,28 +309,28 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
 
 def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                     fsl_ver="**************", verbose=False, indent=2) -> None:  # TODO : add fsl version
+                     soft_ver="xxx", indent=2, verbose=False) -> None:  # TODO : add fsl version
 
-    graph, agent_id = get_default_graph(label="FSL", context_url=context_url)
+    graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
 
     lines = readlines(filename)
     records = build_records(lines, agent_id)
     graph["records"].update(records)
 
     with open(output_file, "w") as fd:
-        json.dump(graph, fd, indent=2)
+        json.dump(graph, fd, indent=indent)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/fsl_default/logs.md",
-                        help="fsl execution log file")
-    parser.add_argument("--output_file", type=str, default="res.jsonld",
-                        help="output dir where results are written")
-    parser.add_argument("--context_url", default=CONTEXT_URL,
-                        help="CONTEXT_URL")
-    parser.add_argument("--verbose", action="store_true", help="more print")
-    opt = parser.parse_args()
-
-    fsl_to_bids_prov(opt.input_file, context_url=opt.context_url,
-                     output_file=opt.output_file, verbose=opt.verbose)
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--input_file", type=str, default="./examples/from_parsers/fsl/fsl_full_examples001_report_log.html.", help="fsl execution log file")
+    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    # parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    # parser.add_argument("--verbose", action="store_true", help="more print")
+    # opt = parser.parse_args()
+    #
+    # fsl_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    # #
+    input_file = os.path.abspath("../../examples/from_parsers/fsl/fsl_full_examples001_report_log.html")
+    output_file = "../../res.jsonld"
+    fsl_to_bids_prov(input_file, context_url=CONTEXT_URL, output_file=output_file, verbose=False)
