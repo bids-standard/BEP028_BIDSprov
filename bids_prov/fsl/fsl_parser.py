@@ -3,6 +3,7 @@ from collections import defaultdict
 from itertools import chain
 import json
 import os
+import random
 from typing import List, Mapping
 from bs4 import BeautifulSoup
 import argparse
@@ -114,28 +115,28 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
     return result
 
 
-def get_closest_config(key):
-    """
-    get the FSL config from bosh if possible, trying to match names
-    of executables returned from bosh with subparts of `key`
-
-    Example
-    -------
-    ```python
-    >>> stats_conf = get_closest_config("fslstats")
-    >>> stats_conf["version"]
-    5.0.9
-    ```
-    """
-    key = re.sub("\d", "", key)
-    if not key:
-        return None
-    key = next(
-        (k for k in conf.bosh_config.keys() if (k.casefold() in key.casefold() or key.casefold() in k.casefold())),
-        None)
-    if key is not None:
-        return conf.bosh_config[key]
-    return None
+# def get_closest_config(key):
+#     """
+#     get the FSL config from bosh if possible, trying to match names
+#     of executables returned from bosh with subparts of `key`
+#
+#     Example
+#     -------
+#     ```python
+#     >>> stats_conf = get_closest_config("fslstats")
+#     >>> stats_conf["version"]
+#     5.0.9
+#     ```
+#     """
+#     key = re.sub("\d", "", key)
+#     if not key:
+#         return None
+#     key = next(
+#         (k for k in conf.bosh_config.keys() if (k.casefold() in key.casefold() or key.casefold() in k.casefold())),
+#         None)
+#     if key is not None:
+#         return conf.bosh_config[key]
+#     return None
 
 
 def get_entities(cmd_s, parameters):
@@ -143,17 +144,26 @@ def get_entities(cmd_s, parameters):
     Given a list of command arguments `cmd_s` and a list of `parameters`, this function returns the entities associated
     with the parameters.
 
-    Parameters ---------- cmd_s : list of str A list of command arguments. parameters : list A list of parameters to
-    search for in `cmd_s`. Each parameter can either be an integer or a string. If the parameter is an integer,
+    Parameters
+    ----------
+
+    cmd_s : list of str
+        A list of command arguments.
+    parameters : list
+        A list of parameters to search for in `cmd_s`. Each parameter can either be an integer or a string. If the parameter is an integer,
     the entity will be the string in `cmd_s` at that index. If the parameter is a string, the entity will be the next
     argument in `cmd_s` after the parameter. If the parameter is a dict, the entity (or entities) will be obtained
-    with the position of the argument and an offset index Returns ------- list of str A list of entities associated
+    with the position of the argument and an offset index
+
+    Returns
+    -------
+    list of str A list of entities associated
     with the parameters.
 
     Example
     -------
     >>> cmd_s = ["command", "-a", "input1", "-b", "input2"]
-    >>> parameters = [1, 3, "input1"]
+    >>> parameters = [2, 4, "-a"]
     >>> get_entities(cmd_s, parameters)
     ['input1', 'input2', 'input1']
     """
@@ -205,7 +215,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
         print(k,":", v)
         if k == "Feat main script":  # skip "Feat main script" section
             continue
-        group_name = k.lower().replace(" ", "_")  # TODO
+        # group_name = k.lower().replace(" ", "_")  # TODO
 
         for cmd in v:
             cmd = cmd.replace(" + ", " ").replace(" - ", " ")  # process to remove + and - in pngappend command
@@ -220,17 +230,15 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             command_name_end = os.path.split(a_name)[1]
             for df in description_functions:
-                if df["name"] != command_name_end:
-                    continue
-
-                function_in_description_functions = True
-                if "used" in df:
-                    inputs.extend(get_entities(cmd_s, df["used"]))
-                if "generatedBy" in df:
-                    outputs.extend(get_entities(cmd_s, df["generatedBy"]))
-                if command_name_end == "fslmaths" and "-odt" not in cmd_s:
-                    outputs.append(cmd_s[-1])
-                break
+                if df["name"] == command_name_end:
+                    function_in_description_functions = True
+                    if "used" in df:
+                        inputs.extend(get_entities(cmd_s, df["used"]))
+                    if "generatedBy" in df:
+                        outputs.extend(get_entities(cmd_s, df["generatedBy"]))
+                    if command_name_end == "fslmaths" and "-odt" not in cmd_s:
+                        outputs.append(cmd_s[-1])
+                    break
 
             if function_in_description_functions is False:
                 # if the function is not in our description file, the process is based on regex
@@ -249,17 +257,17 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 outputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS)))
                 entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
 
-            # cmd_conf = get_closest_config(a_name)  # with the module boutiques
-            cmd_conf = None  # None because boutiques is not used at this time
-            if cmd_conf:
-                pos_args = filter(lambda e: not e.startswith("-"), cmd_s)  # TODO use "-key value" mappings
-                _map = dict(zip(cmd_conf["command-line"].split(" "), pos_args))
-                inputs += [_map[i] for i in INPUT_TAGS if i in _map]
+            # # cmd_conf = get_closest_config(a_name)  # with the module boutiques
+            # cmd_conf = None  # None because boutiques is not used at this time
+            # # if cmd_conf:
+            # #     pos_args = filter(lambda e: not e.startswith("-"), cmd_s)  # TODO use "-key value" mappings
+            # #     _map = dict(zip(cmd_conf["command-line"].split(" "), pos_args))
+            # #     inputs += [_map[i] for i in INPUT_TAGS if i in _map]
 
-            elif (entity_names and entity_names[0] in cmd_without_attributes) and function_in_description_functions is False:
-                outputs.append(entity_names[-1])
-                if len(entity_names) > 1:
-                    inputs.append(entity_names[0])
+                if entity_names and entity_names[0] in cmd_without_attributes:
+                    outputs.append(entity_names[-1])
+                    if len(entity_names) > 1:
+                        inputs.append(entity_names[0])
 
             label = f"{os.path.split(a_name)[1]}"  # the file name and possible extension
 
@@ -274,9 +282,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 "used": list(),
             }
 
-            input_id = ""
+            # input_id = ""
             for input_path in inputs:
-                input_name = input_path.replace("/", "_") # TODO
+                # input_name = input_path.replace("/", "_") # TODO
                 input_id = f"urn:{get_id()}"  # def format_id
 
                 existing_input = next(
@@ -293,7 +301,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     a["used"].append(existing_input["@id"])
 
             for output_path in outputs:
-                output_name = output_path.replace("/", "_") # TODO
+                # output_name = output_path.replace("/", "_") # TODO
                 records["prov:Entity"].append(
                     {
                         "@id": f"urn:{get_id()}",
@@ -311,7 +319,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
                      soft_ver="xxx", indent=2, verbose=False) -> None:  # TODO : add fsl version
 
-    graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
+    graph, agent_id = get_default_graph(label="FSL", context_url=context_url, soft_ver=soft_ver)
 
     lines = readlines(filename)
     records = build_records(lines, agent_id)
@@ -333,4 +341,5 @@ if __name__ == "__main__":
     # #
     # input_file = os.path.abspath("../../examples/from_parsers/fsl/fsl_full_examples001_report_log.html")
     # output_file = "../../res.jsonld"
+    # random.seed(14)
     # fsl_to_bids_prov(input_file, context_url=CONTEXT_URL, output_file=output_file, verbose=False)
