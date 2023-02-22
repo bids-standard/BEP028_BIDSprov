@@ -3,9 +3,10 @@ import shutil
 import argparse
 from datetime import datetime
 
+from bids_prov.afni.afni_parser import afni_to_bids_prov
 from bids_prov.spm.spm_parser import spm_to_bids_prov
-from bids_prov.visualize import main as visualize
 from bids_prov.fsl.fsl_parser import fsl_to_bids_prov
+from bids_prov.visualize import main as visualize
 from bids_prov.utils import CONTEXT_URL
 
 
@@ -60,10 +61,8 @@ def main():
                 filename_ss_ext = file.split(".m")[0]
                 shutil.copyfile(filename, output_dir_spm + "/" + str(file))
                 output_jsonld = output_dir_spm + "/" + filename_ss_ext + ".jsonld"
-                spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld,
-                                 verbose=opt.verbose)
+                spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_spm + "/" + filename_ss_ext + ".png"
-                visualize(output_jsonld, output_file=output_png)
 
             if file.endswith("report_log.html"):
                 context_write.write(f"    file= {root}/{str(file)}\n")
@@ -71,11 +70,20 @@ def main():
                 filename_ss_ext = file.split(".html")[0]
                 shutil.copyfile(filename, output_dir_fsl + "/" + str(file))
                 output_jsonld = output_dir_fsl + "/" + filename_ss_ext + ".jsonld"
-
                 fsl_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_fsl + "/" + filename_ss_ext + ".png"
-                visualize(output_jsonld, output_file=output_png)
 
+            if file.endswith("proc.sub_001"):
+                context_write.write(f"    file= {root}/{str(file)}\n")
+                filename = root + "/" + str(file)
+                filename_ss_ext = file.split(".sub_001")[0]
+                shutil.copyfile(filename, output_dir_fsl + "/" + str(file))
+                output_jsonld = output_dir_fsl + "/" + filename_ss_ext + ".jsonld"
+                afni_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
+                output_png = output_dir_fsl + "/" + filename_ss_ext + ".png"
+
+
+            visualize(output_jsonld, output_file=output_png)
     context_write.write(f"End of processed files. Results in dir : '{opt.output_dir}'. "
                         f"Time required: {datetime.now() - start_time}\n")
 
