@@ -41,8 +41,10 @@ def main():
 
     output_dir_spm = opt.output_dir + "/spm"
     output_dir_fsl = opt.output_dir + "/fsl"
+    output_dir_afni = opt.output_dir + "/afni"
     os.makedirs(output_dir_spm, exist_ok=True)
     os.makedirs(output_dir_fsl, exist_ok=True)
+    os.makedirs(output_dir_afni, exist_ok=True)
 
     start_time = datetime.now()
     start_time_format = "{:%Y_%m_%d_%Hh%Mm%Ss}".format(start_time)
@@ -77,13 +79,14 @@ def main():
                 context_write.write(f"    file= {root}/{str(file)}\n")
                 filename = root + "/" + str(file)
                 filename_ss_ext = file.split(".sub_001")[0]
-                shutil.copyfile(filename, output_dir_fsl + "/" + str(file))
-                output_jsonld = output_dir_fsl + "/" + filename_ss_ext + ".jsonld"
+                shutil.copyfile(filename, output_dir_afni + "/" + str(file))
+                output_jsonld = output_dir_afni + "/" + filename_ss_ext + ".jsonld"
                 afni_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_fsl + "/" + filename_ss_ext + ".png"
 
 
             visualize(output_jsonld, output_file=output_png)
+
     context_write.write(f"End of processed files. Results in dir : '{opt.output_dir}'. "
                         f"Time required: {datetime.now() - start_time}\n")
 
