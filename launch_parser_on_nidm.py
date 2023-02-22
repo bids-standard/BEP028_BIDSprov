@@ -82,7 +82,7 @@ def main():
                 shutil.copyfile(filename, output_dir_afni + "/" + str(file))
                 output_jsonld = output_dir_afni + "/" + filename_ss_ext + ".jsonld"
                 afni_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
-                output_png = output_dir_fsl + "/" + filename_ss_ext + ".png"
+                output_png = output_dir_afni + "/" + filename_ss_ext + ".png"
 
 
             visualize(output_jsonld, output_file=output_png)
