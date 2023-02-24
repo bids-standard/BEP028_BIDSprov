@@ -192,10 +192,10 @@ if __name__ == "__main__":
     opt = parser.parse_args()
 
     afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
-    # input_file = os.path.abspath("../../examples/from_parsers/afni/afni_gam_proc.sub_001")
-    # # input_file = os.path.abspath("../../examples/from_parsers/afni/toy_afni")
+    # input_file = os.path.abspath("../../examples/from_parsers/afni/afni_clustconn_18_proc.sub_001")
+    # # # input_file = os.path.abspath("../../examples/from_parsers/afni/toy_afni")
     # output_file = "../../res.jsonld"
-    # # commands = readlines(input_file)
+    # # # commands = readlines(input_file)
     # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24', indent = 2, verbose = False)
 
     # Finding PREAMBULE
