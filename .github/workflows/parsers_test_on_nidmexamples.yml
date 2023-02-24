@@ -16,7 +16,7 @@ jobs:
           pip install pytest
           pip install -r dev-requirements.txt
           sudo apt-get install graphviz
-      - name: SPM/FSL parsing on nidm-examples
+      - name: SPM/FSL/AFNI parsing on nidm-examples
         run: |
           mkdir -p nidmresults-examples
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/spm_group_ols/batch.m -O nidmresults-examples/spm_group_ols_batch.m
@@ -56,7 +56,7 @@ jobs:
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/fsl_thr_clustfwep05/report_log.html -O nidmresults-examples/fsl_thr_clustfwep05_report_log.html
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/fsl_thr_voxelfwep05/report_log.html -O nidmresults-examples/fsl_thr_voxelfwep05_report_log.html
 
-          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/afni_default/subject_results/group.DS0011/subj.sub_001/proc.sub_001
+          wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/afni_default/subject_results/group.DS0011/subj.sub_001/proc.sub_001 -O nidmresults-examples/afni_default_proc.sub_001
           
           python launch_parser_on_nidm.py --input_dir nidmresults-examples --output_dir examples/from_parsers
       - name: push on the repo the dir "examples/from_parsers"
