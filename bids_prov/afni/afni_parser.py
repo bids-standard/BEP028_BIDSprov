@@ -44,6 +44,16 @@ OUTPUT_TAGS = frozenset(
 )
 
 
+def clean_label_suffix(label:str) ->str:
+    """ Erase suffix like tlrc in label to keep link of passed entities label
+    """
+    new_label_rename = re.sub(r"\+tlrc", "", label)
+    new_label_rename = re.sub(r"\+orig", "", new_label_rename)
+    new_label_rename = re.sub(r"'\[.*\]'", "", new_label_rename)
+    new_label_rename = re.sub(r".HEAD", "", new_label_rename)
+    new_label_rename = re.sub(r"\"\[.*\]\"", "", new_label_rename)
+    new_label_rename = re.sub(r"::WARP_DATA", "", new_label_rename)
+    return new_label_rename
 
 
 def get_entities(cmd_s, parameters):
@@ -114,7 +124,14 @@ def get_entities(cmd_s, parameters):
                 entities.extend(add_ent)
                 for ent in add_ent:
                     args_consumed_list.append(ent)
-    return entities, args_consumed_list
+    renamed_entities = []
+    for ent in entities:
+        new_label = os.path.split(ent)[1]
+        new_label_rename = clean_label_suffix(new_label)
+        renamed_entities.append(new_label_rename)
+    # print("entities: ",entities, " renamed_entities:", renamed_entities)
+
+    return renamed_entities, args_consumed_list
 
 
 def build_records(commands: list, agent_id: str):
@@ -139,7 +156,6 @@ def build_records(commands: list, agent_id: str):
         cmd_args_remain = cmd_s[1:]
         inputs = []
         outputs = []
-        entity_names = []
         function_in_description_functions = False
 
         command_name_end = os.path.split(a_name)[1]
@@ -215,12 +231,15 @@ def build_records(commands: list, agent_id: str):
                 (entity for entity in records["prov:Entity"] if entity["prov:atLocation"] == input_path), None)
 
             if existing_input is None:
+                new_label = os.path.split(input_path)[1]
+
+                new_label_rename = clean_label_suffix(new_label)
                 ent = {
                     "@id": input_id,
-                    "label": os.path.split(input_path)[1],
+                    "label": new_label_rename,
                     "prov:atLocation": input_path,
                 }
-                print("-> new entity label:", os.path.split(input_path)[1])
+                # print("-> new entity label:", new_label, "rename: ", new_label_rename)
                 records["prov:Entity"].append(ent)
                 activity["used"].append(input_id)
             else:
@@ -257,7 +276,7 @@ def gather_multiline(input_file):
     return commands
 def readlines(input_file):
     commands = gather_multiline(input_file)
-    dropline_begin = ["#", 'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
+    dropline_begin = ["#", 'cd', 'touch',  'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
     commands = [cmd for cmd in commands if not any(cmd.startswith(begin) for begin in dropline_begin)]
     return commands
 
@@ -275,21 +294,21 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         json.dump(graph, fd, indent=indent)
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--input_file", type=str, default="./examples/from_parsers/afni/afni_default_proc.sub_001", help="afni execution log file")
-    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    # parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
-    # parser.add_argument("--verbose", action="store_true", help="more print")
-    # opt = parser.parse_args()
-    #
-    # afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_file", type=str, default="./examples/from_parsers/afni/afni_default_proc.sub_001", help="afni execution log file")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--verbose", action="store_true", help="more print")
+    opt = parser.parse_args()
+
+    afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.afni.afni_parser --input_file ./afni_test_local/afni_default_proc.sub_001  --output_file res.jsonld
 
-    input_file = os.path.abspath("../../afni_test_local/afni_default_proc.sub_001")
-    # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
-    output_file = "../../res.jsonld"
-    # # # commands = readlines(input_file)
-    afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24', indent = 2, verbose = False)
+    # input_file = os.path.abspath("../../afni_test_local/afni_default_proc.sub_001")
+    # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
+    # output_file = "../../res.jsonld"
+    # # # # commands = readlines(input_file)
+    # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24', indent = 2, verbose = False)
 
     # Finding PREAMBULE
     #with open(input_file, "r") as file:
