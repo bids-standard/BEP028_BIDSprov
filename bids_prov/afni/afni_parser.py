@@ -134,6 +134,26 @@ def get_entities(cmd_s, parameters):
     return renamed_entities, args_consumed_list
 
 
+def find_param(cmd_args_remain:list, cmd_s :list) ->dict:
+    param_dic = {}
+    for arg_remain in cmd_args_remain:
+        # print("arg_remain", arg_remain)
+        if arg_remain.startswith("-"):
+            if arg_remain != cmd_args_remain[-1]:
+                succesor = cmd_args_remain[cmd_args_remain.index(arg_remain)+1]
+                # print("succesor", succesor)
+                if not succesor.startswith("-"):
+                    param_dic[arg_remain] = succesor
+                    cmd_args_remain.remove(succesor)
+                else:
+                    param_dic[arg_remain] = True
+            else:
+                param_dic[arg_remain] = True
+
+
+    return param_dic
+
+
 def build_records(commands: list, agent_id: str):
     """
     Build the `records` field for the final .jsonld file,
@@ -189,6 +209,10 @@ def build_records(commands: list, agent_id: str):
         print('-> inputs: ', inputs)
         print('<- outputs: ', outputs)
         print("  others args :", *cmd_args_remain)
+        param_dic = find_param(cmd_args_remain, cmd_s)
+        print("Parameters :")
+        for k, v in param_dic.items():
+            print(f"{k} : {v}")
         if function_in_description_functions is False:
             print("-> Not present in description_functions")
 
@@ -222,6 +246,7 @@ def build_records(commands: list, agent_id: str):
             # "attributes": [
             #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
             # ],
+            "parameters": param_dic,
             "used": list(),
         }
 
