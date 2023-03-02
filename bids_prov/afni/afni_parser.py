@@ -5,7 +5,6 @@ import os
 from collections import defaultdict
 from itertools import chain
 
-# from bids_prov.fsl.fsl_parser import get_entities
 from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
 
 # regex to catch inputs
@@ -102,8 +101,7 @@ def get_entities(cmd_s, parameters):
                 entities.extend([cmd_s[i + u_arg["index"]] for i, cmd_part in enumerate(cmd_s) if cmd_part == u_arg["name"]])
                 # The for loop allows to retrieve the entities of the parameters appearing several times
                 # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
-        else:
-            # type(u_arg) == str
+        else:  # type(u_arg) == str
             if u_arg in cmd_s:
                 entities.append(cmd_s[cmd_s.index(u_arg) + 1])  # we add the entity located just after the parameter
                 if u_arg.startswith("-") or '>' in u_arg :
@@ -125,6 +123,7 @@ def get_entities(cmd_s, parameters):
                 for ent in add_ent:
                     args_consumed_list.append(ent)
     renamed_entities = []
+
     for ent in entities:
         new_label = os.path.split(ent)[1]
         new_label_rename = clean_label_suffix(new_label)
@@ -134,14 +133,24 @@ def get_entities(cmd_s, parameters):
     return renamed_entities, args_consumed_list
 
 
-def find_param(cmd_args_remain:list, cmd_s :list) ->dict:
+def find_param(cmd_args_remain:list) ->dict:
+    """ Find parameter in all command arguments that remain after entities extraction
+
+    Parameters
+    ----------
+    cmd_args_remain : list of str
+        all arguments that have not been used for extracting input/output entities
+
+    Returns
+    -------
+    dict :
+        [key:value} where key is parameter name and value is True if no value is given in command arguments, else its value
+    """
     param_dic = {}
     for arg_remain in cmd_args_remain:
-        # print("arg_remain", arg_remain)
         if arg_remain.startswith("-"):
             if arg_remain != cmd_args_remain[-1]:
                 succesor = cmd_args_remain[cmd_args_remain.index(arg_remain)+1]
-                # print("succesor", succesor)
                 if not succesor.startswith("-"):
                     param_dic[arg_remain] = succesor
                     cmd_args_remain.remove(succesor)
@@ -164,11 +173,9 @@ def build_records(commands: list, agent_id: str, verbose=False):
     dict: a set of records compliant with the BIDS-prov standard
     """
     records = defaultdict(list)
-
     filepath = os.path.join(os.path.dirname(__file__), "description_functions.json")
     with open(filepath) as f:
         description_functions = json.load(f)
-
 
     for cmd in commands:
         cmd_s = re.split(" |=", cmd)
@@ -177,10 +184,11 @@ def build_records(commands: list, agent_id: str, verbose=False):
         inputs = []
         outputs = []
         function_in_description_functions = False
-
         command_name_end = os.path.split(a_name)[1]
+
         if verbose:
             print("CMD", cmd)
+
         for df in description_functions:
             if df["name"] == command_name_end:
                 function_in_description_functions = True
@@ -188,26 +196,18 @@ def build_records(commands: list, agent_id: str, verbose=False):
                     arg = df["used"]
                     ent, args_consumed_list = get_entities(cmd_s, arg)
                     inputs.extend(ent)
-                    # for en in ent:
-                    #     cmd_args_remain.remove(en)
-                    # if type(arg[0]) == str:
-                    #     cmd_args_remain.remove(arg[0])
                     for arg in args_consumed_list:
                         cmd_args_remain.remove(arg)
                 if "generatedBy" in df:
                     arg = df["generatedBy"]
                     ent, args_consumed_list = get_entities(cmd_s, arg)
-                    # print("args_consumed_list", args_consumed_list)
-                    # for en in ent:
-                    #     cmd_args_remain.remove(en)
-                    # if type(arg[0]) == str:
-                    #     cmd_args_remain.remove(arg[0])
                     outputs.extend(ent)
                     for arg in args_consumed_list:
                         cmd_args_remain.remove(arg)
 
                 break
-        param_dic = find_param(cmd_args_remain, cmd_s)
+        param_dic = find_param(cmd_args_remain)
+
         if verbose:
             print('-> inputs: ', inputs)
             print('<- outputs: ', outputs)
@@ -215,6 +215,7 @@ def build_records(commands: list, agent_id: str, verbose=False):
             print("Parameters :")
             for k, v in param_dic.items():
                 print(f"{k} : {v}")
+
         if function_in_description_functions is False:
             print(f"-> {command_name_end} : Not present in description_functions")
 
@@ -223,7 +224,6 @@ def build_records(commands: list, agent_id: str, verbose=False):
 
             for key, value in re.findall(ATTRIBUTE_RE, cmd):            # same key can have multiple value
                 attributes[key].append(value)
-
 
             cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd) # make sure attributes are not considered as entities
 
@@ -244,10 +244,7 @@ def build_records(commands: list, agent_id: str, verbose=False):
             "@id": f"urn:{get_id()}",
             "label": label_mapping(label, "afni/afni_labels.json"),
             "associatedWith": "urn:" + agent_id,
-            "command": cmd , #.replace('>', '+'),
-            # "attributes": [
-            #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
-            # ],
+            "command": cmd ,
             "parameters": param_dic,
             "used": list(),
         }
@@ -288,7 +285,6 @@ def build_records(commands: list, agent_id: str, verbose=False):
             print('-------------------------')
 
     return dict(records)
-
 
 
 def gather_multiline(input_file):
