@@ -154,7 +154,7 @@ def find_param(cmd_args_remain:list, cmd_s :list) ->dict:
     return param_dic
 
 
-def build_records(commands: list, agent_id: str):
+def build_records(commands: list, agent_id: str, verbose=False):
     """
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (e.g. `Registration`, `Post-stats`)
@@ -179,7 +179,8 @@ def build_records(commands: list, agent_id: str):
         function_in_description_functions = False
 
         command_name_end = os.path.split(a_name)[1]
-        print("CMD", cmd)
+        if verbose:
+            print("CMD", cmd)
         for df in description_functions:
             if df["name"] == command_name_end:
                 function_in_description_functions = True
@@ -206,15 +207,16 @@ def build_records(commands: list, agent_id: str):
                         cmd_args_remain.remove(arg)
 
                 break
-        print('-> inputs: ', inputs)
-        print('<- outputs: ', outputs)
-        print("  others args :", *cmd_args_remain)
         param_dic = find_param(cmd_args_remain, cmd_s)
-        print("Parameters :")
-        for k, v in param_dic.items():
-            print(f"{k} : {v}")
+        if verbose:
+            print('-> inputs: ', inputs)
+            print('<- outputs: ', outputs)
+            print("  others args :", *cmd_args_remain)
+            print("Parameters :")
+            for k, v in param_dic.items():
+                print(f"{k} : {v}")
         if function_in_description_functions is False:
-            print("-> Not present in description_functions")
+            print(f"-> {command_name_end} : Not present in description_functions")
 
             # if the function is not in our description file, the process is based on regex
             attributes = defaultdict(list)
@@ -282,7 +284,8 @@ def build_records(commands: list, agent_id: str):
             )
 
         records["prov:Activity"].append(activity)
-        print('-------------------------')
+        if verbose:
+            print('-------------------------')
 
     return dict(records)
 
@@ -313,7 +316,7 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         print(filtered)
 
     graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
-    records = build_records(commands, agent_id)
+    records = build_records(commands, agent_id, verbose=verbose)
     graph["records"].update(records)
     with open(output_file, "w") as fd:
         json.dump(graph, fd, indent=indent)
@@ -333,7 +336,7 @@ if __name__ == "__main__":
     # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
     # output_file = "../../res.jsonld"
     # # # # commands = readlines(input_file)
-    # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24', indent = 2, verbose = False)
+    # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24',verbose = False)
 
     # Finding PREAMBULE
     #with open(input_file, "r") as file:
