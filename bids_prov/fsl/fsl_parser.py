@@ -7,6 +7,7 @@ import random
 from typing import List, Mapping
 from bs4 import BeautifulSoup
 import argparse
+from bids_prov.visualize import main as visualize
 
 from bids_prov.fsl import fsl_config as conf
 from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
@@ -106,7 +107,9 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
             if re.match(r"^[a-z/].*$", line) and not line.startswith("did") and tag_text[i - 1] == "":
                 # the line must begin with a lowercase word or a / followed by 0 or more dots
                 # and the line must be after a newline
-                commands.extend(function.strip() for function in line.split(";"))  # rstrip remove the `\n`, split
+                # rstrip remove the `\n`, split
+                commands.extend(function.strip()
+                                for function in line.split(";"))
                 # on a possible `;` and add to the end of the list
             else:
                 pass
@@ -170,7 +173,7 @@ def get_entities(cmd_s, parameters):
     entities = []
     for u_arg in parameters:
         if type(u_arg) == int:
-            if not cmd_s[u_arg].startswith("-") :
+            if not cmd_s[u_arg].startswith("-"):
                 entities.append(cmd_s[u_arg])   # the "if" is useful for
             # Entities that are optional but indicated in the description file
             # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "used": [1, 2]
@@ -180,19 +183,23 @@ def get_entities(cmd_s, parameters):
             # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "generatedBy":
             # [{"name": "-A", "index": 2}]
             if u_arg["name"] in cmd_s:
-                entities.extend([cmd_s[i + u_arg["index"]] for i, cmd_part in enumerate(cmd_s) if cmd_part == u_arg["name"]])
+                entities.extend([cmd_s[i + u_arg["index"]]
+                                for i, cmd_part in enumerate(cmd_s) if cmd_part == u_arg["name"]])
                 # The for loop allows to retrieve the entities of the parameters appearing several times
                 # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
         else:
             # type(u_arg) == str
             if u_arg in cmd_s:
-                entities.append(cmd_s[cmd_s.index(u_arg) + 1])  # we add the entity located just after the parameter
+                # we add the entity located just after the parameter
+                entities.append(cmd_s[cmd_s.index(u_arg) + 1])
             elif not u_arg.startswith("-"):  # case of slicing
                 u_arg_splitted = u_arg.split(":")
                 start = int(u_arg_splitted[0])
-                stop = None if u_arg_splitted[1] == "" else int(u_arg_splitted[-1])
+                stop = None if u_arg_splitted[1] == "" else int(
+                    u_arg_splitted[-1])
                 entities.extend(cmd_s[slice(start+1, stop)]
-                                if re.search(r"(-f|-rf)", cmd_s[1])  # to skip -r or -rf option
+                                # to skip -r or -rf option
+                                if re.search(r"(-f|-rf)", cmd_s[1])
                                 else cmd_s[slice(start, stop)])
     return entities
 
@@ -208,23 +215,26 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     records = defaultdict(list)
 
-    filepath = os.path.join(os.path.dirname(__file__), "description_functions.json")
+    filepath = os.path.join(os.path.dirname(__file__),
+                            "description_functions.json")
     with open(filepath) as f:
         description_functions = json.load(f)
 
     for k, v in groups.items():
-        print(k,":", v)
+        print(k, ":", v)
         if k == "Feat main script":  # skip "Feat main script" section
             continue
         # group_name = k.lower().replace(" ", "_")  # TODO
 
         for cmd in v:
-            cmd = cmd.replace(" + ", " ").replace(" - ", " ")  # process to remove + and - in pngappend command
+            # process to remove + and - in pngappend command
+            cmd = cmd.replace(" + ", " ").replace(" - ", " ")
             cmd_s = re.split(" |=", cmd)
             a_name = cmd_s[0]
 
             inputs = []
             outputs = []
+            parameters = []
             entity_names = []
 
             function_in_description_functions = False
@@ -237,8 +247,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         inputs.extend(get_entities(cmd_s, df["used"]))
                     if "generatedBy" in df:
                         outputs.extend(get_entities(cmd_s, df["generatedBy"]))
-                    if command_name_end == "fslmaths" and "-odt" not in cmd_s:
-                        outputs.append(cmd_s[-1])
+                    # if command_name_end == "fslmaths" and "-odt" not in cmd_s:
+                    #     outputs.append(cmd_s[-1])
                     break
 
             if function_in_description_functions is False:
@@ -253,10 +263,13 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
 
                 # if a key of attributes is in INPUT_TAGS, we add her value in inputs
-                inputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS)))
+                inputs = list(chain(*(attributes.pop(k)
+                              for k in attributes.keys() & INPUT_TAGS)))
                 # same process with OUTPUT_TAGS
-                outputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS)))
-                entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
+                outputs = list(chain(*(attributes.pop(k)
+                               for k in attributes.keys() & OUTPUT_TAGS)))
+                entity_names = [_ for _ in re.findall(
+                    INPUT_RE, cmd_without_attributes[len(a_name):])]
 
             # # cmd_conf = get_closest_config(a_name)  # with the module boutiques
             # cmd_conf = None  # None because boutiques is not used at this time
@@ -270,7 +283,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     if len(entity_names) > 1:
                         inputs.append(entity_names[0])
 
-            label = f"{os.path.split(a_name)[1]}"  # the file name and possible extension
+            # the file name and possible extension
+            label = f"{os.path.split(a_name)[1]}"
 
             a = {
                 "@id": f"urn:{get_id()}",
@@ -320,7 +334,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
                      soft_ver="xxx", indent=2, verbose=False) -> None:  # TODO : add fsl version
 
-    graph, agent_id = get_default_graph(label="FSL", context_url=context_url, soft_ver=soft_ver)
+    graph, agent_id = get_default_graph(
+        label="FSL", context_url=context_url, soft_ver=soft_ver)
 
     lines = readlines(filename)
     records = build_records(lines, agent_id)
@@ -332,13 +347,19 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/from_parsers/fsl/fsl_full_examples001_report_log.html.", help="fsl execution log file")
-    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--input_file", type=str,
+                        default="./examples/from_parsers/fsl/fsl_full_examples001_report_log.html", help="fsl execution log file")
+    parser.add_argument("--output_file", type=str, default="res.jsonld",
+                        help="output dir where results are written")
+    parser.add_argument(
+        "--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
-    fsl_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    fsl_to_bids_prov(opt.input_file, context_url=opt.context_url,
+                     output_file=opt.output_file, verbose=opt.verbose)
+    visualize(opt.output_file, output_file="res.png")
+
     # #
     # input_file = os.path.abspath("../../examples/from_parsers/fsl/fsl_full_examples001_report_log.html")
     # output_file = "../../res.jsonld"
