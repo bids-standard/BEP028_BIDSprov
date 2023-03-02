@@ -358,7 +358,7 @@ if __name__ == "__main__":
 
     fsl_to_bids_prov(opt.input_file, context_url=opt.context_url,
                      output_file=opt.output_file, verbose=opt.verbose)
-    visualize(opt.output_file, output_file="res.png")
+    # visualize(opt.output_file, output_file="res.png")
 
     # #
     # input_file = os.path.abspath("../../examples/from_parsers/fsl/fsl_full_examples001_report_log.html")
