@@ -20,7 +20,8 @@ jobs:
           python -m bids_prov.spm.spm_parser --input_file batch.m --output_file explicit_mask.json
       - name: Test FSL Parser
         run: |
-          python -m bids_prov.fsl.fsl_parser --input_file examples/fsl_default/logs.md --output_file  tests.json
+          curl -LJO https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/fsl_default/report_log.html
+          python -m bids_prov.fsl.fsl_parser --input_file report_log.html --output_file  tests.json
       - name: Test AFNI Parser
         run: |
           wget https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master/afni_default/subject_results/group.DS0011/subj.sub_001/proc.sub_001
