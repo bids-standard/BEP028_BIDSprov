@@ -168,13 +168,15 @@ def get_entities(cmd_s, parameters):
     ['input1', 'input2', 'input1']
     """
     entities = []
+    args_consumed_list = []
     for u_arg in parameters:
         if type(u_arg) == int:
-            if not cmd_s[u_arg].startswith("-"):
+            if not cmd_s[u_arg].startswith("-") :
                 entities.append(cmd_s[u_arg])   # the "if" is useful for
             # Entities that are optional but indicated in the description file
             # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "used": [1, 2]
             # Sometimes, 2 is present. In the previous command, this is not the case
+                args_consumed_list.append(cmd_s[u_arg])
         elif type(u_arg) == dict:
             # Allows us to retrieve entities not directly attached to the parameter name
             # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "generatedBy":
@@ -185,16 +187,28 @@ def get_entities(cmd_s, parameters):
                 # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
         else:  # type(u_arg) == str
             if u_arg in cmd_s:
-                entities.append(cmd_s[cmd_s.index(u_arg) + 1]) # we add the entity located just after the parameter
+                entities.append(cmd_s[cmd_s.index(u_arg) + 1])  # we add the entity located just after the parameter
+                if u_arg.startswith("-") or '>' in u_arg :
+                    args_consumed_list.append(cmd_s[cmd_s.index(u_arg) + 1])
+                    args_consumed_list.append(u_arg)
             elif not u_arg.startswith("-"):  # case of slicing
                 u_arg_splitted = u_arg.split(":")
                 start = int(u_arg_splitted[0])
-                stop = None if u_arg_splitted[1] == "" else int(
-                    u_arg_splitted[-1])
-                entities.extend(cmd_s[slice(start+1, stop)] # to skip -r or -rf option
-                                if re.search(r"(-f|-rf)", cmd_s[1])
-                                else cmd_s[slice(start, stop)])
-    return entities
+                if u_arg_splitted[1] == "":
+                    stop = None
+                else:
+                    stop = int(u_arg_splitted[-1])
+
+                if re.search(r"(-f|-rf)", cmd_s[1]):# to skip -r or -rf option
+                     add_ent = cmd_s[slice(start+1, stop)]
+                else:
+                    add_ent = cmd_s[slice(start, stop)]
+                entities.extend(add_ent)
+                for ent in add_ent:
+                    args_consumed_list.append(ent)
+    # print("entities: ",entities, " renamed_entities:", renamed_entities)
+
+    return entities, args_consumed_list
 
 
 def build_records(groups: Mapping[str, List[str]], agent_id: str):
@@ -236,9 +250,11 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 if df["name"] == command_name_end:
                     function_in_description_functions = True
                     if "used" in df:
-                        inputs.extend(get_entities(cmd_s, df["used"]))
+                        entities, _ = get_entities(cmd_s, df["used"])
+                        inputs.extend(entities)
                     if "generatedBy" in df:
-                        outputs.extend(get_entities(cmd_s, df["generatedBy"]))
+                        entities, _ = get_entities(cmd_s, df["generatedBy"])
+                        outputs.extend(entities)
                     # if command_name_end == "fslmaths" and "-odt" not in cmd_s:
                     #     outputs.append(cmd_s[-1])
                     break
