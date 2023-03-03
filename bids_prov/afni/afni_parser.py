@@ -118,10 +118,12 @@ def build_records(commands: list, agent_id: str, verbose=False):
         for df in description_functions:
             if df["name"] == command_name_end:
                 function_in_description_functions = True
+
                 if "used" in df:
                     arg = df["used"]
                     entities, args_consumed_list = get_entities(cmd_s, arg)
-                    inputs.extend(entities)
+                    renamed_entities = [clean_label_suffix(os.path.split(ent)[1]) for ent in entities]
+                    inputs.extend(renamed_entities)
                     for arg in args_consumed_list:
                         cmd_args_remain.remove(arg)
 
@@ -186,6 +188,7 @@ def build_records(commands: list, agent_id: str, verbose=False):
                 new_label = os.path.split(input_path)[1]
 
                 new_label_rename = clean_label_suffix(new_label)
+                print("label:" , new_label, " rename ", new_label_rename)
                 ent = {
                     "@id": input_id,
                     "label": new_label_rename,
