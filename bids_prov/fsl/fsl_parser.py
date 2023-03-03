@@ -204,9 +204,7 @@ def get_entities(cmd_s, parameters):
                 else:
                     add_ent = cmd_s[slice(start, stop)]
                 entities.extend(add_ent)
-                for ent in add_ent:
-                    args_consumed_list.append(ent)
-    # print("entities: ",entities, " renamed_entities:", renamed_entities)
+                args_consumed_list.extend(add_ent)
 
     return entities, args_consumed_list
 
@@ -357,8 +355,6 @@ if __name__ == "__main__":
     opt = parser.parse_args()
 
     fsl_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
-    # visualize(opt.output_file, output_file="res.png")
-
     # #
     # input_file = os.path.abspath("../../examples/from_parsers/fsl/fsl_full_examples001_report_log.html")
     # output_file = "../../res.jsonld"
