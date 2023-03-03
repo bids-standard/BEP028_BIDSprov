@@ -43,7 +43,6 @@ OUTPUT_TAGS = frozenset(
     ]
 )
 
-
 def clean_label_suffix(label:str) ->str:
     """ Erase suffix like tlrc in label to keep link of passed entities label
     """
