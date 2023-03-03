@@ -79,17 +79,23 @@ def test_get_entities():
     cmd_s = ["command", "-a", "input1", "-b", "input2"]
     parameters = ["-a", 4, "-b"]
     expected_output = ['input1', 'input2', 'input2']
-    assert get_entities(cmd_s, parameters) == expected_output
+    entities, args_consumed_list =  get_entities(cmd_s, parameters)
+    assert entities == expected_output
+
 
     cmd_s = ["command", "input1", "-b", "input2"]
     parameters = [0, 1, "-b"]
     expected_output = ['command', 'input1', 'input2']
-    assert get_entities(cmd_s, parameters) == expected_output
+    entities, args_consumed_list =  get_entities(cmd_s, parameters)
+
+    assert entities == expected_output
 
     cmd_s = ["command", "-a", "input1", "-b", "input2"]
     parameters = [1]
     expected_output = []
-    assert get_entities(cmd_s, parameters) == expected_output
+    entities, args_consumed_list =  get_entities(cmd_s, parameters)
+
+    assert entities == expected_output
 
 
 def test_get_entities_rm():
@@ -97,7 +103,8 @@ def test_get_entities_rm():
     cmd_s = cmd.split(" ")
     parameters = ["1:"]
     expected_output = ["sl?.png", "highres2standard2.png"]
-    assert get_entities(cmd_s, parameters) == expected_output
+    entities, args_consumed_list =  get_entities(cmd_s, parameters)
+    assert entities == expected_output
 
 
 def test_get_entities_mv():
@@ -109,11 +116,13 @@ def test_get_entities_mv():
     expected_inputs = ["prefiltered_func_data_mcf.mat", "prefiltered_func_data_mcf.par",
                        "prefiltered_func_data_mcf_abs.rms", "prefiltered_func_data_mcf_abs_mean.rms",
                        "prefiltered_func_data_mcf_rel.rms", "prefiltered_func_data_mcf_rel_mean.rms"]
-    assert get_entities(cmd_s, parameters) == expected_inputs
+    entities, args_consumed_list =  get_entities(cmd_s, parameters)
+    assert entities== expected_inputs
 
     parameters = [-1]
     expected_outputs = ["mc"]
-    assert get_entities(cmd_s, parameters) == expected_outputs
+    entities, args_consumed_list =  get_entities(cmd_s, parameters)
+    assert entities == expected_outputs
 
 
 def test_get_entities_dict():
@@ -121,6 +130,6 @@ def test_get_entities_dict():
     cmd_s = cmd.split(" ")
     parameters = [{"name": "-x", "index": 2}]
     expected_outputs = ["sla.png", "slb.png", "slc.png"]
-    assert get_entities(cmd_s, parameters) == expected_outputs
+    assert get_entities(cmd_s, parameters)[0] == expected_outputs
 
 
