@@ -416,7 +416,6 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
         False with less verbosity by default
     indent : int, optional
         2, number of indentation in jsonfile between each object
-
     """
 
     graph, agent_id = get_default_graph(label="SPM", context_url=context_url, soft_ver=spm_ver)
