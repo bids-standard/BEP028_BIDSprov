@@ -246,21 +246,21 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         json.dump(graph, fd, indent=indent)
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--input_file", type=str, default="./examples/from_parsers/afni/afni_default_proc.sub_001", help="afni execution log file")
-    # parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    # parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
-    # parser.add_argument("--verbose", action="store_true", help="more print")
-    # opt = parser.parse_args()
-    #
-    # afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_file", type=str, default="./examples/from_parsers/afni/afni_default_proc.sub_001", help="afni execution log file")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--verbose", action="store_true", help="more print")
+    opt = parser.parse_args()
+
+    afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.afni.afni_parser --input_file ./afni_test_local/afni_default_proc.sub_001  --output_file res.jsonld
 
-    input_file = os.path.abspath("../../afni_test_local/afni_default_proc.sub_001")
-    # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
-    output_file = "../../res.jsonld"
-    # # # commands = readlines(input_file)
-    afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24',verbose=True)
+    # input_file = os.path.abspath("../../afni_test_local/afni_default_proc.sub_001")
+    # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
+    # output_file = "../../res.jsonld"
+    # # # # commands = readlines(input_file)
+    # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24',verbose=True)
 
     # Finding PREAMBULE
     #with open(input_file, "r") as file:
