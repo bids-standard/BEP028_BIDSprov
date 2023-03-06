@@ -188,7 +188,7 @@ def build_records(commands: list, agent_id: str, verbose=False):
                 new_label = os.path.split(input_path)[1]
 
                 new_label_rename = clean_label_suffix(new_label)
-                print("label:" , new_label, " rename ", new_label_rename)
+                # print("label:" , new_label, " rename ", new_label_rename)
                 ent = {
                     "@id": input_id,
                     "label": new_label_rename,
