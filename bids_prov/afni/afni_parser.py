@@ -231,7 +231,7 @@ def gather_multiline(input_file):
     return commands
 def readlines(input_file):
     commands = gather_multiline(input_file)
-    dropline_begin = ["#", 'cd', 'touch',  'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
+    dropline_begin = ["#", 'cd', "cat", 'touch',  'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
     commands = [cmd for cmd in commands if not any(cmd.startswith(begin) for begin in dropline_begin)]
     return commands
 
@@ -259,7 +259,7 @@ if __name__ == "__main__":
     afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.afni.afni_parser --input_file ./afni_test_local/afni_default_proc.sub_001  --output_file res.jsonld
 
-    # input_file = os.path.abspath("../../afni_test_local/afni_default_proc.sub_001")
+    # input_file = os.path.abspath("../../nidmresults-examples/narps_do_13_view_zoom.tcsh")
     # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
     # output_file = "../../res.jsonld"
     # # # # commands = readlines(input_file)

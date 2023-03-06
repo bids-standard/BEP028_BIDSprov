@@ -76,7 +76,7 @@ def main():
                 fsl_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_fsl + "/" + filename_ss_ext + ".png"
 
-            elif file.endswith("proc.sub_001"):
+            elif file.endswith("proc.sub_001") or file.endswith(".tcsh"):
                 context_write.write(f"    file= {root}/{str(file)}\n")
                 filename = root + "/" + str(file)
                 filename_ss_ext = file.split(".sub_001")[0]
