@@ -1,0 +1,1119 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "AFNI",
+        "version": "afni24"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:a9cc5eef-578c-46d9-991c-10e6f80db205",
+        "label": "Make directory",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "mkdir $output_dir",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:c25c6ddb-b304-4e70-8fb1-55d746992ef9",
+        "label": "Make directory",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "mkdir $output_dir/stimuli",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:e174c00a-6da3-4b78-9e3f-4720f0d49f10",
+        "label": "cp",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "cp ./afni_one_sided_t_test/tone_counting_onset_times.txt ./afni_one_sided_t_test/tone_counting_probe_duration.txt $output_dir/stimuli",
+        "parameters": {},
+        "used": [
+          "urn:6b531480-728a-43a0-bcab-b042d57906eb",
+          "urn:e5a84379-f6cc-4bf9-a4b7-5bc1a632a0c5"
+        ]
+      },
+      {
+        "@id": "urn:3787e058-b5cd-41b9-8c4b-bf316fce92e2",
+        "label": "3dcopy",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dcopy sub-01_T1w.nii.gz $output_dir/sub-01_T1w",
+        "parameters": {},
+        "used": [
+          "urn:1b2c70be-4c92-4178-a06a-99f484d920ce"
+        ]
+      },
+      {
+        "@id": "urn:a32b9faf-e798-42c2-9bda-6b2e4eddf2a2",
+        "label": "3dTcat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTcat -prefix $output_dir/pb00.$subj.r01.tcat sub-01_task-tonecounting_bold.nii.gz'[0..$]'",
+        "parameters": {},
+        "used": [
+          "urn:b7346ca2-bafb-492c-9d82-57eb5a35bfde"
+        ]
+      },
+      {
+        "@id": "urn:35873e58-ffb4-423a-8eb7-ca2933b4f88b",
+        "label": "3dToutcount",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dToutcount -automask -fraction -polort 2 -legendre pb00.$subj.r$run.tcat+orig > outcount.r$run.1D",
+        "parameters": {
+          "-automask": true,
+          "-fraction": true,
+          "-polort": "2",
+          "-legendre": true
+        },
+        "used": [
+          "urn:ef541d2c-cad4-4f73-8817-f4c7cce9dbbe"
+        ]
+      },
+      {
+        "@id": "urn:806b1ddb-aa7d-4d44-8030-c963c8f8a5a2",
+        "label": "cat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "cat outcount.r*.1D > outcount_rall.1D",
+        "parameters": {},
+        "used": [
+          "urn:269e5eab-2d09-4927-b5b0-82f652cad119"
+        ]
+      },
+      {
+        "@id": "urn:9d831fbc-4b26-402e-8209-0db8f12fed5e",
+        "label": "3dTshift",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTshift -tzero 0 -quintic -prefix pb01.$subj.r$run.tshift pb00.$subj.r$run.tcat+orig",
+        "parameters": {
+          "-tzero": "0",
+          "-quintic": true
+        },
+        "used": [
+          "urn:ef541d2c-cad4-4f73-8817-f4c7cce9dbbe"
+        ]
+      },
+      {
+        "@id": "urn:e5eeb47f-ccd6-464d-a309-5d8332a38d71",
+        "label": "align_epi_anat.py",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "align_epi_anat.py -anat2epi -anat sub-01_T1w+orig -save_skullstrip -suffix _al_junk -epi pb01.$subj.r01.tshift+orig -epi_base 2 -epi_strip 3dAutomask -volreg off -tshift off",
+        "parameters": {
+          "-anat2epi": true,
+          "-save_skullstrip": true,
+          "-epi_base": "2",
+          "-epi_strip": "3dAutomask",
+          "-volreg": "off",
+          "-tshift": "off"
+        },
+        "used": [
+          "urn:9fa53b48-cb38-4e12-97e0-f8410cb76b69",
+          "urn:41fc34ba-27a2-4943-a4e9-c5a4c7f6da5f"
+        ]
+      },
+      {
+        "@id": "urn:c81ea787-4ed8-4ac6-a258-a9c101029922",
+        "label": "@auto_tlrc",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "@auto_tlrc -base TT_N27+tlrc -input sub-01_T1w_ns+orig -no_ss",
+        "parameters": {
+          "-no_ss": true
+        },
+        "used": [
+          "urn:74af4b3c-7d72-4943-8110-d327b8bedd6b",
+          "urn:fba952eb-c9c1-49bb-a6d0-56f6230aa5e0"
+        ]
+      },
+      {
+        "@id": "urn:92d896e2-739f-41f8-b5fd-0337c9a38e55",
+        "label": "cat_matvec",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "cat_matvec sub-01_T1w_ns+tlrc::WARP_DATA -I > warp.anat.Xat.1D",
+        "parameters": {
+          "-I": true
+        },
+        "used": [
+          "urn:fba952eb-c9c1-49bb-a6d0-56f6230aa5e0"
+        ]
+      },
+      {
+        "@id": "urn:c43695c8-c86f-487f-b556-6b84f2ce3a64",
+        "label": "3dvolreg",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dvolreg -verbose -zpad 1 -base pb01.$subj.r01.tshift+orig'[2]' -1Dfile dfile.r$run.1D -prefix rm.epi.volreg.r$run -cubic -1Dmatrix_save mat.r$run.vr.aff12.1D pb01.$subj.r$run.tshift+orig",
+        "parameters": {
+          "-verbose": true,
+          "-zpad": "1",
+          "-base": "pb01.$subj.r01.tshift+orig'[2]'",
+          "-1Dfile": "dfile.r$run.1D",
+          "-prefix": "rm.epi.volreg.r$run",
+          "-cubic": true
+        },
+        "used": [
+          "urn:5092917d-96ae-4607-aa6c-7e961236061f"
+        ]
+      },
+      {
+        "@id": "urn:f6609a32-c904-489f-b209-f17284a8d324",
+        "label": "3dcalc",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dcalc -overwrite -a pb01.$subj.r$run.tshift+orig -expr 1 -prefix rm.epi.all1",
+        "parameters": {
+          "-overwrite": true,
+          "-expr": "1"
+        },
+        "used": [
+          "urn:5092917d-96ae-4607-aa6c-7e961236061f"
+        ]
+      },
+      {
+        "@id": "urn:65ead832-5fe4-4beb-93ad-9d2cd976c876",
+        "label": "cat_matvec",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "cat_matvec -ONELINE sub-01_T1w_ns+tlrc::WARP_DATA -I sub-01_T1w_al_junk_mat.aff12.1D -I mat.r$run.vr.aff12.1D > mat.r$run.warp.aff12.1D",
+        "parameters": {
+          "-ONELINE": "sub-01_T1w_ns+tlrc::WARP_DATA",
+          "-I": true
+        },
+        "used": []
+      },
+      {
+        "@id": "urn:c32e642b-6538-4ac1-9ff6-04e9a76653d7",
+        "label": "3dAllineate",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dAllineate -base sub-01_T1w_ns+tlrc -input pb01.$subj.r$run.tshift+orig -1Dmatrix_apply mat.r$run.warp.aff12.1D -mast_dxyz 3 -prefix rm.epi.nomask.r$run",
+        "parameters": {
+          "-mast_dxyz": "3"
+        },
+        "used": [
+          "urn:fba952eb-c9c1-49bb-a6d0-56f6230aa5e0",
+          "urn:5092917d-96ae-4607-aa6c-7e961236061f",
+          "urn:e33eecab-c631-49b1-bd75-ba1d612f57cc"
+        ]
+      },
+      {
+        "@id": "urn:dbb2250c-aff2-456e-8394-23b66a2d37d6",
+        "label": "3dAllineate",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dAllineate -base sub-01_T1w_ns+tlrc -input rm.epi.all1+orig -1Dmatrix_apply mat.r$run.warp.aff12.1D -mast_dxyz 3 -final NN -quiet -prefix rm.epi.1.r$run",
+        "parameters": {
+          "-mast_dxyz": "3",
+          "-final": "NN",
+          "-quiet": true
+        },
+        "used": [
+          "urn:fba952eb-c9c1-49bb-a6d0-56f6230aa5e0",
+          "urn:0f1aee95-46c4-45fe-8d30-62517697fa82",
+          "urn:e33eecab-c631-49b1-bd75-ba1d612f57cc"
+        ]
+      },
+      {
+        "@id": "urn:0a95cfd9-a53b-4b73-bc68-a0586e840a02",
+        "label": "3dTstat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTstat -min -prefix rm.epi.min.r$run rm.epi.1.r$run+tlrc",
+        "parameters": {
+          "-min": true
+        },
+        "used": [
+          "urn:9f876a48-cb88-49bb-857d-d6a07f20a83f"
+        ]
+      },
+      {
+        "@id": "urn:0ec8bb26-1c87-4740-8c6c-8f276f28fca7",
+        "label": "cat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "cat dfile.r*.1D > dfile_rall.1D",
+        "parameters": {},
+        "used": [
+          "urn:12b0988d-3ce5-4775-843b-ef7eacf4033c"
+        ]
+      },
+      {
+        "@id": "urn:28b84f05-34b1-4856-8b3d-3d50af931a2e",
+        "label": "3dcopy",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dcopy rm.epi.min.r01+tlrc mask_epi_extents",
+        "parameters": {},
+        "used": [
+          "urn:a62b4632-0a06-49ea-86c0-cca0a40b3152"
+        ]
+      },
+      {
+        "@id": "urn:e41ad7d8-d23e-4ec5-96f9-96031d5e019c",
+        "label": "3dcalc",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dcalc -a rm.epi.nomask.r$run+tlrc -b mask_epi_extents+tlrc -expr 'a*b' -prefix pb02.$subj.r$run.volreg",
+        "parameters": {
+          "-expr": "'a*b'"
+        },
+        "used": [
+          "urn:63b754c2-6fa1-4ab3-ac56-0e4d9dd7b307",
+          "urn:a9884353-0f3f-40b2-96e5-9361d9a2efd9"
+        ]
+      },
+      {
+        "@id": "urn:7beb22c9-2ccd-46b0-91ab-798c5c353afc",
+        "label": "3dcopy",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dcopy sub-01_T1w_ns+tlrc anat_final.$subj",
+        "parameters": {},
+        "used": [
+          "urn:fba952eb-c9c1-49bb-a6d0-56f6230aa5e0"
+        ]
+      },
+      {
+        "@id": "urn:84d8e4ed-f00c-4d01-9dab-625ee6f877dd",
+        "label": "3dAllineate",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dAllineate -source sub-01_T1w+orig -master anat_final.$subj+tlrc -final wsinc5 -1Dmatrix_apply warp.anat.Xat.1D -prefix anat_w_skull_warped",
+        "parameters": {
+          "-source": "sub-01_T1w+orig",
+          "-master": "anat_final.$subj+tlrc",
+          "-final": "wsinc5"
+        },
+        "used": [
+          "urn:ebc6aa00-d402-49b0-9cb6-7c464345f3c4"
+        ]
+      },
+      {
+        "@id": "urn:af2fabe9-03ec-44a3-8a46-bd73b7c6e7e3",
+        "label": "3dmerge",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dmerge -1blur_fwhm 4.0 -doall -prefix pb03.$subj.r$run.blur pb02.$subj.r$run.volreg+tlrc",
+        "parameters": {
+          "-1blur_fwhm": "4.0",
+          "-doall": true,
+          "-prefix": "pb03.$subj.r$run.blur"
+        },
+        "used": []
+      },
+      {
+        "@id": "urn:872c5cb2-b0e8-4dc0-9d44-45171b8eb9df",
+        "label": "3dAutomask",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dAutomask -dilate 1 -prefix rm.mask_r$run pb03.$subj.r$run.blur+tlrc",
+        "parameters": {
+          "-dilate": "1"
+        },
+        "used": [
+          "urn:00fed25b-923c-4e05-8cf9-2c5273b3e859"
+        ]
+      },
+      {
+        "@id": "urn:c26aa67d-7da9-4505-8afd-e1697f8367b3",
+        "label": "3dmask_tool",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dmask_tool -inputs rm.mask_r*+tlrc.HEAD -union -prefix full_mask.$subj",
+        "parameters": {
+          "-inputs": "rm.mask_r*+tlrc.HEAD",
+          "-union": true
+        },
+        "used": []
+      },
+      {
+        "@id": "urn:ea434099-2f36-485e-8896-aa2755c3ede5",
+        "label": "3dresample",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dresample -master full_mask.$subj+tlrc -input sub-01_T1w_ns+tlrc -prefix rm.resam.anat",
+        "parameters": {},
+        "used": [
+          "urn:fba952eb-c9c1-49bb-a6d0-56f6230aa5e0",
+          "urn:14d98287-90ec-49ef-9e98-2897475d62ba"
+        ]
+      },
+      {
+        "@id": "urn:898c3c4b-1494-46ae-bcc9-7a90c9b27c6c",
+        "label": "3dmask_tool",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dmask_tool -dilate_input 5 -5 -fill_holes -input rm.resam.anat+tlrc -prefix mask_anat.$subj",
+        "parameters": {
+          "-dilate_input": "5",
+          "-5": true,
+          "-fill_holes": true
+        },
+        "used": [
+          "urn:9092582e-41aa-4ece-b97a-7ae3ac2b35a8"
+        ]
+      },
+      {
+        "@id": "urn:a8edc81b-7258-451e-9c9d-de1fe52cccfe",
+        "label": "3dABoverlap",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dABoverlap -no_automask full_mask.$subj+tlrc mask_anat.$subj+tlrc |& tee out.mask_ae_overlap.txt",
+        "parameters": {
+          "-no_automask": "|&"
+        },
+        "used": [
+          "urn:14d98287-90ec-49ef-9e98-2897475d62ba",
+          "urn:cf7c4dfc-2d15-483d-a45e-487ece1bc3bd"
+        ]
+      },
+      {
+        "@id": "urn:1a9263bf-325a-4ce7-8431-2edff50f3e20",
+        "label": "3ddot",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3ddot -dodice full_mask.$subj+tlrc mask_anat.$subj+tlrc |& tee out.mask_ae_dice.txt",
+        "parameters": {
+          "-dodice": "|&"
+        },
+        "used": [
+          "urn:14d98287-90ec-49ef-9e98-2897475d62ba",
+          "urn:cf7c4dfc-2d15-483d-a45e-487ece1bc3bd"
+        ]
+      },
+      {
+        "@id": "urn:b1ff5744-8b2b-47cb-bbed-5af6e896374f",
+        "label": "3dresample",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dresample -master full_mask.$subj+tlrc -prefix ./rm.resam.group -input /Users/u1591557/abin/TT_N27+tlrc",
+        "parameters": {},
+        "used": [
+          "urn:74af4b3c-7d72-4943-8110-d327b8bedd6b",
+          "urn:14d98287-90ec-49ef-9e98-2897475d62ba"
+        ]
+      },
+      {
+        "@id": "urn:fbcc546b-519f-4c91-891d-59a8d603aeee",
+        "label": "3dmask_tool",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dmask_tool -dilate_input 5 -5 -fill_holes -input rm.resam.group+tlrc -prefix mask_group",
+        "parameters": {
+          "-dilate_input": "5",
+          "-5": true,
+          "-fill_holes": true
+        },
+        "used": [
+          "urn:8a57c239-5562-40e3-8348-b2abd4a04b81"
+        ]
+      },
+      {
+        "@id": "urn:8c1352eb-2646-4bdb-946c-ba2cc2bb396f",
+        "label": "3dTstat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTstat -prefix rm.mean_r$run pb03.$subj.r$run.blur+tlrc",
+        "parameters": {},
+        "used": [
+          "urn:00fed25b-923c-4e05-8cf9-2c5273b3e859"
+        ]
+      },
+      {
+        "@id": "urn:3c6cecc3-81b6-44eb-a7c8-8cbd123f0b77",
+        "label": "3dcalc",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dcalc -a pb03.$subj.r$run.blur+tlrc -b rm.mean_r$run+tlrc -c mask_epi_extents+tlrc -expr 'c * min(200, a/b*100)*step(a)*step(b)' -prefix pb04.$subj.r$run.scale",
+        "parameters": {
+          "-expr": "'c"
+        },
+        "used": [
+          "urn:00fed25b-923c-4e05-8cf9-2c5273b3e859",
+          "urn:4c47a110-d191-4006-9bae-a56177842b1c",
+          "urn:a9884353-0f3f-40b2-96e5-9361d9a2efd9"
+        ]
+      },
+      {
+        "@id": "urn:27abcbbf-90c7-4a25-af0d-8aa03c8cc180",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -demean -write motion_demean.1D",
+        "parameters": {
+          "-set_nruns": "1",
+          "-demean": true
+        },
+        "used": [
+          "urn:657559de-5a89-424f-8971-75a0d74a5c88"
+        ]
+      },
+      {
+        "@id": "urn:ca83bbb3-edef-42b4-845f-d02c99fa2c24",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -derivative -demean -write motion_deriv.1D",
+        "parameters": {
+          "-set_nruns": "1",
+          "-derivative": true,
+          "-demean": true
+        },
+        "used": [
+          "urn:657559de-5a89-424f-8971-75a0d74a5c88"
+        ]
+      },
+      {
+        "@id": "urn:3706e9d4-10bc-4612-916e-1b2870443f8f",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -show_censor_count -censor_prev_TR -censor_motion 0.3 motion_${subj}",
+        "parameters": {
+          "-set_nruns": "1",
+          "-show_censor_count": true,
+          "-censor_prev_TR": true,
+          "-censor_motion": "0.3"
+        },
+        "used": [
+          "urn:657559de-5a89-424f-8971-75a0d74a5c88"
+        ]
+      },
+      {
+        "@id": "urn:deb88b7f-274d-4058-bdfd-d231a3038213",
+        "label": "3dDeconvolve",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dDeconvolve -input pb04.$subj.r*.scale+tlrc.HEAD -censor motion_${subj}_censor.1D -polort 2 -num_stimts 8 -stim_times 1 stimuli/tone_counting_onset_times.txt 'BLOCK(4)' -stim_label 1 tone_counting -stim_times_AM1 2 stimuli/tone_counting_probe_duration.txt 'dmBLOCK' -stim_label 2 probe -stim_file 3 motion_demean.1D'[0]' -stim_base 3 -stim_label 3 roll -stim_file 4 motion_demean.1D'[1]' -stim_base 4 -stim_label 4 pitch -stim_file 5 motion_demean.1D'[2]' -stim_base 5 -stim_label 5 yaw -stim_file 6 motion_demean.1D'[3]' -stim_base 6 -stim_label 6 dS -stim_file 7 motion_demean.1D'[4]' -stim_base 7 -stim_label 7 dL -stim_file 8 motion_demean.1D'[5]' -stim_base 8 -stim_label 8 dP -fout -tout -x1D X.xmat.1D -xjpeg X.jpg -x1D_uncensored X.nocensor.xmat.1D -fitts fitts.$subj -errts errts.${subj} -bucket stats.$subj",
+        "parameters": {
+          "-censor": "motion_${subj}_censor.1D",
+          "-polort": "2",
+          "-num_stimts": "8",
+          "-stim_times": "1",
+          "-stim_label": true,
+          "-stim_times_AM1": "2",
+          "-stim_file": true,
+          "-stim_base": true,
+          "-fout": true,
+          "-tout": true,
+          "-xjpeg": "X.jpg",
+          "-x1D_uncensored": "X.nocensor.xmat.1D",
+          "-fitts": "fitts.$subj",
+          "-errts": "errts.${subj}",
+          "-bucket": "stats.$subj"
+        },
+        "used": [
+          "urn:45a4d6a6-d515-4ac1-b31a-629d555d649f"
+        ]
+      },
+      {
+        "@id": "urn:49cfee7b-5927-404b-9d67-14c4fa7f3ae1",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "1d_tool.py -show_cormat_warnings -infile X.xmat.1D |& tee out.cormat_warn.txt",
+        "parameters": {
+          "-show_cormat_warnings": "|&"
+        },
+        "used": [
+          "urn:8055e70f-69c7-4f77-91a9-0ce9014a3b9d"
+        ]
+      },
+      {
+        "@id": "urn:dd5248bc-4317-4075-b407-03d823caee52",
+        "label": "3dTcat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTcat -prefix all_runs.$subj pb04.$subj.r*.scale+tlrc.HEAD",
+        "parameters": {},
+        "used": [
+          "urn:45a4d6a6-d515-4ac1-b31a-629d555d649f"
+        ]
+      },
+      {
+        "@id": "urn:ce43f889-0d36-472b-808d-886f19532c70",
+        "label": "3dTstat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTstat -mean -prefix rm.signal.all all_runs.$subj+tlrc\"[$ktrs]\"",
+        "parameters": {
+          "-mean": true
+        },
+        "used": [
+          "urn:29a380de-436a-421e-a300-af217d3c792b"
+        ]
+      },
+      {
+        "@id": "urn:19210d8a-5bce-4bb3-b16e-1c0be340a4bf",
+        "label": "3dTstat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTstat -stdev -prefix rm.noise.all errts.${subj}+tlrc\"[$ktrs]\"",
+        "parameters": {
+          "-stdev": true
+        },
+        "used": [
+          "urn:9ae9a0b2-0ca2-4c40-b384-a8a2099bf003"
+        ]
+      },
+      {
+        "@id": "urn:a4e590b9-076b-4fc9-8b7e-8dbb7c33c4a6",
+        "label": "3dcalc",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dcalc -a rm.signal.all+tlrc -b rm.noise.all+tlrc -c full_mask.$subj+tlrc -expr 'c*a/b' -prefix TSNR.$subj",
+        "parameters": {
+          "-expr": "'c*a/b'"
+        },
+        "used": [
+          "urn:db835343-f827-42c6-8a3a-c31c867e5db7",
+          "urn:3fea6f4c-585a-4515-8b2c-c85534325ae7",
+          "urn:14d98287-90ec-49ef-9e98-2897475d62ba"
+        ]
+      },
+      {
+        "@id": "urn:9943d5c1-cb45-4ccd-b2e8-101012413643",
+        "label": "3dTnorm",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTnorm -norm2 -prefix rm.errts.unit errts.${subj}+tlrc",
+        "parameters": {
+          "-norm2": true
+        },
+        "used": [
+          "urn:9ae9a0b2-0ca2-4c40-b384-a8a2099bf003"
+        ]
+      },
+      {
+        "@id": "urn:aa43eb16-f1ed-49d8-b161-d6d8f4908298",
+        "label": "3dmaskave",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dmaskave -quiet -mask full_mask.$subj+tlrc rm.errts.unit+tlrc > gmean.errts.unit.1D",
+        "parameters": {
+          "-quiet": true,
+          "-mask": true
+        },
+        "used": [
+          "urn:14d98287-90ec-49ef-9e98-2897475d62ba",
+          "urn:6fef8475-1349-444f-a29e-c89e668aafe2"
+        ]
+      },
+      {
+        "@id": "urn:7e507c4a-d257-4ffe-a492-750c53e9fda6",
+        "label": "3dTstat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTstat -sos -prefix - gmean.errts.unit.1D\\' > out.gcor.1D",
+        "parameters": {
+          "-sos": "gmean.errts.unit.1D\\'"
+        },
+        "used": [
+          "urn:8e146ee0-a82e-4518-a64a-8cfe3a6d4186"
+        ]
+      },
+      {
+        "@id": "urn:ca333dae-9628-4b3c-88b5-626cbf8d6eca",
+        "label": "3dcalc",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dcalc -a rm.errts.unit+tlrc -b gmean.errts.unit.1D -expr 'a*b' -prefix rm.DP",
+        "parameters": {
+          "-expr": "'a*b'"
+        },
+        "used": [
+          "urn:6fef8475-1349-444f-a29e-c89e668aafe2",
+          "urn:ffa2d84f-3639-415a-81e8-bdd033e351a9"
+        ]
+      },
+      {
+        "@id": "urn:80653d95-874b-4a28-a8f9-ad4ba1c5b20c",
+        "label": "3dTstat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTstat -sum -prefix corr_brain rm.DP+tlrc",
+        "parameters": {
+          "-sum": true
+        },
+        "used": [
+          "urn:52bc0245-a832-4743-a94e-f310fd20dc26"
+        ]
+      },
+      {
+        "@id": "urn:362912d8-5ba7-49c6-97aa-160a613358ae",
+        "label": "1dcat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "1dcat X.nocensor.xmat.1D'[3]' > ideal_tone_counting.1D",
+        "parameters": {},
+        "used": [
+          "urn:9e65f371-91e4-404d-b1ed-2e663f018a3a"
+        ]
+      },
+      {
+        "@id": "urn:928b89a5-b0b1-46c3-a793-f7c11a8cc67e",
+        "label": "1dcat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "1dcat X.nocensor.xmat.1D'[4]' > ideal_probe.1D",
+        "parameters": {},
+        "used": [
+          "urn:9e65f371-91e4-404d-b1ed-2e663f018a3a"
+        ]
+      },
+      {
+        "@id": "urn:72a381ec-7562-40ea-842f-0d7efe2afb40",
+        "label": "3dTstat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dTstat -sum -prefix sum_ideal.1D X.nocensor.xmat.1D\"[$reg_cols]\"",
+        "parameters": {
+          "-sum": true
+        },
+        "used": [
+          "urn:9e65f371-91e4-404d-b1ed-2e663f018a3a"
+        ]
+      },
+      {
+        "@id": "urn:2fb3401b-3474-42f1-b76a-9ce5b8425eaf",
+        "label": "1dcat",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "1dcat X.nocensor.xmat.1D\"[$reg_cols]\" > X.stim.xmat.1D",
+        "parameters": {},
+        "used": [
+          "urn:9e65f371-91e4-404d-b1ed-2e663f018a3a"
+        ]
+      },
+      {
+        "@id": "urn:448ade52-422e-4151-9199-f4269e18b36e",
+        "label": "3dFWHMx",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dFWHMx -detrend -mask full_mask.$subj+tlrc all_runs.$subj+tlrc\"[$trs]\" >> blur.epits.1D",
+        "parameters": {
+          "-detrend": "all_runs.$subj+tlrc\"[$trs]\""
+        },
+        "used": [
+          "urn:14d98287-90ec-49ef-9e98-2897475d62ba"
+        ]
+      },
+      {
+        "@id": "urn:603ce7d4-5f50-475e-bca6-0a687d23f1f7",
+        "label": "3dFWHMx",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dFWHMx -detrend -mask full_mask.$subj+tlrc errts.${subj}+tlrc\"[$trs]\" >> blur.errts.1D",
+        "parameters": {
+          "-detrend": "errts.${subj}+tlrc\"[$trs]\""
+        },
+        "used": [
+          "urn:14d98287-90ec-49ef-9e98-2897475d62ba"
+        ]
+      },
+      {
+        "@id": "urn:7a0fa8d7-9907-4715-9d91-5e0eb6c3a272",
+        "label": "3dClustSim",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "3dClustSim -both -mask full_mask.$subj+tlrc -fwhmxyz $fxyz[1-3] -prefix ClustSim",
+        "parameters": {
+          "-both": true,
+          "-fwhmxyz": "$fxyz[1-3]"
+        },
+        "used": [
+          "urn:14d98287-90ec-49ef-9e98-2897475d62ba"
+        ]
+      },
+      {
+        "@id": "urn:9df63506-0875-4dd0-a7a7-74989cb49912",
+        "label": "$cmd",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "$cmd stats.$subj+tlrc",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:be0f226d-494c-4f3c-8c51-8c384afd2c94",
+        "label": "gen_epi_review.py",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "gen_epi_review.py -script @epi_review.$subj -dsets pb00.$subj.r*.tcat+orig.HEAD",
+        "parameters": {
+          "-script": "@epi_review.$subj"
+        },
+        "used": [
+          "urn:2835d76e-7ae9-447e-a534-38b93a5c0a11"
+        ]
+      },
+      {
+        "@id": "urn:01e81986-7614-4f23-9e3c-d02661eb2f67",
+        "label": "gen_ss_review_scripts.py",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "gen_ss_review_scripts.py -mot_limit 0.3 -exit0",
+        "parameters": {
+          "-mot_limit": "0.3",
+          "-exit0": true
+        },
+        "used": []
+      },
+      {
+        "@id": "urn:cc910dc3-b5be-45d5-a18e-dbe67b4774f1",
+        "label": "\\rm",
+        "associatedWith": "urn:1bc0f9b7-e9b9-403f-a147-317309e36c0a",
+        "command": "\\rm -f rm.*",
+        "parameters": {
+          "-f": "rm.*"
+        },
+        "used": []
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:1259b918-7b36-46a0-9420-73f071049a01",
+        "label": "$output_dir",
+        "prov:atLocation": "$output_dir",
+        "generatedBy": "urn:a9cc5eef-578c-46d9-991c-10e6f80db205"
+      },
+      {
+        "@id": "urn:af2bb853-64ab-4173-8021-c74c3460141a",
+        "label": "stimuli",
+        "prov:atLocation": "stimuli",
+        "generatedBy": "urn:c25c6ddb-b304-4e70-8fb1-55d746992ef9"
+      },
+      {
+        "@id": "urn:6b531480-728a-43a0-bcab-b042d57906eb",
+        "label": "tone_counting_onset_times.txt",
+        "prov:atLocation": "tone_counting_onset_times.txt"
+      },
+      {
+        "@id": "urn:e5a84379-f6cc-4bf9-a4b7-5bc1a632a0c5",
+        "label": "tone_counting_probe_duration.txt",
+        "prov:atLocation": "tone_counting_probe_duration.txt"
+      },
+      {
+        "@id": "urn:6688c119-4464-45c9-adc4-eee6104e8c41",
+        "label": "stimuli",
+        "prov:atLocation": "stimuli",
+        "generatedBy": "urn:e174c00a-6da3-4b78-9e3f-4720f0d49f10"
+      },
+      {
+        "@id": "urn:1b2c70be-4c92-4178-a06a-99f484d920ce",
+        "label": "sub-01_T1w.nii.gz",
+        "prov:atLocation": "sub-01_T1w.nii.gz"
+      },
+      {
+        "@id": "urn:9fa53b48-cb38-4e12-97e0-f8410cb76b69",
+        "label": "sub-01_T1w",
+        "prov:atLocation": "sub-01_T1w",
+        "generatedBy": "urn:3787e058-b5cd-41b9-8c4b-bf316fce92e2"
+      },
+      {
+        "@id": "urn:b7346ca2-bafb-492c-9d82-57eb5a35bfde",
+        "label": "sub-01_task-tonecounting_bold.nii.gz",
+        "prov:atLocation": "sub-01_task-tonecounting_bold.nii.gz"
+      },
+      {
+        "@id": "urn:b2e6d281-5afe-454b-8372-373e03394b23",
+        "label": "pb00.$subj.r01.tcat",
+        "prov:atLocation": "pb00.$subj.r01.tcat",
+        "generatedBy": "urn:a32b9faf-e798-42c2-9bda-6b2e4eddf2a2"
+      },
+      {
+        "@id": "urn:ef541d2c-cad4-4f73-8817-f4c7cce9dbbe",
+        "label": "pb00.$subj.r$run.tcat",
+        "prov:atLocation": "pb00.$subj.r$run.tcat"
+      },
+      {
+        "@id": "urn:ba454b88-b2b7-42d3-a63b-bfab44a09208",
+        "label": "outcount.r$run.1D",
+        "prov:atLocation": "outcount.r$run.1D",
+        "generatedBy": "urn:35873e58-ffb4-423a-8eb7-ca2933b4f88b"
+      },
+      {
+        "@id": "urn:269e5eab-2d09-4927-b5b0-82f652cad119",
+        "label": "outcount.r*.1D",
+        "prov:atLocation": "outcount.r*.1D"
+      },
+      {
+        "@id": "urn:fb6a6bee-3172-404f-9a9e-60431d3f1be0",
+        "label": "outcount_rall.1D",
+        "prov:atLocation": "outcount_rall.1D",
+        "generatedBy": "urn:806b1ddb-aa7d-4d44-8030-c963c8f8a5a2"
+      },
+      {
+        "@id": "urn:5092917d-96ae-4607-aa6c-7e961236061f",
+        "label": "pb01.$subj.r$run.tshift",
+        "prov:atLocation": "pb01.$subj.r$run.tshift",
+        "generatedBy": "urn:9d831fbc-4b26-402e-8209-0db8f12fed5e"
+      },
+      {
+        "@id": "urn:41fc34ba-27a2-4943-a4e9-c5a4c7f6da5f",
+        "label": "pb01.$subj.r01.tshift",
+        "prov:atLocation": "pb01.$subj.r01.tshift"
+      },
+      {
+        "@id": "urn:0f6806aa-4309-49be-9afa-adf9c579c773",
+        "label": "_al_junk",
+        "prov:atLocation": "_al_junk",
+        "generatedBy": "urn:e5eeb47f-ccd6-464d-a309-5d8332a38d71"
+      },
+      {
+        "@id": "urn:74af4b3c-7d72-4943-8110-d327b8bedd6b",
+        "label": "TT_N27",
+        "prov:atLocation": "TT_N27"
+      },
+      {
+        "@id": "urn:fba952eb-c9c1-49bb-a6d0-56f6230aa5e0",
+        "label": "sub-01_T1w_ns",
+        "prov:atLocation": "sub-01_T1w_ns"
+      },
+      {
+        "@id": "urn:ebc6aa00-d402-49b0-9cb6-7c464345f3c4",
+        "label": "warp.anat.Xat.1D",
+        "prov:atLocation": "warp.anat.Xat.1D",
+        "generatedBy": "urn:92d896e2-739f-41f8-b5fd-0337c9a38e55"
+      },
+      {
+        "@id": "urn:a25e0166-bbf5-4705-8c40-b4c9b2be52fb",
+        "label": "mat.r$run.vr.aff12.1D",
+        "prov:atLocation": "mat.r$run.vr.aff12.1D",
+        "generatedBy": "urn:c43695c8-c86f-487f-b556-6b84f2ce3a64"
+      },
+      {
+        "@id": "urn:0f1aee95-46c4-45fe-8d30-62517697fa82",
+        "label": "rm.epi.all1",
+        "prov:atLocation": "rm.epi.all1",
+        "generatedBy": "urn:f6609a32-c904-489f-b209-f17284a8d324"
+      },
+      {
+        "@id": "urn:e33eecab-c631-49b1-bd75-ba1d612f57cc",
+        "label": "mat.r$run.warp.aff12.1D",
+        "prov:atLocation": "mat.r$run.warp.aff12.1D",
+        "generatedBy": "urn:65ead832-5fe4-4beb-93ad-9d2cd976c876"
+      },
+      {
+        "@id": "urn:63b754c2-6fa1-4ab3-ac56-0e4d9dd7b307",
+        "label": "rm.epi.nomask.r$run",
+        "prov:atLocation": "rm.epi.nomask.r$run",
+        "generatedBy": "urn:c32e642b-6538-4ac1-9ff6-04e9a76653d7"
+      },
+      {
+        "@id": "urn:9f876a48-cb88-49bb-857d-d6a07f20a83f",
+        "label": "rm.epi.1.r$run",
+        "prov:atLocation": "rm.epi.1.r$run",
+        "generatedBy": "urn:dbb2250c-aff2-456e-8394-23b66a2d37d6"
+      },
+      {
+        "@id": "urn:973d5218-05f2-4b30-a642-d8625ab17f53",
+        "label": "rm.epi.min.r$run",
+        "prov:atLocation": "rm.epi.min.r$run",
+        "generatedBy": "urn:0a95cfd9-a53b-4b73-bc68-a0586e840a02"
+      },
+      {
+        "@id": "urn:12b0988d-3ce5-4775-843b-ef7eacf4033c",
+        "label": "dfile.r*.1D",
+        "prov:atLocation": "dfile.r*.1D"
+      },
+      {
+        "@id": "urn:657559de-5a89-424f-8971-75a0d74a5c88",
+        "label": "dfile_rall.1D",
+        "prov:atLocation": "dfile_rall.1D",
+        "generatedBy": "urn:0ec8bb26-1c87-4740-8c6c-8f276f28fca7"
+      },
+      {
+        "@id": "urn:a62b4632-0a06-49ea-86c0-cca0a40b3152",
+        "label": "rm.epi.min.r01",
+        "prov:atLocation": "rm.epi.min.r01"
+      },
+      {
+        "@id": "urn:a9884353-0f3f-40b2-96e5-9361d9a2efd9",
+        "label": "mask_epi_extents",
+        "prov:atLocation": "mask_epi_extents",
+        "generatedBy": "urn:28b84f05-34b1-4856-8b3d-3d50af931a2e"
+      },
+      {
+        "@id": "urn:523894fa-0643-4990-8393-e4bb4996fb9f",
+        "label": "pb02.$subj.r$run.volreg",
+        "prov:atLocation": "pb02.$subj.r$run.volreg",
+        "generatedBy": "urn:e41ad7d8-d23e-4ec5-96f9-96031d5e019c"
+      },
+      {
+        "@id": "urn:6940f4e1-8a57-4126-9a99-2f2740a9ee81",
+        "label": "anat_final.$subj",
+        "prov:atLocation": "anat_final.$subj",
+        "generatedBy": "urn:7beb22c9-2ccd-46b0-91ab-798c5c353afc"
+      },
+      {
+        "@id": "urn:c543f2f0-67be-44b3-89a6-13a3c709559f",
+        "label": "anat_w_skull_warped",
+        "prov:atLocation": "anat_w_skull_warped",
+        "generatedBy": "urn:84d8e4ed-f00c-4d01-9dab-625ee6f877dd"
+      },
+      {
+        "@id": "urn:00fed25b-923c-4e05-8cf9-2c5273b3e859",
+        "label": "pb03.$subj.r$run.blur",
+        "prov:atLocation": "pb03.$subj.r$run.blur"
+      },
+      {
+        "@id": "urn:8f9d5e43-ae1c-4ec3-9dcb-a4f113dbe4bc",
+        "label": "rm.mask_r$run",
+        "prov:atLocation": "rm.mask_r$run",
+        "generatedBy": "urn:872c5cb2-b0e8-4dc0-9d44-45171b8eb9df"
+      },
+      {
+        "@id": "urn:14d98287-90ec-49ef-9e98-2897475d62ba",
+        "label": "full_mask.$subj",
+        "prov:atLocation": "full_mask.$subj",
+        "generatedBy": "urn:c26aa67d-7da9-4505-8afd-e1697f8367b3"
+      },
+      {
+        "@id": "urn:9092582e-41aa-4ece-b97a-7ae3ac2b35a8",
+        "label": "rm.resam.anat",
+        "prov:atLocation": "rm.resam.anat",
+        "generatedBy": "urn:ea434099-2f36-485e-8896-aa2755c3ede5"
+      },
+      {
+        "@id": "urn:cf7c4dfc-2d15-483d-a45e-487ece1bc3bd",
+        "label": "mask_anat.$subj",
+        "prov:atLocation": "mask_anat.$subj",
+        "generatedBy": "urn:898c3c4b-1494-46ae-bcc9-7a90c9b27c6c"
+      },
+      {
+        "@id": "urn:8a57c239-5562-40e3-8348-b2abd4a04b81",
+        "label": "rm.resam.group",
+        "prov:atLocation": "rm.resam.group",
+        "generatedBy": "urn:b1ff5744-8b2b-47cb-bbed-5af6e896374f"
+      },
+      {
+        "@id": "urn:b3782afe-c3b9-47a1-82ec-1414dd9858db",
+        "label": "mask_group",
+        "prov:atLocation": "mask_group",
+        "generatedBy": "urn:fbcc546b-519f-4c91-891d-59a8d603aeee"
+      },
+      {
+        "@id": "urn:4c47a110-d191-4006-9bae-a56177842b1c",
+        "label": "rm.mean_r$run",
+        "prov:atLocation": "rm.mean_r$run",
+        "generatedBy": "urn:8c1352eb-2646-4bdb-946c-ba2cc2bb396f"
+      },
+      {
+        "@id": "urn:4c6c6e63-73d4-40bd-bbf6-2b82ced9862c",
+        "label": "pb04.$subj.r$run.scale",
+        "prov:atLocation": "pb04.$subj.r$run.scale",
+        "generatedBy": "urn:3c6cecc3-81b6-44eb-a7c8-8cbd123f0b77"
+      },
+      {
+        "@id": "urn:16d5a0eb-4398-4bcf-8403-25fd32268561",
+        "label": "motion_demean.1D",
+        "prov:atLocation": "motion_demean.1D",
+        "generatedBy": "urn:27abcbbf-90c7-4a25-af0d-8aa03c8cc180"
+      },
+      {
+        "@id": "urn:7c60bd15-7a02-4c84-832d-8d9595cb541f",
+        "label": "motion_deriv.1D",
+        "prov:atLocation": "motion_deriv.1D",
+        "generatedBy": "urn:ca83bbb3-edef-42b4-845f-d02c99fa2c24"
+      },
+      {
+        "@id": "urn:45a4d6a6-d515-4ac1-b31a-629d555d649f",
+        "label": "pb04.$subj.r*.scale",
+        "prov:atLocation": "pb04.$subj.r*.scale"
+      },
+      {
+        "@id": "urn:8055e70f-69c7-4f77-91a9-0ce9014a3b9d",
+        "label": "X.xmat.1D",
+        "prov:atLocation": "X.xmat.1D",
+        "generatedBy": "urn:deb88b7f-274d-4058-bdfd-d231a3038213"
+      },
+      {
+        "@id": "urn:29a380de-436a-421e-a300-af217d3c792b",
+        "label": "all_runs.$subj",
+        "prov:atLocation": "all_runs.$subj",
+        "generatedBy": "urn:dd5248bc-4317-4075-b407-03d823caee52"
+      },
+      {
+        "@id": "urn:db835343-f827-42c6-8a3a-c31c867e5db7",
+        "label": "rm.signal.all",
+        "prov:atLocation": "rm.signal.all",
+        "generatedBy": "urn:ce43f889-0d36-472b-808d-886f19532c70"
+      },
+      {
+        "@id": "urn:9ae9a0b2-0ca2-4c40-b384-a8a2099bf003",
+        "label": "errts.${subj}",
+        "prov:atLocation": "errts.${subj}"
+      },
+      {
+        "@id": "urn:3fea6f4c-585a-4515-8b2c-c85534325ae7",
+        "label": "rm.noise.all",
+        "prov:atLocation": "rm.noise.all",
+        "generatedBy": "urn:19210d8a-5bce-4bb3-b16e-1c0be340a4bf"
+      },
+      {
+        "@id": "urn:7f3904c9-70c3-487f-86a6-28bc5f8de46c",
+        "label": "TSNR.$subj",
+        "prov:atLocation": "TSNR.$subj",
+        "generatedBy": "urn:a4e590b9-076b-4fc9-8b7e-8dbb7c33c4a6"
+      },
+      {
+        "@id": "urn:6fef8475-1349-444f-a29e-c89e668aafe2",
+        "label": "rm.errts.unit",
+        "prov:atLocation": "rm.errts.unit",
+        "generatedBy": "urn:9943d5c1-cb45-4ccd-b2e8-101012413643"
+      },
+      {
+        "@id": "urn:ffa2d84f-3639-415a-81e8-bdd033e351a9",
+        "label": "gmean.errts.unit.1D",
+        "prov:atLocation": "gmean.errts.unit.1D",
+        "generatedBy": "urn:aa43eb16-f1ed-49d8-b161-d6d8f4908298"
+      },
+      {
+        "@id": "urn:8e146ee0-a82e-4518-a64a-8cfe3a6d4186",
+        "label": "out.gcor.1D",
+        "prov:atLocation": "out.gcor.1D"
+      },
+      {
+        "@id": "urn:533434a0-7418-4ad4-a74f-eca7457e3232",
+        "label": "-",
+        "prov:atLocation": "-",
+        "generatedBy": "urn:7e507c4a-d257-4ffe-a492-750c53e9fda6"
+      },
+      {
+        "@id": "urn:52bc0245-a832-4743-a94e-f310fd20dc26",
+        "label": "rm.DP",
+        "prov:atLocation": "rm.DP",
+        "generatedBy": "urn:ca333dae-9628-4b3c-88b5-626cbf8d6eca"
+      },
+      {
+        "@id": "urn:5df89268-941c-4a42-aa36-6b1e14c3b8bc",
+        "label": "corr_brain",
+        "prov:atLocation": "corr_brain",
+        "generatedBy": "urn:80653d95-874b-4a28-a8f9-ad4ba1c5b20c"
+      },
+      {
+        "@id": "urn:9e65f371-91e4-404d-b1ed-2e663f018a3a",
+        "label": "X.nocensor.xmat.1D",
+        "prov:atLocation": "X.nocensor.xmat.1D"
+      },
+      {
+        "@id": "urn:0c28ca4b-0071-42e6-b341-1a29abca9f91",
+        "label": "ideal_tone_counting.1D",
+        "prov:atLocation": "ideal_tone_counting.1D",
+        "generatedBy": "urn:362912d8-5ba7-49c6-97aa-160a613358ae"
+      },
+      {
+        "@id": "urn:67e73bae-9a9d-45f5-9570-b9793b4609d4",
+        "label": "ideal_probe.1D",
+        "prov:atLocation": "ideal_probe.1D",
+        "generatedBy": "urn:928b89a5-b0b1-46c3-a793-f7c11a8cc67e"
+      },
+      {
+        "@id": "urn:b13153ac-36af-413d-8a1c-131c166eabc4",
+        "label": "sum_ideal.1D",
+        "prov:atLocation": "sum_ideal.1D",
+        "generatedBy": "urn:72a381ec-7562-40ea-842f-0d7efe2afb40"
+      },
+      {
+        "@id": "urn:098a8f2a-2745-426a-8c5f-890bfa9e22b7",
+        "label": "X.stim.xmat.1D",
+        "prov:atLocation": "X.stim.xmat.1D",
+        "generatedBy": "urn:2fb3401b-3474-42f1-b76a-9ce5b8425eaf"
+      },
+      {
+        "@id": "urn:e2e7e1f8-ab68-4362-8268-b717ef1ed5c2",
+        "label": "blur.epits.1D",
+        "prov:atLocation": "blur.epits.1D",
+        "generatedBy": "urn:448ade52-422e-4151-9199-f4269e18b36e"
+      },
+      {
+        "@id": "urn:7d9c1e61-a3c5-4718-ac83-a03d670c64a9",
+        "label": "blur.errts.1D",
+        "prov:atLocation": "blur.errts.1D",
+        "generatedBy": "urn:603ce7d4-5f50-475e-bca6-0a687d23f1f7"
+      },
+      {
+        "@id": "urn:74339e20-6d69-4e6f-a52c-b05491796bed",
+        "label": "ClustSim",
+        "prov:atLocation": "ClustSim",
+        "generatedBy": "urn:7a0fa8d7-9907-4715-9d91-5e0eb6c3a272"
+      },
+      {
+        "@id": "urn:06aa3a6e-0b64-4583-a617-f063d0cadfab",
+        "label": "stats",
+        "prov:atLocation": "stats",
+        "generatedBy": "urn:9df63506-0875-4dd0-a7a7-74989cb49912"
+      },
+      {
+        "@id": "urn:2835d76e-7ae9-447e-a534-38b93a5c0a11",
+        "label": "pb00.$subj.r*.tcat",
+        "prov:atLocation": "pb00.$subj.r*.tcat"
+      },
+      {
+        "@id": "urn:8d901dc2-fa84-4bcf-b32d-f140f6810834",
+        "label": "-exit0",
+        "prov:atLocation": "-exit0",
+        "generatedBy": "urn:01e81986-7614-4f23-9e3c-d02661eb2f67"
+      }
+    ]
+  }
+}
