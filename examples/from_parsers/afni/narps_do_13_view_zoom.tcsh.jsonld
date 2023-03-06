@@ -1,0 +1,263 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "AFNI",
+        "version": "afni24"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:1013fbfd-0be5-4389-b027-eadc446e45cc",
+        "label": "Make directory",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "mkdir -p ${odir}",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:36af7ed3-4577-4cc4-bb9d-a9ac0793dccb",
+        "label": "IsoSurface",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "IsoSurface -overwrite -isorois+dsets -input    ${ivol} -o_gii    cc_${pref_surf} -Tsmooth  0 0 -remesh   1",
+        "parameters": {
+          "-overwrite": true,
+          "-isorois+dsets": "",
+          "-Tsmooth": "",
+          "-remesh": ""
+        },
+        "used": [
+          "urn:e8386b1b-b970-473b-bf2d-ca4318bd8929"
+        ]
+      },
+      {
+        "@id": "urn:cf069eb7-553c-4335-b6ac-5be34b13526a",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "1d_tool.py -csim_pthr   ${pthr} -csim_alpha  ${alpha} -infile      ${file_1D}",
+        "parameters": {
+          "-csim_pthr": "",
+          "-csim_alpha": ""
+        },
+        "used": [
+          "urn:e8386b1b-b970-473b-bf2d-ca4318bd8929"
+        ]
+      },
+      {
+        "@id": "urn:b018899e-4516-4bb5-9d7d-e445e20a8190",
+        "label": "plugout_drive",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "plugout_drive -echo_edu -npb $portnum -com \"SWITCH_UNDERLAY ${dset_ref:t}\" -com \"SWITCH_OVERLAY  ${dset_ttest:t}\" -com \"SET_XHAIRS  OFF\" -com \"SET_SUBBRICKS      ${subbb}\" -com \"SET_PBAR_ALL -99 1.0 ${cbar}\" -com \"SET_FUNC_ALPHA  ${olay_alpha}\" -com \"SET_FUNC_BOXED  ${olay_boxed}\" -com \"$coor_type $coors\" -com \"SET_THRESHNEW ${thr}\" -com \"SET_FUNC_VISIBLE +\" -com \"SET_FUNC_RANGE  $frange\" -com \"$OW sagittalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[1]}:${mgap}:${mcolor}\" -com \"$OW coronalimage  ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[2]}:${mgap}:${mcolor}\" -com \"$OW axialimage    ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[3]}:${mgap}:${mcolor}\" &",
+        "parameters": {
+          "-echo_edu": true,
+          "-npb": "$portnum",
+          "-com": true,
+          "-99": "1.0"
+        },
+        "used": [
+          "urn:e6f167c7-284c-4f9f-8e1c-82502e05c00b"
+        ]
+      },
+      {
+        "@id": "urn:60fc65e0-6a9a-4d5d-a4f3-9eccdfa9a4cd",
+        "label": "suma",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "suma -echo_edu -npb $portnum -onestate -niml -i        cc*.k*.gii -vol ${dset_ref} -sv  ${dset_ref} &",
+        "parameters": {
+          "-echo_edu": true,
+          "-npb": "$portnum",
+          "-onestate": true,
+          "-niml": true,
+          "-i": "",
+          "-vol": "${dset_ref}",
+          "-sv": ""
+        },
+        "used": [
+          "urn:42bcf48a-1726-4d21-aa25-3501da4519ec"
+        ]
+      },
+      {
+        "@id": "urn:eb544a11-5dd2-4791-a092-eefc79cb6837",
+        "label": "sleep",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "sleep 3",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:5b2b67f7-e1cd-4438-8c91-d43d6964c24f",
+        "label": "DriveSuma",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "DriveSuma -npb $portnum -com viewer_cont -key \"t\" -key \".\"  &",
+        "parameters": {
+          "-npb": "$portnum",
+          "-com": "viewer_cont",
+          "-key": true
+        },
+        "used": []
+      },
+      {
+        "@id": "urn:d306d78c-5291-4536-91b6-3d88b9c10d35",
+        "label": "----------------------------------------------",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "----------------------------------------------",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:d543af2b-1e28-4588-8cba-6ffe45a2308f",
+        "label": "TO",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "TO ADD VIA THE GUI:",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:1a0bb585-c41f-48a6-b16a-076774a64983",
+        "label": "+",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "+ Colorize the surface lines :  rbgyr20_03 and limegreen",
+        "parameters": {},
+        "used": [
+          "urn:f1a9befa-7326-48d8-af84-feffeb842dc1"
+        ]
+      },
+      {
+        "@id": "urn:5d1c41e9-c640-4659-b39c-69ca5be98e9e",
+        "label": "+",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "+ Set the LineWidth          :  6",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:f146ca2d-e633-45ea-8d02-b523561ce3a1",
+        "label": "+",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "+ And clustersize            :  ${clsize}",
+        "parameters": {},
+        "used": [
+          "urn:7b175e6f-13e8-4fb4-abf2-56a973de46a8"
+        ]
+      },
+      {
+        "@id": "urn:e3e7026a-f67f-49a6-bc14-674b742868fa",
+        "label": "...",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "... and then snapshot (for best results)",
+        "parameters": {},
+        "used": [
+          "urn:dfd2a547-2a88-4b0e-95eb-cb5ab159b08d"
+        ]
+      },
+      {
+        "@id": "urn:7da32fe7-057d-45ef-bf54-5edb6b1de004",
+        "label": "----------------------------------------------",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "----------------------------------------------",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:778814c4-d808-4438-ab0c-13ec5ac93561",
+        "label": "EOF",
+        "associatedWith": "urn:e80d91aa-4be4-4e6f-814b-a23189b120ba",
+        "command": "EOF",
+        "parameters": {},
+        "used": []
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:19d33023-3046-43ad-9399-a65559d5014a",
+        "label": "-p",
+        "prov:atLocation": "-p",
+        "generatedBy": "urn:1013fbfd-0be5-4389-b027-eadc446e45cc"
+      },
+      {
+        "@id": "urn:9c30b40b-968e-429f-b284-4cf6edbf3d60",
+        "label": "${odir}",
+        "prov:atLocation": "${odir}",
+        "generatedBy": "urn:1013fbfd-0be5-4389-b027-eadc446e45cc"
+      },
+      {
+        "@id": "urn:e8386b1b-b970-473b-bf2d-ca4318bd8929",
+        "label": "",
+        "prov:atLocation": ""
+      },
+      {
+        "@id": "urn:b2983fd4-ad59-48fc-b4e8-056c21c13743",
+        "label": "",
+        "prov:atLocation": "",
+        "generatedBy": "urn:36af7ed3-4577-4cc4-bb9d-a9ac0793dccb"
+      },
+      {
+        "@id": "urn:e6f167c7-284c-4f9f-8e1c-82502e05c00b",
+        "label": "portnum",
+        "prov:atLocation": "portnum"
+      },
+      {
+        "@id": "urn:292e49f9-ef29-4eb9-8947-7c443e49e939",
+        "label": "mcolor",
+        "prov:atLocation": "mcolor",
+        "generatedBy": "urn:b018899e-4516-4bb5-9d7d-e445e20a8190"
+      },
+      {
+        "@id": "urn:42bcf48a-1726-4d21-aa25-3501da4519ec",
+        "label": "cc*.k*.gii",
+        "prov:atLocation": "cc*.k*.gii"
+      },
+      {
+        "@id": "urn:372787bf-4a97-4f4d-903d-8645c306a332",
+        "label": "portnum",
+        "prov:atLocation": "portnum",
+        "generatedBy": "urn:60fc65e0-6a9a-4d5d-a4f3-9eccdfa9a4cd"
+      },
+      {
+        "@id": "urn:f1a9befa-7326-48d8-af84-feffeb842dc1",
+        "label": "Colorize",
+        "prov:atLocation": "Colorize"
+      },
+      {
+        "@id": "urn:f5cef296-8c11-41f3-87e0-0a0c25cbca78",
+        "label": "limegreen",
+        "prov:atLocation": "limegreen",
+        "generatedBy": "urn:1a0bb585-c41f-48a6-b16a-076774a64983"
+      },
+      {
+        "@id": "urn:fd5dba8a-ba8d-4a58-9fb1-79518b54bd41",
+        "label": "LineWidth",
+        "prov:atLocation": "LineWidth",
+        "generatedBy": "urn:5d1c41e9-c640-4659-b39c-69ca5be98e9e"
+      },
+      {
+        "@id": "urn:7b175e6f-13e8-4fb4-abf2-56a973de46a8",
+        "label": "clustersize",
+        "prov:atLocation": "clustersize"
+      },
+      {
+        "@id": "urn:5cef3349-f909-422e-9264-4c0395010b1f",
+        "label": "clsize",
+        "prov:atLocation": "clsize",
+        "generatedBy": "urn:f146ca2d-e633-45ea-8d02-b523561ce3a1"
+      },
+      {
+        "@id": "urn:dfd2a547-2a88-4b0e-95eb-cb5ab159b08d",
+        "label": "snapshot",
+        "prov:atLocation": "snapshot"
+      },
+      {
+        "@id": "urn:55c0fa5d-ee18-4b9b-af2d-6aea5339bb7f",
+        "label": "results",
+        "prov:atLocation": "results",
+        "generatedBy": "urn:e3e7026a-f67f-49a6-bc14-674b742868fa"
+      }
+    ]
+  }
+}
