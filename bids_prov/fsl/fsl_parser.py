@@ -164,7 +164,8 @@ def _get_arg(serie, arg_rest):
                 arg_list.append(arg_purge[u_arg])
 
         if type(u_arg) == str and ":" in u_arg:
-            arg_list.extend(eval("arg_purge[" + u_arg + "]"))
+            res = eval("arg_purge[" + u_arg + "]")
+            arg_list.extend(res) if type(res) == list else arg_list.append(res)
 
     return arg_list
 
@@ -179,26 +180,46 @@ def is_number(n):
     return True
 
 
-def _get_entities_from_kwarg(inputs, opts, inputs_kwarg):
-    for u_arg in inputs_kwarg:
+def _get_entities_from_kwarg(entities, opts, parse_kwarg):
+    for u_arg in parse_kwarg:
         param = u_arg[0]
         index = u_arg[1]
         value = []
         for (arg, val) in opts._get_kwargs():
+            # print("\n--arg, val", type(arg), type(val), arg, val)
             if param.split("-")[1] == arg:
+                # print("\n----arg select", type(arg), arg)
                 if val != None:
+                    # print("\n------val != None", type(val), val)
                     if type(val) == list:
+                        # print("\n--------val == list", type(val), val)
                         for info in val:
+                            # print("\n----------info in val", type(info), info)
                             for i in index:
-                                if type(info[i]) == str:
-                                    value.append(info[i])
+                                # print("\n------------i in indexn info", type(i), i)
+                                if type(i) != list:
+                                    # print("\n--------------i != list", type(i), i)
+                                    res = eval("info[" + str(i) + "]")
+                                    value.extend(res) if type(
+                                        res) == list else value.append(res)
+                                else:
+                                    for j in i:
+                                        # print(
+                                        #     "\n----------------i == list : j",
+                                        #     type(j),
+                                        #     j,
+                                        #     "info[" + str(j) + "]",
+                                        #     eval("info[" + str(j) + "]"))
+                                        res = eval("info[" + str(j) + "]")
+                                        value.extend(res) if type(
+                                            res) == list else value.append(res)
 
                     else:
                         if not is_number(val):
                             value.append(val)
         if len(value) > 0:
-            inputs.extend(value)
-    return inputs
+            entities.extend(value)
+    return entities
 
 
 def get_entities(cmd_s, parameters):
@@ -232,8 +253,6 @@ def get_entities(cmd_s, parameters):
 
     parser = argparse.ArgumentParser(
         add_help=False, conflict_handler='resolve')
-    # positional argument
-    # parser.add_argument('arg1', nargs='+')
 
     inputs_kwarg = []
     outputs_kwarg = []
@@ -269,7 +288,6 @@ def get_entities(cmd_s, parameters):
     inputs = []
     outputs = []
     params = []
-    # print("opts._get_kwargs", opts._get_kwargs())
     inputs = _get_entities_from_kwarg(inputs, opts, inputs_kwarg)
     outputs = _get_entities_from_kwarg(outputs, opts, outputs_kwarg)
     params = _get_entities_from_kwarg(params, opts, parameters_value)
