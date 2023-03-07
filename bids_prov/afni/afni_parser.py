@@ -91,6 +91,16 @@ def build_records(commands: list, agent_id: str, verbose=False):
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (e.g. `Registration`, `Post-stats`)
 
+    Parameters
+    ----------
+
+    commands : list of str
+        all commands extracted from afni file
+    agent_id : int
+        random uuid for software agent (here afni)
+     verbose : bool
+        True to have more verbosity
+
     Returns
     -------
     dict: a set of records compliant with the BIDS-prov standard
@@ -201,7 +211,21 @@ def build_records(commands: list, agent_id: str, verbose=False):
     return dict(records)
 
 
-def gather_multiline(input_file):
+def gather_multiline(input_file :str) -> list:
+    """
+    gather multiline command split by \ separator
+
+    Parameters
+    ----------
+    input_file : str
+        name of input afni file
+
+    Returns
+    -------
+    commands : list
+        all commands extracted from afni file without filtering
+
+    """
     commands = []
     with open(input_file) as fd:
         for line in fd:
@@ -212,7 +236,20 @@ def gather_multiline(input_file):
                 commands.append(command_)
 
     return commands
-def readlines(input_file):
+def readlines(input_file:str) -> list:
+    """
+    gather multiline command split by \ separator
+
+    Parameters
+    ----------
+    input_file : str
+        name of input afni file
+
+    Returns
+    -------
+      commands : list
+         all commands extracted from afni file with  filtering function that gives no input/output
+    """
     commands = gather_multiline(input_file)
     filtered = "\n".join(commands)
     filtered = re.sub(r"cat <<EOF[\s\S]*?EOF","", filtered) # drop infile text creation
@@ -225,7 +262,28 @@ def readlines(input_file):
     return commands
 
 def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                     soft_ver='afni24', indent=2, verbose=True) -> None:  # TODO : add afni version
+                     soft_ver='afni24', indent=2, verbose=True) -> None: 
+    """
+    afni parser
+
+    Parameters
+    ----------
+    filename : str
+        filename of  afni script
+    context_url : str
+        url for context bids-prov :
+    output_file : str
+        name of output parsed file with extension json.ld
+    soft_ver:str
+        version of sofware afni
+    indent :int
+        number of indentation in jsonld
+    verbose : bool
+        True to have more verbosity
+
+
+
+    """
     commands = readlines(filename)
     graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
     records = build_records(commands, agent_id, verbose=verbose)
