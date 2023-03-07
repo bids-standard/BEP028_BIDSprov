@@ -148,13 +148,12 @@ def _get_kwarg(serie,  with_value=True):
                 {"arg": u_arg["name"], "nargs": '+', "action": 'append'})
             arg_list.append((u_arg["name"], [u_arg["index"]]))
         if type(u_arg) == str and ":" not in u_arg:
+
             if with_value:
                 if u_arg == ">" or u_arg == ">>":
                     # parser.add_argument("-" + u_arg)
                     add_argument_list.append({"arg": "-" + u_arg})
                     arg_list.append(("-" + u_arg, [0]))
-                    print("serie[k]", serie[k])
-                    print("u_arg", u_arg)
                 else:
                     # parser.add_argument(u_arg)
                     add_argument_list.append({"arg": u_arg})
@@ -284,9 +283,10 @@ def get_entities(cmd_s, parameters):
     parameters_no_value = []
 
     print("\n\n cmd_s", cmd_s)
-    # change cmd_s to add ">" , ">>"  as parameter for argparse
+    # change cmd_s to add ">" , ">>", "|&"  as parameter for argparse
     cmd_s = ["->" if it == ">" else it for it in cmd_s]
     cmd_s = ["->>" if it == ">>" else it for it in cmd_s]
+    cmd_s = ["-|&" if it == "|&" else it for it in cmd_s]
 
     print("\n\n cmd_s change", cmd_s)
 
