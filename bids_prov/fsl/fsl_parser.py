@@ -389,6 +389,10 @@ def get_entities(cmd_s, parameters):
     # print("\n\n outputs", outputs)
     # print("\n\n params", params)
 
+    print("\n\n inputs", inputs)
+    print("\n\n outputs", outputs)
+    print("\n\n params", params)
+
     return inputs, outputs, params
 
 
