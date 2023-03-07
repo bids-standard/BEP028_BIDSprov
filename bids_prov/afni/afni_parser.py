@@ -5,7 +5,7 @@ import os
 from collections import defaultdict
 from itertools import chain
 
-from bids_prov.fsl.fsl_parser import get_entities
+# from bids_prov.fsl.fsl_parser import get_entities
 from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
 
 # regex to catch inputs
@@ -43,7 +43,8 @@ OUTPUT_TAGS = frozenset(
     ]
 )
 
-def clean_label_suffix(label:str) ->str:
+
+def clean_label_suffix(label: str) -> str:
     """ Erase suffix like tlrc in label to keep link of passed entities label
     """
     new_label_rename = re.sub(r"\+tlrc", "", label)
@@ -55,7 +56,88 @@ def clean_label_suffix(label:str) ->str:
     return new_label_rename
 
 
-def find_param(cmd_args_remain:list) ->dict:
+def get_entities(cmd_s, parameters):
+    """
+    Given a list of command arguments `cmd_s` and a list of `parameters`, this function returns the entities associated
+    with the parameters.
+
+    Parameters
+    ----------
+
+    cmd_s : list of str
+        A list of command arguments.
+    parameters : list
+        A list of parameters to search for in `cmd_s`. Each parameter can either be an integer or a string. If the parameter is an integer,
+    the entity will be the string in `cmd_s` at that index. If the parameter is a string, the entity will be the next
+    argument in `cmd_s` after the parameter. If the parameter is a dict, the entity (or entities) will be obtained
+    with the position of the argument and an offset index
+
+    Returns
+    -------
+    list of str A list of entities associated
+    with the parameters.
+
+    Example
+    -------
+    >>> cmd_s = ["command", "-a", "input1", "-b", "input2"]
+    >>> parameters = [2, 4, "-a"]
+    >>> get_entities(cmd_s, parameters)
+    ['input1', 'input2', 'input1']
+    """
+    entities = []
+    args_consumed_list = []
+    for u_arg in parameters:
+        if type(u_arg) == int:
+            if not cmd_s[u_arg].startswith("-"):
+                entities.append(cmd_s[u_arg])   # the "if" is useful for
+            # Entities that are optional but indicated in the description file
+            # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "used": [1, 2]
+            # Sometimes, 2 is present. In the previous command, this is not the case
+                args_consumed_list.append(cmd_s[u_arg])
+        elif type(u_arg) == dict:
+            # Allows us to retrieve entities not directly attached to the parameter name
+            # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "generatedBy":
+            # [{"name": "-A", "index": 2}]
+            if u_arg["name"] in cmd_s:
+                entities.extend([cmd_s[i + u_arg["index"]]
+                                for i, cmd_part in enumerate(cmd_s) if cmd_part == u_arg["name"]])
+                # The for loop allows to retrieve the entities of the parameters appearing several times
+                # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
+        else:
+            # type(u_arg) == str
+            if u_arg in cmd_s:
+                # we add the entity located just after the parameter
+                entities.append(cmd_s[cmd_s.index(u_arg) + 1])
+                if u_arg.startswith("-") or '>' in u_arg:
+                    args_consumed_list.append(cmd_s[cmd_s.index(u_arg) + 1])
+                    args_consumed_list.append(u_arg)
+            elif not u_arg.startswith("-"):  # case of slicing
+                u_arg_splitted = u_arg.split(":")
+                start = int(u_arg_splitted[0])
+                if u_arg_splitted[1] == "":
+                    stop = None
+                else:
+                    stop = int(u_arg_splitted[-1])
+
+                # to skip -r or -rf option
+                if re.search(r"(-f|-rf)", cmd_s[1]):
+                    add_ent = cmd_s[slice(start+1, stop)]
+                else:
+                    add_ent = cmd_s[slice(start, stop)]
+                entities.extend(add_ent)
+                for ent in add_ent:
+                    args_consumed_list.append(ent)
+    renamed_entities = []
+    for ent in entities:
+        new_label = os.path.split(ent)[1]
+        new_label_rename = clean_label_suffix(new_label)
+        renamed_entities.append(new_label_rename)
+    # print("entities: ",entities, " renamed_entities:", renamed_entities)
+
+    return renamed_entities, args_consumed_list
+
+
+def find_param(cmd_args_remain: list) -> dict:
     """ Find parameter in all command arguments that remain after entities extraction
 
     Parameters
@@ -81,7 +163,6 @@ def find_param(cmd_args_remain:list) ->dict:
             else:
                 param_dic[arg_remain] = True
 
-
     return param_dic
 
 
@@ -105,7 +186,8 @@ def build_records(commands: list, agent_id: str, verbose=False):
     dict: a set of records compliant with the BIDS-prov standard
     """
     records = defaultdict(list)
-    filepath = os.path.join(os.path.dirname(__file__), "description_functions.json")
+    filepath = os.path.join(os.path.dirname(__file__),
+                            "description_functions.json")
     with open(filepath) as f:
         description_functions = json.load(f)
 
@@ -121,10 +203,12 @@ def build_records(commands: list, agent_id: str, verbose=False):
         for df in description_functions:
             if df["name"] == command_name_end:
                 function_in_description_functions = True
-                for key,ent_list in zip(["used", "generatedBy"], [inputs,outputs]):
+                for key, ent_list in zip(["used", "generatedBy"], [inputs, outputs]):
                     if key in df:
-                        entities, args_consumed_list = get_entities(cmd_s, df[key])
-                        renamed_entities = [clean_label_suffix(os.path.split(ent)[1]) for ent in entities]
+                        entities, args_consumed_list = get_entities(
+                            cmd_s, df[key])
+                        renamed_entities = [clean_label_suffix(
+                            os.path.split(ent)[1]) for ent in entities]
                         ent_list.extend(renamed_entities)
                         for arg in args_consumed_list:
                             cmd_args_remain.remove(arg)
@@ -142,34 +226,41 @@ def build_records(commands: list, agent_id: str, verbose=False):
             for k, v in param_dic.items():
                 print(f"{k} : {v}")
 
-        if function_in_description_functions is False: # default behavior if function is not present in descriptions
+        # default behavior if function is not present in descriptions
+        if function_in_description_functions is False:
             print(f"-> {command_name_end} : Not present in description_functions")
 
             # if the function is not in our description file, the process is based on regex
             attributes = defaultdict(list)
 
-            for key, value in re.findall(ATTRIBUTE_RE, cmd):            # same key can have multiple value
+            # same key can have multiple value
+            for key, value in re.findall(ATTRIBUTE_RE, cmd):
                 attributes[key].append(value)
 
-            cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd) # make sure attributes are not considered as entities
+            # make sure attributes are not considered as entities
+            cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
             # if a key of attributes is in INPUT_TAGS, we add her value in inputs
-            inputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS)))
+            inputs = list(chain(*(attributes.pop(k)
+                          for k in attributes.keys() & INPUT_TAGS)))
             # same process with OUTPUT_TAGS
-            outputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS)))
-            entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
+            outputs = list(chain(*(attributes.pop(k)
+                           for k in attributes.keys() & OUTPUT_TAGS)))
+            entity_names = [_ for _ in re.findall(
+                INPUT_RE, cmd_without_attributes[len(a_name):])]
 
             if entity_names and entity_names[0] in cmd_without_attributes:
                 outputs.append(entity_names[-1])
                 if len(entity_names) > 1:
                     inputs.append(entity_names[0])
 
-        label = f"{os.path.split(a_name)[1]}"  # the file name and possible extension
+        # the file name and possible extension
+        label = f"{os.path.split(a_name)[1]}"
 
         activity = {
             "@id": f"urn:{get_id()}",
             "label": label_mapping(label, "afni/afni_labels.json"),
             "associatedWith": "urn:" + agent_id,
-            "command": cmd ,
+            "command": cmd,
             "parameters": param_dic,
             "used": list(),
         }
@@ -210,7 +301,7 @@ def build_records(commands: list, agent_id: str, verbose=False):
     return dict(records)
 
 
-def gather_multiline(input_file :str) -> list:
+def gather_multiline(input_file: str) -> list:
     """
     gather multiline command split by \ separator
 
@@ -228,14 +319,18 @@ def gather_multiline(input_file :str) -> list:
     commands = []
     with open(input_file) as fd:
         for line in fd:
-            command_ = line[:-1].strip() # drop '\n' at end and drop blank space
-            if command_: # drop blank line
+            # drop '\n' at end and drop blank space
+            command_ = line[:-1].strip()
+            if command_:  # drop blank line
                 while command_.endswith('\\'):
-                   command_ = command_[:-1].strip() + ' ' + next(fd)[:-1].strip()
+                    command_ = command_[:-1].strip() + ' ' + \
+                        next(fd)[:-1].strip()
                 commands.append(command_)
 
     return commands
-def readlines(input_file:str) -> list:
+
+
+def readlines(input_file: str) -> list:
     """
     gather multiline command split by \ separator
 
@@ -251,17 +346,22 @@ def readlines(input_file:str) -> list:
     """
     commands = gather_multiline(input_file)
     filtered = "\n".join(commands)
-    filtered = re.sub(r"cat <<EOF[\s\S]*?EOF","", filtered) # drop infile text creation
+    # drop infile text creation
+    filtered = re.sub(r"cat <<EOF[\s\S]*?EOF", "", filtered)
     commands = filtered.split("\n")
-    dropline_begin = ["#", "cd", "printf", "\\rm", "$cmd", 'touch', 'sleep', 'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
-    commands = [cmd for cmd in commands if not any(cmd.startswith(begin) for begin in dropline_begin)]
-    commands = [re.sub( r"\s+", " ", cmd) for cmd in commands] # drop multiple space between args
-    commands = [cmd for cmd in commands if cmd] # drop empty commands
+    dropline_begin = ["#", "cd", "printf", "\\rm", "$cmd", 'touch', 'sleep',
+                      'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
+    commands = [cmd for cmd in commands if not any(
+        cmd.startswith(begin) for begin in dropline_begin)]
+    commands = [re.sub(r"\s+", " ", cmd)
+                for cmd in commands]  # drop multiple space between args
+    commands = [cmd for cmd in commands if cmd]  # drop empty commands
 
     return commands
 
+
 def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                     soft_ver='afni24', indent=2, verbose=True) -> None: 
+                      soft_ver='afni24', indent=2, verbose=True) -> None:
     """
     afni parser
 
@@ -284,21 +384,27 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
 
     """
     commands = readlines(filename)
-    graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
+    graph, agent_id = get_default_graph(
+        label="AFNI", context_url=context_url, soft_ver=soft_ver)
     records = build_records(commands, agent_id, verbose=verbose)
     graph["records"].update(records)
     with open(output_file, "w") as fd:
         json.dump(graph, fd, indent=indent)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/from_parsers/afni/afni_default_proc.sub_001", help="afni execution log file")
-    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
-    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--input_file", type=str,
+                        default="./examples/from_parsers/afni/afni_default_proc.sub_001", help="afni execution log file")
+    parser.add_argument("--output_file", type=str, default="res.jsonld",
+                        help="output dir where results are written")
+    parser.add_argument(
+        "--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
-    afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    afni_to_bids_prov(opt.input_file, context_url=opt.context_url,
+                      output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.afni.afni_parser --input_file ./afni_test_local/afni_default_proc.sub_001  --output_file res.jsonld
 
     # input_file = os.path.abspath("../../nidmresults-examples/narps_do_13_view_zoom.tcsh")
@@ -308,7 +414,7 @@ if __name__ == "__main__":
     # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24',verbose=True)
 
     # Finding PREAMBULE
-    #with open(input_file, "r") as file:
+    # with open(input_file, "r") as file:
     #     all_lines= file.readlines()
     # all_lines = [line.strip() for line in all_lines]
     # idx_line_set_runs = all_lines.index('set runs = (`count -digits 2 1 1`)')
