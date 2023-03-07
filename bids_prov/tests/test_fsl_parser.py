@@ -76,60 +76,178 @@ mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
 
 
 def test_get_entities():
-    cmd_s = ["command", "-a", "input1", "-b", "input2"]
-    parameters = ["-a", 4, "-b"]
-    expected_output = ['input1', 'input2', 'input2']
-    entities, args_consumed_list =  get_entities(cmd_s, parameters)
-    assert entities == expected_output
+    # positionnal argument
+    df = {
+        "name": "command",
+        "used": [0],
+        "generatedBy": [1]
+    }
+    cmd_s = ["command", "arg_0", "arg_1"]
+    expected_results = (['arg_0'], ['arg_1'], [])
+    assert get_entities(cmd_s[1:], df) == expected_results
 
+    # inputs, outputs : arg and kwarg
+    df = {
+        "name": "command",
+        "used": [0, "-a"],
+        "generatedBy": [1, "-b"]
+    }
+    cmd_s = ["command", "arg_0", "arg_1", "-a", "kwarg_0",  "-b", "kwarg_1"]
+    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+    expected_inputs = ["kwarg_0", "arg_0"]
+    expected_outputs = ["kwarg_1", "arg_1"]
+    expected_parameters = []
+    assert inputs == expected_inputs
+    assert outputs == expected_outputs
+    assert parameters == expected_parameters
 
-    cmd_s = ["command", "input1", "-b", "input2"]
-    parameters = [0, 1, "-b"]
-    expected_output = ['command', 'input1', 'input2']
-    entities, args_consumed_list =  get_entities(cmd_s, parameters)
+    # inputs, outputs : shuffle arg and kwarg
+    df = {
+        "name": "command",
+        "used": [0, "-a"],
+        "generatedBy": [1, "-b"]
+    }
+    cmd_s = ["command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
+    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+    expected_inputs = ["kwarg_0", "arg_0"]
+    expected_outputs = ["kwarg_1", "arg_1"]
+    expected_parameters = []
+    assert inputs == expected_inputs
+    assert outputs == expected_outputs
+    assert parameters == expected_parameters
 
-    assert entities == expected_output
+    # inputs, outputs : arg -1 and kwarg
+    df = {
+        "name": "command",
+        "used": [0, "-a"],
+        "generatedBy": [-1, "-b"]
+    }
+    cmd_s = ["command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
+    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+    expected_inputs = ["kwarg_0", "arg_0"]
+    expected_outputs = ["kwarg_1", "arg_1"]
+    expected_parameters = []
+    assert inputs == expected_inputs
+    assert outputs == expected_outputs
+    assert parameters == expected_parameters
 
-    cmd_s = ["command", "-a", "input1", "-b", "input2"]
-    parameters = [1]
-    expected_output = []
-    entities, args_consumed_list =  get_entities(cmd_s, parameters)
+    # inputs, outputs : arg "0:-1" and kwarg
+    df = {
+        "name": "command",
+        "used": ["0:-1", "-a"],
+        "generatedBy": [-1, "-b"]
+    }
+    cmd_s = ["command", "-a", "kwarg_0", "arg_0",
+             "arg_1",  "-b", "kwarg_1", "arg_2"]
+    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+    expected_inputs = ["kwarg_0", "arg_0", "arg_1"]
+    expected_outputs = ["kwarg_1", "arg_2"]
+    expected_parameters = []
+    assert inputs == expected_inputs
+    assert outputs == expected_outputs
+    assert parameters == expected_parameters
 
-    assert entities == expected_output
+    # inputs, outputs : arg and kwarg dict
+    df = {
+        "name": "command",
+        "used": ["0:-1", "-a"],
+        "generatedBy": [-1, "-b",  {
+            "name": "-c",
+            "index": ["0:2"]
+        },
+            {
+            "name": "-d",
+            "index": [3]
+        },]
+    }
+    cmd_s = [
+        "command",
+        "-a", "kwarg_0",
+        "arg_0",
+        "arg_1",
+        "-b", "kwarg_1",
+        "arg_2",
+        "-c", "kwarg_2", "kwarg_3", "kwarg_4",
+        "-d", "kwarg_5", "kwarg_6", "kwarg_7", "kwarg_8",
+    ]
+    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+    expected_inputs = ["kwarg_0", "arg_0", "arg_1"]
+    expected_outputs = ["kwarg_1", "kwarg_2",
+                        "kwarg_3", "kwarg_8", "arg_2"]
+    expected_parameters = []
+
+    assert inputs == expected_inputs
+    assert outputs == expected_outputs
+    assert parameters == expected_parameters
+
+    # inputs, outputs, parameters : arg and kwarg, parameters
+    df = {
+        "name": "command",
+        "used": [0, "-a"],
+        "generatedBy": [-1, "-b"],
+        "parameters_value": ["-c",
+                             {
+                                 "name": "-d",
+                                 "index": ["0:2"]
+                             }],
+        "parameters_no_value": ["-e", "-f"]
+    }
+    cmd_s = [
+        "command",
+        "-a", "kwarg_0",
+        "arg_0",
+        "arg_1",
+        "-b", "kwarg_1",
+        "arg_2",
+        "-c", "kwarg_2",
+        "-d", "kwarg_3", "kwarg_4", "kwarg_5", "kwarg_6",
+    ]
+    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+    expected_inputs = ["kwarg_0", "arg_0"]
+    expected_outputs = ["kwarg_1", "arg_2"]
+    expected_parameters = ["kwarg_2", "kwarg_3", "kwarg_4"]
+
+    assert inputs == expected_inputs
+    assert outputs == expected_outputs
+    assert parameters == expected_parameters
 
 
 def test_get_entities_rm():
+    df = {
+        "name": "rm",
+        "used": ["0:"]
+    }
     cmd = "/bin/rm -f sl?.png highres2standard2.png"
     cmd_s = cmd.split(" ")
-    parameters = ["1:"]
-    expected_output = ["sl?.png", "highres2standard2.png"]
-    entities, args_consumed_list =  get_entities(cmd_s, parameters)
-    assert entities == expected_output
+    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+
+    expected_inputs = ["sl?.png", "highres2standard2.png"]
+    expected_outputs = []
+    expected_parameters = []
+
+    assert inputs == expected_inputs
+    assert outputs == expected_outputs
+    assert parameters == expected_parameters
 
 
 def test_get_entities_mv():
+    df = {
+        "name": "mv",
+        "used": ["0:-1"],
+        "generatedBy": [-1]
+    }
     cmd = "/bin/mv -f prefiltered_func_data_mcf.mat prefiltered_func_data_mcf.par prefiltered_func_data_mcf_abs.rms " \
           "prefiltered_func_data_mcf_abs_mean.rms prefiltered_func_data_mcf_rel.rms " \
           "prefiltered_func_data_mcf_rel_mean.rms mc"
     cmd_s = cmd.split(" ")
-    parameters = ["1:-1"]
+    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+
     expected_inputs = ["prefiltered_func_data_mcf.mat", "prefiltered_func_data_mcf.par",
                        "prefiltered_func_data_mcf_abs.rms", "prefiltered_func_data_mcf_abs_mean.rms",
                        "prefiltered_func_data_mcf_rel.rms", "prefiltered_func_data_mcf_rel_mean.rms"]
-    entities, args_consumed_list =  get_entities(cmd_s, parameters)
-    assert entities== expected_inputs
-
-    parameters = [-1]
     expected_outputs = ["mc"]
-    entities, args_consumed_list =  get_entities(cmd_s, parameters)
-    assert entities == expected_outputs
+    expected_parameters = []
 
-
-def test_get_entities_dict():
-    cmd = "/slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png"
-    cmd_s = cmd.split(" ")
-    parameters = [{"name": "-x", "index": 2}]
-    expected_outputs = ["sla.png", "slb.png", "slc.png"]
-    assert get_entities(cmd_s, parameters)[0] == expected_outputs
-
-
+    assert inputs == expected_inputs
+    assert outputs == expected_outputs
+    assert parameters == expected_parameters
