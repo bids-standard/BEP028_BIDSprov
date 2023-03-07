@@ -224,7 +224,7 @@ def _get_entities_from_kwarg(entities, opts, parse_kwarg):
 
 def get_entities(cmd_s, parameters):
     """
-    Given a list of command arguments `cmd_s` and a list of `parameters`, this function returns the entities associated
+    Given a list of command arguments `cmd_s` and a dict of `parameters`, this function returns the entities associated
     with the parameters.
 
     Parameters
@@ -232,23 +232,25 @@ def get_entities(cmd_s, parameters):
 
     cmd_s : list of str
         A list of command arguments.
-    parameters : list
-        A list of parameters to search for in `cmd_s`. Each parameter can either be an integer or a string. If the parameter is an integer,
-    the entity will be the string in `cmd_s` at that index. If the parameter is a string, the entity will be the next
-    argument in `cmd_s` after the parameter. If the parameter is a dict, the entity (or entities) will be obtained
-    with the position of the argument and an offset index
+    parameters : Dict
+        Dict of parameters loaded by the description_functions.json to search for in `cmd_s`. 
 
     Returns
     -------
-    list of str A list of entities associated
-    with the parameters.
+    inputs, outputs, params :  of entities associated with the parameters.
 
     Example
     -------
-    >>> cmd_s = ["command", "-a", "input1", "-b", "input2"]
-    >>> parameters = [2, 4, "-a"]
-    >>> get_entities(cmd_s, parameters)
-    ['input1', 'input2', 'input1']
+
+    >>> df = {
+            "name": "command",
+            "used": [0, "-a"],
+            "generatedBy": [-1, "-b"]
+        }
+    >>> cmd_s = ["command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
+    >>> inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+    >>> (["kwarg_0", "arg_0"], ["kwarg_1", "arg_1"], [])
+
     """
 
     parser = argparse.ArgumentParser(
