@@ -138,21 +138,30 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 #         return conf.bosh_config[key]
 #     return None
 
+
 def _get_kwarg(parser, serie,  with_value=True):
     arg_list = []
-    for u_arg in serie:
+    for k, u_arg in enumerate(serie):
         if type(u_arg) == dict:
             parser.add_argument(u_arg["name"], nargs='+', action='append')
             arg_list.append((u_arg["name"], [u_arg["index"]]))
         if type(u_arg) == str and ":" not in u_arg:
             if with_value:
-                parser.add_argument(u_arg)
-                arg_list.append((u_arg, [0]))
+                if u_arg == ">" or ">>":
+                    parser.add_argument("-" + u_arg)
+                    arg_list.append(("-" + u_arg, [0]))
+                    print("serie[k]", serie[k])
+                    print("u_arg", u_arg)
+                else:
+                    parser.add_argument(u_arg)
+                    arg_list.append((u_arg, [0]))
+                # parser.add_argument(u_arg)
+                # arg_list.append((u_arg, [0]))
             else:
                 parser.add_argument(u_arg, action='store_true')
                 arg_list.append((u_arg, []))
 
-    return parser, arg_list
+    return parser, arg_list, serie
 
 
 def _get_arg(serie, arg_rest):
@@ -261,28 +270,38 @@ def get_entities(cmd_s, parameters):
     parameters_value = []
     parameters_no_value = []
 
+    print("\n\n cmd_s", cmd_s)
+    # change cmd_s to add ">" , ">>"  as parameter for argparse
+    cmd_s = ["->" if it == ">" else it for it in cmd_s]
+    cmd_s = ["->>" if it == ">>" else it for it in cmd_s]
+
+    print("\n\n cmd_s change", cmd_s)
+
     if "used" in parameters:
-        parser, inputs_kwarg = _get_kwarg(parser, parameters["used"])
+        parser, inputs_kwarg, parameters["used"] = _get_kwarg(
+            parser, parameters["used"])
 
     if "generatedBy" in parameters:
-        parser, outputs_kwarg = _get_kwarg(parser, parameters["generatedBy"])
+        parser, outputs_kwarg, parameters["generatedBy"] = _get_kwarg(
+            parser, parameters["generatedBy"])
 
     if "parameters_value" in parameters:
-        parser, parameters_value = _get_kwarg(
+        parser, parameters_value, parameters["parameters_value"] = _get_kwarg(
             parser, parameters["parameters_value"])
 
     if "parameters_no_value" in parameters:
-        parser, parameters_no_value = _get_kwarg(
+        parser, parameters_no_value, parameters["parameters_no_value"] = _get_kwarg(
             parser, parameters["parameters_no_value"], with_value=False)
 
     opts, arg_rest = parser.parse_known_args(cmd_s)
 
-    # print("\n\n parse_known_args", opts)
-    # print("\n\n inputs_kwarg", inputs_kwarg)
-    # print("\n\n outputs_kwarg", outputs_kwarg)
-    # print("\n\n parameters_value", parameters_value)
-    # print("\n\n parameters_no_value", parameters_no_value)
-    # print("\n\n arg_rest", arg_rest)
+    print("\n\n parameters", parameters)
+    print("\n\n parse_known_args", opts)
+    print("\n\n inputs_kwarg", inputs_kwarg)
+    print("\n\n outputs_kwarg", outputs_kwarg)
+    print("\n\n parameters_value", parameters_value)
+    print("\n\n parameters_no_value", parameters_no_value)
+    print("\n\n arg_rest", arg_rest)
 
     entities = []
     arg_in_param = []
@@ -340,6 +359,10 @@ def get_entities(cmd_s, parameters):
     #                                                            cmd_s[1]) else cmd_s[slice(start, stop)]
     #             entities.extend(ent)
     #             arg_in_param.append(ent)
+
+    print("\n\n inputs", inputs)
+    print("\n\n outputs", outputs)
+    print("\n\n params", params)
 
     return inputs, outputs, params
 
