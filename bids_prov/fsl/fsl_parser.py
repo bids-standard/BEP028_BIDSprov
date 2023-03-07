@@ -147,7 +147,7 @@ def _get_kwarg(parser, serie,  with_value=True):
             arg_list.append((u_arg["name"], [u_arg["index"]]))
         if type(u_arg) == str and ":" not in u_arg:
             if with_value:
-                if u_arg == ">" or ">>":
+                if u_arg == ">" or u_arg == ">>":
                     parser.add_argument("-" + u_arg)
                     arg_list.append(("-" + u_arg, [0]))
                     print("serie[k]", serie[k])
