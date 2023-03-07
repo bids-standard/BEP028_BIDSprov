@@ -56,9 +56,6 @@ def clean_label_suffix(label:str) ->str:
     return new_label_rename
 
 
-
-
-
 def find_param(cmd_args_remain:list) ->dict:
     """ Find parameter in all command arguments that remain after entities extraction
 
@@ -112,33 +109,23 @@ def build_records(commands: list, agent_id: str, verbose=False):
         function_in_description_functions = False
         command_name_end = os.path.split(a_name)[1]
 
-        if verbose:
-            print("CMD", cmd)
-
         for df in description_functions:
             if df["name"] == command_name_end:
                 function_in_description_functions = True
-
-                if "used" in df:
-                    arg = df["used"]
-                    entities, args_consumed_list = get_entities(cmd_s, arg)
-                    renamed_entities = [clean_label_suffix(os.path.split(ent)[1]) for ent in entities]
-                    inputs.extend(renamed_entities)
-                    for arg in args_consumed_list:
-                        cmd_args_remain.remove(arg)
-
-                if "generatedBy" in df:
-                    arg = df["generatedBy"]
-                    entities, args_consumed_list = get_entities(cmd_s, arg)
-                    renamed_entities = [clean_label_suffix(os.path.split(ent)[1]) for ent in entities]
-                    outputs.extend(renamed_entities)
-                    for arg in args_consumed_list:
-                        cmd_args_remain.remove(arg)
+                for key,ent_list in zip(["used", "generatedBy"], [inputs,outputs]):
+                    if key in df:
+                        entities, args_consumed_list = get_entities(cmd_s, df[key])
+                        renamed_entities = [clean_label_suffix(os.path.split(ent)[1]) for ent in entities]
+                        ent_list.extend(renamed_entities)
+                        for arg in args_consumed_list:
+                            cmd_args_remain.remove(arg)
 
                 break
+
         param_dic = find_param(cmd_args_remain)
 
         if verbose:
+            print("CMD", cmd)
             print('-> inputs: ', inputs)
             print('<- outputs: ', outputs)
             print("  others args :", *cmd_args_remain)
@@ -146,7 +133,7 @@ def build_records(commands: list, agent_id: str, verbose=False):
             for k, v in param_dic.items():
                 print(f"{k} : {v}")
 
-        if function_in_description_functions is False:
+        if function_in_description_functions is False: # default behavior if function is not present in descriptions
             print(f"-> {command_name_end} : Not present in description_functions")
 
             # if the function is not in our description file, the process is based on regex
@@ -156,7 +143,6 @@ def build_records(commands: list, agent_id: str, verbose=False):
                 attributes[key].append(value)
 
             cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd) # make sure attributes are not considered as entities
-
             # if a key of attributes is in INPUT_TAGS, we add her value in inputs
             inputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS)))
             # same process with OUTPUT_TAGS
@@ -186,15 +172,12 @@ def build_records(commands: list, agent_id: str, verbose=False):
 
             if existing_input is None:
                 new_label = os.path.split(input_path)[1]
-
                 new_label_rename = clean_label_suffix(new_label)
-                # print("label:" , new_label, " rename ", new_label_rename)
                 ent = {
                     "@id": input_id,
                     "label": new_label_rename,
                     "prov:atLocation": input_path,
                 }
-                # print("-> new entity label:", new_label, "rename: ", new_label_rename)
                 records["prov:Entity"].append(ent)
                 activity["used"].append(input_id)
             else:
