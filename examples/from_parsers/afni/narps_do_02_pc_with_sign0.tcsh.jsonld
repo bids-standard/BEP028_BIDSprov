@@ -1,0 +1,115 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:dd047fff-7a66-41c5-8e9c-2aee4a6517e4",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "AFNI",
+        "version": "afni24"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:454c2ac1-ffd8-4117-8405-eb3f458bc118",
+        "label": "3dpc",
+        "associatedWith": "urn:dd047fff-7a66-41c5-8e9c-2aee4a6517e4",
+        "command": "3dpc -overwrite -mask ${dset_mask} -pcsave 5 -prefix ${dir_hyp}/PC_hyp${num} ${grp_dset}",
+        "parameters": {
+          "-overwrite": true,
+          "-pcsave": "5"
+        },
+        "used": [
+          "urn:59910f7b-c8b0-4393-8194-255e02d8a270",
+          "urn:467e1468-2aaa-4b02-8757-1b97c02a5c8e"
+        ]
+      },
+      {
+        "@id": "urn:44663850-a481-463a-84ac-6125e359af46",
+        "label": "3dresample",
+        "associatedWith": "urn:dd047fff-7a66-41c5-8e9c-2aee4a6517e4",
+        "command": "3dresample -overwrite -prefix tmp_REF_DSET.nii.gz -master ${dset_mask} -input \"${ref_dset}\"",
+        "parameters": {
+          "-overwrite": true
+        },
+        "used": [
+          "urn:038ad1e7-a8c0-4d72-8263-a8b520e29381",
+          "urn:467e1468-2aaa-4b02-8757-1b97c02a5c8e"
+        ]
+      },
+      {
+        "@id": "urn:067086d7-de93-4ba9-9910-ac4578247047",
+        "label": "3dMatch",
+        "associatedWith": "urn:dd047fff-7a66-41c5-8e9c-2aee4a6517e4",
+        "command": "3dMatch -echo_edu -overwrite -mask ${dset_mask} -refset ${dir_hyp}/PC_hyp${num}+tlrc -inset tmp_REF_DSET.nii.gz -prefix tmp_MATCHED",
+        "parameters": {
+          "-echo_edu": true,
+          "-overwrite": true
+        },
+        "used": [
+          "urn:9cdae5cf-10e1-43ac-af9f-e23292a635eb",
+          "urn:70ced3a5-b5dc-4973-8a4e-bf999753977d",
+          "urn:467e1468-2aaa-4b02-8757-1b97c02a5c8e"
+        ]
+      },
+      {
+        "@id": "urn:44084176-de55-49ed-9464-ec3c2c76ea4c",
+        "label": "3dcalc",
+        "associatedWith": "urn:dd047fff-7a66-41c5-8e9c-2aee4a6517e4",
+        "command": "3dcalc -echo_edu -overwrite -a ${dir_hyp}/PC_hyp${num}+tlrc -expr \"${signum}*a\" -prefix ${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
+        "parameters": {
+          "-echo_edu": true,
+          "-overwrite": true,
+          "-expr": "\"${signum}*a\""
+        },
+        "used": [
+          "urn:70ced3a5-b5dc-4973-8a4e-bf999753977d"
+        ]
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:59910f7b-c8b0-4393-8194-255e02d8a270",
+        "label": "${grp_dset}",
+        "prov:atLocation": "${grp_dset}"
+      },
+      {
+        "@id": "urn:467e1468-2aaa-4b02-8757-1b97c02a5c8e",
+        "label": "${dset_mask}",
+        "prov:atLocation": "${dset_mask}"
+      },
+      {
+        "@id": "urn:70ced3a5-b5dc-4973-8a4e-bf999753977d",
+        "label": "PC_hyp${num}",
+        "prov:atLocation": "PC_hyp${num}",
+        "generatedBy": "urn:454c2ac1-ffd8-4117-8405-eb3f458bc118"
+      },
+      {
+        "@id": "urn:038ad1e7-a8c0-4d72-8263-a8b520e29381",
+        "label": "\"${ref_dset}\"",
+        "prov:atLocation": "\"${ref_dset}\""
+      },
+      {
+        "@id": "urn:9cdae5cf-10e1-43ac-af9f-e23292a635eb",
+        "label": "tmp_REF_DSET.nii.gz",
+        "prov:atLocation": "tmp_REF_DSET.nii.gz",
+        "generatedBy": "urn:44663850-a481-463a-84ac-6125e359af46"
+      },
+      {
+        "@id": "urn:0279eaf3-adbe-4ced-a962-bf42b6fe0665",
+        "label": "tmp_MATCHED",
+        "prov:atLocation": "tmp_MATCHED",
+        "generatedBy": "urn:067086d7-de93-4ba9-9910-ac4578247047"
+      },
+      {
+        "@id": "urn:9e6849ff-b9ca-43a6-b3df-610243518928",
+        "label": "PC_hyp${num}_sign0.nii.gz",
+        "prov:atLocation": "PC_hyp${num}_sign0.nii.gz",
+        "generatedBy": "urn:44084176-de55-49ed-9464-ec3c2c76ea4c"
+      }
+    ]
+  }
+}
