@@ -169,6 +169,7 @@ def _get_arg(serie, arg_rest):
     arg_purge = [arg for arg in arg_rest if not arg.startswith("-")]
     for u_arg in serie:
         if type(u_arg) == int:
+            print("arg_purge", type(arg_purge), arg_purge, u_arg)
             if u_arg < len(arg_purge):
                 arg_list.append(arg_purge[u_arg])
 
