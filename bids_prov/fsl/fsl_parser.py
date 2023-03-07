@@ -141,6 +141,7 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 
 def _get_kwarg(serie,  with_value=True):
     arg_list = []
+
     add_argument_list = []
     for u_arg in serie:
         if type(u_arg) == dict:
