@@ -231,17 +231,19 @@ def gather_multiline(input_file):
     return commands
 def readlines(input_file):
     commands = gather_multiline(input_file)
-    dropline_begin = ["#", 'cd', "cat", 'touch',  'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
+    filtered = "\n".join(commands)
+    filtered = re.sub(r"cat <<EOF[\s\S]*?EOF","", filtered) # drop infile text creation
+    commands = filtered.split("\n")
+    dropline_begin = ["#", "cd", "printf", "\\rm", "$cmd", 'touch', 'sleep', 'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
     commands = [cmd for cmd in commands if not any(cmd.startswith(begin) for begin in dropline_begin)]
+    commands = [re.sub( r"\s+", " ", cmd) for cmd in commands] # drop multiple space between args
+    commands = [cmd for cmd in commands if cmd] # drop empty commands
+
     return commands
 
 def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                     soft_ver='afni24', indent=2, verbose=False) -> None:  # TODO : add afni version
+                     soft_ver='afni24', indent=2, verbose=True) -> None:  # TODO : add afni version
     commands = readlines(filename)
-    filtered = "\n".join(commands)
-    if verbose:
-        print(filtered)
-
     graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
     records = build_records(commands, agent_id, verbose=verbose)
     graph["records"].update(records)
@@ -260,9 +262,9 @@ if __name__ == "__main__":
     # > python -m   bids_prov.afni.afni_parser --input_file ./afni_test_local/afni_default_proc.sub_001  --output_file res.jsonld
 
     # input_file = os.path.abspath("../../nidmresults-examples/narps_do_13_view_zoom.tcsh")
-    # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
+    # # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
     # output_file = "../../res.jsonld"
-    # # # # commands = readlines(input_file)
+    # # commands = readlines(input_file)
     # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24',verbose=True)
 
     # Finding PREAMBULE
