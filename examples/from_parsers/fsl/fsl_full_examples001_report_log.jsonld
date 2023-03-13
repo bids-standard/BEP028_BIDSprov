@@ -5,7 +5,11 @@
   "records": {
     "prov:Agent": [
       {
+<<<<<<< HEAD
         "@id": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "RRID": "RRID:SCR_007037",
         "@type": "prov:SoftwareAgent",
         "label": "FSL",
@@ -14,6 +18,7 @@
     ],
     "prov:Activity": [
       {
+<<<<<<< HEAD
         "@id": "urn:845a4237-74cd-417c-bd0c-90c2c0718b31",
         "label": "fslmaths",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
@@ -44,10 +49,43 @@
         "@id": "urn:92c8760e-9f68-4a1c-93e7-2f2eacc0078e",
         "label": "Make directory",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:3aadaeb0-91bd-4a74-ae01-36ae57128262",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/fmri prefiltered_func_data -odt float",
+        "used": [
+          "urn:b7ac6b48-c304-46ee-bb88-a12d564c92b7"
+        ]
+      },
+      {
+        "@id": "urn:c1c05f31-53b3-4d60-932c-d2a1b5d4a466",
+        "label": "fslroi",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslroi prefiltered_func_data example_func 53 1",
+        "used": [
+          "urn:e543b291-5499-40bd-b1ea-5239496845e8"
+        ]
+      },
+      {
+        "@id": "urn:718dbf60-9c92-4e97-bf35-590f0bf62328",
+        "label": "mcflirt",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/mcflirt -in prefiltered_func_data -out prefiltered_func_data_mcf -mats -plots -reffile example_func -rmsrel -rmsabs",
+        "used": [
+          "urn:e543b291-5499-40bd-b1ea-5239496845e8"
+        ]
+      },
+      {
+        "@id": "urn:a5a71577-60ff-4ddd-8f00-49cddb64d296",
+        "label": "Make directory",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "command": "/bin/mkdir -p mc",
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:b7e33644-5ec7-4d52-874c-0a6e615c887e",
         "label": "mv",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
@@ -250,10 +288,215 @@
         "@id": "urn:fe69e484-a9eb-4971-94cd-c358f2192e6f",
         "label": "Make directory",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:0b3bf159-ea15-4f84-bc7a-d987c96fafa8",
+        "label": "mv",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/mv -f prefiltered_func_data_mcf.mat prefiltered_func_data_mcf.par prefiltered_func_data_mcf_abs.rms prefiltered_func_data_mcf_abs_mean.rms prefiltered_func_data_mcf_rel.rms prefiltered_func_data_mcf_rel_mean.rms mc",
+        "used": [
+          "urn:7119526c-a504-45eb-a002-13886a4f35a8",
+          "urn:8b63c884-07b2-4b5c-ac7d-7dd725614b6d",
+          "urn:60019bc0-d908-493b-aab0-30ce8bb5924a",
+          "urn:e9c77575-d8ac-44a0-8dca-b872504f8dbb",
+          "urn:2710ef76-16d0-4ee3-9bbb-44fa8a077b4d",
+          "urn:befe69ea-8d47-4f0e-961b-d4a504bf5cb1"
+        ]
+      },
+      {
+        "@id": "urn:f3e20c3a-8143-48d9-a185-35d8dc759392",
+        "label": "fsl_tsplot",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fsl_tsplot -i prefiltered_func_data_mcf.par -t 'MCFLIRT estimated rotations (radians)' -u 1 --start=1 --finish=3 -a x,y,z -w 640 -h 144 -o rot.png",
+        "used": [
+          "urn:8b63c884-07b2-4b5c-ac7d-7dd725614b6d"
+        ]
+      },
+      {
+        "@id": "urn:2714c35f-ccda-4048-885c-7aaec0241c1a",
+        "label": "fsl_tsplot",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fsl_tsplot -i prefiltered_func_data_mcf.par -t 'MCFLIRT estimated translations (mm)' -u 1 --start=4 --finish=6 -a x,y,z -w 640 -h 144 -o trans.png",
+        "used": [
+          "urn:8b63c884-07b2-4b5c-ac7d-7dd725614b6d"
+        ]
+      },
+      {
+        "@id": "urn:a17942ce-ee8c-4641-b69d-bf6efb81b8fd",
+        "label": "fsl_tsplot",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fsl_tsplot -i prefiltered_func_data_mcf_abs.rms,prefiltered_func_data_mcf_rel.rms -t 'MCFLIRT estimated mean displacement (mm)' -u 1 -w 640 -h 144 -a absolute,relative -o disp.png",
+        "used": [
+          "urn:bd813c9a-24d7-4b6f-8225-92206c328831"
+        ]
+      },
+      {
+        "@id": "urn:b95a9473-f81e-44a8-9151-9d113455ee7d",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_mcf -Tmean mean_func",
+        "used": [
+          "urn:d5a8ef3b-3fe5-4c55-bd5b-fc2ed5d334bd"
+        ]
+      },
+      {
+        "@id": "urn:70a51f08-724e-47b1-8d2f-2944020912b8",
+        "label": "bet2",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/bet2 mean_func mask -f 0.3 -n -m",
+        "used": [
+          "urn:01059823-7978-4e42-ad5d-d6bf2af5d817"
+        ]
+      },
+      {
+        "@id": "urn:bf7053f6-7a1d-45f0-9d9e-519d074961df",
+        "label": "immv",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/immv mask_mask mask",
+        "used": [
+          "urn:7ef272f5-42a7-4a14-aff4-5fac234cbe2c"
+        ]
+      },
+      {
+        "@id": "urn:bf6add19-53ce-4270-97b7-cf5eeba6edc1",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_mcf -mas mask prefiltered_func_data_bet",
+        "used": [
+          "urn:d5a8ef3b-3fe5-4c55-bd5b-fc2ed5d334bd",
+          "urn:a0b4e0dc-5550-43e7-a727-f064fd6546fe"
+        ]
+      },
+      {
+        "@id": "urn:946392e9-b606-4e9a-876e-b9b7526bc8cc",
+        "label": "fslstats",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslstats prefiltered_func_data_bet -p 2 -p 98",
+        "used": [
+          "urn:d3dcbc62-b50f-49f1-90b4-dcc15c4fde3a"
+        ]
+      },
+      {
+        "@id": "urn:4c1284e8-c069-40f9-b7e4-587543401bd2",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_bet -thr 978.24375 -Tmin -bin mask -odt char",
+        "used": [
+          "urn:d3dcbc62-b50f-49f1-90b4-dcc15c4fde3a",
+          "urn:b1dae223-5edd-41fd-b8f5-27d1af9ecf65"
+        ]
+      },
+      {
+        "@id": "urn:e1b6981c-509b-4997-8421-ec50dc1323dd",
+        "label": "fslstats",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslstats prefiltered_func_data_mcf -k mask -p 50",
+        "used": [
+          "urn:d5a8ef3b-3fe5-4c55-bd5b-fc2ed5d334bd"
+        ]
+      },
+      {
+        "@id": "urn:ad1eea11-77da-48ec-b0a4-7707ac70ad8e",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths mask -dilF mask",
+        "used": [
+          "urn:a0b4e0dc-5550-43e7-a727-f064fd6546fe"
+        ]
+      },
+      {
+        "@id": "urn:e3b8ced7-a290-4583-b2dd-da1253bdfa52",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_mcf -mas mask prefiltered_func_data_thresh",
+        "used": [
+          "urn:d5a8ef3b-3fe5-4c55-bd5b-fc2ed5d334bd",
+          "urn:a0b4e0dc-5550-43e7-a727-f064fd6546fe"
+        ]
+      },
+      {
+        "@id": "urn:fee05dbb-8108-43d5-9f3f-11539b48b0f1",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_thresh -Tmean mean_func",
+        "used": [
+          "urn:deebac6e-ac89-4f00-a671-4ccaf3d71657"
+        ]
+      },
+      {
+        "@id": "urn:9a8ff7c0-af76-41e1-95ef-8582efb2e2f0",
+        "label": "susan",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/susan prefiltered_func_data_thresh 5646.963501 2.97239915074 3 1 1 mean_func 5646.963501 prefiltered_func_data_smooth",
+        "used": [
+          "urn:deebac6e-ac89-4f00-a671-4ccaf3d71657"
+        ]
+      },
+      {
+        "@id": "urn:8fbe31aa-f34b-4161-896d-a47596088e82",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_smooth -mas mask prefiltered_func_data_smooth",
+        "used": [
+          "urn:8f6c848a-8e05-43be-92b1-18827dcca41c",
+          "urn:a0b4e0dc-5550-43e7-a727-f064fd6546fe"
+        ]
+      },
+      {
+        "@id": "urn:df732542-6dd5-4692-a2a3-6ea76ce99bba",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_smooth -mul 1.32814741917 prefiltered_func_data_intnorm",
+        "used": [
+          "urn:8f6c848a-8e05-43be-92b1-18827dcca41c",
+          "urn:6ae95d80-d913-4020-9c40-0d2cb4be1f70"
+        ]
+      },
+      {
+        "@id": "urn:02d969c9-80c4-417b-b978-41219845f261",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_intnorm -bptf 227.142867456 -1 prefiltered_func_data_tempfilt",
+        "used": [
+          "urn:061e060e-bdc0-46c0-8a08-4c0d8e9f8504"
+        ]
+      },
+      {
+        "@id": "urn:80689192-fa3c-44dd-8e36-3057d5447087",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_tempfilt filtered_func_data",
+        "used": [
+          "urn:2f830b56-7669-41bc-ad43-ae0b1c3ffbdd"
+        ]
+      },
+      {
+        "@id": "urn:754469e0-a322-4c02-b200-de6237bacf1d",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths filtered_func_data -Tmean mean_func",
+        "used": [
+          "urn:11a607ec-e3cd-44ac-a35b-fc1cf3c9f75e"
+        ]
+      },
+      {
+        "@id": "urn:2a8b6e1f-312d-48f4-b5b0-9708fb82094e",
+        "label": "rm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/rm -rf prefiltered_func_data*",
+        "used": [
+          "urn:ee45cc1b-8736-4b74-bada-e48f1e7b17a0"
+        ]
+      },
+      {
+        "@id": "urn:a4eab650-e211-4a1b-bef1-9452fa7066cc",
+        "label": "Make directory",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "command": "mkdir -p custom_timing_files",
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:4c361a82-1fe1-4fe5-b267-f7ba9f2d3e5d",
         "label": "cp",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
@@ -266,10 +509,25 @@
         "@id": "urn:ff49ea40-ebb6-4904-88e8-66ee1e9b26e3",
         "label": "Make directory",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:7a9f6c12-24ff-4b95-981b-d7994bdb0a3f",
+        "label": "cp",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/cp /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/word_generation.txt custom_timing_files/ev1.txt",
+        "used": [
+          "urn:41ce8096-0f44-4359-b0e6-c7f73726ab54"
+        ]
+      },
+      {
+        "@id": "urn:18cf8f77-1376-4e57-bd63-16be3ce96952",
+        "label": "Make directory",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "command": "mkdir -p custom_timing_files",
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:38b31a88-69dc-4586-b865-b063b5cb423a",
         "label": "cp",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
@@ -282,10 +540,25 @@
         "@id": "urn:059d69dd-e7dc-41d8-abd4-b1b11b260fbf",
         "label": "film_gls",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:fa5a4808-403a-46f2-bb7f-77714d67f8ad",
+        "label": "cp",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/cp /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/word_shadowing.txt custom_timing_files/ev2.txt",
+        "used": [
+          "urn:0f7b5d4b-f519-4b5b-841c-5614f34a1422"
+        ]
+      },
+      {
+        "@id": "urn:eb40845a-1679-4156-b434-d3ba93cce2bd",
+        "label": "film_gls",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "command": "/usr/local/fsl/bin/film_gls -rn stats -sa -ms 5   filtered_func_data design.mat 1000.0",
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:4e472e9a-57c1-47dc-9f7f-0a638572c280",
         "label": "smoothest",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
@@ -299,10 +572,26 @@
         "@id": "urn:0568aff4-18a9-486e-895d-be949e0ba3d9",
         "label": "contrast_mgr",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:ebbc9288-e6bf-42ed-b5c3-92f471cb961c",
+        "label": "smoothest",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/smoothest -d 102   -m mask -r stats/res4d > stats/smoothness",
+        "used": [
+          "urn:a0b4e0dc-5550-43e7-a727-f064fd6546fe",
+          "urn:9fb9db23-1463-45c8-a840-9efb7a9a7010"
+        ]
+      },
+      {
+        "@id": "urn:8d6ea4f2-6ec4-496e-b5f2-74121a04b5ed",
+        "label": "contrast_mgr",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "command": "/usr/local/fsl/bin/contrast_mgr  stats design.con",
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:8ae2e990-2404-4e1a-ad17-7e89e6716be5",
         "label": "fslmaths",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
@@ -353,10 +642,63 @@
         "@id": "urn:d05af8c9-0125-42b8-bff4-559b688992ba",
         "label": "overlay",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:884a6a58-5f0c-4384-8a97-e4d23a76f737",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths stats/zstat1 -mas mask thresh_zstat1",
+        "used": [
+          "urn:1794aebb-0b6a-465b-a08c-9e3c683e8541",
+          "urn:a0b4e0dc-5550-43e7-a727-f064fd6546fe"
+        ]
+      },
+      {
+        "@id": "urn:79bdcd2b-5462-4df3-8b5a-8cd94c706116",
+        "label": "echo",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "echo 45203 > thresh_zstat1.vol",
+        "used": [
+          "urn:5d6e7edb-fde0-4ce2-b236-f20b9d8ab5dd"
+        ]
+      },
+      {
+        "@id": "urn:0a558555-8b65-454d-a81d-b66493020d06",
+        "label": "cluster",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/cluster -i thresh_zstat1 -c stats/cope1 -t 2.3 -p 0.05 -d 0.384676 --volume=45203 --othresh=thresh_zstat1 -o cluster_mask_zstat1 --connectivity=26  --olmax=lmax_zstat1.txt --scalarname=Z > cluster_zstat1.txt",
+        "used": [
+          "urn:a1b7e26f-7c8a-4a25-aa57-714830e97b93",
+          "urn:a56ebb33-687f-42ad-927e-a3cab56bb872"
+        ]
+      },
+      {
+        "@id": "urn:233ffe77-1cb8-41d6-896e-c04e073d40cc",
+        "label": "cluster2html",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/cluster2html . cluster_zstat1",
+        "used": [
+          "urn:fbfbd3e9-149c-4a2d-aeec-1db3c6e35d08"
+        ]
+      },
+      {
+        "@id": "urn:13f99617-f775-47e1-b9bd-0e9426798eb1",
+        "label": "fslstats",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslstats thresh_zstat1 -l 0.0001 -R 2>/dev/null",
+        "used": [
+          "urn:a1b7e26f-7c8a-4a25-aa57-714830e97b93"
+        ]
+      },
+      {
+        "@id": "urn:287cde08-15ee-481f-b1b0-746b94a6c052",
+        "label": "overlay",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "command": "/usr/local/fsl/bin/overlay 1 0 example_func -a thresh_zstat1 2.300331 5.793015 rendered_thresh_zstat1",
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:8ab8404b-1449-48d2-bbb1-5f6f38d910b1",
         "label": "slicer",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
@@ -378,17 +720,47 @@
         "@id": "urn:204d7155-23fd-49b4-8150-4f4f818cbc01",
         "label": "Make directory",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:438013f8-7d5a-4983-8a02-07f593ba47ff",
+        "label": "slicer",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/slicer rendered_thresh_zstat1 -A 750 rendered_thresh_zstat1.png",
+        "used": [
+          "urn:cf85bae3-a4d7-41da-ada6-1d1dd250bf01"
+        ]
+      },
+      {
+        "@id": "urn:6b1b4411-43e4-4af6-be68-ad8eca3cc03a",
+        "label": "cp",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/cp /usr/local/fsl/etc/luts/ramp.gif .ramp.gif",
+        "used": [
+          "urn:d44e161e-c283-41fc-824e-b0ab709afa5e"
+        ]
+      },
+      {
+        "@id": "urn:d36227c2-17b7-4efa-9758-c6cdc27979db",
+        "label": "Make directory",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "command": "mkdir -p tsplot",
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:a4626b59-831f-4cbe-bc4d-1f6fe4fde5ee",
         "label": "tsplot",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:6766e0d5-f6f8-443e-874f-147c30053668",
+        "label": "tsplot",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "command": "/usr/local/fsl/bin/tsplot . -f filtered_func_data -o tsplot",
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:65058cfd-3e0d-4f6b-97dd-cc86daeccfb4",
         "label": "cluster",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
@@ -411,10 +783,35 @@
         "@id": "urn:c17cd10d-7bc7-48c4-9540-a9c803de4b3b",
         "label": "Make directory",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
+=======
+        "@id": "urn:7df0135c-ff78-41fd-8ef4-36ee1dbd1e74",
+        "label": "cluster",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/cluster -i thresh_zstat1 -c stats/cope1 -t 2.3  -p 0.05 -d 0.384676 --volume=45203 -x reg/example_func2standard.mat --stdvol=reg/standard --mm --connectivity=26 --olmax=lmax_zstat1_std.txt --scalarname=Z > cluster_zstat1_std.txt",
+        "used": [
+          "urn:a1b7e26f-7c8a-4a25-aa57-714830e97b93",
+          "urn:a56ebb33-687f-42ad-927e-a3cab56bb872"
+        ]
+      },
+      {
+        "@id": "urn:f86302e7-6a8c-4181-b188-0e0c4fd2114a",
+        "label": "cluster2html",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/cluster2html . cluster_zstat1 -std",
+        "used": [
+          "urn:fbfbd3e9-149c-4a2d-aeec-1db3c6e35d08"
+        ]
+      },
+      {
+        "@id": "urn:a4c9c82d-e09d-43b1-9080-9dc3428720e0",
+        "label": "Make directory",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "command": "/bin/mkdir -p /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/fmri+.feat/reg",
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:83a1bf16-40c4-4656-a4d3-3fd947715efa",
         "label": "fslmaths",
         "associatedWith": "urn:eb68c748-31fe-44dc-9e89-c493720d22d6",
@@ -755,16 +1152,363 @@
         "used": [
           "urn:b67ce3f3-4980-4fcf-8990-6fcae4e540bf",
           "urn:6899ce6f-66b0-45ba-a196-ecc930ba8889"
+=======
+        "@id": "urn:6f37ca90-bf74-43e0-93e4-238aaddd1861",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/structural_brain highres",
+        "used": [
+          "urn:41c66811-f842-4080-bb73-0088d614b6f6"
+        ]
+      },
+      {
+        "@id": "urn:0982c12c-d3f1-4acc-8d7e-d0e9fe3cdb31",
+        "label": "fslmaths",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/fslmaths /usr/local/fsl/data/standard/MNI152_T1_2mm_brain standard",
+        "used": [
+          "urn:ce3793e7-a109-473d-ae43-23341992a054"
+        ]
+      },
+      {
+        "@id": "urn:df8dff39-604c-4afa-aa42-7aa3020db30e",
+        "label": "flirt",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/flirt -in example_func -ref highres -out example_func2highres -omat example_func2highres.mat -cost corratio -dof 7 -searchrx -90 90 -searchry -90 90 -searchrz -90 90 -interp trilinear",
+        "used": [
+          "urn:f364bd81-b2ee-4854-9ba0-9a4f67548f6d",
+          "urn:a8139a71-b628-490b-8afa-5000ae93e4b0"
+        ]
+      },
+      {
+        "@id": "urn:4291b5a0-b492-499e-8c0d-a5f28750d6e7",
+        "label": "convert_xfm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/convert_xfm -inverse -omat highres2example_func.mat example_func2highres.mat",
+        "used": [
+          "urn:4941bf08-f9a0-412e-b79c-5a7428327640"
+        ]
+      },
+      {
+        "@id": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c",
+        "label": "slicer",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:a925031d-004a-4d00-a0ba-872aca37fefa",
+          "urn:a8139a71-b628-490b-8afa-5000ae93e4b0"
+        ]
+      },
+      {
+        "@id": "urn:57cff580-1a8e-4446-933a-6531cbf9a5e8",
+        "label": "pngappend",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2highres1.png",
+        "used": [
+          "urn:b6c88a90-a410-4b41-b46f-ab87c9365935",
+          "urn:35c543ac-1e59-43c0-b24c-4f3a6839dc70",
+          "urn:5f1fa25e-1bc3-4d01-a1ba-8371db2e7a90",
+          "urn:bd47408e-f727-4be9-8931-c95a2d0a4459",
+          "urn:db415750-5e44-438d-929f-4d3f4de61dd1",
+          "urn:b3e4f9c9-2118-4445-a269-2c0ce2faad3c",
+          "urn:6fd767a3-17b5-4046-90fb-73b89ffd67b3",
+          "urn:9aa3d02f-7857-42e4-a56f-c5e33d30bbdd",
+          "urn:30bf72d1-b126-4ac3-a9ec-7d3faa819b49",
+          "urn:58e04116-eddc-44ae-ad67-90ad0d9140ca",
+          "urn:953e914c-dcbf-4650-9caa-197e0e457e37",
+          "urn:adca2f11-584a-4203-97e2-2ec61e88b602"
+        ]
+      },
+      {
+        "@id": "urn:da0194bd-3594-4203-870b-66e44c3d63b8",
+        "label": "slicer",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/slicer highres example_func2highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:a8139a71-b628-490b-8afa-5000ae93e4b0",
+          "urn:a925031d-004a-4d00-a0ba-872aca37fefa"
+        ]
+      },
+      {
+        "@id": "urn:a63e77dd-a715-4cd4-aa39-76cefbec6070",
+        "label": "pngappend",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2highres2.png",
+        "used": [
+          "urn:b6c88a90-a410-4b41-b46f-ab87c9365935",
+          "urn:35c543ac-1e59-43c0-b24c-4f3a6839dc70",
+          "urn:5f1fa25e-1bc3-4d01-a1ba-8371db2e7a90",
+          "urn:bd47408e-f727-4be9-8931-c95a2d0a4459",
+          "urn:db415750-5e44-438d-929f-4d3f4de61dd1",
+          "urn:b3e4f9c9-2118-4445-a269-2c0ce2faad3c",
+          "urn:6fd767a3-17b5-4046-90fb-73b89ffd67b3",
+          "urn:9aa3d02f-7857-42e4-a56f-c5e33d30bbdd",
+          "urn:30bf72d1-b126-4ac3-a9ec-7d3faa819b49",
+          "urn:58e04116-eddc-44ae-ad67-90ad0d9140ca",
+          "urn:953e914c-dcbf-4650-9caa-197e0e457e37",
+          "urn:adca2f11-584a-4203-97e2-2ec61e88b602"
+        ]
+      },
+      {
+        "@id": "urn:1e14dc51-c654-4d63-aaca-71d48d8c695f",
+        "label": "pngappend",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/pngappend example_func2highres1.png example_func2highres2.png example_func2highres.png",
+        "used": [
+          "urn:d5b5c44b-b3fd-41f9-8fc5-8c5f92713b58",
+          "urn:ae56a94e-e98f-4f7f-bbdb-9426bf39b4ca"
+        ]
+      },
+      {
+        "@id": "urn:32d6207f-2ea7-4bd7-ac47-b72694b61cf1",
+        "label": "rm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/rm -f sl?.png example_func2highres2.png",
+        "used": [
+          "urn:c068562a-0a7f-4c81-8be6-90d2c88c8a32",
+          "urn:ae56a94e-e98f-4f7f-bbdb-9426bf39b4ca"
+        ]
+      },
+      {
+        "@id": "urn:2349e9e7-7fd4-4ffd-b73c-e9d2d08539c2",
+        "label": "rm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/rm example_func2highres1.png",
+        "used": [
+          "urn:d5b5c44b-b3fd-41f9-8fc5-8c5f92713b58"
+        ]
+      },
+      {
+        "@id": "urn:b0305d2c-ec29-4a65-87b7-0d8a9eeb99dc",
+        "label": "flirt",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/flirt -in highres -ref standard -out highres2standard -omat highres2standard.mat -cost corratio -dof 12 -searchrx -90 90 -searchry -90 90 -searchrz -90 90 -interp trilinear",
+        "used": [
+          "urn:a8139a71-b628-490b-8afa-5000ae93e4b0",
+          "urn:900ff8dd-57e0-498f-a36e-e1cf8fff133e"
+        ]
+      },
+      {
+        "@id": "urn:fda454ee-b4a6-4404-8fa4-1472d7b366fb",
+        "label": "convert_xfm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/convert_xfm -inverse -omat standard2highres.mat highres2standard.mat",
+        "used": [
+          "urn:6ee44a59-803c-429f-8031-035b2af95bac"
+        ]
+      },
+      {
+        "@id": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db",
+        "label": "slicer",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/slicer highres2standard standard -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:0c61480c-078e-494f-86cb-b29025e555c9",
+          "urn:900ff8dd-57e0-498f-a36e-e1cf8fff133e"
+        ]
+      },
+      {
+        "@id": "urn:9511a200-5f86-4e9f-ac75-1949cba5e2a3",
+        "label": "pngappend",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png highres2standard1.png",
+        "used": [
+          "urn:b6c88a90-a410-4b41-b46f-ab87c9365935",
+          "urn:35c543ac-1e59-43c0-b24c-4f3a6839dc70",
+          "urn:5f1fa25e-1bc3-4d01-a1ba-8371db2e7a90",
+          "urn:bd47408e-f727-4be9-8931-c95a2d0a4459",
+          "urn:db415750-5e44-438d-929f-4d3f4de61dd1",
+          "urn:b3e4f9c9-2118-4445-a269-2c0ce2faad3c",
+          "urn:6fd767a3-17b5-4046-90fb-73b89ffd67b3",
+          "urn:9aa3d02f-7857-42e4-a56f-c5e33d30bbdd",
+          "urn:30bf72d1-b126-4ac3-a9ec-7d3faa819b49",
+          "urn:58e04116-eddc-44ae-ad67-90ad0d9140ca",
+          "urn:953e914c-dcbf-4650-9caa-197e0e457e37",
+          "urn:adca2f11-584a-4203-97e2-2ec61e88b602"
+        ]
+      },
+      {
+        "@id": "urn:cdfcb224-cb73-492b-82a6-03505a95c622",
+        "label": "slicer",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/slicer standard highres2standard -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:900ff8dd-57e0-498f-a36e-e1cf8fff133e",
+          "urn:0c61480c-078e-494f-86cb-b29025e555c9"
+        ]
+      },
+      {
+        "@id": "urn:f40aa0bf-b012-4542-a638-6a933b442855",
+        "label": "pngappend",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png highres2standard2.png",
+        "used": [
+          "urn:b6c88a90-a410-4b41-b46f-ab87c9365935",
+          "urn:35c543ac-1e59-43c0-b24c-4f3a6839dc70",
+          "urn:5f1fa25e-1bc3-4d01-a1ba-8371db2e7a90",
+          "urn:bd47408e-f727-4be9-8931-c95a2d0a4459",
+          "urn:db415750-5e44-438d-929f-4d3f4de61dd1",
+          "urn:b3e4f9c9-2118-4445-a269-2c0ce2faad3c",
+          "urn:6fd767a3-17b5-4046-90fb-73b89ffd67b3",
+          "urn:9aa3d02f-7857-42e4-a56f-c5e33d30bbdd",
+          "urn:30bf72d1-b126-4ac3-a9ec-7d3faa819b49",
+          "urn:58e04116-eddc-44ae-ad67-90ad0d9140ca",
+          "urn:953e914c-dcbf-4650-9caa-197e0e457e37",
+          "urn:adca2f11-584a-4203-97e2-2ec61e88b602"
+        ]
+      },
+      {
+        "@id": "urn:ab98c1cb-c2ce-496d-8cf0-cd6ad7c11aa4",
+        "label": "pngappend",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/pngappend highres2standard1.png highres2standard2.png highres2standard.png",
+        "used": [
+          "urn:62384573-4cc7-450e-90b9-3c237e750d56",
+          "urn:9bb17365-4e30-41a2-8795-4b4f531330d2"
+        ]
+      },
+      {
+        "@id": "urn:8d86834e-248c-407e-ba62-5204c132f408",
+        "label": "rm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/rm -f sl?.png highres2standard2.png",
+        "used": [
+          "urn:c068562a-0a7f-4c81-8be6-90d2c88c8a32",
+          "urn:9bb17365-4e30-41a2-8795-4b4f531330d2"
+        ]
+      },
+      {
+        "@id": "urn:8d39e270-7dbc-4050-94b2-dc0ecb0dbee8",
+        "label": "rm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/rm highres2standard1.png",
+        "used": [
+          "urn:62384573-4cc7-450e-90b9-3c237e750d56"
+        ]
+      },
+      {
+        "@id": "urn:f23a3697-50db-4002-bc6c-c481672b7634",
+        "label": "convert_xfm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/convert_xfm -omat example_func2standard.mat -concat highres2standard.mat example_func2highres.mat",
+        "used": [
+          "urn:4941bf08-f9a0-412e-b79c-5a7428327640"
+        ]
+      },
+      {
+        "@id": "urn:23425be8-9ec5-46c3-907f-ce5d33039de5",
+        "label": "flirt",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/flirt -ref standard -in example_func -out example_func2standard -applyxfm -init example_func2standard.mat -interp trilinear",
+        "used": [
+          "urn:f364bd81-b2ee-4854-9ba0-9a4f67548f6d",
+          "urn:900ff8dd-57e0-498f-a36e-e1cf8fff133e",
+          "urn:959c05b9-0f04-493e-8784-a04ff7541e0c"
+        ]
+      },
+      {
+        "@id": "urn:6204c989-3441-4c2b-a22c-43d60907db5c",
+        "label": "convert_xfm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/convert_xfm -inverse -omat standard2example_func.mat example_func2standard.mat",
+        "used": [
+          "urn:959c05b9-0f04-493e-8784-a04ff7541e0c"
+        ]
+      },
+      {
+        "@id": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c",
+        "label": "slicer",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/slicer example_func2standard standard -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:b2bf0cb0-5e3c-41c2-9801-534a2cb9adda",
+          "urn:900ff8dd-57e0-498f-a36e-e1cf8fff133e"
+        ]
+      },
+      {
+        "@id": "urn:ec624061-d9d8-49d3-ba61-210ba8bc668d",
+        "label": "pngappend",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2standard1.png",
+        "used": [
+          "urn:b6c88a90-a410-4b41-b46f-ab87c9365935",
+          "urn:35c543ac-1e59-43c0-b24c-4f3a6839dc70",
+          "urn:5f1fa25e-1bc3-4d01-a1ba-8371db2e7a90",
+          "urn:bd47408e-f727-4be9-8931-c95a2d0a4459",
+          "urn:db415750-5e44-438d-929f-4d3f4de61dd1",
+          "urn:b3e4f9c9-2118-4445-a269-2c0ce2faad3c",
+          "urn:6fd767a3-17b5-4046-90fb-73b89ffd67b3",
+          "urn:9aa3d02f-7857-42e4-a56f-c5e33d30bbdd",
+          "urn:30bf72d1-b126-4ac3-a9ec-7d3faa819b49",
+          "urn:58e04116-eddc-44ae-ad67-90ad0d9140ca",
+          "urn:953e914c-dcbf-4650-9caa-197e0e457e37",
+          "urn:adca2f11-584a-4203-97e2-2ec61e88b602"
+        ]
+      },
+      {
+        "@id": "urn:a7cd20da-4bb7-463b-be57-3497c9110026",
+        "label": "slicer",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/slicer standard example_func2standard -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:900ff8dd-57e0-498f-a36e-e1cf8fff133e",
+          "urn:b2bf0cb0-5e3c-41c2-9801-534a2cb9adda"
+        ]
+      },
+      {
+        "@id": "urn:2a4c145b-a831-4db9-ba1b-af5f51131ec5",
+        "label": "pngappend",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2standard2.png",
+        "used": [
+          "urn:b6c88a90-a410-4b41-b46f-ab87c9365935",
+          "urn:35c543ac-1e59-43c0-b24c-4f3a6839dc70",
+          "urn:5f1fa25e-1bc3-4d01-a1ba-8371db2e7a90",
+          "urn:bd47408e-f727-4be9-8931-c95a2d0a4459",
+          "urn:db415750-5e44-438d-929f-4d3f4de61dd1",
+          "urn:b3e4f9c9-2118-4445-a269-2c0ce2faad3c",
+          "urn:6fd767a3-17b5-4046-90fb-73b89ffd67b3",
+          "urn:9aa3d02f-7857-42e4-a56f-c5e33d30bbdd",
+          "urn:30bf72d1-b126-4ac3-a9ec-7d3faa819b49",
+          "urn:58e04116-eddc-44ae-ad67-90ad0d9140ca",
+          "urn:953e914c-dcbf-4650-9caa-197e0e457e37",
+          "urn:adca2f11-584a-4203-97e2-2ec61e88b602"
+        ]
+      },
+      {
+        "@id": "urn:b6f35671-5424-4dec-8880-66e2a8946ef3",
+        "label": "pngappend",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/usr/local/fsl/bin/pngappend example_func2standard1.png example_func2standard2.png example_func2standard.png",
+        "used": [
+          "urn:1c354be2-6139-44dd-af4a-0365ec05f38b",
+          "urn:46807bdd-b410-4210-96e0-88f718e6cb16"
+        ]
+      },
+      {
+        "@id": "urn:2b5f3c13-6d9a-4b38-a6ca-3de31109194c",
+        "label": "rm",
+        "associatedWith": "urn:6745329b-fd30-4939-a255-ef1feea6b9d3",
+        "command": "/bin/rm -f sl?.png example_func2standard2.png",
+        "used": [
+          "urn:c068562a-0a7f-4c81-8be6-90d2c88c8a32",
+          "urn:46807bdd-b410-4210-96e0-88f718e6cb16"
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         ]
       }
     ],
     "prov:Entity": [
       {
+<<<<<<< HEAD
         "@id": "urn:47a6d8d2-1b3f-40c2-9ac2-3d2f88407a1b",
+=======
+        "@id": "urn:b7ac6b48-c304-46ee-bb88-a12d564c92b7",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "fmri",
         "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/fmri"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:4458df8c-3d5a-4dc6-b264-41718a65ecb7",
         "label": "prefiltered_func_data",
         "prov:atLocation": "prefiltered_func_data",
@@ -796,35 +1540,89 @@
       },
       {
         "@id": "urn:d2ffe8ff-7de7-48b7-97c7-6b303015f8ec",
+=======
+        "@id": "urn:e543b291-5499-40bd-b1ea-5239496845e8",
+        "label": "prefiltered_func_data",
+        "prov:atLocation": "prefiltered_func_data",
+        "generatedBy": "urn:3aadaeb0-91bd-4a74-ae01-36ae57128262"
+      },
+      {
+        "@id": "urn:f364bd81-b2ee-4854-9ba0-9a4f67548f6d",
+        "label": "example_func",
+        "prov:atLocation": "example_func",
+        "generatedBy": "urn:c1c05f31-53b3-4d60-932c-d2a1b5d4a466"
+      },
+      {
+        "@id": "urn:d5a8ef3b-3fe5-4c55-bd5b-fc2ed5d334bd",
+        "label": "prefiltered_func_data_mcf",
+        "prov:atLocation": "prefiltered_func_data_mcf",
+        "generatedBy": "urn:718dbf60-9c92-4e97-bf35-590f0bf62328"
+      },
+      {
+        "@id": "urn:929dfacf-5c72-49ca-93f0-a8517bf909ab",
+        "label": "-p",
+        "prov:atLocation": "-p",
+        "generatedBy": "urn:a5a71577-60ff-4ddd-8f00-49cddb64d296"
+      },
+      {
+        "@id": "urn:92c899a3-3a6b-4340-a390-fb4bce24d834",
+        "label": "mc",
+        "prov:atLocation": "mc",
+        "generatedBy": "urn:a5a71577-60ff-4ddd-8f00-49cddb64d296"
+      },
+      {
+        "@id": "urn:7119526c-a504-45eb-a002-13886a4f35a8",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_mcf.mat",
         "prov:atLocation": "prefiltered_func_data_mcf.mat"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:54657c19-2c3e-41b3-8b79-83caa4dc51f2",
+=======
+        "@id": "urn:8b63c884-07b2-4b5c-ac7d-7dd725614b6d",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_mcf.par",
         "prov:atLocation": "prefiltered_func_data_mcf.par"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:9760540d-d544-47af-9d82-3dec267a9056",
+=======
+        "@id": "urn:60019bc0-d908-493b-aab0-30ce8bb5924a",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_mcf_abs.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_abs.rms"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:5a2ebba9-b9a9-4380-a478-1cbc9e0c4cf8",
+=======
+        "@id": "urn:e9c77575-d8ac-44a0-8dca-b872504f8dbb",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_mcf_abs_mean.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_abs_mean.rms"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:87cf374e-7e23-41d2-90a8-e2475740b6f8",
+=======
+        "@id": "urn:2710ef76-16d0-4ee3-9bbb-44fa8a077b4d",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_mcf_rel.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_rel.rms"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:ff181c8e-7141-4399-b9a7-9bedc2c1deb2",
+=======
+        "@id": "urn:befe69ea-8d47-4f0e-961b-d4a504bf5cb1",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_mcf_rel_mean.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_rel_mean.rms"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:28dfcaee-d5c6-470d-90d5-9d23597e312b",
         "label": "mc",
         "prov:atLocation": "mc",
@@ -844,10 +1642,32 @@
       },
       {
         "@id": "urn:5f05fdda-34ce-44f0-b5fd-bbf8f48d22e7",
+=======
+        "@id": "urn:5c53303d-106a-418e-b67d-876aa7070862",
+        "label": "mc",
+        "prov:atLocation": "mc",
+        "generatedBy": "urn:0b3bf159-ea15-4f84-bc7a-d987c96fafa8"
+      },
+      {
+        "@id": "urn:c92940f0-7cff-4ed9-9929-8a739222f34e",
+        "label": "rot.png",
+        "prov:atLocation": "rot.png",
+        "generatedBy": "urn:f3e20c3a-8143-48d9-a185-35d8dc759392"
+      },
+      {
+        "@id": "urn:8cd9fd11-288f-4cb7-a3b0-98b9c59e9553",
+        "label": "trans.png",
+        "prov:atLocation": "trans.png",
+        "generatedBy": "urn:2714c35f-ccda-4048-885c-7aaec0241c1a"
+      },
+      {
+        "@id": "urn:bd813c9a-24d7-4b6f-8225-92206c328831",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_mcf_abs.rms,prefiltered_func_data_mcf_rel.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_abs.rms,prefiltered_func_data_mcf_rel.rms"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:20f9c4e7-892a-4da5-845d-ceb1a0a2b274",
         "label": "disp.png",
         "prov:atLocation": "disp.png",
@@ -855,10 +1675,20 @@
       },
       {
         "@id": "urn:fe52b42c-ab14-43c3-b053-aecc6a531a98",
+=======
+        "@id": "urn:29ea6018-e450-4810-9268-937c4703d873",
+        "label": "disp.png",
+        "prov:atLocation": "disp.png",
+        "generatedBy": "urn:a17942ce-ee8c-4641-b69d-bf6efb81b8fd"
+      },
+      {
+        "@id": "urn:01059823-7978-4e42-ad5d-d6bf2af5d817",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "mean_func",
         "prov:atLocation": "mean_func"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:d38a30ad-465d-4d1d-80ae-cff3fcc11e6e",
         "label": "mask",
         "prov:atLocation": "mask",
@@ -866,10 +1696,20 @@
       },
       {
         "@id": "urn:b03d8821-1c78-4ec1-97d2-7137e826bdc8",
+=======
+        "@id": "urn:a0b4e0dc-5550-43e7-a727-f064fd6546fe",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:70a51f08-724e-47b1-8d2f-2944020912b8"
+      },
+      {
+        "@id": "urn:7ef272f5-42a7-4a14-aff4-5fac234cbe2c",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "mask_mask",
         "prov:atLocation": "mask_mask"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:d80c7650-a094-4890-9592-44d0dbc5ceb3",
         "label": "mask",
         "prov:atLocation": "mask",
@@ -877,20 +1717,38 @@
       },
       {
         "@id": "urn:a969df41-173c-44f1-b076-d353561a5357",
+=======
+        "@id": "urn:ddc32bbd-fead-4547-b73e-6cf661d62f6a",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:bf7053f6-7a1d-45f0-9d9e-519d074961df"
+      },
+      {
+        "@id": "urn:d3dcbc62-b50f-49f1-90b4-dcc15c4fde3a",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_bet",
         "prov:atLocation": "prefiltered_func_data_bet"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:40c0f9a0-eea0-4c80-9c48-1f81dcc0e56c",
+=======
+        "@id": "urn:b1dae223-5edd-41fd-b8f5-27d1af9ecf65",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "978.24375",
         "prov:atLocation": "978.24375"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:f1af1803-1dce-4b88-873f-4238caec50cc",
+=======
+        "@id": "urn:deebac6e-ac89-4f00-a671-4ccaf3d71657",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_thresh",
         "prov:atLocation": "prefiltered_func_data_thresh"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:931e7769-fb3b-4606-aa26-1d9bae1d4ce4",
         "label": "prefiltered_func_data_smooth",
         "prov:atLocation": "prefiltered_func_data_smooth",
@@ -898,20 +1756,38 @@
       },
       {
         "@id": "urn:f9288e17-634f-47c0-891e-d5149c190020",
+=======
+        "@id": "urn:8f6c848a-8e05-43be-92b1-18827dcca41c",
+        "label": "prefiltered_func_data_smooth",
+        "prov:atLocation": "prefiltered_func_data_smooth",
+        "generatedBy": "urn:9a8ff7c0-af76-41e1-95ef-8582efb2e2f0"
+      },
+      {
+        "@id": "urn:6ae95d80-d913-4020-9c40-0d2cb4be1f70",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "1.32814741917",
         "prov:atLocation": "1.32814741917"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:a7a461fb-4daf-485a-b1b0-2534c7391089",
+=======
+        "@id": "urn:061e060e-bdc0-46c0-8a08-4c0d8e9f8504",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_intnorm",
         "prov:atLocation": "prefiltered_func_data_intnorm"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:ada4d575-94fb-4f89-8788-092e324f3691",
+=======
+        "@id": "urn:2f830b56-7669-41bc-ad43-ae0b1c3ffbdd",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data_tempfilt",
         "prov:atLocation": "prefiltered_func_data_tempfilt"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:dbf0f885-5ff5-4bc5-8c71-904e61a01b74",
         "label": "filtered_func_data",
         "prov:atLocation": "filtered_func_data",
@@ -919,10 +1795,20 @@
       },
       {
         "@id": "urn:57c0b8e9-4dbf-4ae3-81b4-6456750da22b",
+=======
+        "@id": "urn:11a607ec-e3cd-44ac-a35b-fc1cf3c9f75e",
+        "label": "filtered_func_data",
+        "prov:atLocation": "filtered_func_data",
+        "generatedBy": "urn:80689192-fa3c-44dd-8e36-3057d5447087"
+      },
+      {
+        "@id": "urn:ee45cc1b-8736-4b74-bada-e48f1e7b17a0",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "prefiltered_func_data*",
         "prov:atLocation": "prefiltered_func_data*"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:5cc86deb-3393-499f-ab5f-a9c39e14b24a",
         "label": "-p",
         "prov:atLocation": "-p",
@@ -936,10 +1822,26 @@
       },
       {
         "@id": "urn:0c6d0c91-7c47-43b2-b4a7-1e9a25e5ef4c",
+=======
+        "@id": "urn:9d770526-aacd-468f-97fb-7b881214bce5",
+        "label": "-p",
+        "prov:atLocation": "-p",
+        "generatedBy": "urn:a4eab650-e211-4a1b-bef1-9452fa7066cc"
+      },
+      {
+        "@id": "urn:391d1c11-0ef3-4aad-81b1-26bc038e6690",
+        "label": "custom_timing_files",
+        "prov:atLocation": "custom_timing_files",
+        "generatedBy": "urn:a4eab650-e211-4a1b-bef1-9452fa7066cc"
+      },
+      {
+        "@id": "urn:41ce8096-0f44-4359-b0e6-c7f73726ab54",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "word_generation.txt",
         "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/word_generation.txt"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:73f5fc42-46ff-4950-9490-759ad0a71c1d",
         "label": "ev1.txt",
         "prov:atLocation": "custom_timing_files/ev1.txt",
@@ -959,10 +1861,32 @@
       },
       {
         "@id": "urn:e3fe0576-6ef5-40ba-a013-e1221764e3ac",
+=======
+        "@id": "urn:d59e84ea-3c58-44fa-982f-fec606b888a8",
+        "label": "ev1.txt",
+        "prov:atLocation": "custom_timing_files/ev1.txt",
+        "generatedBy": "urn:7a9f6c12-24ff-4b95-981b-d7994bdb0a3f"
+      },
+      {
+        "@id": "urn:0673b830-e4ed-4e8f-9eec-0d91a7567280",
+        "label": "-p",
+        "prov:atLocation": "-p",
+        "generatedBy": "urn:18cf8f77-1376-4e57-bd63-16be3ce96952"
+      },
+      {
+        "@id": "urn:fd46f533-45d6-49c6-9023-29452546493c",
+        "label": "custom_timing_files",
+        "prov:atLocation": "custom_timing_files",
+        "generatedBy": "urn:18cf8f77-1376-4e57-bd63-16be3ce96952"
+      },
+      {
+        "@id": "urn:0f7b5d4b-f519-4b5b-841c-5614f34a1422",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "word_shadowing.txt",
         "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/word_shadowing.txt"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:b94c59e7-0de4-4a6b-8a0f-f2b355d78d1b",
         "label": "ev2.txt",
         "prov:atLocation": "custom_timing_files/ev2.txt",
@@ -970,10 +1894,20 @@
       },
       {
         "@id": "urn:a03289e2-7ce3-464e-85db-8cb9c19867d8",
+=======
+        "@id": "urn:526edc21-f678-4b9c-bcb6-e7568ff6c096",
+        "label": "ev2.txt",
+        "prov:atLocation": "custom_timing_files/ev2.txt",
+        "generatedBy": "urn:fa5a4808-403a-46f2-bb7f-77714d67f8ad"
+      },
+      {
+        "@id": "urn:9fb9db23-1463-45c8-a840-9efb7a9a7010",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "res4d",
         "prov:atLocation": "stats/res4d"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:013eae3a-1f25-4ef2-b38e-4ab70812b08d",
         "label": "smoothness",
         "prov:atLocation": "stats/smoothness",
@@ -981,25 +1915,47 @@
       },
       {
         "@id": "urn:2a76945d-7c04-4349-8193-f68ea00235e6",
+=======
+        "@id": "urn:7c857f1c-eee8-4493-9e79-0c6d612c8e59",
+        "label": "smoothness",
+        "prov:atLocation": "stats/smoothness",
+        "generatedBy": "urn:ebbc9288-e6bf-42ed-b5c3-92f471cb961c"
+      },
+      {
+        "@id": "urn:1794aebb-0b6a-465b-a08c-9e3c683e8541",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "zstat1",
         "prov:atLocation": "stats/zstat1"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:993c4403-c7ba-4ef0-bd75-3063ca4b6e96",
+=======
+        "@id": "urn:5d6e7edb-fde0-4ce2-b236-f20b9d8ab5dd",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "thresh_zstat1.vol",
         "prov:atLocation": "thresh_zstat1.vol"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:16cbe1e9-3c8c-44bb-b0e6-51798d4d2aa2",
+=======
+        "@id": "urn:a1b7e26f-7c8a-4a25-aa57-714830e97b93",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "thresh_zstat1",
         "prov:atLocation": "thresh_zstat1"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:7038b39d-a15c-43fb-ba43-f1f29c8efc75",
+=======
+        "@id": "urn:a56ebb33-687f-42ad-927e-a3cab56bb872",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "cope1",
         "prov:atLocation": "stats/cope1"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:49b0b60e-ff2b-412a-a0f6-9e594cb0af1b",
         "label": "cluster_mask_zstat1",
         "prov:atLocation": "cluster_mask_zstat1",
@@ -1025,10 +1981,38 @@
       },
       {
         "@id": "urn:5429af78-ecbb-4fae-bc2f-4bd3beefac87",
+=======
+        "@id": "urn:beb7f679-7765-4252-9c5a-30c2506835f1",
+        "label": "cluster_mask_zstat1",
+        "prov:atLocation": "cluster_mask_zstat1",
+        "generatedBy": "urn:0a558555-8b65-454d-a81d-b66493020d06"
+      },
+      {
+        "@id": "urn:9e9360aa-bc54-4b9c-a35d-8b603f640e44",
+        "label": "thresh_zstat1",
+        "prov:atLocation": "thresh_zstat1",
+        "generatedBy": "urn:0a558555-8b65-454d-a81d-b66493020d06"
+      },
+      {
+        "@id": "urn:f7727994-7423-4962-b681-95601427a42c",
+        "label": "lmax_zstat1.txt",
+        "prov:atLocation": "lmax_zstat1.txt",
+        "generatedBy": "urn:0a558555-8b65-454d-a81d-b66493020d06"
+      },
+      {
+        "@id": "urn:479c9538-0d8a-433b-87ed-8ef58c383379",
+        "label": "cope1",
+        "prov:atLocation": "stats/cope1",
+        "generatedBy": "urn:0a558555-8b65-454d-a81d-b66493020d06"
+      },
+      {
+        "@id": "urn:fbfbd3e9-149c-4a2d-aeec-1db3c6e35d08",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "cluster_zstat1",
         "prov:atLocation": "cluster_zstat1"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:f7481dea-b8c1-4307-b2ab-5a31b983f879",
         "label": "rendered_thresh_zstat1",
         "prov:atLocation": "rendered_thresh_zstat1",
@@ -1042,10 +2026,26 @@
       },
       {
         "@id": "urn:8eb7a8d4-b027-4724-b781-1f360d53da68",
+=======
+        "@id": "urn:cf85bae3-a4d7-41da-ada6-1d1dd250bf01",
+        "label": "rendered_thresh_zstat1",
+        "prov:atLocation": "rendered_thresh_zstat1",
+        "generatedBy": "urn:287cde08-15ee-481f-b1b0-746b94a6c052"
+      },
+      {
+        "@id": "urn:3661cc3f-83b4-4420-baf5-6b71cb045ce3",
+        "label": "rendered_thresh_zstat1.png",
+        "prov:atLocation": "rendered_thresh_zstat1.png",
+        "generatedBy": "urn:438013f8-7d5a-4983-8a02-07f593ba47ff"
+      },
+      {
+        "@id": "urn:d44e161e-c283-41fc-824e-b0ab709afa5e",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "ramp.gif",
         "prov:atLocation": "/usr/local/fsl/etc/luts/ramp.gif"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:0b1d929d-eeab-4aed-8a24-6ab59f4632a9",
         "label": ".ramp.gif",
         "prov:atLocation": ".ramp.gif",
@@ -1107,10 +2107,74 @@
       },
       {
         "@id": "urn:a636b0a1-b397-4f4c-ad12-503ca2be0d28",
+=======
+        "@id": "urn:7e46429a-842c-420f-8d7c-bd9758071637",
+        "label": ".ramp.gif",
+        "prov:atLocation": ".ramp.gif",
+        "generatedBy": "urn:6b1b4411-43e4-4af6-be68-ad8eca3cc03a"
+      },
+      {
+        "@id": "urn:c59c5d90-7787-4bad-bf6a-d7c5799a4a33",
+        "label": "-p",
+        "prov:atLocation": "-p",
+        "generatedBy": "urn:d36227c2-17b7-4efa-9758-c6cdc27979db"
+      },
+      {
+        "@id": "urn:52aea33d-535d-465b-a531-ba826d4764a8",
+        "label": "tsplot",
+        "prov:atLocation": "tsplot",
+        "generatedBy": "urn:d36227c2-17b7-4efa-9758-c6cdc27979db"
+      },
+      {
+        "@id": "urn:e1dfa4e1-e52f-4d97-b4f4-e724b66a57b6",
+        "label": "tsplot",
+        "prov:atLocation": "tsplot",
+        "generatedBy": "urn:6766e0d5-f6f8-443e-874f-147c30053668"
+      },
+      {
+        "@id": "urn:11aa0371-32a8-43f0-982b-9824e4ff8217",
+        "label": "lmax_zstat1_std.txt",
+        "prov:atLocation": "lmax_zstat1_std.txt",
+        "generatedBy": "urn:7df0135c-ff78-41fd-8ef4-36ee1dbd1e74"
+      },
+      {
+        "@id": "urn:ef2c767a-318c-4e36-8f30-615aae4198d9",
+        "label": "cope1",
+        "prov:atLocation": "stats/cope1",
+        "generatedBy": "urn:7df0135c-ff78-41fd-8ef4-36ee1dbd1e74"
+      },
+      {
+        "@id": "urn:a3445456-fed2-4f36-9094-1958ac038309",
+        "label": "example_func2standard.mat",
+        "prov:atLocation": "reg/example_func2standard.mat",
+        "generatedBy": "urn:7df0135c-ff78-41fd-8ef4-36ee1dbd1e74"
+      },
+      {
+        "@id": "urn:ca0b7d81-cea8-4e41-94e3-9152209a2703",
+        "label": "standard",
+        "prov:atLocation": "reg/standard",
+        "generatedBy": "urn:7df0135c-ff78-41fd-8ef4-36ee1dbd1e74"
+      },
+      {
+        "@id": "urn:06a08f9b-e3a5-4457-abec-67541a1211d4",
+        "label": "-p",
+        "prov:atLocation": "-p",
+        "generatedBy": "urn:a4c9c82d-e09d-43b1-9080-9dc3428720e0"
+      },
+      {
+        "@id": "urn:9b125d10-5328-4bde-bdf6-b9cd07ea42f0",
+        "label": "reg",
+        "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/fmri+.feat/reg",
+        "generatedBy": "urn:a4c9c82d-e09d-43b1-9080-9dc3428720e0"
+      },
+      {
+        "@id": "urn:41c66811-f842-4080-bb73-0088d614b6f6",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "structural_brain",
         "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/structural_brain"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:3078963c-aa65-4025-976a-2ee3b1ff699e",
         "label": "highres",
         "prov:atLocation": "highres",
@@ -1118,10 +2182,20 @@
       },
       {
         "@id": "urn:9426529e-250b-4d5d-aa59-6a40b3de31d8",
+=======
+        "@id": "urn:a8139a71-b628-490b-8afa-5000ae93e4b0",
+        "label": "highres",
+        "prov:atLocation": "highres",
+        "generatedBy": "urn:6f37ca90-bf74-43e0-93e4-238aaddd1861"
+      },
+      {
+        "@id": "urn:ce3793e7-a109-473d-ae43-23341992a054",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "MNI152_T1_2mm_brain",
         "prov:atLocation": "/usr/local/fsl/data/standard/MNI152_T1_2mm_brain"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:a5b1c62b-88ba-4149-b8cb-209170863186",
         "label": "standard",
         "prov:atLocation": "standard",
@@ -1309,10 +2383,200 @@
       },
       {
         "@id": "urn:b67ce3f3-4980-4fcf-8990-6fcae4e540bf",
+=======
+        "@id": "urn:900ff8dd-57e0-498f-a36e-e1cf8fff133e",
+        "label": "standard",
+        "prov:atLocation": "standard",
+        "generatedBy": "urn:0982c12c-d3f1-4acc-8d7e-d0e9fe3cdb31"
+      },
+      {
+        "@id": "urn:4941bf08-f9a0-412e-b79c-5a7428327640",
+        "label": "example_func2highres.mat",
+        "prov:atLocation": "example_func2highres.mat",
+        "generatedBy": "urn:df8dff39-604c-4afa-aa42-7aa3020db30e"
+      },
+      {
+        "@id": "urn:a925031d-004a-4d00-a0ba-872aca37fefa",
+        "label": "example_func2highres",
+        "prov:atLocation": "example_func2highres",
+        "generatedBy": "urn:df8dff39-604c-4afa-aa42-7aa3020db30e"
+      },
+      {
+        "@id": "urn:3fe675d9-5705-4bb1-8ae8-4ac7080aa538",
+        "label": "highres2example_func.mat",
+        "prov:atLocation": "highres2example_func.mat",
+        "generatedBy": "urn:4291b5a0-b492-499e-8c0d-a5f28750d6e7"
+      },
+      {
+        "@id": "urn:b6c88a90-a410-4b41-b46f-ab87c9365935",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:35c543ac-1e59-43c0-b24c-4f3a6839dc70",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:5f1fa25e-1bc3-4d01-a1ba-8371db2e7a90",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:bd47408e-f727-4be9-8931-c95a2d0a4459",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:db415750-5e44-438d-929f-4d3f4de61dd1",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:b3e4f9c9-2118-4445-a269-2c0ce2faad3c",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:6fd767a3-17b5-4046-90fb-73b89ffd67b3",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:9aa3d02f-7857-42e4-a56f-c5e33d30bbdd",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:30bf72d1-b126-4ac3-a9ec-7d3faa819b49",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:58e04116-eddc-44ae-ad67-90ad0d9140ca",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:953e914c-dcbf-4650-9caa-197e0e457e37",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:adca2f11-584a-4203-97e2-2ec61e88b602",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:a8c0a87f-4830-43e2-b7ff-76c446bfc20c"
+      },
+      {
+        "@id": "urn:d5b5c44b-b3fd-41f9-8fc5-8c5f92713b58",
+        "label": "example_func2highres1.png",
+        "prov:atLocation": "example_func2highres1.png",
+        "generatedBy": "urn:57cff580-1a8e-4446-933a-6531cbf9a5e8"
+      },
+      {
+        "@id": "urn:5ea560ce-123a-45ad-a6fa-15a4864e9e3a",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:4abb9b4f-733e-4841-9d91-cabbca54c7b5",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:32dcf2c2-8166-468f-9997-7049c933ac7e",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:4569e649-d2b1-4ef9-a203-02085f32bdb7",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:24f0151e-1cdc-482a-9987-25e019ee9b25",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:a4e1da11-3906-4543-95ac-46f1f5ad6825",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:fe8485d9-2348-4419-888c-19e52092eb5e",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:840a6dbe-854b-48be-ad89-3b496b498e6b",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:1556e57d-5d40-4754-b7c6-ffb95584e429",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:c3aaf67d-cd9e-4f39-b3b1-c8aa3cb0da64",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:6ce7e9fa-3ac7-49fc-96e5-27bc9ab20cdb",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:14dd7357-dd40-47f5-ae5a-5fecc4df65f9",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:da0194bd-3594-4203-870b-66e44c3d63b8"
+      },
+      {
+        "@id": "urn:ae56a94e-e98f-4f7f-bbdb-9426bf39b4ca",
+        "label": "example_func2highres2.png",
+        "prov:atLocation": "example_func2highres2.png",
+        "generatedBy": "urn:a63e77dd-a715-4cd4-aa39-76cefbec6070"
+      },
+      {
+        "@id": "urn:b59b0a76-9455-4177-943f-7bdacf250326",
+        "label": "example_func2highres.png",
+        "prov:atLocation": "example_func2highres.png",
+        "generatedBy": "urn:1e14dc51-c654-4d63-aaca-71d48d8c695f"
+      },
+      {
+        "@id": "urn:c068562a-0a7f-4c81-8be6-90d2c88c8a32",
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
         "label": "sl?.png",
         "prov:atLocation": "sl?.png"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:baba75c5-b41b-40de-bdcd-1c05041240cb",
         "label": "highres2standard.mat",
         "prov:atLocation": "highres2standard.mat",
@@ -1671,6 +2935,366 @@
         "label": "example_func2standard.png",
         "prov:atLocation": "example_func2standard.png",
         "generatedBy": "urn:556f717e-7acc-4f39-bc08-dd138cbfbe3f"
+=======
+        "@id": "urn:6ee44a59-803c-429f-8031-035b2af95bac",
+        "label": "highres2standard.mat",
+        "prov:atLocation": "highres2standard.mat",
+        "generatedBy": "urn:b0305d2c-ec29-4a65-87b7-0d8a9eeb99dc"
+      },
+      {
+        "@id": "urn:0c61480c-078e-494f-86cb-b29025e555c9",
+        "label": "highres2standard",
+        "prov:atLocation": "highres2standard",
+        "generatedBy": "urn:b0305d2c-ec29-4a65-87b7-0d8a9eeb99dc"
+      },
+      {
+        "@id": "urn:df2ea320-6850-423c-8446-bdb0c2c8981d",
+        "label": "standard2highres.mat",
+        "prov:atLocation": "standard2highres.mat",
+        "generatedBy": "urn:fda454ee-b4a6-4404-8fa4-1472d7b366fb"
+      },
+      {
+        "@id": "urn:5b652ebb-46ec-42cc-bac2-cea5ad0fcf76",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:4b87f9a6-dd4c-448e-8652-f01e8d175c14",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:9a5a6c74-d9f1-42b8-9cbf-dbdc7cb5a1f2",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:4d054e3b-d042-4762-92cc-8afd720f4271",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:27fb1a35-d388-4771-85da-0006171fb38e",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:7f926b02-6027-4af4-8180-eb5c42a1f97d",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:baedebcf-1980-4982-99a5-7f02138b7190",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:257ae5cd-027e-4d12-b18d-14e4efb6f662",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:24db7d1b-6efb-4d99-b30b-4a718ad3c09d",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:e72fd307-54a8-4e84-a7cc-2ef5e6905b9c",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:a3b5e939-6aa9-43f0-8c79-8660da589cde",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:cfef4b78-6861-48dd-a4c4-389e272f05eb",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:3def3e91-5e21-4a74-8272-8f7d2289a3db"
+      },
+      {
+        "@id": "urn:62384573-4cc7-450e-90b9-3c237e750d56",
+        "label": "highres2standard1.png",
+        "prov:atLocation": "highres2standard1.png",
+        "generatedBy": "urn:9511a200-5f86-4e9f-ac75-1949cba5e2a3"
+      },
+      {
+        "@id": "urn:c45c6160-6799-4b38-b8d0-32d8411c0d75",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:89069dd8-6fa0-4a44-a239-ee7d72e3f13d",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:4a69469f-ad09-4bde-b678-26c9fac4148d",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:027a8625-e433-4734-a097-71831cdd768f",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:6a664262-bdb1-4353-aa07-239063d043fd",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:68183896-842c-4fb2-b472-d5ebe9bc430c",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:bb79facb-3fcb-4d77-99c9-6756b743083b",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:2bc1ea9b-44d3-45ed-ba3c-99df4e3a7713",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:e6746983-667f-4636-bcf1-0bd46c78ecc5",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:04af6bd8-9f3e-4c42-9c2c-055134db638a",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:850a1127-6e95-403f-8ceb-21bfd99036b1",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:1f78be83-88a4-4471-8bfd-032ac9615ab7",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:cdfcb224-cb73-492b-82a6-03505a95c622"
+      },
+      {
+        "@id": "urn:9bb17365-4e30-41a2-8795-4b4f531330d2",
+        "label": "highres2standard2.png",
+        "prov:atLocation": "highres2standard2.png",
+        "generatedBy": "urn:f40aa0bf-b012-4542-a638-6a933b442855"
+      },
+      {
+        "@id": "urn:dea9a5aa-d948-4a54-a6fd-391e495ccc21",
+        "label": "highres2standard.png",
+        "prov:atLocation": "highres2standard.png",
+        "generatedBy": "urn:ab98c1cb-c2ce-496d-8cf0-cd6ad7c11aa4"
+      },
+      {
+        "@id": "urn:959c05b9-0f04-493e-8784-a04ff7541e0c",
+        "label": "example_func2standard.mat",
+        "prov:atLocation": "example_func2standard.mat",
+        "generatedBy": "urn:f23a3697-50db-4002-bc6c-c481672b7634"
+      },
+      {
+        "@id": "urn:b2bf0cb0-5e3c-41c2-9801-534a2cb9adda",
+        "label": "example_func2standard",
+        "prov:atLocation": "example_func2standard",
+        "generatedBy": "urn:23425be8-9ec5-46c3-907f-ce5d33039de5"
+      },
+      {
+        "@id": "urn:43a04c11-034d-4c3e-8602-437d3e3d52eb",
+        "label": "standard2example_func.mat",
+        "prov:atLocation": "standard2example_func.mat",
+        "generatedBy": "urn:6204c989-3441-4c2b-a22c-43d60907db5c"
+      },
+      {
+        "@id": "urn:13913ba0-20e5-4ca6-89f1-64964db0a2a8",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:876adadb-d80d-4573-8f35-cfe1863939fc",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:226fc312-cb66-46b7-9123-9104133507da",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:1114e831-f090-42d2-bfe4-68fc1ed9b851",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:eaccf8d9-23ed-4728-bf21-e3150f38971e",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:26d30e85-1cf7-48ea-ab14-188a94843e97",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:0f309e7d-7630-4e4c-a34b-15e179293e73",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:94b9125d-b72e-48ce-9e93-0fb9a5cbeb13",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:c99bbb8c-4005-43a7-ac7f-7f00cf99a0c1",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:78586a22-fe32-4bbe-9e1a-6c3ffcad1b9b",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:b89ddf2b-09e9-4cfc-9f84-b545a3de14b5",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:7cee592c-dfca-43b6-8ed7-8b012fe7fdb4",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:94e2b64c-b092-49b9-9a95-f47efb43086c"
+      },
+      {
+        "@id": "urn:1c354be2-6139-44dd-af4a-0365ec05f38b",
+        "label": "example_func2standard1.png",
+        "prov:atLocation": "example_func2standard1.png",
+        "generatedBy": "urn:ec624061-d9d8-49d3-ba61-210ba8bc668d"
+      },
+      {
+        "@id": "urn:0fdd01b8-dcb7-493b-8247-8d795603e6b6",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:d0ee3faf-8050-462f-b477-ee70a58c7f2b",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:b577cc9e-1b90-48ee-b671-894ee8f87078",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:e596faaa-6fd0-4f98-a296-fad0dd67aa5a",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:4e212a0c-79f1-420c-83f1-845c1d9d1bab",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:76717fae-8c46-4f0f-9d90-785150a24868",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:448f91e7-bb6c-41e3-91c4-74d18f810a26",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:0bdb27a7-f7fb-4aec-894a-9234c4161333",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:208fe15a-e1f1-4ba8-9b9e-8aa9fed88f13",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:362e0e3c-8f75-4787-b942-d9a8245701ea",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:b4b5cd81-0bf9-42c0-81a7-72c2d2d14d63",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:6e65ad16-d9a0-4d48-8cd4-41faac6544ac",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:a7cd20da-4bb7-463b-be57-3497c9110026"
+      },
+      {
+        "@id": "urn:46807bdd-b410-4210-96e0-88f718e6cb16",
+        "label": "example_func2standard2.png",
+        "prov:atLocation": "example_func2standard2.png",
+        "generatedBy": "urn:2a4c145b-a831-4db9-ba1b-af5f51131ec5"
+      },
+      {
+        "@id": "urn:de05a8b7-a067-4bf2-8def-deb99b8386ff",
+        "label": "example_func2standard.png",
+        "prov:atLocation": "example_func2standard.png",
+        "generatedBy": "urn:b6f35671-5424-4dec-8880-66e2a8946ef3"
+>>>>>>> d183ef522085bd037a36529d41b7381f57718c5a
       }
     ]
   }
