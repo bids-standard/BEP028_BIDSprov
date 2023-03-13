@@ -239,6 +239,7 @@ def build_records(commands: list, agent_id: str, verbose=False):
 
             # make sure attributes are not considered as entities
             cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
+
             # if a key of attributes is in INPUT_TAGS, we add her value in inputs
             inputs = list(chain(*(attributes.pop(k)
                           for k in attributes.keys() & INPUT_TAGS)))
