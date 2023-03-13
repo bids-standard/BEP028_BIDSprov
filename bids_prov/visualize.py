@@ -118,10 +118,8 @@ def main(filename: str, output_file=None, omit_details=True) -> None:
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str,
-                        default="res.jsonld", help="data jsonld file ",)
-    parser.add_argument("--output_file", type=str, default="res.png",
-                        help="output dir where results are written",)
+    parser.add_argument("--input_file", type=str, default="res.jsonld", help="data jsonld file ",)
+    parser.add_argument("--output_file", type=str, default="res.png", help="output dir where results are written",)
     opt = parser.parse_args()
 
     main(opt.input_file, output_file=opt.output_file, omit_details=True)

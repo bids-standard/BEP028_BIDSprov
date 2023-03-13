@@ -1,0 +1,180 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:bb206f26-1581-4a00-87e2-89bfe5198061",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "AFNI",
+        "version": "afni24"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:d715a2ed-88b7-4cde-b47e-c231f02066b6",
+        "label": "Make directory",
+        "associatedWith": "urn:bb206f26-1581-4a00-87e2-89bfe5198061",
+        "command": "\\mkdir ${odir}",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:8434eb69-c88f-4495-b760-16e38daf566e",
+        "label": "@chauffeur_afni",
+        "associatedWith": "urn:bb206f26-1581-4a00-87e2-89bfe5198061",
+        "command": "@chauffeur_afni -ulay ${ref} -ulay_range \"2%\" \"110%\" -olay ${ff} -set_subbricks -1 0 0 -func_range 5 -thr_olay 3 -cbar Reds_and_Blues_Inv -olay_alpha Linear -olay_boxed Yes -opacity 7 -prefix ${odir}/img_${nnn}_alpha_${iid} -montx 1 -monty 1 -set_dicom_xyz 5 18 18 -set_xhairs OFF -label_string \"::${iid}\" -label_mode 1 -label_size 3 -do_clean",
+        "parameters": {
+          "-ulay_range": "\"2%\"",
+          "-olay": "${ff}",
+          "-set_subbricks": true,
+          "-1": "0",
+          "-func_range": "5",
+          "-thr_olay": "3",
+          "-cbar": "Reds_and_Blues_Inv",
+          "-olay_alpha": "Linear",
+          "-olay_boxed": "Yes",
+          "-opacity": "7",
+          "-montx": "1",
+          "-monty": "1",
+          "-set_dicom_xyz": "5",
+          "-set_xhairs": "OFF",
+          "-label_string": "\"::${iid}\"",
+          "-label_mode": "1",
+          "-label_size": "3",
+          "-do_clean": true
+        },
+        "used": [
+          "urn:021aed6d-f6a9-4803-beb9-b29831963d2b"
+        ]
+      },
+      {
+        "@id": "urn:6f2b5781-10c0-4642-8733-d0168567fa14",
+        "label": "@chauffeur_afni",
+        "associatedWith": "urn:bb206f26-1581-4a00-87e2-89bfe5198061",
+        "command": "@chauffeur_afni -ulay ${ref} -ulay_range \"2%\" \"110%\" -olay ${ff} -set_subbricks -1 0 0 -func_range 5 -thr_olay 3 -cbar Reds_and_Blues_Inv -olay_alpha No -olay_boxed No -opacity 7 -prefix ${odir}/img_${nnn}_psi_${iid} -montx 1 -monty 1 -set_dicom_xyz 5 18 18 -set_xhairs OFF -label_string \"::${iid}\" -label_mode 1 -label_size 3 -do_clean",
+        "parameters": {
+          "-ulay_range": "\"2%\"",
+          "-olay": "${ff}",
+          "-set_subbricks": true,
+          "-1": "0",
+          "-func_range": "5",
+          "-thr_olay": "3",
+          "-cbar": "Reds_and_Blues_Inv",
+          "-olay_alpha": "No",
+          "-olay_boxed": "No",
+          "-opacity": "7",
+          "-montx": "1",
+          "-monty": "1",
+          "-set_dicom_xyz": "5",
+          "-set_xhairs": "OFF",
+          "-label_string": "\"::${iid}\"",
+          "-label_mode": "1",
+          "-label_size": "3",
+          "-do_clean": true
+        },
+        "used": [
+          "urn:021aed6d-f6a9-4803-beb9-b29831963d2b"
+        ]
+      },
+      {
+        "@id": "urn:c17dae2a-4011-4339-92af-82299a1eef03",
+        "label": "adjunct_calc_mont_dims.py",
+        "associatedWith": "urn:bb206f26-1581-4a00-87e2-89bfe5198061",
+        "command": "adjunct_calc_mont_dims.py ${nallbase} __tmp_${hyp}",
+        "parameters": {},
+        "used": [
+          "urn:0a25f877-765a-4bca-b204-65c378d87d37"
+        ]
+      },
+      {
+        "@id": "urn:9f8b4b8d-789c-4f1b-843e-aa6f4e8b2cee",
+        "label": "2dcat",
+        "associatedWith": "urn:bb206f26-1581-4a00-87e2-89bfe5198061",
+        "command": "2dcat -echo_edu -gap 5 -gap_col ${lcol} -ny ${dims[4]} -nx ${dims[3]} -zero_wrap -prefix ${odir}/ALL_alpha_${hyp}_sview_${ss}.jpg ${odir}/img_*_alpha*${ss}*",
+        "parameters": {
+          "-echo_edu": true,
+          "-gap": "5",
+          "-gap_col": "${lcol}",
+          "-ny": "${dims[4]}",
+          "-nx": "${dims[3]}",
+          "-zero_wrap": true
+        },
+        "used": [
+          "urn:b4523fec-dc30-4a90-8c8a-a198cea1250e"
+        ]
+      },
+      {
+        "@id": "urn:87d0c03c-a0bd-4a32-8021-774f483d6495",
+        "label": "2dcat",
+        "associatedWith": "urn:bb206f26-1581-4a00-87e2-89bfe5198061",
+        "command": "2dcat -echo_edu -gap 5 -gap_col ${lcol} -ny ${dims[4]} -nx ${dims[3]} -zero_wrap -prefix ${odir}/ALL_psi_${hyp}_sview_${ss}.jpg ${odir}/img_*_psi*${ss}*",
+        "parameters": {
+          "-echo_edu": true,
+          "-gap": "5",
+          "-gap_col": "${lcol}",
+          "-ny": "${dims[4]}",
+          "-nx": "${dims[3]}",
+          "-zero_wrap": true
+        },
+        "used": [
+          "urn:12cd77a4-af85-4927-bbd0-518d20c9b284"
+        ]
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:021aed6d-f6a9-4803-beb9-b29831963d2b",
+        "label": "${ref}",
+        "prov:atLocation": "${ref}"
+      },
+      {
+        "@id": "urn:791e7d01-6f71-4187-823a-a0e4f0f7d961",
+        "label": "img_${nnn}_alpha_${iid}",
+        "prov:atLocation": "img_${nnn}_alpha_${iid}",
+        "generatedBy": "urn:8434eb69-c88f-4495-b760-16e38daf566e"
+      },
+      {
+        "@id": "urn:ea8aa05c-3315-4575-a03e-137baf4a038a",
+        "label": "img_${nnn}_psi_${iid}",
+        "prov:atLocation": "img_${nnn}_psi_${iid}",
+        "generatedBy": "urn:6f2b5781-10c0-4642-8733-d0168567fa14"
+      },
+      {
+        "@id": "urn:0a25f877-765a-4bca-b204-65c378d87d37",
+        "label": "nallbase",
+        "prov:atLocation": "nallbase"
+      },
+      {
+        "@id": "urn:76fa7e5a-c0d2-43c3-88ee-afe44048d0a9",
+        "label": "__tmp_",
+        "prov:atLocation": "__tmp_",
+        "generatedBy": "urn:c17dae2a-4011-4339-92af-82299a1eef03"
+      },
+      {
+        "@id": "urn:b4523fec-dc30-4a90-8c8a-a198cea1250e",
+        "label": "img_*_alpha*${ss}*",
+        "prov:atLocation": "img_*_alpha*${ss}*"
+      },
+      {
+        "@id": "urn:e13cefaf-bb72-485b-89fc-0ce87e10bd9b",
+        "label": "ALL_alpha_${hyp}_sview_${ss}.jpg",
+        "prov:atLocation": "ALL_alpha_${hyp}_sview_${ss}.jpg",
+        "generatedBy": "urn:9f8b4b8d-789c-4f1b-843e-aa6f4e8b2cee"
+      },
+      {
+        "@id": "urn:12cd77a4-af85-4927-bbd0-518d20c9b284",
+        "label": "img_*_psi*${ss}*",
+        "prov:atLocation": "img_*_psi*${ss}*"
+      },
+      {
+        "@id": "urn:8361b64e-ddb1-48a5-987f-84808db0f2dd",
+        "label": "ALL_psi_${hyp}_sview_${ss}.jpg",
+        "prov:atLocation": "ALL_psi_${hyp}_sview_${ss}.jpg",
+        "generatedBy": "urn:87d0c03c-a0bd-4a32-8021-774f483d6495"
+      }
+    ]
+  }
+}
