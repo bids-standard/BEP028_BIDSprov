@@ -56,6 +56,7 @@ def main():
 
     for root, dirs, files in os.walk(opt.input_dir):
         for file in files:
+            print("File: ", file)
             # matlab extension the one of your choice.
             if file.endswith("batch.m"):
                 context_write.write(f"    file= {root}/{str(file)}\n")
@@ -66,7 +67,7 @@ def main():
                 spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_spm + "/" + filename_ss_ext + ".png"
 
-            if file.endswith("report_log.html"):
+            elif file.endswith("report_log.html"):
                 context_write.write(f"    file= {root}/{str(file)}\n")
                 filename = root + "/" + str(file)
                 filename_ss_ext = file.split(".html")[0]
@@ -75,7 +76,7 @@ def main():
                 fsl_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_fsl + "/" + filename_ss_ext + ".png"
 
-            if file.endswith("proc.sub_001"):
+            elif file.endswith("proc.sub_001") or file.endswith(".tcsh"):
                 context_write.write(f"    file= {root}/{str(file)}\n")
                 filename = root + "/" + str(file)
                 filename_ss_ext = file.split(".sub_001")[0]
@@ -84,6 +85,9 @@ def main():
                 afni_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_afni + "/" + filename_ss_ext + ".png"
 
+            else:
+                print(" -> Extension of file ", file , " not supported")
+                continue
 
             visualize(output_jsonld, output_file=output_png)
 
