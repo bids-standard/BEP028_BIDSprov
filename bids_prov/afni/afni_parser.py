@@ -56,9 +56,6 @@ def clean_label_suffix(label:str) ->str:
     return new_label_rename
 
 
-
-
-
 def find_param(cmd_args_remain:list) ->dict:
     """ Find parameter in all command arguments that remain after entities extraction
 
@@ -94,6 +91,16 @@ def build_records(commands: list, agent_id: str, verbose=False):
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (e.g. `Registration`, `Post-stats`)
 
+    Parameters
+    ----------
+
+    commands : list of str
+        all commands extracted from afni file
+    agent_id : int
+        random uuid for software agent (here afni)
+     verbose : bool
+        True to have more verbosity
+
     Returns
     -------
     dict: a set of records compliant with the BIDS-prov standard
@@ -112,33 +119,23 @@ def build_records(commands: list, agent_id: str, verbose=False):
         function_in_description_functions = False
         command_name_end = os.path.split(a_name)[1]
 
-        if verbose:
-            print("CMD", cmd)
-
         for df in description_functions:
             if df["name"] == command_name_end:
                 function_in_description_functions = True
-
-                if "used" in df:
-                    arg = df["used"]
-                    entities, args_consumed_list = get_entities(cmd_s, arg)
-                    renamed_entities = [clean_label_suffix(os.path.split(ent)[1]) for ent in entities]
-                    inputs.extend(renamed_entities)
-                    for arg in args_consumed_list:
-                        cmd_args_remain.remove(arg)
-
-                if "generatedBy" in df:
-                    arg = df["generatedBy"]
-                    entities, args_consumed_list = get_entities(cmd_s, arg)
-                    renamed_entities = [clean_label_suffix(os.path.split(ent)[1]) for ent in entities]
-                    outputs.extend(renamed_entities)
-                    for arg in args_consumed_list:
-                        cmd_args_remain.remove(arg)
+                for key,ent_list in zip(["used", "generatedBy"], [inputs,outputs]):
+                    if key in df:
+                        entities, args_consumed_list = get_entities(cmd_s, df[key])
+                        renamed_entities = [clean_label_suffix(os.path.split(ent)[1]) for ent in entities]
+                        ent_list.extend(renamed_entities)
+                        for arg in args_consumed_list:
+                            cmd_args_remain.remove(arg)
 
                 break
+
         param_dic = find_param(cmd_args_remain)
 
         if verbose:
+            print("CMD", cmd)
             print('-> inputs: ', inputs)
             print('<- outputs: ', outputs)
             print("  others args :", *cmd_args_remain)
@@ -146,7 +143,7 @@ def build_records(commands: list, agent_id: str, verbose=False):
             for k, v in param_dic.items():
                 print(f"{k} : {v}")
 
-        if function_in_description_functions is False:
+        if function_in_description_functions is False: # default behavior if function is not present in descriptions
             print(f"-> {command_name_end} : Not present in description_functions")
 
             # if the function is not in our description file, the process is based on regex
@@ -156,7 +153,6 @@ def build_records(commands: list, agent_id: str, verbose=False):
                 attributes[key].append(value)
 
             cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd) # make sure attributes are not considered as entities
-
             # if a key of attributes is in INPUT_TAGS, we add her value in inputs
             inputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS)))
             # same process with OUTPUT_TAGS
@@ -186,15 +182,12 @@ def build_records(commands: list, agent_id: str, verbose=False):
 
             if existing_input is None:
                 new_label = os.path.split(input_path)[1]
-
                 new_label_rename = clean_label_suffix(new_label)
-                print("label:" , new_label, " rename ", new_label_rename)
                 ent = {
                     "@id": input_id,
                     "label": new_label_rename,
                     "prov:atLocation": input_path,
                 }
-                # print("-> new entity label:", new_label, "rename: ", new_label_rename)
                 records["prov:Entity"].append(ent)
                 activity["used"].append(input_id)
             else:
@@ -218,7 +211,21 @@ def build_records(commands: list, agent_id: str, verbose=False):
     return dict(records)
 
 
-def gather_multiline(input_file):
+def gather_multiline(input_file :str) -> list:
+    """
+    gather multiline command split by \ separator
+
+    Parameters
+    ----------
+    input_file : str
+        name of input afni file
+
+    Returns
+    -------
+    commands : list
+        all commands extracted from afni file without filtering
+
+    """
     commands = []
     with open(input_file) as fd:
         for line in fd:
@@ -229,19 +236,55 @@ def gather_multiline(input_file):
                 commands.append(command_)
 
     return commands
-def readlines(input_file):
+def readlines(input_file:str) -> list:
+    """
+    gather multiline command split by \ separator
+
+    Parameters
+    ----------
+    input_file : str
+        name of input afni file
+
+    Returns
+    -------
+      commands : list
+         all commands extracted from afni file with  filtering function that gives no input/output
+    """
     commands = gather_multiline(input_file)
-    dropline_begin = ["#", 'cd', 'touch',  'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
+    filtered = "\n".join(commands)
+    filtered = re.sub(r"cat <<EOF[\s\S]*?EOF","", filtered) # drop infile text creation
+    commands = filtered.split("\n")
+    dropline_begin = ["#", "cd", "printf", "\\rm", "$cmd", 'touch', 'sleep', 'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
     commands = [cmd for cmd in commands if not any(cmd.startswith(begin) for begin in dropline_begin)]
+    commands = [re.sub( r"\s+", " ", cmd) for cmd in commands] # drop multiple space between args
+    commands = [cmd for cmd in commands if cmd] # drop empty commands
+
     return commands
 
 def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                     soft_ver='afni24', indent=2, verbose=False) -> None:  # TODO : add afni version
-    commands = readlines(filename)
-    filtered = "\n".join(commands)
-    if verbose:
-        print(filtered)
+                     soft_ver='afni24', indent=2, verbose=True) -> None: 
+    """
+    afni parser
 
+    Parameters
+    ----------
+    filename : str
+        filename of  afni script
+    context_url : str
+        url for context bids-prov :
+    output_file : str
+        name of output parsed file with extension json.ld
+    soft_ver:str
+        version of sofware afni
+    indent :int
+        number of indentation in jsonld
+    verbose : bool
+        True to have more verbosity
+
+
+
+    """
+    commands = readlines(filename)
     graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
     records = build_records(commands, agent_id, verbose=verbose)
     graph["records"].update(records)
@@ -259,10 +302,10 @@ if __name__ == "__main__":
     afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.afni.afni_parser --input_file ./afni_test_local/afni_default_proc.sub_001  --output_file res.jsonld
 
-    # input_file = os.path.abspath("../../afni_test_local/afni_default_proc.sub_001")
-    # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
+    # input_file = os.path.abspath("../../nidmresults-examples/narps_do_13_view_zoom.tcsh")
+    # # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
     # output_file = "../../res.jsonld"
-    # # # # commands = readlines(input_file)
+    # # commands = readlines(input_file)
     # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24',verbose=True)
 
     # Finding PREAMBULE
