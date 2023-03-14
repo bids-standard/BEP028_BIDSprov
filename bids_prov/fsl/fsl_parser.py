@@ -158,11 +158,10 @@ def _get_kwarg(serie,  with_value=True):
                     # parser.add_argument(u_arg)
                     add_argument_list.append({"arg": u_arg})
                     arg_list.append((u_arg, [0]))
-                # parser.add_argument(u_arg)
-                add_argument_list.append({"arg": u_arg})
-                arg_list.append((u_arg, [0]))
+
             else:
                 if u_arg == ">" or u_arg == ">>" or u_arg == "|&":
+                    print("with_novalue > u_arg", u_arg)
                     # parser.add_argument(u_arg, action='store_true')
                     add_argument_list.append(
                         {"arg": "-" + u_arg, "action": 'store_true'})
