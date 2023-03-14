@@ -138,21 +138,27 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 #         return conf.bosh_config[key]
 #     return None
 
-def _get_kwarg(parser, serie,  with_value=True):
+def _get_kwarg(serie,  with_value=True):
     arg_list = []
+    add_argument_list = []
     for u_arg in serie:
         if type(u_arg) == dict:
-            parser.add_argument(u_arg["name"], nargs='+', action='append')
+            # parser.add_argument(u_arg["name"], nargs='+', action='append')
+            add_argument_list.append(
+                {"arg": u_arg["name"], "nargs": '+', "action": 'append'})
             arg_list.append((u_arg["name"], [u_arg["index"]]))
         if type(u_arg) == str and ":" not in u_arg:
             if with_value:
-                parser.add_argument(u_arg)
+                # parser.add_argument(u_arg)
+                add_argument_list.append({"arg": u_arg})
                 arg_list.append((u_arg, [0]))
             else:
-                parser.add_argument(u_arg, action='store_true')
+                # parser.add_argument(u_arg, action='store_true')
+                add_argument_list.append(
+                    {"arg": u_arg, "action": 'store_true'})
                 arg_list.append((u_arg, []))
 
-    return parser, arg_list
+    return add_argument_list, arg_list
 
 
 def _get_arg(serie, arg_rest):
@@ -262,18 +268,32 @@ def get_entities(cmd_s, parameters):
     parameters_no_value = []
 
     if "used" in parameters:
-        parser, inputs_kwarg = _get_kwarg(parser, parameters["used"])
+        add_argument_list, inputs_kwarg = _get_kwarg(
+            parameters["used"])
+        for kwarg in add_argument_list:
+            arg = kwarg.pop("arg")
+            parser.add_argument(arg, **kwarg)
 
     if "generatedBy" in parameters:
-        parser, outputs_kwarg = _get_kwarg(parser, parameters["generatedBy"])
+        add_argument_list, outputs_kwarg = _get_kwarg(
+            parameters["generatedBy"])
+        for kwarg in add_argument_list:
+            arg = kwarg.pop("arg")
+            parser.add_argument(arg, **kwarg)
 
     if "parameters_value" in parameters:
-        parser, parameters_value = _get_kwarg(
-            parser, parameters["parameters_value"])
+        add_argument_list, parameters_value = _get_kwarg(
+            parameters["parameters_value"])
+        for kwarg in add_argument_list:
+            arg = kwarg.pop("arg")
+            parser.add_argument(arg, **kwarg)
 
     if "parameters_no_value" in parameters:
-        parser, parameters_no_value = _get_kwarg(
-            parser, parameters["parameters_no_value"], with_value=False)
+        add_argument_list, parameters_no_value = _get_kwarg(
+            parameters["parameters_no_value"], with_value=False)
+        for kwarg in add_argument_list:
+            arg = kwarg.pop("arg")
+            parser.add_argument(arg, **kwarg)
 
     opts, arg_rest = parser.parse_known_args(cmd_s)
 
@@ -382,18 +402,10 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             command_name_end = os.path.split(a_name)[1]
             for df in description_functions:
                 if df["name"] == command_name_end:
+                    description_of_command = df
                     function_in_description_functions = True
-                    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
-                    # if "used" in df:
-                    #     ent, arg_ = get_entities(cmd_s, df["used"])
-                    #     inputs.extend(ent)
-                    #     arg_list.append(arg_)
-                    # if "generatedBy" in df:
-                    #     ent, arg_ = get_entities(cmd_s, df["generatedBy"])
-                    #     outputs.extend(ent)
-                    #     arg_list.append(arg_)
-                    # if command_name_end == "fslmaths" and "-odt" not in cmd_s:
-                    #     outputs.append(cmd_s[-1])
+                    inputs, outputs, parameters = get_entities(
+                        cmd_s[1:], description_of_command)
                     break
 
             if function_in_description_functions is False:
