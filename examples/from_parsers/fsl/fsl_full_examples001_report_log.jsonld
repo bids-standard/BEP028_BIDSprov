@@ -23,6 +23,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         "@id": "urn:07c13c75-dc25-4d00-bfec-c7195c59ef54",
 =======
 =======
@@ -119,7 +120,13 @@
 =======
         "@id": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "RRID": "RRID:SCR_007037",
         "@type": "prov:SoftwareAgent",
         "label": "FSL",
@@ -131,6 +138,7 @@
 <<<<<<< HEAD
         "@id": "urn:2dbc9281-311f-44fb-8ada-ddbc6d5009ea",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -465,7 +473,42 @@
         "label": "Make directory",
         "associatedWith": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:9a3d9d16-4773-401d-9813-15b46254e566",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/fmri prefiltered_func_data -odt float",
+        "used": [
+          "urn:ee233c10-32b9-4d6a-b85d-0c08f45b3e21"
+        ]
+      },
+      {
+        "@id": "urn:6d9c223c-81c7-4ac4-9166-34fa76b2c8ac",
+        "label": "fslroi",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslroi prefiltered_func_data example_func 53 1",
+        "used": [
+          "urn:961a2e83-4684-466c-a98a-1b3ed6e97d9f"
+        ]
+      },
+      {
+        "@id": "urn:2c845b88-e8e9-4d29-8a62-e2e0e9146fcf",
+        "label": "mcflirt",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/mcflirt -in prefiltered_func_data -out prefiltered_func_data_mcf -mats -plots -reffile example_func -rmsrel -rmsabs",
+        "used": [
+          "urn:961a2e83-4684-466c-a98a-1b3ed6e97d9f"
+        ]
+      },
+      {
+        "@id": "urn:4e15b057-3dad-446b-8539-81dd4e18a976",
+        "label": "Make directory",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "/bin/mkdir -p mc",
         "used": []
       },
@@ -473,6 +516,7 @@
 <<<<<<< HEAD
         "@id": "urn:2efb1d94-8f81-46bb-b88d-4a243d7223da",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1827,7 +1871,212 @@
         "label": "Make directory",
         "associatedWith": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:e761d505-84d6-4c25-9c78-04f7dd2e36a6",
+        "label": "mv",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/mv -f prefiltered_func_data_mcf.mat prefiltered_func_data_mcf.par prefiltered_func_data_mcf_abs.rms prefiltered_func_data_mcf_abs_mean.rms prefiltered_func_data_mcf_rel.rms prefiltered_func_data_mcf_rel_mean.rms mc",
+        "used": [
+          "urn:04b3202e-6c49-49ab-9d13-5159338ae9be",
+          "urn:672b4533-a4ec-4107-aa8a-b750a020c460",
+          "urn:6dc2973a-6316-42ca-84d7-2a2131fedddb",
+          "urn:baac777c-fd0a-41d5-a3b6-4eef93264788",
+          "urn:25672ef8-ad23-452d-bff5-290108067631",
+          "urn:47f57c6e-30b0-4761-ac4b-0af05ca5179b"
+        ]
+      },
+      {
+        "@id": "urn:3d0577ee-6322-4ee6-ae41-a0f45fd01983",
+        "label": "fsl_tsplot",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fsl_tsplot -i prefiltered_func_data_mcf.par -t 'MCFLIRT estimated rotations (radians)' -u 1 --start=1 --finish=3 -a x,y,z -w 640 -h 144 -o rot.png",
+        "used": [
+          "urn:672b4533-a4ec-4107-aa8a-b750a020c460"
+        ]
+      },
+      {
+        "@id": "urn:27e6cc50-958b-41ce-9cf1-bda86efa5d2a",
+        "label": "fsl_tsplot",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fsl_tsplot -i prefiltered_func_data_mcf.par -t 'MCFLIRT estimated translations (mm)' -u 1 --start=4 --finish=6 -a x,y,z -w 640 -h 144 -o trans.png",
+        "used": [
+          "urn:672b4533-a4ec-4107-aa8a-b750a020c460"
+        ]
+      },
+      {
+        "@id": "urn:619538a1-29bc-4e89-b31f-666e6af37859",
+        "label": "fsl_tsplot",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fsl_tsplot -i prefiltered_func_data_mcf_abs.rms,prefiltered_func_data_mcf_rel.rms -t 'MCFLIRT estimated mean displacement (mm)' -u 1 -w 640 -h 144 -a absolute,relative -o disp.png",
+        "used": [
+          "urn:fd9e99a4-1b2e-46f5-84f1-8bef10a1e603"
+        ]
+      },
+      {
+        "@id": "urn:859844ab-ef18-46b9-9ce5-3dc8292ac3f4",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_mcf -Tmean mean_func",
+        "used": [
+          "urn:44baefdc-6aa3-4078-b08f-2a528460a123"
+        ]
+      },
+      {
+        "@id": "urn:046bf6ce-ca1e-455d-9420-b786b1ca6e15",
+        "label": "bet2",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/bet2 mean_func mask -f 0.3 -n -m",
+        "used": [
+          "urn:b5a536e9-2882-4ec5-8683-27ac44ba9803"
+        ]
+      },
+      {
+        "@id": "urn:85b0ca52-084e-405f-9f59-d5165f3b2b49",
+        "label": "immv",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/immv mask_mask mask",
+        "used": [
+          "urn:c4aa8f9a-b94d-4e6c-921a-df83568678d7"
+        ]
+      },
+      {
+        "@id": "urn:d7d2a7cc-2d56-4883-b99f-b57d4b50452f",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_mcf -mas mask prefiltered_func_data_bet",
+        "used": [
+          "urn:d2710e9d-5085-423f-bcd1-c414323441b6",
+          "urn:44baefdc-6aa3-4078-b08f-2a528460a123"
+        ]
+      },
+      {
+        "@id": "urn:9380bc33-349a-458f-8542-7a37c2eb6dca",
+        "label": "fslstats",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslstats prefiltered_func_data_bet -p 2 -p 98",
+        "used": [
+          "urn:fd4390e2-38b0-45bb-95eb-075da0b03322"
+        ]
+      },
+      {
+        "@id": "urn:908e3bdc-e485-406a-a627-4f237a7e0e58",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_bet -thr 978.24375 -Tmin -bin mask -odt char",
+        "used": [
+          "urn:fd4390e2-38b0-45bb-95eb-075da0b03322"
+        ]
+      },
+      {
+        "@id": "urn:16104bb0-4511-4c73-b987-b93e83eb58ac",
+        "label": "fslstats",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslstats prefiltered_func_data_mcf -k mask -p 50",
+        "used": [
+          "urn:44baefdc-6aa3-4078-b08f-2a528460a123"
+        ]
+      },
+      {
+        "@id": "urn:bb5b4211-efef-4b6a-bd19-70862a9c71c2",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths mask -dilF mask",
+        "used": [
+          "urn:d2710e9d-5085-423f-bcd1-c414323441b6"
+        ]
+      },
+      {
+        "@id": "urn:a75a0a3b-37c4-4f58-9dfa-6b5461dca0b5",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_mcf -mas mask prefiltered_func_data_thresh",
+        "used": [
+          "urn:d2710e9d-5085-423f-bcd1-c414323441b6",
+          "urn:44baefdc-6aa3-4078-b08f-2a528460a123"
+        ]
+      },
+      {
+        "@id": "urn:b8f79306-0f53-40eb-b932-5e84573beac3",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_thresh -Tmean mean_func",
+        "used": [
+          "urn:8b17dedf-86ef-49ea-a100-42134c2d6f93"
+        ]
+      },
+      {
+        "@id": "urn:9182fc4b-ecb8-4f23-a1e9-bb592c80bb22",
+        "label": "susan",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/susan prefiltered_func_data_thresh 5646.963501 2.97239915074 3 1 1 mean_func 5646.963501 prefiltered_func_data_smooth",
+        "used": [
+          "urn:8b17dedf-86ef-49ea-a100-42134c2d6f93"
+        ]
+      },
+      {
+        "@id": "urn:0629c83f-02d7-441c-b357-ec6fb0c0439f",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_smooth -mas mask prefiltered_func_data_smooth",
+        "used": [
+          "urn:d2710e9d-5085-423f-bcd1-c414323441b6",
+          "urn:0952ecce-6f08-49c8-8994-49b0a7536769"
+        ]
+      },
+      {
+        "@id": "urn:94a78872-b1d1-4a0c-baee-348461abbd9d",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_smooth -mul 1.32814741917 prefiltered_func_data_intnorm",
+        "used": [
+          "urn:0952ecce-6f08-49c8-8994-49b0a7536769"
+        ]
+      },
+      {
+        "@id": "urn:eafb78ee-0eb7-487e-823e-e1f0cfd89070",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_intnorm -bptf 227.142867456 -1 prefiltered_func_data_tempfilt",
+        "used": [
+          "urn:f087e270-2851-496d-adb7-6f7bd8a5303b"
+        ]
+      },
+      {
+        "@id": "urn:7aa0b03d-77c2-4770-a306-d07ca9323634",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths prefiltered_func_data_tempfilt filtered_func_data",
+        "used": [
+          "urn:984ae888-fd52-4270-aa8f-7d3bd1eacef7"
+        ]
+      },
+      {
+        "@id": "urn:51576834-91ee-4dab-b506-edf23ef35111",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths filtered_func_data -Tmean mean_func",
+        "used": [
+          "urn:3fbe2ca2-a07d-4051-8180-220966f8efc5"
+        ]
+      },
+      {
+        "@id": "urn:7e5dd5f9-054f-43c4-8370-fa3ebad41944",
+        "label": "rm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/rm -rf prefiltered_func_data*",
+        "used": [
+          "urn:51380924-22f0-4bb7-9125-54a9a35fc506"
+        ]
+      },
+      {
+        "@id": "urn:a3424992-db52-4a84-bae9-fcfa0ac7a172",
+        "label": "Make directory",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "mkdir -p custom_timing_files",
         "used": []
       },
@@ -1835,6 +2084,7 @@
 <<<<<<< HEAD
         "@id": "urn:2564dcb1-42fe-4a8b-8163-78215f521b83",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -2061,7 +2311,24 @@
         "label": "Make directory",
         "associatedWith": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:1ddcced2-ec66-42f7-a35e-e8ce2ab7f07a",
+        "label": "cp",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/cp /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/word_generation.txt custom_timing_files/ev1.txt",
+        "used": [
+          "urn:8ddc7a37-f96b-4009-ac21-a403922e1ddd"
+        ]
+      },
+      {
+        "@id": "urn:b52e9d80-ce47-43ab-9f42-22be16a2cf56",
+        "label": "Make directory",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "mkdir -p custom_timing_files",
         "used": []
       },
@@ -2069,6 +2336,7 @@
 <<<<<<< HEAD
         "@id": "urn:c5620da6-735c-4794-891c-f01667fa1348",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -2295,7 +2563,24 @@
         "label": "film_gls",
         "associatedWith": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:429cc95a-ef18-4bc7-be3d-668dd2a63de1",
+        "label": "cp",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/cp /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/word_shadowing.txt custom_timing_files/ev2.txt",
+        "used": [
+          "urn:d932796c-cb92-4794-9a95-7b934a164b44"
+        ]
+      },
+      {
+        "@id": "urn:8394c87f-4f24-42da-974a-f39d7937e5a7",
+        "label": "film_gls",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "/usr/local/fsl/bin/film_gls -rn stats -sa -ms 5   filtered_func_data design.mat 1000.0",
         "used": []
       },
@@ -2303,6 +2588,7 @@
 <<<<<<< HEAD
         "@id": "urn:d4bc21ed-e202-4459-b847-7457a709adcd",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -2535,7 +2821,25 @@
         "label": "contrast_mgr",
         "associatedWith": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:ee5fd2d9-9151-4b8a-8566-d7441fe5d9a6",
+        "label": "smoothest",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/smoothest -d 102   -m mask -r stats/res4d > stats/smoothness",
+        "used": [
+          "urn:d2710e9d-5085-423f-bcd1-c414323441b6",
+          "urn:d6d30fdf-70e5-4e96-b312-11d0fc87478d"
+        ]
+      },
+      {
+        "@id": "urn:b7673599-de2b-4f60-80bc-5e7aab9feef6",
+        "label": "contrast_mgr",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "/usr/local/fsl/bin/contrast_mgr  stats design.con",
         "used": []
       },
@@ -2543,6 +2847,7 @@
 <<<<<<< HEAD
         "@id": "urn:5da9edd2-0102-4ddf-a09c-892391ec1c8b",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -2789,7 +3094,25 @@
         "label": "echo",
         "associatedWith": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:26e8ba2a-3dbe-4ca9-a1f1-8a97607699dd",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths stats/zstat1 -mas mask thresh_zstat1",
+        "used": [
+          "urn:d2710e9d-5085-423f-bcd1-c414323441b6",
+          "urn:4d35db95-49e4-4ca7-ab8d-5d53867f73f3"
+        ]
+      },
+      {
+        "@id": "urn:857d8129-158b-4d9d-8b7a-af8f130d9eba",
+        "label": "echo",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "echo 45203 > thresh_zstat1.vol",
         "used": []
       },
@@ -2797,6 +3120,7 @@
 <<<<<<< HEAD
         "@id": "urn:2db998b8-68f8-4c34-8486-726f904ad035",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -2937,35 +3261,39 @@
 =======
 >>>>>>> 80fe1366 (automated nidm example computation from github action)
         "@id": "urn:0ba951da-6dd1-44e3-b5fe-3fece3ccc5f7",
+=======
+        "@id": "urn:e16de58e-4e44-43cd-aa7e-b3568acfb3eb",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
         "label": "cluster",
-        "associatedWith": "urn:2a4b90f3-8e16-41bf-937f-59dcbde38ad2",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
         "command": "/usr/local/fsl/bin/cluster -i thresh_zstat1 -c stats/cope1 -t 2.3 -p 0.05 -d 0.384676 --volume=45203 --othresh=thresh_zstat1 -o cluster_mask_zstat1 --connectivity=26  --olmax=lmax_zstat1.txt --scalarname=Z > cluster_zstat1.txt",
         "used": [
-          "urn:47f890b3-3c91-4249-8b0a-d1ca967bd473",
-          "urn:d7cbb052-7562-4066-a0f7-856590ca8777"
+          "urn:3804ad8d-b1c8-4d3f-9f3e-5554b37dc59f",
+          "urn:bc30ccfe-aa9d-4081-b27c-4127ba4daef1"
         ]
       },
       {
-        "@id": "urn:b9f2e75c-aa75-4ea9-b0f8-cb615724c4af",
+        "@id": "urn:b5b2d874-d781-4349-8b8c-e9e579909b86",
         "label": "cluster2html",
-        "associatedWith": "urn:2a4b90f3-8e16-41bf-937f-59dcbde38ad2",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
         "command": "/usr/local/fsl/bin/cluster2html . cluster_zstat1",
         "used": [
-          "urn:f5d9780c-3066-4681-840e-773ee015ba5f"
+          "urn:483bd032-f7f8-493c-a6a3-9c948eec548e"
         ]
       },
       {
-        "@id": "urn:3885034a-eb90-4c9b-8407-d0aee102198a",
+        "@id": "urn:02fb6810-4bc1-45b6-a094-c6ffda863f04",
         "label": "fslstats",
-        "associatedWith": "urn:2a4b90f3-8e16-41bf-937f-59dcbde38ad2",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
         "command": "/usr/local/fsl/bin/fslstats thresh_zstat1 -l 0.0001 -R 2>/dev/null",
         "used": [
-          "urn:47f890b3-3c91-4249-8b0a-d1ca967bd473"
+          "urn:3804ad8d-b1c8-4d3f-9f3e-5554b37dc59f"
         ]
       },
       {
-        "@id": "urn:49c108a0-1377-48b0-b2e1-2096d5ef5679",
+        "@id": "urn:07e46021-8e8a-4511-9ce2-2a26d9cc85da",
         "label": "overlay",
+<<<<<<< HEAD
         "associatedWith": "urn:2a4b90f3-8e16-41bf-937f-59dcbde38ad2",
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -3036,7 +3364,13 @@
 =======
 =======
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "/usr/local/fsl/bin/overlay 1 0 example_func -a thresh_zstat1 2.300331 5.793015 rendered_thresh_zstat1",
         "used": []
       },
@@ -3044,6 +3378,7 @@
 <<<<<<< HEAD
         "@id": "urn:69a4bab9-4fcb-47b7-a3d1-2e34709f4c4e",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -3324,7 +3659,33 @@
         "label": "Make directory",
         "associatedWith": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:0f0a3e60-4c32-4f41-b39f-9228d092160f",
+        "label": "slicer",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/slicer rendered_thresh_zstat1 -A 750 rendered_thresh_zstat1.png",
+        "used": [
+          "urn:a183f5bf-c104-4d0d-881b-c74d7d410ed8"
+        ]
+      },
+      {
+        "@id": "urn:f8304278-b855-4217-b2c1-d470c9d2e811",
+        "label": "cp",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/cp /usr/local/fsl/etc/luts/ramp.gif .ramp.gif",
+        "used": [
+          "urn:a29a14a3-1662-4e07-b8d1-29feaa596337"
+        ]
+      },
+      {
+        "@id": "urn:f6c1794b-b90d-4287-bf43-0d8a945d888b",
+        "label": "Make directory",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "mkdir -p tsplot",
         "used": []
       },
@@ -3334,6 +3695,7 @@
         "label": "tsplot",
         "associatedWith": "urn:58496b46-d88f-4b28-9665-ea62de645b03",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -3471,7 +3833,15 @@
         "label": "tsplot",
         "associatedWith": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:9f0062be-6bf0-4553-8407-7cebaadd4d59",
+        "label": "tsplot",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "/usr/local/fsl/bin/tsplot . -f filtered_func_data -o tsplot",
         "used": []
       },
@@ -3479,6 +3849,7 @@
 <<<<<<< HEAD
         "@id": "urn:a5c32814-dc65-492c-b973-a506d94893ea",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -3765,7 +4136,34 @@
         "label": "Make directory",
         "associatedWith": "urn:8ea73354-7937-45c7-9164-e660c6a38767",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:81d5a520-4efa-4ba2-bd31-ff313e25f14f",
+        "label": "cluster",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/cluster -i thresh_zstat1 -c stats/cope1 -t 2.3  -p 0.05 -d 0.384676 --volume=45203 -x reg/example_func2standard.mat --stdvol=reg/standard --mm --connectivity=26 --olmax=lmax_zstat1_std.txt --scalarname=Z > cluster_zstat1_std.txt",
+        "used": [
+          "urn:3804ad8d-b1c8-4d3f-9f3e-5554b37dc59f",
+          "urn:bc30ccfe-aa9d-4081-b27c-4127ba4daef1"
+        ]
+      },
+      {
+        "@id": "urn:5d0dc12b-c637-4a24-8d6d-99a01f32e85f",
+        "label": "cluster2html",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/cluster2html . cluster_zstat1 -std",
+        "used": [
+          "urn:483bd032-f7f8-493c-a6a3-9c948eec548e"
+        ]
+      },
+      {
+        "@id": "urn:60141020-6a18-4fd8-bf32-4ad5bcbe8322",
+        "label": "Make directory",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "command": "/bin/mkdir -p /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/fmri+.feat/reg",
         "used": []
       },
@@ -3773,6 +4171,7 @@
 <<<<<<< HEAD
         "@id": "urn:341bf0ce-1d42-4e35-9815-a3acb46cff0e",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -5972,7 +6371,352 @@
           "urn:ac4166cc-0b15-42b6-a6e4-e37e33f8a2af",
           "urn:8df3ced4-04bd-4b12-b399-9c904023c5f0"
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:3952a505-ff48-4a7b-b09c-db27294e4377",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths /Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/structural_brain highres",
+        "used": [
+          "urn:ead7d6bc-daf0-4e45-a18d-62a63cf2f38f"
+        ]
+      },
+      {
+        "@id": "urn:3bc9f259-1cb1-4bbb-98cc-2a8e9f4f7470",
+        "label": "fslmaths",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/fslmaths /usr/local/fsl/data/standard/MNI152_T1_2mm_brain standard",
+        "used": [
+          "urn:ab628e93-80f3-4d9d-9635-becb91c9706a"
+        ]
+      },
+      {
+        "@id": "urn:9b1bd6a4-8bc1-42a4-abf8-77428d369dc7",
+        "label": "flirt",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/flirt -in example_func -ref highres -out example_func2highres -omat example_func2highres.mat -cost corratio -dof 7 -searchrx -90 90 -searchry -90 90 -searchrz -90 90 -interp trilinear",
+        "used": [
+          "urn:1a0c6591-78b7-4f66-88a7-88805790faf3",
+          "urn:16720439-ce15-412c-b0cb-0d4f1f8d985a"
+        ]
+      },
+      {
+        "@id": "urn:7dd9aa6c-2fc4-49fb-a592-81d58c02aaf7",
+        "label": "convert_xfm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/convert_xfm -inverse -omat highres2example_func.mat example_func2highres.mat",
+        "used": [
+          "urn:bb1d0b5c-7b79-439c-9662-2f6f76e8e19d"
+        ]
+      },
+      {
+        "@id": "urn:c484762a-e445-454f-aeee-a407371278cc",
+        "label": "slicer",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:5e8b7ce2-112c-41c7-8626-17d8dd68ada1",
+          "urn:16720439-ce15-412c-b0cb-0d4f1f8d985a"
+        ]
+      },
+      {
+        "@id": "urn:60a130a5-ada8-40f5-b8c1-e40c41b8980e",
+        "label": "pngappend",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2highres1.png",
+        "used": [
+          "urn:43323ee2-e98b-451e-8333-c1dc290fab08",
+          "urn:9edf01a2-d71e-4aff-982f-3792e306f671",
+          "urn:9b5f49b0-2296-4fbf-ae93-e45d62b9b624",
+          "urn:5ffedcff-ea81-435f-b5f4-96b9ad60c81e",
+          "urn:41b7a94e-3ab7-4089-b8c2-560a258d52b9",
+          "urn:e64bce54-f74b-48f9-b9b6-c5c419852eb4",
+          "urn:92d91b96-c17a-43fa-ac78-affb03c0a0d2",
+          "urn:9808e958-3843-4b49-b82a-dd411694950a",
+          "urn:1479bd5e-1a77-4f22-bf63-2e3ffa5e9a88",
+          "urn:86375c8e-cdfa-4fcd-bc15-a213a5588c96",
+          "urn:fcdfdfac-db5f-4987-8ba6-661e88052707",
+          "urn:37aca709-59f3-4f2d-ab00-cb80034dc24e"
+        ]
+      },
+      {
+        "@id": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619",
+        "label": "slicer",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/slicer highres example_func2highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:16720439-ce15-412c-b0cb-0d4f1f8d985a",
+          "urn:5e8b7ce2-112c-41c7-8626-17d8dd68ada1"
+        ]
+      },
+      {
+        "@id": "urn:33d1d910-b3de-4ffc-b0e3-e45163966645",
+        "label": "pngappend",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2highres2.png",
+        "used": [
+          "urn:43323ee2-e98b-451e-8333-c1dc290fab08",
+          "urn:9edf01a2-d71e-4aff-982f-3792e306f671",
+          "urn:9b5f49b0-2296-4fbf-ae93-e45d62b9b624",
+          "urn:5ffedcff-ea81-435f-b5f4-96b9ad60c81e",
+          "urn:41b7a94e-3ab7-4089-b8c2-560a258d52b9",
+          "urn:e64bce54-f74b-48f9-b9b6-c5c419852eb4",
+          "urn:92d91b96-c17a-43fa-ac78-affb03c0a0d2",
+          "urn:9808e958-3843-4b49-b82a-dd411694950a",
+          "urn:1479bd5e-1a77-4f22-bf63-2e3ffa5e9a88",
+          "urn:86375c8e-cdfa-4fcd-bc15-a213a5588c96",
+          "urn:fcdfdfac-db5f-4987-8ba6-661e88052707",
+          "urn:37aca709-59f3-4f2d-ab00-cb80034dc24e"
+        ]
+      },
+      {
+        "@id": "urn:df20bd67-b889-47b8-9cb8-cc71e9bf7983",
+        "label": "pngappend",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/pngappend example_func2highres1.png example_func2highres2.png example_func2highres.png",
+        "used": [
+          "urn:df9373a3-2116-4a99-8340-e53deb1eb373",
+          "urn:6e1add10-c972-4738-8dd7-d4f2daabb485"
+        ]
+      },
+      {
+        "@id": "urn:674b433c-67d3-492f-ba42-a18f225a91c0",
+        "label": "rm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/rm -f sl?.png example_func2highres2.png",
+        "used": [
+          "urn:d1717559-1365-4226-89d4-47d791dbb927",
+          "urn:6e1add10-c972-4738-8dd7-d4f2daabb485"
+        ]
+      },
+      {
+        "@id": "urn:aef811d0-b96e-42e8-8698-f737b8df11b0",
+        "label": "rm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/rm example_func2highres1.png",
+        "used": [
+          "urn:df9373a3-2116-4a99-8340-e53deb1eb373"
+        ]
+      },
+      {
+        "@id": "urn:2968dcf9-451a-4908-863f-1889558c1b05",
+        "label": "flirt",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/flirt -in highres -ref standard -out highres2standard -omat highres2standard.mat -cost corratio -dof 12 -searchrx -90 90 -searchry -90 90 -searchrz -90 90 -interp trilinear",
+        "used": [
+          "urn:16720439-ce15-412c-b0cb-0d4f1f8d985a",
+          "urn:f71e6f52-8a26-4a22-ada4-b213691528ad"
+        ]
+      },
+      {
+        "@id": "urn:5d7436b2-8459-4f1f-855c-eb4dcea35477",
+        "label": "convert_xfm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/convert_xfm -inverse -omat standard2highres.mat highres2standard.mat",
+        "used": [
+          "urn:830e3ab2-64f4-4d73-84bd-68708322cd6e"
+        ]
+      },
+      {
+        "@id": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54",
+        "label": "slicer",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/slicer highres2standard standard -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:06a623d7-a2a5-447c-bf5c-42ec4d1ae0e8",
+          "urn:f71e6f52-8a26-4a22-ada4-b213691528ad"
+        ]
+      },
+      {
+        "@id": "urn:d2fdbda9-25bc-429f-8d97-b5c2a113483b",
+        "label": "pngappend",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png highres2standard1.png",
+        "used": [
+          "urn:43323ee2-e98b-451e-8333-c1dc290fab08",
+          "urn:9edf01a2-d71e-4aff-982f-3792e306f671",
+          "urn:9b5f49b0-2296-4fbf-ae93-e45d62b9b624",
+          "urn:5ffedcff-ea81-435f-b5f4-96b9ad60c81e",
+          "urn:41b7a94e-3ab7-4089-b8c2-560a258d52b9",
+          "urn:e64bce54-f74b-48f9-b9b6-c5c419852eb4",
+          "urn:92d91b96-c17a-43fa-ac78-affb03c0a0d2",
+          "urn:9808e958-3843-4b49-b82a-dd411694950a",
+          "urn:1479bd5e-1a77-4f22-bf63-2e3ffa5e9a88",
+          "urn:86375c8e-cdfa-4fcd-bc15-a213a5588c96",
+          "urn:fcdfdfac-db5f-4987-8ba6-661e88052707",
+          "urn:37aca709-59f3-4f2d-ab00-cb80034dc24e"
+        ]
+      },
+      {
+        "@id": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b",
+        "label": "slicer",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/slicer standard highres2standard -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:f71e6f52-8a26-4a22-ada4-b213691528ad",
+          "urn:06a623d7-a2a5-447c-bf5c-42ec4d1ae0e8"
+        ]
+      },
+      {
+        "@id": "urn:cf71dfe3-4042-4260-98f5-618c614ec4a1",
+        "label": "pngappend",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png highres2standard2.png",
+        "used": [
+          "urn:43323ee2-e98b-451e-8333-c1dc290fab08",
+          "urn:9edf01a2-d71e-4aff-982f-3792e306f671",
+          "urn:9b5f49b0-2296-4fbf-ae93-e45d62b9b624",
+          "urn:5ffedcff-ea81-435f-b5f4-96b9ad60c81e",
+          "urn:41b7a94e-3ab7-4089-b8c2-560a258d52b9",
+          "urn:e64bce54-f74b-48f9-b9b6-c5c419852eb4",
+          "urn:92d91b96-c17a-43fa-ac78-affb03c0a0d2",
+          "urn:9808e958-3843-4b49-b82a-dd411694950a",
+          "urn:1479bd5e-1a77-4f22-bf63-2e3ffa5e9a88",
+          "urn:86375c8e-cdfa-4fcd-bc15-a213a5588c96",
+          "urn:fcdfdfac-db5f-4987-8ba6-661e88052707",
+          "urn:37aca709-59f3-4f2d-ab00-cb80034dc24e"
+        ]
+      },
+      {
+        "@id": "urn:c62eb15d-3817-423f-9c04-457b20eccfc1",
+        "label": "pngappend",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/pngappend highres2standard1.png highres2standard2.png highres2standard.png",
+        "used": [
+          "urn:bb7b140c-42d2-437b-996e-2e4aba56a8ce",
+          "urn:24937259-a967-45b8-b933-a53eebf5dc39"
+        ]
+      },
+      {
+        "@id": "urn:67ddb0e0-2e27-4e5a-bd65-7d1f3c7e9626",
+        "label": "rm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/rm -f sl?.png highres2standard2.png",
+        "used": [
+          "urn:d1717559-1365-4226-89d4-47d791dbb927",
+          "urn:24937259-a967-45b8-b933-a53eebf5dc39"
+        ]
+      },
+      {
+        "@id": "urn:158aa956-f4bd-473a-87df-bf5732f23daf",
+        "label": "rm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/rm highres2standard1.png",
+        "used": [
+          "urn:bb7b140c-42d2-437b-996e-2e4aba56a8ce"
+        ]
+      },
+      {
+        "@id": "urn:8236d954-225f-433e-ac69-052f4f158f3e",
+        "label": "convert_xfm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/convert_xfm -omat example_func2standard.mat -concat highres2standard.mat example_func2highres.mat",
+        "used": [
+          "urn:bb1d0b5c-7b79-439c-9662-2f6f76e8e19d"
+        ]
+      },
+      {
+        "@id": "urn:502abde9-45e9-4ddc-b9a4-cf2404009ba2",
+        "label": "flirt",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/flirt -ref standard -in example_func -out example_func2standard -applyxfm -init example_func2standard.mat -interp trilinear",
+        "used": [
+          "urn:1a0c6591-78b7-4f66-88a7-88805790faf3",
+          "urn:f71e6f52-8a26-4a22-ada4-b213691528ad",
+          "urn:06c7bbb5-2a51-46e6-b2a5-f674c4a5efe8"
+        ]
+      },
+      {
+        "@id": "urn:b3b46b8e-c17b-40f7-943a-ba5f96cc9cd5",
+        "label": "convert_xfm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/convert_xfm -inverse -omat standard2example_func.mat example_func2standard.mat",
+        "used": [
+          "urn:06c7bbb5-2a51-46e6-b2a5-f674c4a5efe8"
+        ]
+      },
+      {
+        "@id": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e",
+        "label": "slicer",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/slicer example_func2standard standard -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:c75e82cb-28fc-41aa-be0c-4faf6f73447b",
+          "urn:f71e6f52-8a26-4a22-ada4-b213691528ad"
+        ]
+      },
+      {
+        "@id": "urn:70278d5e-b1a9-42d6-a30f-d2f41a864654",
+        "label": "pngappend",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2standard1.png",
+        "used": [
+          "urn:43323ee2-e98b-451e-8333-c1dc290fab08",
+          "urn:9edf01a2-d71e-4aff-982f-3792e306f671",
+          "urn:9b5f49b0-2296-4fbf-ae93-e45d62b9b624",
+          "urn:5ffedcff-ea81-435f-b5f4-96b9ad60c81e",
+          "urn:41b7a94e-3ab7-4089-b8c2-560a258d52b9",
+          "urn:e64bce54-f74b-48f9-b9b6-c5c419852eb4",
+          "urn:92d91b96-c17a-43fa-ac78-affb03c0a0d2",
+          "urn:9808e958-3843-4b49-b82a-dd411694950a",
+          "urn:1479bd5e-1a77-4f22-bf63-2e3ffa5e9a88",
+          "urn:86375c8e-cdfa-4fcd-bc15-a213a5588c96",
+          "urn:fcdfdfac-db5f-4987-8ba6-661e88052707",
+          "urn:37aca709-59f3-4f2d-ab00-cb80034dc24e"
+        ]
+      },
+      {
+        "@id": "urn:23bf993f-e142-462e-9657-305581d65e8b",
+        "label": "slicer",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/slicer standard example_func2standard -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:f71e6f52-8a26-4a22-ada4-b213691528ad",
+          "urn:c75e82cb-28fc-41aa-be0c-4faf6f73447b"
+        ]
+      },
+      {
+        "@id": "urn:05b3e26b-3feb-409d-be3d-6c9d6d55b346",
+        "label": "pngappend",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2standard2.png",
+        "used": [
+          "urn:43323ee2-e98b-451e-8333-c1dc290fab08",
+          "urn:9edf01a2-d71e-4aff-982f-3792e306f671",
+          "urn:9b5f49b0-2296-4fbf-ae93-e45d62b9b624",
+          "urn:5ffedcff-ea81-435f-b5f4-96b9ad60c81e",
+          "urn:41b7a94e-3ab7-4089-b8c2-560a258d52b9",
+          "urn:e64bce54-f74b-48f9-b9b6-c5c419852eb4",
+          "urn:92d91b96-c17a-43fa-ac78-affb03c0a0d2",
+          "urn:9808e958-3843-4b49-b82a-dd411694950a",
+          "urn:1479bd5e-1a77-4f22-bf63-2e3ffa5e9a88",
+          "urn:86375c8e-cdfa-4fcd-bc15-a213a5588c96",
+          "urn:fcdfdfac-db5f-4987-8ba6-661e88052707",
+          "urn:37aca709-59f3-4f2d-ab00-cb80034dc24e"
+        ]
+      },
+      {
+        "@id": "urn:d638adbf-550f-440c-972d-ea8946a795a4",
+        "label": "pngappend",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/usr/local/fsl/bin/pngappend example_func2standard1.png example_func2standard2.png example_func2standard.png",
+        "used": [
+          "urn:6b496e3a-8123-45a6-a624-749981e56138",
+          "urn:2feaf5ce-9c47-4bd1-af86-e48b2184f7a1"
+        ]
+      },
+      {
+        "@id": "urn:39478662-1ad2-4225-a573-0eed0ef338c1",
+        "label": "rm",
+        "associatedWith": "urn:b0b38859-4f79-488a-aa62-6483582723af",
+        "command": "/bin/rm -f sl?.png example_func2standard2.png",
+        "used": [
+          "urn:d1717559-1365-4226-89d4-47d791dbb927",
+          "urn:2feaf5ce-9c47-4bd1-af86-e48b2184f7a1"
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         ]
       }
     ],
@@ -5981,6 +6725,7 @@
 <<<<<<< HEAD
         "@id": "urn:122ff3bf-4cbf-4903-9c73-74696faf0da7",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -6092,7 +6837,13 @@
 =======
         "@id": "urn:99c5014c-c919-4377-b4c3-9bb8f979908e",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:ee233c10-32b9-4d6a-b85d-0c08f45b3e21",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "fmri",
         "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/fmri"
       },
@@ -6100,6 +6851,7 @@
 <<<<<<< HEAD
         "@id": "urn:bcdc8cd2-3cc1-4df0-b6be-2782e25021d3",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -6404,7 +7156,37 @@
       {
         "@id": "urn:053d118c-cce0-4a91-ae23-d8f539641ff1",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:961a2e83-4684-466c-a98a-1b3ed6e97d9f",
+        "label": "prefiltered_func_data",
+        "prov:atLocation": "prefiltered_func_data",
+        "generatedBy": "urn:9a3d9d16-4773-401d-9813-15b46254e566"
+      },
+      {
+        "@id": "urn:1a0c6591-78b7-4f66-88a7-88805790faf3",
+        "label": "example_func",
+        "prov:atLocation": "example_func",
+        "generatedBy": "urn:6d9c223c-81c7-4ac4-9166-34fa76b2c8ac"
+      },
+      {
+        "@id": "urn:44baefdc-6aa3-4078-b08f-2a528460a123",
+        "label": "prefiltered_func_data_mcf",
+        "prov:atLocation": "prefiltered_func_data_mcf",
+        "generatedBy": "urn:2c845b88-e8e9-4d29-8a62-e2e0e9146fcf"
+      },
+      {
+        "@id": "urn:c14ca74d-fe37-4414-bdcd-701f080b8679",
+        "label": "mc",
+        "prov:atLocation": "mc",
+        "generatedBy": "urn:4e15b057-3dad-446b-8539-81dd4e18a976"
+      },
+      {
+        "@id": "urn:04b3202e-6c49-49ab-9d13-5159338ae9be",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "prefiltered_func_data_mcf.mat",
         "prov:atLocation": "prefiltered_func_data_mcf.mat"
       },
@@ -6412,6 +7194,7 @@
 <<<<<<< HEAD
         "@id": "urn:547528f5-328f-409e-9d3b-0ff6a5e8c5b5",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -6523,7 +7306,13 @@
 =======
         "@id": "urn:f9a1f338-fcd7-4b48-951c-2638cb20cdc0",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:672b4533-a4ec-4107-aa8a-b750a020c460",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "prefiltered_func_data_mcf.par",
         "prov:atLocation": "prefiltered_func_data_mcf.par"
       },
@@ -6531,6 +7320,7 @@
 <<<<<<< HEAD
         "@id": "urn:cfebdf04-1f2e-49d4-8ef0-bd4f6afce994",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -6642,7 +7432,13 @@
 =======
         "@id": "urn:812c8176-1022-42bc-92cf-60fe2e6416ce",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:6dc2973a-6316-42ca-84d7-2a2131fedddb",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "prefiltered_func_data_mcf_abs.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_abs.rms"
       },
@@ -6650,6 +7446,7 @@
 <<<<<<< HEAD
         "@id": "urn:f4aca924-48b9-4048-b25b-bb8ebc444669",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -6761,7 +7558,13 @@
 =======
         "@id": "urn:8a488717-6b8b-4986-8a06-5da274d62e6a",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:baac777c-fd0a-41d5-a3b6-4eef93264788",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "prefiltered_func_data_mcf_abs_mean.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_abs_mean.rms"
       },
@@ -6769,6 +7572,7 @@
 <<<<<<< HEAD
         "@id": "urn:527632b5-97c1-4373-a665-6d8443bb8437",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -6880,7 +7684,13 @@
 =======
         "@id": "urn:5fbdb271-9a1a-4041-904d-30514077cdfc",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:25672ef8-ad23-452d-bff5-290108067631",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "prefiltered_func_data_mcf_rel.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_rel.rms"
       },
@@ -6888,6 +7698,7 @@
 <<<<<<< HEAD
         "@id": "urn:1cf152a5-3ada-47b9-bf78-cc5723aba067",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -6999,7 +7810,13 @@
 =======
         "@id": "urn:87f6c2ca-3b99-4642-b336-2779c56f41b6",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:47f57c6e-30b0-4761-ac4b-0af05ca5179b",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "prefiltered_func_data_mcf_rel_mean.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_rel_mean.rms"
       },
@@ -7007,6 +7824,7 @@
 <<<<<<< HEAD
         "@id": "urn:47df69af-dd37-44cc-a02c-2d73057e7292",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -7275,7 +8093,31 @@
       {
         "@id": "urn:1f6ddc52-02fc-4156-a009-f5910c7a0086",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:0774e042-796d-46d0-8941-da5bdb475f1e",
+        "label": "mc",
+        "prov:atLocation": "mc",
+        "generatedBy": "urn:e761d505-84d6-4c25-9c78-04f7dd2e36a6"
+      },
+      {
+        "@id": "urn:7de361a9-f555-4d7c-a15f-374728d8cd7e",
+        "label": "rot.png",
+        "prov:atLocation": "rot.png",
+        "generatedBy": "urn:3d0577ee-6322-4ee6-ae41-a0f45fd01983"
+      },
+      {
+        "@id": "urn:2b346959-a962-4873-afbf-67f5c577fc00",
+        "label": "trans.png",
+        "prov:atLocation": "trans.png",
+        "generatedBy": "urn:27e6cc50-958b-41ce-9cf1-bda86efa5d2a"
+      },
+      {
+        "@id": "urn:fd9e99a4-1b2e-46f5-84f1-8bef10a1e603",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "prefiltered_func_data_mcf_abs.rms,prefiltered_func_data_mcf_rel.rms",
         "prov:atLocation": "prefiltered_func_data_mcf_abs.rms,prefiltered_func_data_mcf_rel.rms"
       },
@@ -7283,6 +8125,7 @@
 <<<<<<< HEAD
         "@id": "urn:d3389022-309d-415b-87cd-2ce5674d9666",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -7588,7 +8431,31 @@
       {
         "@id": "urn:a3ac7ee0-ed58-4c56-9df2-632e6ef914ec",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:279356fb-cae8-44f0-abdd-04ac7c207ad6",
+        "label": "disp.png",
+        "prov:atLocation": "disp.png",
+        "generatedBy": "urn:619538a1-29bc-4e89-b31f-666e6af37859"
+      },
+      {
+        "@id": "urn:b5a536e9-2882-4ec5-8683-27ac44ba9803",
+        "label": "mean_func",
+        "prov:atLocation": "mean_func",
+        "generatedBy": "urn:859844ab-ef18-46b9-9ce5-3dc8292ac3f4"
+      },
+      {
+        "@id": "urn:d2710e9d-5085-423f-bcd1-c414323441b6",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:046bf6ce-ca1e-455d-9420-b786b1ca6e15"
+      },
+      {
+        "@id": "urn:c4aa8f9a-b94d-4e6c-921a-df83568678d7",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "mask_mask",
         "prov:atLocation": "mask_mask"
       },
@@ -7596,6 +8463,7 @@
 <<<<<<< HEAD
         "@id": "urn:4a34c3f4-6f94-4b88-8477-79239b16ae51",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -8272,7 +9140,73 @@
       {
         "@id": "urn:4048d5a2-1cf1-4a30-8895-28e29ab3985d",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:1b6d7498-7283-45fd-961b-b836daa3474a",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:85b0ca52-084e-405f-9f59-d5165f3b2b49"
+      },
+      {
+        "@id": "urn:fd4390e2-38b0-45bb-95eb-075da0b03322",
+        "label": "prefiltered_func_data_bet",
+        "prov:atLocation": "prefiltered_func_data_bet",
+        "generatedBy": "urn:d7d2a7cc-2d56-4883-b99f-b57d4b50452f"
+      },
+      {
+        "@id": "urn:7602325e-c70f-4c62-baeb-550e4e421d62",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:908e3bdc-e485-406a-a627-4f237a7e0e58"
+      },
+      {
+        "@id": "urn:a1978c8f-c339-4145-919f-a1abfb209863",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:bb5b4211-efef-4b6a-bd19-70862a9c71c2"
+      },
+      {
+        "@id": "urn:8b17dedf-86ef-49ea-a100-42134c2d6f93",
+        "label": "prefiltered_func_data_thresh",
+        "prov:atLocation": "prefiltered_func_data_thresh",
+        "generatedBy": "urn:a75a0a3b-37c4-4f58-9dfa-6b5461dca0b5"
+      },
+      {
+        "@id": "urn:6ac36805-003f-4ac9-b30f-a63bcf1c6562",
+        "label": "mean_func",
+        "prov:atLocation": "mean_func",
+        "generatedBy": "urn:b8f79306-0f53-40eb-b932-5e84573beac3"
+      },
+      {
+        "@id": "urn:0952ecce-6f08-49c8-8994-49b0a7536769",
+        "label": "prefiltered_func_data_smooth",
+        "prov:atLocation": "prefiltered_func_data_smooth",
+        "generatedBy": "urn:9182fc4b-ecb8-4f23-a1e9-bb592c80bb22"
+      },
+      {
+        "@id": "urn:7097dbaf-af99-4fda-850c-0e604713f21d",
+        "label": "prefiltered_func_data_smooth",
+        "prov:atLocation": "prefiltered_func_data_smooth",
+        "generatedBy": "urn:0629c83f-02d7-441c-b357-ec6fb0c0439f"
+      },
+      {
+        "@id": "urn:f087e270-2851-496d-adb7-6f7bd8a5303b",
+        "label": "prefiltered_func_data_intnorm",
+        "prov:atLocation": "prefiltered_func_data_intnorm",
+        "generatedBy": "urn:94a78872-b1d1-4a0c-baee-348461abbd9d"
+      },
+      {
+        "@id": "urn:85f0dc4f-9d6b-403b-b3f4-d957c6430ba9",
+        "label": "227.142867456",
+        "prov:atLocation": "227.142867456",
+        "generatedBy": "urn:eafb78ee-0eb7-487e-823e-e1f0cfd89070"
+      },
+      {
+        "@id": "urn:984ae888-fd52-4270-aa8f-7d3bd1eacef7",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "prefiltered_func_data_tempfilt",
         "prov:atLocation": "prefiltered_func_data_tempfilt"
       },
@@ -8280,6 +9214,7 @@
 <<<<<<< HEAD
         "@id": "urn:f283dc53-7f9e-48f4-8790-e15aeece0fdf",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -8524,7 +9459,25 @@
       {
         "@id": "urn:6a2b97c3-3342-4d73-b4f0-390485b6789a",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:3fbe2ca2-a07d-4051-8180-220966f8efc5",
+        "label": "filtered_func_data",
+        "prov:atLocation": "filtered_func_data",
+        "generatedBy": "urn:7aa0b03d-77c2-4770-a306-d07ca9323634"
+      },
+      {
+        "@id": "urn:119a71a4-6027-4f0f-96e3-d33845ba479e",
+        "label": "mean_func",
+        "prov:atLocation": "mean_func",
+        "generatedBy": "urn:51576834-91ee-4dab-b506-edf23ef35111"
+      },
+      {
+        "@id": "urn:51380924-22f0-4bb7-9125-54a9a35fc506",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "prefiltered_func_data*",
         "prov:atLocation": "prefiltered_func_data*"
       },
@@ -8532,6 +9485,7 @@
 <<<<<<< HEAD
         "@id": "urn:c6785a3c-0385-4295-87c9-a2166c01dc01",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -8728,7 +9682,19 @@
       {
         "@id": "urn:1d59891f-0273-4bb9-9cf2-cb6f5aadfec6",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:228d5531-775b-4d5b-82b9-ecfe815d442c",
+        "label": "custom_timing_files",
+        "prov:atLocation": "custom_timing_files",
+        "generatedBy": "urn:a3424992-db52-4a84-bae9-fcfa0ac7a172"
+      },
+      {
+        "@id": "urn:8ddc7a37-f96b-4009-ac21-a403922e1ddd",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "word_generation.txt",
         "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/word_generation.txt"
       },
@@ -8736,6 +9702,7 @@
 <<<<<<< HEAD
         "@id": "urn:38643701-0766-4c47-a050-66f574205400",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -8968,7 +9935,25 @@
       {
         "@id": "urn:ee801506-00ad-47ce-b4bd-825a0f4a49d7",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:2cbaa490-e5a7-4394-af8a-dedb804e8a9b",
+        "label": "ev1.txt",
+        "prov:atLocation": "custom_timing_files/ev1.txt",
+        "generatedBy": "urn:1ddcced2-ec66-42f7-a35e-e8ce2ab7f07a"
+      },
+      {
+        "@id": "urn:de17b498-1f04-40ed-99a5-65742d4b1287",
+        "label": "custom_timing_files",
+        "prov:atLocation": "custom_timing_files",
+        "generatedBy": "urn:b52e9d80-ce47-43ab-9f42-22be16a2cf56"
+      },
+      {
+        "@id": "urn:d932796c-cb92-4794-9a95-7b934a164b44",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "word_shadowing.txt",
         "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/word_shadowing.txt"
       },
@@ -8976,6 +9961,7 @@
 <<<<<<< HEAD
         "@id": "urn:94a26c7e-41df-4b9d-b035-fa23f1a06e12",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -9172,7 +10158,19 @@
       {
         "@id": "urn:411e3c70-2bc9-44f6-8346-235a01dcaafa",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:a14fbcc8-40ab-4fb8-9f2d-2883055c5372",
+        "label": "ev2.txt",
+        "prov:atLocation": "custom_timing_files/ev2.txt",
+        "generatedBy": "urn:429cc95a-ef18-4bc7-be3d-668dd2a63de1"
+      },
+      {
+        "@id": "urn:d6d30fdf-70e5-4e96-b312-11d0fc87478d",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "res4d",
         "prov:atLocation": "stats/res4d"
       },
@@ -9180,6 +10178,7 @@
 <<<<<<< HEAD
         "@id": "urn:489db187-9665-46af-b7df-2a21eaf5d0c8",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -9376,7 +10375,19 @@
       {
         "@id": "urn:4bb19c5b-8d7f-4963-95c9-8ac08c36dcab",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:0b85a277-71f7-490f-b594-120573214580",
+        "label": "smoothness",
+        "prov:atLocation": "stats/smoothness",
+        "generatedBy": "urn:ee5fd2d9-9151-4b8a-8566-d7441fe5d9a6"
+      },
+      {
+        "@id": "urn:4d35db95-49e4-4ca7-ab8d-5d53867f73f3",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "zstat1",
         "prov:atLocation": "stats/zstat1"
       },
@@ -9384,6 +10395,7 @@
 <<<<<<< HEAD
         "@id": "urn:7821e793-8418-4810-952b-834d231d3bd4",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -9579,7 +10591,19 @@
       {
         "@id": "urn:03487708-9f9b-4351-a6e0-0925aa3409ec",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:3804ad8d-b1c8-4d3f-9f3e-5554b37dc59f",
+        "label": "thresh_zstat1",
+        "prov:atLocation": "thresh_zstat1",
+        "generatedBy": "urn:26e8ba2a-3dbe-4ca9-a1f1-8a97607699dd"
+      },
+      {
+        "@id": "urn:bc30ccfe-aa9d-4081-b27c-4127ba4daef1",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "cope1",
         "prov:atLocation": "stats/cope1"
       },
@@ -9587,6 +10611,7 @@
 <<<<<<< HEAD
         "@id": "urn:c1f52509-6499-49a5-a5b6-5bc4b43b98df",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -9819,7 +10844,25 @@
       {
         "@id": "urn:89dbade1-e361-45f4-a27e-9be7d581ae87",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:b0d6b0bb-2e43-47a5-afe6-3387e03b8c45",
+        "label": "cluster_mask_zstat1",
+        "prov:atLocation": "cluster_mask_zstat1",
+        "generatedBy": "urn:e16de58e-4e44-43cd-aa7e-b3568acfb3eb"
+      },
+      {
+        "@id": "urn:cde5b658-3b39-47fb-a559-af55ff0086ed",
+        "label": "cope1",
+        "prov:atLocation": "stats/cope1",
+        "generatedBy": "urn:e16de58e-4e44-43cd-aa7e-b3568acfb3eb"
+      },
+      {
+        "@id": "urn:483bd032-f7f8-493c-a6a3-9c948eec548e",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "cluster_zstat1",
         "prov:atLocation": "cluster_zstat1"
       },
@@ -9827,6 +10870,7 @@
 <<<<<<< HEAD
         "@id": "urn:da227683-d5ab-40ee-93f5-f61923367f90",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -10059,7 +11103,25 @@
       {
         "@id": "urn:c7da38ba-7ea3-46ac-a666-06edcb8977e6",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:a183f5bf-c104-4d0d-881b-c74d7d410ed8",
+        "label": "rendered_thresh_zstat1",
+        "prov:atLocation": "rendered_thresh_zstat1",
+        "generatedBy": "urn:07e46021-8e8a-4511-9ce2-2a26d9cc85da"
+      },
+      {
+        "@id": "urn:fca71313-8026-4df2-ac69-df7e6d86e365",
+        "label": "rendered_thresh_zstat1.png",
+        "prov:atLocation": "rendered_thresh_zstat1.png",
+        "generatedBy": "urn:0f0a3e60-4c32-4f41-b39f-9228d092160f"
+      },
+      {
+        "@id": "urn:a29a14a3-1662-4e07-b8d1-29feaa596337",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "ramp.gif",
         "prov:atLocation": "/usr/local/fsl/etc/luts/ramp.gif"
       },
@@ -10067,6 +11129,7 @@
 <<<<<<< HEAD
         "@id": "urn:64b5840f-e198-4d05-9021-9d5f02bc1f5b",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -10443,7 +11506,49 @@
       {
         "@id": "urn:5bb7c77b-cf60-406e-88ee-60c8b9adfdec",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:7cb5719b-b29d-4798-acc0-b25f5e2a2a5d",
+        "label": ".ramp.gif",
+        "prov:atLocation": ".ramp.gif",
+        "generatedBy": "urn:f8304278-b855-4217-b2c1-d470c9d2e811"
+      },
+      {
+        "@id": "urn:c7c56290-5fb6-4866-abbb-dcc494b74cd4",
+        "label": "tsplot",
+        "prov:atLocation": "tsplot",
+        "generatedBy": "urn:f6c1794b-b90d-4287-bf43-0d8a945d888b"
+      },
+      {
+        "@id": "urn:c8f846f4-62b4-45bf-9fbe-062db1b9d092",
+        "label": "tsplot",
+        "prov:atLocation": "tsplot",
+        "generatedBy": "urn:9f0062be-6bf0-4553-8407-7cebaadd4d59"
+      },
+      {
+        "@id": "urn:1bafa373-fa66-4a9f-b9af-5a65ca0563fc",
+        "label": "cope1",
+        "prov:atLocation": "stats/cope1",
+        "generatedBy": "urn:81d5a520-4efa-4ba2-bd31-ff313e25f14f"
+      },
+      {
+        "@id": "urn:1fa3bc12-6763-470e-947a-39dc37730e08",
+        "label": "example_func2standard.mat",
+        "prov:atLocation": "reg/example_func2standard.mat",
+        "generatedBy": "urn:81d5a520-4efa-4ba2-bd31-ff313e25f14f"
+      },
+      {
+        "@id": "urn:3e2b8db1-3bc9-4f66-9ec1-7a16ba8f1652",
+        "label": "reg",
+        "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/fmri+.feat/reg",
+        "generatedBy": "urn:60141020-6a18-4fd8-bf32-4ad5bcbe8322"
+      },
+      {
+        "@id": "urn:ead7d6bc-daf0-4e45-a18d-62a63cf2f38f",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "structural_brain",
         "prov:atLocation": "/Users/cmaumet/Data/fsl_practicals/fsl_course_data/fmri/fmri_fluency/structural_brain"
       },
@@ -10451,6 +11556,7 @@
 <<<<<<< HEAD
         "@id": "urn:d5525524-644e-489f-b5a4-2d02641d17ce",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -10647,7 +11753,19 @@
       {
         "@id": "urn:c642a61a-18f2-4019-995a-2b4db61acc91",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:16720439-ce15-412c-b0cb-0d4f1f8d985a",
+        "label": "highres",
+        "prov:atLocation": "highres",
+        "generatedBy": "urn:3952a505-ff48-4a7b-b09c-db27294e4377"
+      },
+      {
+        "@id": "urn:ab628e93-80f3-4d9d-9635-becb91c9706a",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "MNI152_T1_2mm_brain",
         "prov:atLocation": "/usr/local/fsl/data/standard/MNI152_T1_2mm_brain"
       },
@@ -10655,6 +11773,7 @@
 <<<<<<< HEAD
         "@id": "urn:63f90759-1919-44e6-943e-2ed5ffab4140",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -11931,7 +13050,199 @@
       {
         "@id": "urn:ac4166cc-0b15-42b6-a6e4-e37e33f8a2af",
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:f71e6f52-8a26-4a22-ada4-b213691528ad",
+        "label": "standard",
+        "prov:atLocation": "standard",
+        "generatedBy": "urn:3bc9f259-1cb1-4bbb-98cc-2a8e9f4f7470"
+      },
+      {
+        "@id": "urn:bb1d0b5c-7b79-439c-9662-2f6f76e8e19d",
+        "label": "example_func2highres.mat",
+        "prov:atLocation": "example_func2highres.mat",
+        "generatedBy": "urn:9b1bd6a4-8bc1-42a4-abf8-77428d369dc7"
+      },
+      {
+        "@id": "urn:5e8b7ce2-112c-41c7-8626-17d8dd68ada1",
+        "label": "example_func2highres",
+        "prov:atLocation": "example_func2highres",
+        "generatedBy": "urn:9b1bd6a4-8bc1-42a4-abf8-77428d369dc7"
+      },
+      {
+        "@id": "urn:3388c9f4-9ab3-4304-a05c-8f78df12b001",
+        "label": "highres2example_func.mat",
+        "prov:atLocation": "highres2example_func.mat",
+        "generatedBy": "urn:7dd9aa6c-2fc4-49fb-a592-81d58c02aaf7"
+      },
+      {
+        "@id": "urn:43323ee2-e98b-451e-8333-c1dc290fab08",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:9edf01a2-d71e-4aff-982f-3792e306f671",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:9b5f49b0-2296-4fbf-ae93-e45d62b9b624",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:5ffedcff-ea81-435f-b5f4-96b9ad60c81e",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:41b7a94e-3ab7-4089-b8c2-560a258d52b9",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:e64bce54-f74b-48f9-b9b6-c5c419852eb4",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:92d91b96-c17a-43fa-ac78-affb03c0a0d2",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:9808e958-3843-4b49-b82a-dd411694950a",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:1479bd5e-1a77-4f22-bf63-2e3ffa5e9a88",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:86375c8e-cdfa-4fcd-bc15-a213a5588c96",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:fcdfdfac-db5f-4987-8ba6-661e88052707",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:37aca709-59f3-4f2d-ab00-cb80034dc24e",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:c484762a-e445-454f-aeee-a407371278cc"
+      },
+      {
+        "@id": "urn:df9373a3-2116-4a99-8340-e53deb1eb373",
+        "label": "example_func2highres1.png",
+        "prov:atLocation": "example_func2highres1.png",
+        "generatedBy": "urn:60a130a5-ada8-40f5-b8c1-e40c41b8980e"
+      },
+      {
+        "@id": "urn:f47a270f-a67b-41b7-8b20-40d6c2860863",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:1df5fff1-e3bf-470d-9a36-23cb7197d62f",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:93e68a17-9e29-4d02-b921-804b08c1df4e",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:765ac84b-6372-4951-9e12-caa716ec6d85",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:935a08d0-54fd-453c-9624-8c795c4c0fb1",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:dad439fd-00c3-4183-8b56-7069fd0d0b10",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:f8d04381-76ac-45f0-b221-87c15d44fa3a",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:ce54a8de-3a0b-42a5-9c8c-1266d142d00f",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:02b05b1d-ceca-495e-95f2-2b87c9fbde9a",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:bc613a3f-c824-4014-bc45-22e5e115c8d1",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:39625f8f-56cb-4a49-a931-50ea3609fa22",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:bec9d301-8de2-46c3-940c-028e974a6f5c",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:4c0d5bb8-2531-45f3-94ce-e2ea3c1d7619"
+      },
+      {
+        "@id": "urn:6e1add10-c972-4738-8dd7-d4f2daabb485",
+        "label": "example_func2highres2.png",
+        "prov:atLocation": "example_func2highres2.png",
+        "generatedBy": "urn:33d1d910-b3de-4ffc-b0e3-e45163966645"
+      },
+      {
+        "@id": "urn:4469e405-0bdf-4990-ba86-3a9b2a9eb0b5",
+        "label": "example_func2highres.png",
+        "prov:atLocation": "example_func2highres.png",
+        "generatedBy": "urn:df20bd67-b889-47b8-9cb8-cc71e9bf7983"
+      },
+      {
+        "@id": "urn:d1717559-1365-4226-89d4-47d791dbb927",
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
         "label": "sl?.png",
         "prov:atLocation": "sl?.png"
       },
@@ -11939,6 +13250,7 @@
 <<<<<<< HEAD
         "@id": "urn:b3be5474-f34c-4d05-965d-fc06cfe93a9b",
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -14241,7 +15553,370 @@
         "prov:atLocation": "example_func2standard.png",
         "generatedBy": "urn:fb33e850-39d0-4932-839f-a40ad7e806a8"
 >>>>>>> cb9f0939 (automated nidm example computation from github action)
+<<<<<<< HEAD
 >>>>>>> 489f6531 (automated nidm example computation from github action)
+=======
+=======
+        "@id": "urn:830e3ab2-64f4-4d73-84bd-68708322cd6e",
+        "label": "highres2standard.mat",
+        "prov:atLocation": "highres2standard.mat",
+        "generatedBy": "urn:2968dcf9-451a-4908-863f-1889558c1b05"
+      },
+      {
+        "@id": "urn:06a623d7-a2a5-447c-bf5c-42ec4d1ae0e8",
+        "label": "highres2standard",
+        "prov:atLocation": "highres2standard",
+        "generatedBy": "urn:2968dcf9-451a-4908-863f-1889558c1b05"
+      },
+      {
+        "@id": "urn:0475746c-92ce-4b99-b673-b21bb13c41c6",
+        "label": "standard2highres.mat",
+        "prov:atLocation": "standard2highres.mat",
+        "generatedBy": "urn:5d7436b2-8459-4f1f-855c-eb4dcea35477"
+      },
+      {
+        "@id": "urn:a4096d23-6c26-447d-b5d8-59e3cf2c3375",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:3e2d4e7e-0f92-40b2-8aa4-35cbe9be6f92",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:13207066-3b94-4b01-892e-40dad284ab53",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:2088eadb-c175-4504-b3f6-6d6039054116",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:5205ff1a-15f1-4bba-bf63-d08c2d7a4c60",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:02a4a7ee-139e-4d68-8a70-b80a36dd08dc",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:9d0ee90a-53b2-4dd1-a0b4-87a9e2f4c1f8",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:77d7c2fd-d84a-47fa-aa6b-8de132072551",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:321c213e-9ebb-4c2c-b7c7-74efc391bba4",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:3d56affc-9f9f-442e-8d55-086add505b56",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:0657aba6-182c-4984-a949-83ee840faf5f",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:d4ae5dc9-c627-472f-8fb6-6a066145caf7",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:187b131a-cc80-4f12-834d-4b3f4afafb54"
+      },
+      {
+        "@id": "urn:bb7b140c-42d2-437b-996e-2e4aba56a8ce",
+        "label": "highres2standard1.png",
+        "prov:atLocation": "highres2standard1.png",
+        "generatedBy": "urn:d2fdbda9-25bc-429f-8d97-b5c2a113483b"
+      },
+      {
+        "@id": "urn:b3f252bc-c76a-4645-929e-a067e83c500c",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:bb7ff984-916b-4690-826c-5c3d8264f64c",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:865f3a5c-781f-4628-93df-e8dab29c1e36",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:7512e0f1-c6dc-43c8-8b57-d5931e0f8edf",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:087832e3-da2c-4625-9c74-31aac67c9668",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:ffa0f89e-d81e-420f-9259-01db5564470d",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:a072a7cb-eb92-4355-a68b-c9c6189b9d40",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:62c564f1-aad9-4410-bef0-53023f587fc4",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:a2c1caa7-fa0f-4ea2-9ab8-69279084eec1",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:2a92c36c-9b88-498b-a73a-a59dec422c1a",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:c0e5dcf1-3aae-4a71-bd84-0df8cc45bc66",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:43251144-37c1-44f1-bc7b-2e984e72b038",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:a22a0ac5-5b17-41a9-863d-8342c299261b"
+      },
+      {
+        "@id": "urn:24937259-a967-45b8-b933-a53eebf5dc39",
+        "label": "highres2standard2.png",
+        "prov:atLocation": "highres2standard2.png",
+        "generatedBy": "urn:cf71dfe3-4042-4260-98f5-618c614ec4a1"
+      },
+      {
+        "@id": "urn:638873fa-75f1-4f0c-99df-33eb20aabccf",
+        "label": "highres2standard.png",
+        "prov:atLocation": "highres2standard.png",
+        "generatedBy": "urn:c62eb15d-3817-423f-9c04-457b20eccfc1"
+      },
+      {
+        "@id": "urn:06c7bbb5-2a51-46e6-b2a5-f674c4a5efe8",
+        "label": "example_func2standard.mat",
+        "prov:atLocation": "example_func2standard.mat",
+        "generatedBy": "urn:8236d954-225f-433e-ac69-052f4f158f3e"
+      },
+      {
+        "@id": "urn:c75e82cb-28fc-41aa-be0c-4faf6f73447b",
+        "label": "example_func2standard",
+        "prov:atLocation": "example_func2standard",
+        "generatedBy": "urn:502abde9-45e9-4ddc-b9a4-cf2404009ba2"
+      },
+      {
+        "@id": "urn:3d224001-b094-406c-9662-ccfde16f0f56",
+        "label": "standard2example_func.mat",
+        "prov:atLocation": "standard2example_func.mat",
+        "generatedBy": "urn:b3b46b8e-c17b-40f7-943a-ba5f96cc9cd5"
+      },
+      {
+        "@id": "urn:26186e38-3e70-434c-bfb3-1f4d6be9ec2e",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:6df58c14-79db-4e87-8a90-8998ea9579fb",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:5af4e9f9-b006-487d-b868-57c286a4970a",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:0f53ced7-f6a4-4e1c-bfb7-bc54dfaac5e8",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:ed97da1d-e981-46f8-ac7c-0605c1d5dce8",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:6de9f5ac-35d9-4403-ae90-33c5ad75ff65",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:b74632e9-91f7-4304-b4ed-7531aa3e1320",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:88461c71-3d29-49dc-89aa-342dfab99af1",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:a37b73d3-f416-4926-8b1f-970d1b404acd",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:ed974863-8d19-438d-934f-06cb40cefaee",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:3fd5f166-ccba-4e81-8d9a-25a5aeb523ac",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:32c089a7-6e04-4a14-ac20-3868a690ca98",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:3adc7b59-cbe6-4cf3-b33e-13edfeb3c70e"
+      },
+      {
+        "@id": "urn:6b496e3a-8123-45a6-a624-749981e56138",
+        "label": "example_func2standard1.png",
+        "prov:atLocation": "example_func2standard1.png",
+        "generatedBy": "urn:70278d5e-b1a9-42d6-a30f-d2f41a864654"
+      },
+      {
+        "@id": "urn:60dedaa2-cce2-4fb4-8edb-9dc532f802d1",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:85a256c8-d585-4cd9-842a-b40f902d2c49",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:042b5c19-ba8d-40ce-881b-d127f3ed2a8c",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:b053ea3c-451d-47d2-8d98-7835159018d6",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:0ef37779-4ff5-408f-b272-940c15e1ed29",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:f1426e97-7691-46cc-bf29-3eb427ee9440",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:52adc795-9414-4f28-8606-abb0198a866d",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:27efc6be-1e48-455b-b055-68350420ee9f",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:4f2951cf-77e0-4144-bdd3-4c5424d110f6",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:d34ad31d-648a-43af-8217-adbb664ff631",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:196ff993-5013-471c-8ee0-85a6eaa34987",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:71ea256a-fbc0-480c-9d96-14adcdd1e9cd",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:23bf993f-e142-462e-9657-305581d65e8b"
+      },
+      {
+        "@id": "urn:2feaf5ce-9c47-4bd1-af86-e48b2184f7a1",
+        "label": "example_func2standard2.png",
+        "prov:atLocation": "example_func2standard2.png",
+        "generatedBy": "urn:05b3e26b-3feb-409d-be3d-6c9d6d55b346"
+      },
+      {
+        "@id": "urn:781e464d-aab1-441b-9de1-f7c49eabb4f9",
+        "label": "example_func2standard.png",
+        "prov:atLocation": "example_func2standard.png",
+        "generatedBy": "urn:d638adbf-550f-440c-972d-ea8946a795a4"
+>>>>>>> 62ce1a7d (automated nidm example computation from github action)
+>>>>>>> 7b0f2695 (automated nidm example computation from github action)
       }
     ]
   }
