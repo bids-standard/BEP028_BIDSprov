@@ -16,6 +16,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         "@id": "urn:1ec40939-916d-445d-b877-c90cabfb42c5",
 =======
 <<<<<<< HEAD
@@ -56,6 +57,9 @@
 =======
         "@id": "urn:755f5845-6bba-46ee-aa3d-13298440a96e",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "RRID": "RRID:SCR_007037",
         "@type": "prov:SoftwareAgent",
         "label": "AFNI",
@@ -64,6 +68,7 @@
     ],
     "prov:Activity": [
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -139,11 +144,17 @@
         "label": "Make directory",
         "associatedWith": "urn:755f5845-6bba-46ee-aa3d-13298440a96e",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:839a0f76-ced4-4d09-b6e0-ec3b8b43de21",
+        "label": "Make directory",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "command": "mkdir $output_dir",
         "parameters": {},
         "used": []
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -219,11 +230,17 @@
         "label": "Make directory",
         "associatedWith": "urn:755f5845-6bba-46ee-aa3d-13298440a96e",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:af8fb1c3-d5b0-4ca9-8880-e7973f72a068",
+        "label": "Make directory",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "command": "mkdir $output_dir/stimuli",
         "parameters": {},
         "used": []
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1731,11 +1748,246 @@
 =======
         "associatedWith": "urn:755f5845-6bba-46ee-aa3d-13298440a96e",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:9793c411-b70a-4d3c-a9a6-4538b2e943f9",
+        "label": "cp",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "cp ./afni_cluster_nn2/tone_counting_onset_times.txt ./afni_cluster_nn2/tone_counting_probe_duration.txt $output_dir/stimuli",
+        "parameters": {},
+        "used": [
+          "urn:7b77c5e2-0e26-4f03-a73e-7b52c0f8f05e",
+          "urn:625370f4-4b54-448b-91a4-04a1192d8238"
+        ]
+      },
+      {
+        "@id": "urn:3bc50521-c4a2-485a-8550-fa53cac87e73",
+        "label": "3dcopy",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dcopy sub-01_T1w.nii.gz $output_dir/sub-01_T1w",
+        "parameters": {},
+        "used": [
+          "urn:821b0d9d-90cd-42b2-ab3e-6959b409772f"
+        ]
+      },
+      {
+        "@id": "urn:9a598ce3-41c2-413a-8551-71cd8d9c4533",
+        "label": "3dTcat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTcat -prefix $output_dir/pb00.$subj.r01.tcat sub-01_task-tonecounting_bold.nii.gz'[0..$]'",
+        "parameters": {},
+        "used": [
+          "urn:7a014587-fa15-4c3b-b294-026ff05b3c79"
+        ]
+      },
+      {
+        "@id": "urn:77f5d915-b0d2-4fa8-81c9-56668dadd2e3",
+        "label": "3dToutcount",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dToutcount -automask -fraction -polort 2 -legendre pb00.$subj.r$run.tcat+orig > outcount.r$run.1D",
+        "parameters": {},
+        "used": [
+          "urn:1b355ce9-772a-43db-9188-eca3c2fe5272"
+        ]
+      },
+      {
+        "@id": "urn:0707eae2-01c0-4373-8f5c-6791ca9de931",
+        "label": "cat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "cat outcount.r*.1D > outcount_rall.1D",
+        "parameters": {},
+        "used": [
+          "urn:cf850e2d-f092-4467-9406-b8e1eff3ea04"
+        ]
+      },
+      {
+        "@id": "urn:0d574fc8-44a7-4e2c-8d15-34eed03814bb",
+        "label": "3dTshift",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTshift -tzero 0 -quintic -prefix pb01.$subj.r$run.tshift pb00.$subj.r$run.tcat+orig",
+        "parameters": {},
+        "used": [
+          "urn:1b355ce9-772a-43db-9188-eca3c2fe5272"
+        ]
+      },
+      {
+        "@id": "urn:c746fb70-6eb6-462b-967b-c2789f327929",
+        "label": "align_epi_anat.py",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "align_epi_anat.py -anat2epi -anat sub-01_T1w+orig -save_skullstrip -suffix _al_junk -epi pb01.$subj.r01.tshift+orig -epi_base 2 -epi_strip 3dAutomask -volreg off -tshift off",
+        "parameters": {},
+        "used": [
+          "urn:3b6a5293-3fef-460f-bfa4-b1a50fce8377",
+          "urn:5e8da494-8b2e-424e-a7b1-0b6fcf7a7cdd"
+        ]
+      },
+      {
+        "@id": "urn:8552214c-f343-4d45-b9a4-336da2b280eb",
+        "label": "@auto_tlrc",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "@auto_tlrc -base TT_N27+tlrc -input sub-01_T1w_ns+orig -no_ss",
+        "parameters": {},
+        "used": [
+          "urn:2f312eb1-cb95-49b3-9de7-a613c94f0ea5",
+          "urn:e4da5766-856b-4bd0-9140-388f59d23d9d"
+        ]
+      },
+      {
+        "@id": "urn:dce604fa-1b40-4a33-a0e6-586991e37197",
+        "label": "cat_matvec",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "cat_matvec sub-01_T1w_ns+tlrc::WARP_DATA -I > warp.anat.Xat.1D",
+        "parameters": {},
+        "used": [
+          "urn:c1f5f02c-b608-407d-a38c-57ceaf8eaed7"
+        ]
+      },
+      {
+        "@id": "urn:cd371154-9fa7-480b-9bbf-3b5f57a224c9",
+        "label": "3dvolreg",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dvolreg -verbose -zpad 1 -base pb01.$subj.r01.tshift+orig'[2]' -1Dfile dfile.r$run.1D -prefix rm.epi.volreg.r$run -cubic -1Dmatrix_save mat.r$run.vr.aff12.1D pb01.$subj.r$run.tshift+orig",
+        "parameters": {},
+        "used": [
+          "urn:c9f4a3ff-a329-40f6-8ba4-9df45aabeb2c"
+        ]
+      },
+      {
+        "@id": "urn:4288b234-7c16-478a-a031-3823b2bffd67",
+        "label": "3dcalc",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dcalc -overwrite -a pb01.$subj.r$run.tshift+orig -expr 1 -prefix rm.epi.all1",
+        "parameters": {},
+        "used": [
+          "urn:c9f4a3ff-a329-40f6-8ba4-9df45aabeb2c"
+        ]
+      },
+      {
+        "@id": "urn:78103329-a4d6-43d3-ae35-0cffd8e9283b",
+        "label": "cat_matvec",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "cat_matvec -ONELINE sub-01_T1w_ns+tlrc::WARP_DATA -I sub-01_T1w_al_junk_mat.aff12.1D -I mat.r$run.vr.aff12.1D > mat.r$run.warp.aff12.1D",
+        "parameters": {},
+        "used": [
+          "urn:c1f5f02c-b608-407d-a38c-57ceaf8eaed7"
+        ]
+      },
+      {
+        "@id": "urn:dd5e2231-6f66-43e5-9f7f-f5047c0191fd",
+        "label": "3dAllineate",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dAllineate -base sub-01_T1w_ns+tlrc -input pb01.$subj.r$run.tshift+orig -1Dmatrix_apply mat.r$run.warp.aff12.1D -mast_dxyz 3 -prefix rm.epi.nomask.r$run",
+        "parameters": {},
+        "used": [
+          "urn:7b50153d-41aa-4b5b-8b5d-316a1a2f726d",
+          "urn:c9f4a3ff-a329-40f6-8ba4-9df45aabeb2c",
+          "urn:f0915d78-e36d-4f57-a9ce-3086470c3b67"
+        ]
+      },
+      {
+        "@id": "urn:63dbb4ae-e2c0-4e34-b40f-d5889a7088f0",
+        "label": "3dAllineate",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dAllineate -base sub-01_T1w_ns+tlrc -input rm.epi.all1+orig -1Dmatrix_apply mat.r$run.warp.aff12.1D -mast_dxyz 3 -final NN -quiet -prefix rm.epi.1.r$run",
+        "parameters": {},
+        "used": [
+          "urn:7b50153d-41aa-4b5b-8b5d-316a1a2f726d",
+          "urn:6ca03a0a-c935-4229-9b71-f91d4b2937b2",
+          "urn:f0915d78-e36d-4f57-a9ce-3086470c3b67"
+        ]
+      },
+      {
+        "@id": "urn:e45b1a81-a85f-46e1-8882-18ed2d9a1974",
+        "label": "3dTstat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTstat -min -prefix rm.epi.min.r$run rm.epi.1.r$run+tlrc",
+        "parameters": {},
+        "used": [
+          "urn:d1ca8b3f-8073-41c9-85d8-23686838e440"
+        ]
+      },
+      {
+        "@id": "urn:bf633d20-d292-43cf-b5de-2c8c188b3f64",
+        "label": "cat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "cat dfile.r*.1D > dfile_rall.1D",
+        "parameters": {},
+        "used": [
+          "urn:cb5c1fa6-1a21-4800-aff2-b51125e7afff"
+        ]
+      },
+      {
+        "@id": "urn:cf04134b-4694-483c-9bcf-dc7260786700",
+        "label": "3dcopy",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dcopy rm.epi.min.r01+tlrc mask_epi_extents",
+        "parameters": {},
+        "used": [
+          "urn:bb1bbbf1-1608-492e-b898-2080c20123c5"
+        ]
+      },
+      {
+        "@id": "urn:1702e46b-c18e-4178-98ed-cefc08ab4b6e",
+        "label": "3dcalc",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dcalc -a rm.epi.nomask.r$run+tlrc -b mask_epi_extents+tlrc -expr 'a*b' -prefix pb02.$subj.r$run.volreg",
+        "parameters": {},
+        "used": [
+          "urn:db47328b-ca25-4b86-b7d3-d2db5b76b9a2",
+          "urn:ba5fe5ae-7f0d-4e05-92b1-a0528c8f8e00"
+        ]
+      },
+      {
+        "@id": "urn:2c27170b-00b0-49cd-8c73-ab1b4c9d5da9",
+        "label": "3dcopy",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dcopy sub-01_T1w_ns+tlrc anat_final.$subj",
+        "parameters": {},
+        "used": [
+          "urn:7b50153d-41aa-4b5b-8b5d-316a1a2f726d"
+        ]
+      },
+      {
+        "@id": "urn:4a058c9b-e5ab-415e-a34b-1b33d091a610",
+        "label": "3dAllineate",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dAllineate -source sub-01_T1w+orig -master anat_final.$subj+tlrc -final wsinc5 -1Dmatrix_apply warp.anat.Xat.1D -prefix anat_w_skull_warped",
+        "parameters": {},
+        "used": [
+          "urn:67176e98-3ca4-440f-b58c-2740e47ca083"
+        ]
+      },
+      {
+        "@id": "urn:2da3253d-b57a-43e3-96ef-aedd5bb8d5a1",
+        "label": "3dmerge",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dmerge -1blur_fwhm 4.0 -doall -prefix pb03.$subj.r$run.blur pb02.$subj.r$run.volreg+tlrc",
+        "parameters": {},
+        "used": [
+          "urn:80c51dd8-161e-4ffb-b812-911f6748e143",
+          "urn:60faf836-d91e-4283-90d9-63570f1ce2e7"
+        ]
+      },
+      {
+        "@id": "urn:fa4f47df-0ef6-434e-963f-15a3f955c0d4",
+        "label": "3dAutomask",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dAutomask -dilate 1 -prefix rm.mask_r$run pb03.$subj.r$run.blur+tlrc",
+        "parameters": {},
+        "used": [
+          "urn:4f802968-cc9c-4347-b2ce-047d1f1d093f"
+        ]
+      },
+      {
+        "@id": "urn:03d71252-2155-4b1d-9567-4f93687b25ba",
+        "label": "3dmask_tool",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "command": "3dmask_tool -inputs rm.mask_r*+tlrc.HEAD -union -prefix full_mask.$subj",
         "parameters": {},
         "used": []
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -2825,11 +3077,205 @@
 =======
         "associatedWith": "urn:755f5845-6bba-46ee-aa3d-13298440a96e",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:3685416f-541b-4c47-89a6-f7190cd6481e",
+        "label": "3dresample",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dresample -master full_mask.$subj+tlrc -input sub-01_T1w_ns+tlrc -prefix rm.resam.anat",
+        "parameters": {},
+        "used": [
+          "urn:7b50153d-41aa-4b5b-8b5d-316a1a2f726d",
+          "urn:7af413e9-4c09-4b82-8105-762c0e7a13ed"
+        ]
+      },
+      {
+        "@id": "urn:0420b375-20e1-4429-a02b-f01870bc15c0",
+        "label": "3dmask_tool",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dmask_tool -dilate_input 5 -5 -fill_holes -input rm.resam.anat+tlrc -prefix mask_anat.$subj",
+        "parameters": {},
+        "used": [
+          "urn:69779362-cf2e-4eb6-95cb-dde2b9f9c972"
+        ]
+      },
+      {
+        "@id": "urn:33f29e2b-6809-4809-b219-e4732809b238",
+        "label": "3dABoverlap",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dABoverlap -no_automask full_mask.$subj+tlrc mask_anat.$subj+tlrc |& tee out.mask_ae_overlap.txt",
+        "parameters": {},
+        "used": [
+          "urn:bf358542-e677-4e85-a986-ebeb51fe4a12",
+          "urn:b32ef03c-18b2-428e-a0c0-394596ca4ff1"
+        ]
+      },
+      {
+        "@id": "urn:53116acb-e860-4f99-8314-108881764957",
+        "label": "3ddot",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3ddot -dodice full_mask.$subj+tlrc mask_anat.$subj+tlrc |& tee out.mask_ae_dice.txt",
+        "parameters": {},
+        "used": [
+          "urn:bf358542-e677-4e85-a986-ebeb51fe4a12",
+          "urn:b32ef03c-18b2-428e-a0c0-394596ca4ff1"
+        ]
+      },
+      {
+        "@id": "urn:2dfbc1d5-b129-4fbe-89b9-7f61112dd385",
+        "label": "3dresample",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dresample -master full_mask.$subj+tlrc -prefix ./rm.resam.group -input /Users/u1591557/abin/TT_N27+tlrc",
+        "parameters": {},
+        "used": [
+          "urn:fea9f516-d306-4bdd-ad50-b5f3529d1084",
+          "urn:7af413e9-4c09-4b82-8105-762c0e7a13ed"
+        ]
+      },
+      {
+        "@id": "urn:42041e3a-0e63-450a-8f89-ef3680d797d2",
+        "label": "3dmask_tool",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dmask_tool -dilate_input 5 -5 -fill_holes -input rm.resam.group+tlrc -prefix mask_group",
+        "parameters": {},
+        "used": [
+          "urn:02837102-2ad2-4dba-8418-726fb7f15911"
+        ]
+      },
+      {
+        "@id": "urn:2094f909-3a5c-4d15-a2d0-dd5d62acaafb",
+        "label": "3dTstat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTstat -prefix rm.mean_r$run pb03.$subj.r$run.blur+tlrc",
+        "parameters": {},
+        "used": [
+          "urn:4f802968-cc9c-4347-b2ce-047d1f1d093f"
+        ]
+      },
+      {
+        "@id": "urn:a91710cf-9d32-4b39-aeac-59a2e62e9960",
+        "label": "3dcalc",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dcalc -a pb03.$subj.r$run.blur+tlrc -b rm.mean_r$run+tlrc -c mask_epi_extents+tlrc -expr 'c * min(200, a/b*100)*step(a)*step(b)' -prefix pb04.$subj.r$run.scale",
+        "parameters": {},
+        "used": [
+          "urn:4f802968-cc9c-4347-b2ce-047d1f1d093f",
+          "urn:f5f06493-f00f-4b13-9682-d6734d944d16",
+          "urn:ba5fe5ae-7f0d-4e05-92b1-a0528c8f8e00"
+        ]
+      },
+      {
+        "@id": "urn:a3a83f02-e2fb-4dfb-855c-c6da7598114a",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -demean -write motion_demean.1D",
+        "parameters": {},
+        "used": [
+          "urn:1f8b92bf-5be4-4a97-8ecb-6349cfb86c14"
+        ]
+      },
+      {
+        "@id": "urn:722c7967-bbb6-46bb-8a19-ae2e967bde35",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -derivative -demean -write motion_deriv.1D",
+        "parameters": {},
+        "used": [
+          "urn:1f8b92bf-5be4-4a97-8ecb-6349cfb86c14"
+        ]
+      },
+      {
+        "@id": "urn:49006aa0-6cd2-4ee4-9994-cdccb9f8d8ac",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -show_censor_count -censor_prev_TR -censor_motion 0.3 motion_${subj}",
+        "parameters": {},
+        "used": [
+          "urn:1f8b92bf-5be4-4a97-8ecb-6349cfb86c14"
+        ]
+      },
+      {
+        "@id": "urn:fed37a9a-5086-4bbf-a5d9-937179eca36a",
+        "label": "3dDeconvolve",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dDeconvolve -input pb04.$subj.r*.scale+tlrc.HEAD -censor motion_${subj}_censor.1D -polort 2 -num_stimts 8 -stim_times 1 stimuli/tone_counting_onset_times.txt 'BLOCK(4)' -stim_label 1 tone_counting -stim_times_AM1 2 stimuli/tone_counting_probe_duration.txt 'dmBLOCK' -stim_label 2 probe -stim_file 3 motion_demean.1D'[0]' -stim_base 3 -stim_label 3 roll -stim_file 4 motion_demean.1D'[1]' -stim_base 4 -stim_label 4 pitch -stim_file 5 motion_demean.1D'[2]' -stim_base 5 -stim_label 5 yaw -stim_file 6 motion_demean.1D'[3]' -stim_base 6 -stim_label 6 dS -stim_file 7 motion_demean.1D'[4]' -stim_base 7 -stim_label 7 dL -stim_file 8 motion_demean.1D'[5]' -stim_base 8 -stim_label 8 dP -fout -tout -x1D X.xmat.1D -xjpeg X.jpg -x1D_uncensored X.nocensor.xmat.1D -fitts fitts.$subj -errts errts.${subj} -bucket stats.$subj",
+        "parameters": {},
+        "used": [
+          "urn:3c68962a-d547-42f6-a76b-7834805fc047"
+        ]
+      },
+      {
+        "@id": "urn:5f9d1301-526a-4268-9124-930c9a72becb",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "1d_tool.py -show_cormat_warnings -infile X.xmat.1D |& tee out.cormat_warn.txt",
+        "parameters": {},
+        "used": [
+          "urn:764ec421-42bc-439e-890f-ebd826cbc693"
+        ]
+      },
+      {
+        "@id": "urn:f3eae679-62cd-4ff2-a146-3441550485a9",
+        "label": "3dTcat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTcat -prefix all_runs.$subj pb04.$subj.r*.scale+tlrc.HEAD",
+        "parameters": {},
+        "used": [
+          "urn:3c68962a-d547-42f6-a76b-7834805fc047"
+        ]
+      },
+      {
+        "@id": "urn:65eb02e5-9a39-42ce-970a-07ddfeb2f147",
+        "label": "3dTstat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTstat -mean -prefix rm.signal.all all_runs.$subj+tlrc\"[$ktrs]\"",
+        "parameters": {},
+        "used": [
+          "urn:0c36e372-9f64-4335-adca-4f0df6c3e90e"
+        ]
+      },
+      {
+        "@id": "urn:baceef04-f0d3-4269-b873-1ea070790dec",
+        "label": "3dTstat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTstat -stdev -prefix rm.noise.all errts.${subj}+tlrc\"[$ktrs]\"",
+        "parameters": {},
+        "used": [
+          "urn:6868c7d8-a4cd-4a6c-9bf8-11135eb1585f"
+        ]
+      },
+      {
+        "@id": "urn:1d0f705c-38d7-424a-95f0-294dc5b9a7f1",
+        "label": "3dcalc",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dcalc -a rm.signal.all+tlrc -b rm.noise.all+tlrc -c full_mask.$subj+tlrc -expr 'c*a/b' -prefix TSNR.$subj",
+        "parameters": {},
+        "used": [
+          "urn:39c4d239-95dc-4113-926b-65a0c8de7a25",
+          "urn:6b466b2e-1bd6-4fa9-a917-d63877853527",
+          "urn:7af413e9-4c09-4b82-8105-762c0e7a13ed"
+        ]
+      },
+      {
+        "@id": "urn:2c91dbe7-4b82-4b65-9d43-f742eeb9c045",
+        "label": "3dTnorm",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTnorm -norm2 -prefix rm.errts.unit errts.${subj}+tlrc",
+        "parameters": {},
+        "used": [
+          "urn:e3083e32-ab12-4ecc-9b98-65916def078e"
+        ]
+      },
+      {
+        "@id": "urn:182d8af1-f4df-4ba5-92e4-e9450e1d6168",
+        "label": "3dmaskave",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "command": "3dmaskave -quiet -mask full_mask.$subj+tlrc rm.errts.unit+tlrc > gmean.errts.unit.1D",
         "parameters": {},
         "used": []
       },
       {
+<<<<<<< HEAD
         "@id": "urn:02b5d90b-d8d6-4d9d-ae17-d212e01867c2",
         "label": "3dTstat",
         "associatedWith": "urn:755f5845-6bba-46ee-aa3d-13298440a96e",
@@ -4105,6 +4551,122 @@
 =======
         "associatedWith": "urn:755f5845-6bba-46ee-aa3d-13298440a96e",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:68032b30-baef-4668-8500-5163971cdfbe",
+        "label": "3dTstat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTstat -sos -prefix - gmean.errts.unit.1D\\' > out.gcor.1D",
+        "parameters": {},
+        "used": [
+          "urn:939445ac-a753-411e-8ef1-2229542650a7"
+        ]
+      },
+      {
+        "@id": "urn:9728e60d-36c8-45ac-93aa-61b858c0650e",
+        "label": "3dcalc",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dcalc -a rm.errts.unit+tlrc -b gmean.errts.unit.1D -expr 'a*b' -prefix rm.DP",
+        "parameters": {},
+        "used": [
+          "urn:df487793-70ca-44ba-8924-930fe1e35163",
+          "urn:0219c684-f4bb-40ec-aa38-9eae2e8438b9"
+        ]
+      },
+      {
+        "@id": "urn:1b1f85d1-5670-4eec-8454-ad990d80ef9b",
+        "label": "3dTstat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTstat -sum -prefix corr_brain rm.DP+tlrc",
+        "parameters": {},
+        "used": [
+          "urn:ee47b38e-2ac5-4c70-a50d-83f639241884"
+        ]
+      },
+      {
+        "@id": "urn:3a424929-f1c6-41c8-880e-13eb4fa0b15b",
+        "label": "1dcat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "1dcat X.nocensor.xmat.1D'[3]' > ideal_tone_counting.1D",
+        "parameters": {},
+        "used": [
+          "urn:043f93e2-ed8b-4d5f-a347-94ae19aced8b"
+        ]
+      },
+      {
+        "@id": "urn:599d7888-428a-41fe-ae02-8d07cd63f905",
+        "label": "1dcat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "1dcat X.nocensor.xmat.1D'[4]' > ideal_probe.1D",
+        "parameters": {},
+        "used": [
+          "urn:0b54d64d-cf0b-492d-bade-3ff1078f532b"
+        ]
+      },
+      {
+        "@id": "urn:f49b6d4e-3bbf-4021-a25f-2a4ca2433976",
+        "label": "3dTstat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dTstat -sum -prefix sum_ideal.1D X.nocensor.xmat.1D\"[$reg_cols]\"",
+        "parameters": {},
+        "used": [
+          "urn:9bcf0fab-dcef-45df-a29e-b4321d6f2ffa"
+        ]
+      },
+      {
+        "@id": "urn:e74d597d-c5bc-4916-aa30-271e43b631c8",
+        "label": "1dcat",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "1dcat X.nocensor.xmat.1D\"[$reg_cols]\" > X.stim.xmat.1D",
+        "parameters": {},
+        "used": [
+          "urn:9bcf0fab-dcef-45df-a29e-b4321d6f2ffa"
+        ]
+      },
+      {
+        "@id": "urn:2c84ddb8-913b-48b7-bed6-6e60c7a8ce37",
+        "label": "3dFWHMx",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dFWHMx -detrend -mask full_mask.$subj+tlrc all_runs.$subj+tlrc\"[$trs]\" >> blur.epits.1D",
+        "parameters": {},
+        "used": [
+          "urn:7af413e9-4c09-4b82-8105-762c0e7a13ed"
+        ]
+      },
+      {
+        "@id": "urn:cedf7366-aee3-48f1-89c3-6245fc081985",
+        "label": "3dFWHMx",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dFWHMx -detrend -mask full_mask.$subj+tlrc errts.${subj}+tlrc\"[$trs]\" >> blur.errts.1D",
+        "parameters": {},
+        "used": [
+          "urn:7af413e9-4c09-4b82-8105-762c0e7a13ed"
+        ]
+      },
+      {
+        "@id": "urn:968e8093-d6a8-4d75-9220-01b2c11afdab",
+        "label": "3dClustSim",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "3dClustSim -both -mask full_mask.$subj+tlrc -fwhmxyz $fxyz[1-3] -prefix ClustSim",
+        "parameters": {},
+        "used": [
+          "urn:7af413e9-4c09-4b82-8105-762c0e7a13ed"
+        ]
+      },
+      {
+        "@id": "urn:77d5bcec-2cfa-49aa-9126-bd578ffa9b14",
+        "label": "gen_epi_review.py",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+        "command": "gen_epi_review.py -script @epi_review.$subj -dsets pb00.$subj.r*.tcat+orig.HEAD",
+        "parameters": {},
+        "used": [
+          "urn:ad7336a9-a156-4f98-97e8-a7416c08d602"
+        ]
+      },
+      {
+        "@id": "urn:835e48cc-9576-4e21-817e-8177f4dd05b1",
+        "label": "gen_ss_review_scripts.py",
+        "associatedWith": "urn:d8bbbb17-b853-4867-be98-9c3501407220",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "command": "gen_ss_review_scripts.py -mot_limit 0.3 -exit0",
         "parameters": {
           "-mot_limit": "0.3",
@@ -4115,6 +4677,7 @@
     ],
     "prov:Entity": [
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -4281,10 +4844,26 @@
 =======
         "@id": "urn:94c1b316-3b4a-45f3-a078-bd2e6c973464",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:90dbc115-e5b9-4fc4-826b-cdb8a17e0d16",
+        "label": "$output_dir",
+        "prov:atLocation": "$output_dir",
+        "generatedBy": "urn:839a0f76-ced4-4d09-b6e0-ec3b8b43de21"
+      },
+      {
+        "@id": "urn:a0cbf3e6-678b-4120-a918-395c434751da",
+        "label": "stimuli",
+        "prov:atLocation": "$output_dir/stimuli",
+        "generatedBy": "urn:af8fb1c3-d5b0-4ca9-8880-e7973f72a068"
+      },
+      {
+        "@id": "urn:7b77c5e2-0e26-4f03-a73e-7b52c0f8f05e",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "tone_counting_onset_times.txt",
         "prov:atLocation": "./afni_cluster_nn2/tone_counting_onset_times.txt"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -4336,10 +4915,14 @@
 =======
         "@id": "urn:1d1a8052-8c1a-4e58-bfc6-60bb97637a59",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:625370f4-4b54-448b-91a4-04a1192d8238",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "tone_counting_probe_duration.txt",
         "prov:atLocation": "./afni_cluster_nn2/tone_counting_probe_duration.txt"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -4450,10 +5033,20 @@
 =======
         "@id": "urn:6c649edf-5168-4d3a-8163-5d96ff472c51",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:ce06b28b-fdf2-42c8-8327-5042554404d9",
+        "label": "stimuli",
+        "prov:atLocation": "$output_dir/stimuli",
+        "generatedBy": "urn:9793c411-b70a-4d3c-a9a6-4538b2e943f9"
+      },
+      {
+        "@id": "urn:821b0d9d-90cd-42b2-ab3e-6959b409772f",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "sub-01_T1w.nii.gz",
         "prov:atLocation": "sub-01_T1w.nii.gz"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -4532,10 +5125,20 @@
 =======
         "@id": "urn:f10039fa-e1fa-4b40-a52e-d5ff0bbb548e",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:fbfe5e1d-8682-4bf3-a5be-ca4edd1e8fb7",
+        "label": "sub-01_T1w",
+        "prov:atLocation": "$output_dir/sub-01_T1w",
+        "generatedBy": "urn:3bc50521-c4a2-485a-8550-fa53cac87e73"
+      },
+      {
+        "@id": "urn:7a014587-fa15-4c3b-b294-026ff05b3c79",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "sub-01_task-tonecounting_bold.nii.gz",
         "prov:atLocation": "sub-01_task-tonecounting_bold.nii.gz'[0..$]'"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -4654,10 +5257,20 @@
 =======
         "@id": "urn:89bba8d2-f50d-4540-8393-eec6e626466c",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:551d9ce2-a274-4ce3-be32-58e12b28dc23",
+        "label": "pb00.$subj.r01.tcat",
+        "prov:atLocation": "$output_dir/pb00.$subj.r01.tcat",
+        "generatedBy": "urn:9a598ce3-41c2-413a-8551-71cd8d9c4533"
+      },
+      {
+        "@id": "urn:1b355ce9-772a-43db-9188-eca3c2fe5272",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "pb00.$subj.r$run.tcat",
         "prov:atLocation": "pb00.$subj.r$run.tcat+orig"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -4809,10 +5422,20 @@
 =======
         "@id": "urn:e9e10618-c08c-411f-9816-1b8756062875",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:e58b74d5-74c6-425d-941e-0216c45f905e",
+        "label": "outcount.r$run.1D",
+        "prov:atLocation": "outcount.r$run.1D",
+        "generatedBy": "urn:77f5d915-b0d2-4fa8-81c9-56668dadd2e3"
+      },
+      {
+        "@id": "urn:cf850e2d-f092-4467-9406-b8e1eff3ea04",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "outcount.r*.1D",
         "prov:atLocation": "outcount.r*.1D"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -4913,10 +5536,26 @@
 =======
         "@id": "urn:acc8f2d4-12a6-4e2e-a806-eb42a6219fca",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:ca04a180-a973-4302-b190-3e273e44aff1",
+        "label": "outcount_rall.1D",
+        "prov:atLocation": "outcount_rall.1D",
+        "generatedBy": "urn:0707eae2-01c0-4373-8f5c-6791ca9de931"
+      },
+      {
+        "@id": "urn:025e0b0b-85ad-4ecc-9868-7b9a45a3f6c0",
+        "label": "pb01.$subj.r$run.tshift",
+        "prov:atLocation": "pb01.$subj.r$run.tshift",
+        "generatedBy": "urn:0d574fc8-44a7-4e2c-8d15-34eed03814bb"
+      },
+      {
+        "@id": "urn:3b6a5293-3fef-460f-bfa4-b1a50fce8377",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "sub-01_T1w",
         "prov:atLocation": "sub-01_T1w+orig"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -4938,10 +5577,14 @@
 =======
         "@id": "urn:41534e38-0247-49c7-9473-68134a34c3f6",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:5e8da494-8b2e-424e-a7b1-0b6fcf7a7cdd",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "pb01.$subj.r01.tshift",
         "prov:atLocation": "pb01.$subj.r01.tshift+orig"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -5130,10 +5773,20 @@
 =======
         "@id": "urn:7821a156-51fc-49f2-818d-42c5037777c2",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:a1a9e90f-7328-439a-b826-66e6e1723d32",
+        "label": "_al_junk",
+        "prov:atLocation": "_al_junk",
+        "generatedBy": "urn:c746fb70-6eb6-462b-967b-c2789f327929"
+      },
+      {
+        "@id": "urn:2f312eb1-cb95-49b3-9de7-a613c94f0ea5",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "TT_N27",
         "prov:atLocation": "TT_N27+tlrc"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -5185,10 +5838,14 @@
 =======
         "@id": "urn:beb1b0d6-dec2-4816-8ffe-e0ea0ed58a5c",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:e4da5766-856b-4bd0-9140-388f59d23d9d",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "sub-01_T1w_ns",
         "prov:atLocation": "sub-01_T1w_ns+orig"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -5267,10 +5924,14 @@
 =======
         "@id": "urn:6631ce56-30a1-49dd-b9a9-ac08e552924f",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:c1f5f02c-b608-407d-a38c-57ceaf8eaed7",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "sub-01_T1w_ns",
         "prov:atLocation": "sub-01_T1w_ns+tlrc::WARP_DATA"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:09936bf0-c482-4602-bb61-b8613adb4f6d",
         "label": "warp.anat.Xat.1D",
         "prov:atLocation": "warp.anat.Xat.1D",
@@ -5278,10 +5939,20 @@
       },
       {
         "@id": "urn:9d6d60de-58ab-4803-ae51-e29bd76f8ed3",
+=======
+        "@id": "urn:67176e98-3ca4-440f-b58c-2740e47ca083",
+        "label": "warp.anat.Xat.1D",
+        "prov:atLocation": "warp.anat.Xat.1D",
+        "generatedBy": "urn:dce604fa-1b40-4a33-a0e6-586991e37197"
+      },
+      {
+        "@id": "urn:c9f4a3ff-a329-40f6-8ba4-9df45aabeb2c",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "pb01.$subj.r$run.tshift",
         "prov:atLocation": "pb01.$subj.r$run.tshift+orig"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:7faaf61b-1013-49f3-8676-4f59b2faa294",
         "label": "mat.r$run.vr.aff12.1D",
         "prov:atLocation": "mat.r$run.vr.aff12.1D",
@@ -5301,10 +5972,32 @@
       },
       {
         "@id": "urn:1e63388e-d887-4868-9700-fee7011b6d91",
+=======
+        "@id": "urn:fb37f9b9-fda2-40b5-b0b4-37cc44e2953f",
+        "label": "mat.r$run.vr.aff12.1D",
+        "prov:atLocation": "mat.r$run.vr.aff12.1D",
+        "generatedBy": "urn:cd371154-9fa7-480b-9bbf-3b5f57a224c9"
+      },
+      {
+        "@id": "urn:ad7aa2f5-4838-4924-b287-c5e39451a6eb",
+        "label": "rm.epi.all1",
+        "prov:atLocation": "rm.epi.all1",
+        "generatedBy": "urn:4288b234-7c16-478a-a031-3823b2bffd67"
+      },
+      {
+        "@id": "urn:f0915d78-e36d-4f57-a9ce-3086470c3b67",
+        "label": "mat.r$run.warp.aff12.1D",
+        "prov:atLocation": "mat.r$run.warp.aff12.1D",
+        "generatedBy": "urn:78103329-a4d6-43d3-ae35-0cffd8e9283b"
+      },
+      {
+        "@id": "urn:7b50153d-41aa-4b5b-8b5d-316a1a2f726d",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "sub-01_T1w_ns",
         "prov:atLocation": "sub-01_T1w_ns+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:1cd6ab9b-2b89-4159-b55d-6b5eacb67c3f",
         "label": "rm.epi.nomask.r$run",
         "prov:atLocation": "rm.epi.nomask.r$run",
@@ -5312,10 +6005,20 @@
       },
       {
         "@id": "urn:762727cc-2a74-46a4-b9c7-17de03dd6835",
+=======
+        "@id": "urn:941f84fb-f857-4ca6-97b2-60c641f04502",
+        "label": "rm.epi.nomask.r$run",
+        "prov:atLocation": "rm.epi.nomask.r$run",
+        "generatedBy": "urn:dd5e2231-6f66-43e5-9f7f-f5047c0191fd"
+      },
+      {
+        "@id": "urn:6ca03a0a-c935-4229-9b71-f91d4b2937b2",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.epi.all1",
         "prov:atLocation": "rm.epi.all1+orig"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:becfa6a4-48f7-49d0-9a61-599ef6ef9966",
         "label": "rm.epi.1.r$run",
         "prov:atLocation": "rm.epi.1.r$run",
@@ -5323,10 +6026,20 @@
       },
       {
         "@id": "urn:34fcbbf4-9e8d-4bac-b91b-eac62eae59d0",
+=======
+        "@id": "urn:28786c7e-a676-4db0-a946-1f3b4fa47fd7",
+        "label": "rm.epi.1.r$run",
+        "prov:atLocation": "rm.epi.1.r$run",
+        "generatedBy": "urn:63dbb4ae-e2c0-4e34-b40f-d5889a7088f0"
+      },
+      {
+        "@id": "urn:d1ca8b3f-8073-41c9-85d8-23686838e440",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.epi.1.r$run",
         "prov:atLocation": "rm.epi.1.r$run+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:8a874104-1c4b-42d2-8964-60b7135fe5c4",
         "label": "rm.epi.min.r$run",
         "prov:atLocation": "rm.epi.min.r$run",
@@ -5518,10 +6231,20 @@
 =======
         "@id": "urn:dc2119b3-6f3f-44cd-b470-3a60d11ca226",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:00973183-7f80-4027-b958-54734ef2e9eb",
+        "label": "rm.epi.min.r$run",
+        "prov:atLocation": "rm.epi.min.r$run",
+        "generatedBy": "urn:e45b1a81-a85f-46e1-8882-18ed2d9a1974"
+      },
+      {
+        "@id": "urn:cb5c1fa6-1a21-4800-aff2-b51125e7afff",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "dfile.r*.1D",
         "prov:atLocation": "dfile.r*.1D"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -5577,10 +6300,20 @@
 =======
         "@id": "urn:d7f0ab5b-e1ff-4fba-aeee-5cf03239da6a",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:1f8b92bf-5be4-4a97-8ecb-6349cfb86c14",
+        "label": "dfile_rall.1D",
+        "prov:atLocation": "dfile_rall.1D",
+        "generatedBy": "urn:bf633d20-d292-43cf-b5de-2c8c188b3f64"
+      },
+      {
+        "@id": "urn:bb1bbbf1-1608-492e-b898-2080c20123c5",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.epi.min.r01",
         "prov:atLocation": "rm.epi.min.r01+tlrc"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -5730,15 +6463,29 @@
 =======
         "@id": "urn:c2ee5160-d76a-442d-8654-93b10f5541fa",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:cce11dad-a0d2-488c-b2be-1f1cf08b76fd",
+        "label": "mask_epi_extents",
+        "prov:atLocation": "mask_epi_extents",
+        "generatedBy": "urn:cf04134b-4694-483c-9bcf-dc7260786700"
+      },
+      {
+        "@id": "urn:db47328b-ca25-4b86-b7d3-d2db5b76b9a2",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.epi.nomask.r$run",
         "prov:atLocation": "rm.epi.nomask.r$run+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:74d83e98-4023-4eaa-ae1c-c5a7accd1b25",
+=======
+        "@id": "urn:ba5fe5ae-7f0d-4e05-92b1-a0528c8f8e00",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "mask_epi_extents",
         "prov:atLocation": "mask_epi_extents+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:b0f0de8b-3e76-4c39-afe8-4a8491233387",
         "label": "pb02.$subj.r$run.volreg",
         "prov:atLocation": "pb02.$subj.r$run.volreg",
@@ -5890,10 +6637,32 @@
 =======
         "@id": "urn:a49bb98d-cfdb-4f30-aeb2-1bbeb9e4cd6c",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:2fde739a-94f1-446a-9334-59ed2d09bb9a",
+        "label": "pb02.$subj.r$run.volreg",
+        "prov:atLocation": "pb02.$subj.r$run.volreg",
+        "generatedBy": "urn:1702e46b-c18e-4178-98ed-cefc08ab4b6e"
+      },
+      {
+        "@id": "urn:f45d63ac-0e0c-4136-925f-91df09187cac",
+        "label": "anat_final.$subj",
+        "prov:atLocation": "anat_final.$subj",
+        "generatedBy": "urn:2c27170b-00b0-49cd-8c73-ab1b4c9d5da9"
+      },
+      {
+        "@id": "urn:8c810d1b-628b-4508-8d36-3bee5277366a",
+        "label": "anat_w_skull_warped",
+        "prov:atLocation": "anat_w_skull_warped",
+        "generatedBy": "urn:4a058c9b-e5ab-415e-a34b-1b33d091a610"
+      },
+      {
+        "@id": "urn:80c51dd8-161e-4ffb-b812-911f6748e143",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "pb03.$subj.r$run.blur",
         "prov:atLocation": "pb03.$subj.r$run.blur"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -5994,10 +6763,19 @@
       },
       {
         "@id": "urn:b0c4ab00-a85a-445b-8310-25536d3e0c32",
+=======
+        "@id": "urn:60faf836-d91e-4283-90d9-63570f1ce2e7",
+        "label": "pb02.$subj.r$run.volreg",
+        "prov:atLocation": "pb02.$subj.r$run.volreg+tlrc"
+      },
+      {
+        "@id": "urn:4f802968-cc9c-4347-b2ce-047d1f1d093f",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "pb03.$subj.r$run.blur",
         "prov:atLocation": "pb03.$subj.r$run.blur+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:7c0b973b-c140-474f-81b4-039646fcc87c",
         "label": "rm.mask_r$run",
         "prov:atLocation": "rm.mask_r$run",
@@ -6011,10 +6789,26 @@
       },
       {
         "@id": "urn:0f74812b-7ae0-49cc-b73f-051c345a6ee2",
+=======
+        "@id": "urn:9be59a5f-2f9c-4938-8760-821e157289e8",
+        "label": "rm.mask_r$run",
+        "prov:atLocation": "rm.mask_r$run",
+        "generatedBy": "urn:fa4f47df-0ef6-434e-963f-15a3f955c0d4"
+      },
+      {
+        "@id": "urn:d56056a2-ceeb-4fd8-a7e7-f6a22df78508",
+        "label": "full_mask.$subj",
+        "prov:atLocation": "full_mask.$subj",
+        "generatedBy": "urn:03d71252-2155-4b1d-9567-4f93687b25ba"
+      },
+      {
+        "@id": "urn:7af413e9-4c09-4b82-8105-762c0e7a13ed",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "full_mask.$subj",
         "prov:atLocation": "full_mask.$subj+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:e5546503-0194-4a77-a00a-4cbf4cd056c8",
         "label": "rm.resam.anat",
         "prov:atLocation": "rm.resam.anat",
@@ -6022,10 +6816,20 @@
       },
       {
         "@id": "urn:04d81fc7-6558-4450-86b5-adf43b9e0f47",
+=======
+        "@id": "urn:d0a49ac9-8f0e-4286-bef4-48a286aa2f06",
+        "label": "rm.resam.anat",
+        "prov:atLocation": "rm.resam.anat",
+        "generatedBy": "urn:3685416f-541b-4c47-89a6-f7190cd6481e"
+      },
+      {
+        "@id": "urn:69779362-cf2e-4eb6-95cb-dde2b9f9c972",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.resam.anat",
         "prov:atLocation": "rm.resam.anat+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:8a7ef0b5-05d6-4024-89cb-93a3241508ab",
         "label": "mask_anat.$subj",
         "prov:atLocation": "mask_anat.$subj",
@@ -6033,20 +6837,38 @@
       },
       {
         "@id": "urn:d28e556f-4818-4e3d-baa1-2b8d429f7a67",
+=======
+        "@id": "urn:8776c1ff-554e-47c2-ae86-41045fe34ce4",
+        "label": "mask_anat.$subj",
+        "prov:atLocation": "mask_anat.$subj",
+        "generatedBy": "urn:0420b375-20e1-4429-a02b-f01870bc15c0"
+      },
+      {
+        "@id": "urn:bf358542-e677-4e85-a986-ebeb51fe4a12",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "mask_anat.$subj",
         "prov:atLocation": "mask_anat.$subj+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:b547bac8-ec6d-487f-9a1f-18f72ebdc863",
+=======
+        "@id": "urn:b32ef03c-18b2-428e-a0c0-394596ca4ff1",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "tee",
         "prov:atLocation": "tee"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:d55038e1-f74b-41a1-bdd1-88349e5eec11",
+=======
+        "@id": "urn:fea9f516-d306-4bdd-ad50-b5f3529d1084",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "TT_N27",
         "prov:atLocation": "/Users/u1591557/abin/TT_N27+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:a8cb1d31-673b-4c07-a6a8-4a02b50a000e",
         "label": "rm.resam.group",
         "prov:atLocation": "./rm.resam.group",
@@ -6054,10 +6876,20 @@
       },
       {
         "@id": "urn:41556faf-0de6-40e3-a47f-48c1e22c0599",
+=======
+        "@id": "urn:35472da2-d1a1-4d12-9b09-2243d2e2c736",
+        "label": "rm.resam.group",
+        "prov:atLocation": "./rm.resam.group",
+        "generatedBy": "urn:2dfbc1d5-b129-4fbe-89b9-7f61112dd385"
+      },
+      {
+        "@id": "urn:02837102-2ad2-4dba-8418-726fb7f15911",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.resam.group",
         "prov:atLocation": "rm.resam.group+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:1936675f-b3b0-436f-b656-76c1d01dd1c3",
         "label": "mask_group",
         "prov:atLocation": "mask_group",
@@ -6071,10 +6903,26 @@
       },
       {
         "@id": "urn:fec74f45-e929-4336-9efc-055bc33171e3",
+=======
+        "@id": "urn:755c6945-6e82-4682-a943-1ebf96cf0050",
+        "label": "mask_group",
+        "prov:atLocation": "mask_group",
+        "generatedBy": "urn:42041e3a-0e63-450a-8f89-ef3680d797d2"
+      },
+      {
+        "@id": "urn:2a4ea2b3-0154-452c-81a3-1656779e35d2",
+        "label": "rm.mean_r$run",
+        "prov:atLocation": "rm.mean_r$run",
+        "generatedBy": "urn:2094f909-3a5c-4d15-a2d0-dd5d62acaafb"
+      },
+      {
+        "@id": "urn:f5f06493-f00f-4b13-9682-d6734d944d16",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.mean_r$run",
         "prov:atLocation": "rm.mean_r$run+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:aff87ef4-a5b1-485e-9a2f-a55c7f5fb159",
         "label": "pb04.$subj.r$run.scale",
         "prov:atLocation": "pb04.$subj.r$run.scale",
@@ -6222,10 +7070,32 @@
 =======
         "@id": "urn:52678ee5-4147-4904-82d5-da3ab5c8cc04",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:91e5f011-3d02-4893-997b-44e08d6f2eeb",
+        "label": "pb04.$subj.r$run.scale",
+        "prov:atLocation": "pb04.$subj.r$run.scale",
+        "generatedBy": "urn:a91710cf-9d32-4b39-aeac-59a2e62e9960"
+      },
+      {
+        "@id": "urn:e1bdf024-5fac-4b1a-a743-a0dd4b6b64e1",
+        "label": "motion_demean.1D",
+        "prov:atLocation": "motion_demean.1D",
+        "generatedBy": "urn:a3a83f02-e2fb-4dfb-855c-c6da7598114a"
+      },
+      {
+        "@id": "urn:8fabea4b-47f7-4228-9188-04ce69d3ca2f",
+        "label": "motion_deriv.1D",
+        "prov:atLocation": "motion_deriv.1D",
+        "generatedBy": "urn:722c7967-bbb6-46bb-8a19-ae2e967bde35"
+      },
+      {
+        "@id": "urn:3c68962a-d547-42f6-a76b-7834805fc047",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "pb04.$subj.r*.scale",
         "prov:atLocation": "pb04.$subj.r*.scale+tlrc.HEAD"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -6517,10 +7387,26 @@
       },
       {
         "@id": "urn:74e3e614-53e9-47c2-b99b-9a1c885e2e27",
+=======
+        "@id": "urn:764ec421-42bc-439e-890f-ebd826cbc693",
+        "label": "X.xmat.1D",
+        "prov:atLocation": "X.xmat.1D",
+        "generatedBy": "urn:fed37a9a-5086-4bbf-a5d9-937179eca36a"
+      },
+      {
+        "@id": "urn:23eb34c2-b85e-4921-83e7-45dcd393324a",
+        "label": "all_runs.$subj",
+        "prov:atLocation": "all_runs.$subj",
+        "generatedBy": "urn:f3eae679-62cd-4ff2-a146-3441550485a9"
+      },
+      {
+        "@id": "urn:0c36e372-9f64-4335-adca-4f0df6c3e90e",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "all_runs.$subj",
         "prov:atLocation": "all_runs.$subj+tlrc\"[$ktrs]\""
       },
       {
+<<<<<<< HEAD
         "@id": "urn:7981fc17-81cf-4465-a357-54c66e249c4e",
         "label": "rm.signal.all",
         "prov:atLocation": "rm.signal.all",
@@ -6562,10 +7448,20 @@
 =======
         "@id": "urn:984ff2aa-7155-44da-9407-97e0e7b1de48",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:35f87a3b-8a8f-48ed-a75c-c73d3f2a3f09",
+        "label": "rm.signal.all",
+        "prov:atLocation": "rm.signal.all",
+        "generatedBy": "urn:65eb02e5-9a39-42ce-970a-07ddfeb2f147"
+      },
+      {
+        "@id": "urn:6868c7d8-a4cd-4a6c-9bf8-11135eb1585f",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "errts.${subj}",
         "prov:atLocation": "errts.${subj}+tlrc\"[$ktrs]\""
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -6792,15 +7688,29 @@
 =======
         "@id": "urn:3c665e40-bdbb-43d2-bf63-f9203a58a863",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:40a7ae16-3207-454e-9065-cbb6de8e9569",
+        "label": "rm.noise.all",
+        "prov:atLocation": "rm.noise.all",
+        "generatedBy": "urn:baceef04-f0d3-4269-b873-1ea070790dec"
+      },
+      {
+        "@id": "urn:39c4d239-95dc-4113-926b-65a0c8de7a25",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.signal.all",
         "prov:atLocation": "rm.signal.all+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:1f1f82b2-93fe-40e9-b769-3d823eaac77a",
+=======
+        "@id": "urn:6b466b2e-1bd6-4fa9-a917-d63877853527",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.noise.all",
         "prov:atLocation": "rm.noise.all+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:d3a0012e-7d64-4b03-b6b4-e533b57716ae",
         "label": "TSNR.$subj",
         "prov:atLocation": "TSNR.$subj",
@@ -6808,10 +7718,20 @@
       },
       {
         "@id": "urn:12096d88-cece-4bf2-9d79-b18cdef19a0c",
+=======
+        "@id": "urn:718b9ed1-da80-4260-a90e-86d075302238",
+        "label": "TSNR.$subj",
+        "prov:atLocation": "TSNR.$subj",
+        "generatedBy": "urn:1d0f705c-38d7-424a-95f0-294dc5b9a7f1"
+      },
+      {
+        "@id": "urn:e3083e32-ab12-4ecc-9b98-65916def078e",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "errts.${subj}",
         "prov:atLocation": "errts.${subj}+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:2164ea07-c028-4f16-9b25-5d9bc912f07e",
         "label": "rm.errts.unit",
         "prov:atLocation": "rm.errts.unit",
@@ -6967,10 +7887,26 @@
 =======
         "@id": "urn:8687b351-dba3-4796-811e-caf53db6b27c",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:20301a5c-8c0c-4cb8-b0a8-eaf691c0eba1",
+        "label": "rm.errts.unit",
+        "prov:atLocation": "rm.errts.unit",
+        "generatedBy": "urn:2c91dbe7-4b82-4b65-9d43-f742eeb9c045"
+      },
+      {
+        "@id": "urn:0219c684-f4bb-40ec-aa38-9eae2e8438b9",
+        "label": "gmean.errts.unit.1D",
+        "prov:atLocation": "gmean.errts.unit.1D",
+        "generatedBy": "urn:182d8af1-f4df-4ba5-92e4-e9450e1d6168"
+      },
+      {
+        "@id": "urn:939445ac-a753-411e-8ef1-2229542650a7",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "out.gcor.1D",
         "prov:atLocation": "out.gcor.1D"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -7025,10 +7961,20 @@
       },
       {
         "@id": "urn:3941f7f5-638a-4a0c-957b-81bf1b835a9c",
+=======
+        "@id": "urn:34107177-4fda-4c04-89b4-af3be4b647d6",
+        "label": "-",
+        "prov:atLocation": "-",
+        "generatedBy": "urn:68032b30-baef-4668-8500-5163971cdfbe"
+      },
+      {
+        "@id": "urn:df487793-70ca-44ba-8924-930fe1e35163",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.errts.unit",
         "prov:atLocation": "rm.errts.unit+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:bc351c2d-f4b0-41a6-8f85-b55d762fc508",
         "label": "rm.DP",
         "prov:atLocation": "rm.DP",
@@ -7036,10 +7982,20 @@
       },
       {
         "@id": "urn:ae8a1dec-21d8-4bc6-9e8f-6ccf3e82e284",
+=======
+        "@id": "urn:ec7ee381-659e-43d6-83ad-7f61df2aea9f",
+        "label": "rm.DP",
+        "prov:atLocation": "rm.DP",
+        "generatedBy": "urn:9728e60d-36c8-45ac-93aa-61b858c0650e"
+      },
+      {
+        "@id": "urn:ee47b38e-2ac5-4c70-a50d-83f639241884",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "rm.DP",
         "prov:atLocation": "rm.DP+tlrc"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:04e9c105-ce84-4b7a-8b1c-4bbc74fbf832",
         "label": "corr_brain",
         "prov:atLocation": "corr_brain",
@@ -7086,10 +8042,20 @@
 =======
         "@id": "urn:7b178bd5-7c02-4914-a397-29e54e401d4a",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:9b0da04a-df35-422c-8359-9445f8ec4c85",
+        "label": "corr_brain",
+        "prov:atLocation": "corr_brain",
+        "generatedBy": "urn:1b1f85d1-5670-4eec-8454-ad990d80ef9b"
+      },
+      {
+        "@id": "urn:043f93e2-ed8b-4d5f-a347-94ae19aced8b",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "X.nocensor.xmat.1D",
         "prov:atLocation": "X.nocensor.xmat.1D'[3]'"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -7335,10 +8301,20 @@
       },
       {
         "@id": "urn:36d2b67e-b2f2-4815-aa6f-e3d5acd3e395",
+=======
+        "@id": "urn:312ecdfd-1e2d-4c73-b4f6-3c2cbd97c98c",
+        "label": "ideal_tone_counting.1D",
+        "prov:atLocation": "ideal_tone_counting.1D",
+        "generatedBy": "urn:3a424929-f1c6-41c8-880e-13eb4fa0b15b"
+      },
+      {
+        "@id": "urn:0b54d64d-cf0b-492d-bade-3ff1078f532b",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "X.nocensor.xmat.1D",
         "prov:atLocation": "X.nocensor.xmat.1D'[4]'"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:687154b9-8ab5-429b-bb54-317053ad33d5",
         "label": "ideal_probe.1D",
         "prov:atLocation": "ideal_probe.1D",
@@ -7346,10 +8322,20 @@
       },
       {
         "@id": "urn:4f925b8e-fac2-4b4b-91aa-749d24644c68",
+=======
+        "@id": "urn:6ee4ce2b-760f-4ec0-b444-96d4382f9204",
+        "label": "ideal_probe.1D",
+        "prov:atLocation": "ideal_probe.1D",
+        "generatedBy": "urn:599d7888-428a-41fe-ae02-8d07cd63f905"
+      },
+      {
+        "@id": "urn:9bcf0fab-dcef-45df-a29e-b4321d6f2ffa",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "X.nocensor.xmat.1D",
         "prov:atLocation": "X.nocensor.xmat.1D\"[$reg_cols]\""
       },
       {
+<<<<<<< HEAD
         "@id": "urn:58c22919-f28c-48f1-8a7f-714f85848c58",
         "label": "sum_ideal.1D",
         "prov:atLocation": "sum_ideal.1D",
@@ -7444,10 +8430,44 @@
 =======
         "@id": "urn:a9f7cf56-b929-435b-9a45-c8d9faa154a3",
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:ff27f86f-1e82-4fea-a919-57f2a2829024",
+        "label": "sum_ideal.1D",
+        "prov:atLocation": "sum_ideal.1D",
+        "generatedBy": "urn:f49b6d4e-3bbf-4021-a25f-2a4ca2433976"
+      },
+      {
+        "@id": "urn:df4fc4d9-df54-4280-887f-8ff13fe469a6",
+        "label": "X.stim.xmat.1D",
+        "prov:atLocation": "X.stim.xmat.1D",
+        "generatedBy": "urn:e74d597d-c5bc-4916-aa30-271e43b631c8"
+      },
+      {
+        "@id": "urn:4fc629fd-9606-41ec-8cc3-ca705a18ecbd",
+        "label": "blur.epits.1D",
+        "prov:atLocation": "blur.epits.1D",
+        "generatedBy": "urn:2c84ddb8-913b-48b7-bed6-6e60c7a8ce37"
+      },
+      {
+        "@id": "urn:c5a0ece9-89aa-42d0-8303-edd832ab693e",
+        "label": "blur.errts.1D",
+        "prov:atLocation": "blur.errts.1D",
+        "generatedBy": "urn:cedf7366-aee3-48f1-89c3-6245fc081985"
+      },
+      {
+        "@id": "urn:69b1a133-abb9-4b94-ae07-faa2058fa670",
+        "label": "ClustSim",
+        "prov:atLocation": "ClustSim",
+        "generatedBy": "urn:968e8093-d6a8-4d75-9220-01b2c11afdab"
+      },
+      {
+        "@id": "urn:ad7336a9-a156-4f98-97e8-a7416c08d602",
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
         "label": "pb00.$subj.r*.tcat",
         "prov:atLocation": "pb00.$subj.r*.tcat+orig.HEAD"
       },
       {
+<<<<<<< HEAD
         "@id": "urn:a610af66-4dfe-4152-a709-5ae4ef61eec1",
         "label": "-exit0",
         "prov:atLocation": "-exit0",
@@ -7745,6 +8765,12 @@
 =======
         "generatedBy": "urn:1b6a1dc4-1512-4a7b-ae7d-3645903de1eb"
 >>>>>>> 3168daf9 (automated nidm example computation from github action)
+=======
+        "@id": "urn:6eb64070-4101-4421-b3cf-1215110b8346",
+        "label": "-exit0",
+        "prov:atLocation": "-exit0",
+        "generatedBy": "urn:835e48cc-9576-4e21-817e-8177f4dd05b1"
+>>>>>>> 40a1b3ea (automated nidm example computation from github action)
       }
     ]
   }
