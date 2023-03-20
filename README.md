@@ -11,13 +11,34 @@ Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Satrajit Ghosh ([@sa
 
 List of all contributors
 
-- Camille Maumet ([@cmaumet](https://github.com/cmaumet))
-- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Camille Maumet ([@cmaumet](https://github.com/cmaumet))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cmaumet" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Acmaumet" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cmaumet" title="Documentation">📖</a>
+<a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Acmaumet" title="Bug reports">🐛</a><a href="#content-dorahermes" title="Content">🖋</a> <a href="#ideas-dorahermes" title="Ideas, Planning, & Feedback">🤔</a><a href="#maintenance-dorahermes" title="Maintenance">🚧</a>
+
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=satra" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Asatra" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=satra" title="Documentation">📖</a>
+<a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Asatra" title="Bug reports">🐛</a>
+
 - Stefan Appelhoff ([@sappelhoff](https://github.com/sappelhoff))
+
 - Chris Markiewicz ([@effigies](https://github.com/effigies))
+
 - Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
 - Jean-Baptiste Poline ([@jbpoline](https://github.com/jbpoline))
-- Rémi Adon ([@remiadon](https://github.com/remiadon))
+
+- Rémi Adon ([@remiadon](https://github.com/remiadon))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=remiadon" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Aremiadon" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=remiadon" title="Documentation">📖</a>
+<a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Aremiadon" title="Bug reports">🐛</a>
+
+- Hermann Courteille ([@hermann74](https://github.com/hermann74))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=hermann74" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Ahermann74" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=hermann74" title="Documentation">📖</a>
+<a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Ahermann74" title="Bug reports">🐛</a>
+
+- thomas Betton ([@thomasbtnfr](https://github.com/thomasbtnfr))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=thomasbtnfr" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Athomasbtnfr" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=thomasbtnfr" title="Documentation">📖</a>
+<a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Athomasbtnfr" title="Bug reports">🐛</a>
+
+- Cyril Regan ([@cyril-data](https://github.com/cyril-data))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cyril-data" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Acyril-data" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cyril-data" title="Documentation">📖</a>
+<a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Acyril-data" title="Bug reports">🐛</a>
+
+
 
 ### BIDS-prov in the NIDM project
 
