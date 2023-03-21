@@ -211,6 +211,41 @@ def test_get_entities():
     assert outputs == expected_outputs
     assert parameters == expected_parameters
 
+    # inputs, outputs : arg and kwarg dict and nargs
+    df = {
+        "name": "command",
+        "used": ["0:-1", "-a"],
+        "generatedBy": [-1, "-b",  {
+            "name": "-c",
+            "index": ["0:2"],
+            "nargs": 3,
+        },
+            {
+            "name": "-d",
+            "index": [3],
+            "nargs": 5,
+        },]
+    }
+    cmd_s = [
+        "command",
+        "-a", "kwarg_0",
+        "arg_0",
+        "arg_1",
+        "-b", "kwarg_1",
+        "-c", "kwarg_2", "kwarg_3", "kwarg_4",
+        "-d", "kwarg_5", "kwarg_6", "kwarg_7", "kwarg_8", "kwarg_9",
+        "arg_2", "arg_3",
+    ]
+    inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+    expected_inputs = ["kwarg_0", "arg_0", "arg_1", "arg_2"]
+    expected_outputs = ["kwarg_1", "kwarg_2",
+                        "kwarg_3", "kwarg_8", "arg_3"]
+    expected_parameters = []
+
+    assert inputs == expected_inputs
+    assert outputs == expected_outputs
+    assert parameters == expected_parameters
+
 
 def test_get_entities_rm():
     df = {
