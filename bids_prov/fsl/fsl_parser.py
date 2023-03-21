@@ -145,8 +145,12 @@ def _get_kwarg(serie,  with_value=True):
     for u_arg in serie:
         if type(u_arg) == dict:
             # parser.add_argument(u_arg["name"], nargs='+', action='append')
-            add_argument_list.append(
-                {"arg": u_arg["name"], "nargs": '+', "action": 'append'})
+            if "nargs" in u_arg:
+                add_argument_list.append(
+                    {"arg": u_arg["name"], "nargs": u_arg["nargs"], "action": 'append'})
+            else:
+                add_argument_list.append(
+                    {"arg": u_arg["name"], "nargs": "+", "action": 'append'})
             arg_list.append((u_arg["name"], [u_arg["index"]]))
         if type(u_arg) == str and ":" not in u_arg:
 
@@ -282,13 +286,13 @@ def get_entities(cmd_s, parameters):
     parameters_value = []
     parameters_no_value = []
 
-    # print("\n\n cmd_s", cmd_s)
+    print("\n\n cmd_s", cmd_s)
     # change cmd_s to add ">" , ">>", "|&"  as parameter for argparse
     cmd_s = ["->" if it == ">" else it for it in cmd_s]
     cmd_s = ["->>" if it == ">>" else it for it in cmd_s]
     cmd_s = ["-|&" if it == "|&" else it for it in cmd_s]
 
-    # print("\n\n cmd_s change", cmd_s)
+    print("\n\n cmd_s change", cmd_s)
 
     if "used" in parameters:
         add_argument_list, inputs_kwarg = _get_kwarg(
@@ -320,13 +324,13 @@ def get_entities(cmd_s, parameters):
 
     opts, arg_rest = parser.parse_known_args(cmd_s)
 
-    # print("\n\n parameters", parameters)
-    # print("\n\n parse_known_args", opts)
-    # print("\n\n inputs_kwarg", inputs_kwarg)
-    # print("\n\n outputs_kwarg", outputs_kwarg)
-    # print("\n\n parameters_value", parameters_value)
-    # print("\n\n parameters_no_value", parameters_no_value)
-    # print("\n\n arg_rest", arg_rest)
+    print("\n\n parameters", parameters)
+    print("\n\n parse_known_args", opts)
+    print("\n\n inputs_kwarg", inputs_kwarg)
+    print("\n\n outputs_kwarg", outputs_kwarg)
+    print("\n\n parameters_value", parameters_value)
+    print("\n\n parameters_no_value", parameters_no_value)
+    print("\n\n arg_rest", arg_rest)
 
     entities = []
     arg_in_param = []
@@ -345,9 +349,9 @@ def get_entities(cmd_s, parameters):
     if "generatedBy" in parameters:
         outputs.extend(_get_arg(parameters["generatedBy"], arg_rest))
 
-    # print("\n\n inputs", inputs)
-    # print("\n\n outputs", outputs)
-    # print("\n\n params", params)
+    print("\n\n inputs", inputs)
+    print("\n\n outputs", outputs)
+    print("\n\n params", params)
 
     return inputs, outputs, params
 
