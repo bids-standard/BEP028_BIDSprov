@@ -138,10 +138,99 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 #         return conf.bosh_config[key]
 #     return None
 
+def _get_kwarg(serie,  with_value=True):
+    arg_list = []
+    add_argument_list = []
+    for u_arg in serie:
+        if type(u_arg) == dict:
+            # parser.add_argument(u_arg["name"], nargs='+', action='append')
+            add_argument_list.append(
+                {"arg": u_arg["name"], "nargs": '+', "action": 'append'})
+            arg_list.append((u_arg["name"], [u_arg["index"]]))
+        if type(u_arg) == str and ":" not in u_arg:
+            if with_value:
+                # parser.add_argument(u_arg)
+                add_argument_list.append({"arg": u_arg})
+                arg_list.append((u_arg, [0]))
+            else:
+                # parser.add_argument(u_arg, action='store_true')
+                add_argument_list.append(
+                    {"arg": u_arg, "action": 'store_true'})
+                arg_list.append((u_arg, []))
+
+    return add_argument_list, arg_list
+
+
+def _get_arg(serie, arg_rest):
+    arg_list = []
+    arg_purge = [arg for arg in arg_rest if not arg.startswith("-")]
+    for u_arg in serie:
+        if type(u_arg) == int:
+            if u_arg < len(arg_purge):
+                arg_list.append(arg_purge[u_arg])
+
+        if type(u_arg) == str and ":" in u_arg:
+            res = eval("arg_purge[" + u_arg + "]")
+            arg_list.extend(res) if type(res) == list else arg_list.append(res)
+
+    return arg_list
+
+
+def is_number(n):
+    try:
+        float(n)   # Type-casting the string to `float`.
+        # If string is not a valid `float`,
+        # it'll raise `ValueError` exception
+    except ValueError:
+        return False
+    return True
+
+
+def _get_entities_from_kwarg(entities, opts, parse_kwarg):
+    for u_arg in parse_kwarg:
+        param = u_arg[0]
+        index = u_arg[1]
+        value = []
+        for (arg, val) in opts._get_kwargs():
+            # print("\n--arg, val", type(arg), type(val), arg, val)
+            if param.split("-")[1] == arg:
+                # print("\n----arg select", type(arg), arg)
+                if val != None:
+                    # print("\n------val != None", type(val), val)
+                    if type(val) == list:
+                        # print("\n--------val == list", type(val), val)
+                        for info in val:
+                            # print("\n----------info in val", type(info), info)
+                            for i in index:
+                                # print("\n------------i in indexn info", type(i), i)
+                                if type(i) != list:
+                                    # print("\n--------------i != list", type(i), i)
+                                    res = eval("info[" + str(i) + "]")
+                                    value.extend(res) if type(
+                                        res) == list else value.append(res)
+                                else:
+                                    for j in i:
+                                        # print(
+                                        #     "\n----------------i == list : j",
+                                        #     type(j),
+                                        #     j,
+                                        #     "info[" + str(j) + "]",
+                                        #     eval("info[" + str(j) + "]"))
+                                        res = eval("info[" + str(j) + "]")
+                                        value.extend(res) if type(
+                                            res) == list else value.append(res)
+
+                    else:
+                        if not is_number(val):
+                            value.append(val)
+        if len(value) > 0:
+            entities.extend(value)
+    return entities
+
 
 def get_entities(cmd_s, parameters):
     """
-    Given a list of command arguments `cmd_s` and a list of `parameters`, this function returns the entities associated
+    Given a list of command arguments `cmd_s` and a dict of `parameters`, this function returns the entities associated
     with the parameters.
 
     Parameters
@@ -149,64 +238,130 @@ def get_entities(cmd_s, parameters):
 
     cmd_s : list of str
         A list of command arguments.
-    parameters : list
-        A list of parameters to search for in `cmd_s`. Each parameter can either be an integer or a string. If the parameter is an integer,
-    the entity will be the string in `cmd_s` at that index. If the parameter is a string, the entity will be the next
-    argument in `cmd_s` after the parameter. If the parameter is a dict, the entity (or entities) will be obtained
-    with the position of the argument and an offset index
+    parameters : Dict
+        Dict of parameters loaded by the description_functions.json to search for in `cmd_s`. 
 
     Returns
     -------
-    list of str A list of entities associated
-    with the parameters.
+    inputs, outputs, params :  of entities associated with the parameters.
 
     Example
     -------
-    >>> cmd_s = ["command", "-a", "input1", "-b", "input2"]
-    >>> parameters = [2, 4, "-a"]
-    >>> get_entities(cmd_s, parameters)
-    ['input1', 'input2', 'input1']
+
+    >>> df = {
+            "name": "command",
+            "used": [0, "-a"],
+            "generatedBy": [-1, "-b"]
+        }
+    >>> cmd_s = ["command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
+    >>> inputs, outputs, parameters = get_entities(cmd_s[1:], df)
+    >>> (["kwarg_0", "arg_0"], ["kwarg_1", "arg_1"], [])
+
     """
+
+    parser = argparse.ArgumentParser(
+        add_help=False, conflict_handler='resolve')
+
+    inputs_kwarg = []
+    outputs_kwarg = []
+    parameters_value = []
+    parameters_no_value = []
+
+    if "used" in parameters:
+        add_argument_list, inputs_kwarg = _get_kwarg(
+            parameters["used"])
+        for kwarg in add_argument_list:
+            arg = kwarg.pop("arg")
+            parser.add_argument(arg, **kwarg)
+
+    if "generatedBy" in parameters:
+        add_argument_list, outputs_kwarg = _get_kwarg(
+            parameters["generatedBy"])
+        for kwarg in add_argument_list:
+            arg = kwarg.pop("arg")
+            parser.add_argument(arg, **kwarg)
+
+    if "parameters_value" in parameters:
+        add_argument_list, parameters_value = _get_kwarg(
+            parameters["parameters_value"])
+        for kwarg in add_argument_list:
+            arg = kwarg.pop("arg")
+            parser.add_argument(arg, **kwarg)
+
+    if "parameters_no_value" in parameters:
+        add_argument_list, parameters_no_value = _get_kwarg(
+            parameters["parameters_no_value"], with_value=False)
+        for kwarg in add_argument_list:
+            arg = kwarg.pop("arg")
+            parser.add_argument(arg, **kwarg)
+
+    opts, arg_rest = parser.parse_known_args(cmd_s)
+
+    # print("\n\n parse_known_args", opts)
+    # print("\n\n inputs_kwarg", inputs_kwarg)
+    # print("\n\n outputs_kwarg", outputs_kwarg)
+    # print("\n\n parameters_value", parameters_value)
+    # print("\n\n parameters_no_value", parameters_no_value)
+    # print("\n\n arg_rest", arg_rest)
+
     entities = []
-    args_consumed_list = []
-    for u_arg in parameters:
-        if type(u_arg) == int:
-            if not cmd_s[u_arg].startswith("-") :
-                entities.append(cmd_s[u_arg])   # the "if" is useful for
-            # Entities that are optional but indicated in the description file
-            # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "used": [1, 2]
-            # Sometimes, 2 is present. In the previous command, this is not the case
-                args_consumed_list.append(cmd_s[u_arg])
-        elif type(u_arg) == dict:
-            # Allows us to retrieve entities not directly attached to the parameter name
-            # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "generatedBy":
-            # [{"name": "-A", "index": 2}]
-            if u_arg["name"] in cmd_s:
-                entities.extend([cmd_s[i + u_arg["index"]] for i, cmd_part in enumerate(cmd_s) if cmd_part == u_arg["name"]])
-                # The for loop allows to retrieve the entities of the parameters appearing several times
-                # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
-        else:  # type(u_arg) == str
-            if u_arg in cmd_s:
-                entities.append(cmd_s[cmd_s.index(u_arg) + 1])  # we add the entity located just after the parameter
-                if u_arg.startswith("-") or '>' in u_arg :
-                    args_consumed_list.append(cmd_s[cmd_s.index(u_arg) + 1])
-                    args_consumed_list.append(u_arg)
-            elif not u_arg.startswith("-"):  # case of slicing
-                u_arg_splitted = u_arg.split(":")
-                start = int(u_arg_splitted[0])
-                if u_arg_splitted[1] == "":
-                    stop = None
-                else:
-                    stop = int(u_arg_splitted[-1])
+    arg_in_param = []
 
-                if re.search(r"(-f|-rf)", cmd_s[1]):# to skip -r or -rf option
-                     add_ent = cmd_s[slice(start+1, stop)]
-                else:
-                    add_ent = cmd_s[slice(start, stop)]
-                entities.extend(add_ent)
-                args_consumed_list.extend(add_ent)
+    inputs = []
+    outputs = []
+    params = []
+    inputs = _get_entities_from_kwarg(inputs, opts, inputs_kwarg)
+    outputs = _get_entities_from_kwarg(outputs, opts, outputs_kwarg)
+    params = _get_entities_from_kwarg(params, opts, parameters_value)
+    params = _get_entities_from_kwarg(params, opts, parameters_no_value)
 
-    return entities, args_consumed_list
+    if "used" in parameters:
+        inputs.extend(_get_arg(parameters["used"], arg_rest))
+
+    if "generatedBy" in parameters:
+        outputs.extend(_get_arg(parameters["generatedBy"], arg_rest))
+
+    # print("inputs", inputs)
+    # print("outputs", outputs)
+    # print("params", params)
+
+    # for u_arg in parameters:
+
+    #     if type(u_arg) == int:
+    #         if not cmd_s[u_arg].startswith("-"):
+    #             entities.append(cmd_s[u_arg])   # the "if" is useful for
+    #             arg_in_param.append(cmd_s[u_arg])
+    #         # Entities that are optional but indicated in the description file
+    #         # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "used": [1, 2]
+    #         # Sometimes, 2 is present. In the previous command, this is not the case
+    #     elif type(u_arg) == dict:
+    #         # Allows us to retrieve entities not directly attached to the parameter name
+    #         # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "generatedBy":
+    #         # [{"name": "-A", "index": 2}]
+    #         if u_arg["name"] in cmd_s:
+    #             ent = [cmd_s[i + u_arg["index"]]
+    #                    for i, cmd_part in enumerate(cmd_s) if cmd_part == u_arg["name"]]
+    #             entities.extend(ent)
+    #             arg_in_param.append(ent)
+    #             # The for loop allows to retrieve the entities of the parameters appearing several times
+    #             # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
+    #     else:  # type(u_arg) == str
+    #         if u_arg in cmd_s:
+    #             # we add the entity located just after the parameter
+    #             ent = cmd_s[cmd_s.index(u_arg) + 1]
+    #             entities.append(ent)
+    #             arg_in_param.append(ent)
+    #         elif not u_arg.startswith("-"):  # case of slicing
+    #             u_arg_splitted = u_arg.split(":")
+    #             start = int(u_arg_splitted[0])
+    #             stop = None if u_arg_splitted[1] == "" else int(
+    #                 u_arg_splitted[-1])
+    #             ent = cmd_s[slice(start+1, stop)] if re.search(r"(-f|-rf)",
+    #                                                            cmd_s[1]) else cmd_s[slice(start, stop)]
+    #             entities.extend(ent)
+    #             arg_in_param.append(ent)
+
+    return inputs, outputs, params
 
 
 def build_records(groups: Mapping[str, List[str]], agent_id: str):
@@ -220,12 +375,13 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
     """
     records = defaultdict(list)
 
-    filepath = os.path.join(os.path.dirname(__file__),"description_functions.json")
+    filepath = os.path.join(os.path.dirname(__file__),
+                            "description_functions.json")
     with open(filepath) as f:
         description_functions = json.load(f)
 
     for k, v in groups.items():
-        print(k, ":", v)
+        # print(k, ":", v)
         if k == "Feat main script":  # skip "Feat main script" section
             continue
         # group_name = k.lower().replace(" ", "_")  # TODO
@@ -246,15 +402,10 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             command_name_end = os.path.split(a_name)[1]
             for df in description_functions:
                 if df["name"] == command_name_end:
+                    description_of_command = df
                     function_in_description_functions = True
-                    if "used" in df:
-                        entities, _ = get_entities(cmd_s, df["used"])
-                        inputs.extend(entities)
-                    if "generatedBy" in df:
-                        entities, _ = get_entities(cmd_s, df["generatedBy"])
-                        outputs.extend(entities)
-                    # if command_name_end == "fslmaths" and "-odt" not in cmd_s:
-                    #     outputs.append(cmd_s[-1])
+                    inputs, outputs, parameters = get_entities(
+                        cmd_s[1:], description_of_command)
                     break
 
             if function_in_description_functions is False:
@@ -269,10 +420,13 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 cmd_without_attributes = re.sub(ATTRIBUTE_RE, "", cmd)
 
                 # if a key of attributes is in INPUT_TAGS, we add her value in inputs
-                inputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & INPUT_TAGS)))
+                inputs = list(chain(*(attributes.pop(k)
+                              for k in attributes.keys() & INPUT_TAGS)))
                 # same process with OUTPUT_TAGS
-                outputs = list(chain(*(attributes.pop(k) for k in attributes.keys() & OUTPUT_TAGS)))
-                entity_names = [_ for _ in re.findall(INPUT_RE, cmd_without_attributes[len(a_name):])]
+                outputs = list(chain(*(attributes.pop(k)
+                               for k in attributes.keys() & OUTPUT_TAGS)))
+                entity_names = [_ for _ in re.findall(
+                    INPUT_RE, cmd_without_attributes[len(a_name):])]
 
             # # cmd_conf = get_closest_config(a_name)  # with the module boutiques
             # cmd_conf = None  # None because boutiques is not used at this time
@@ -286,7 +440,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     if len(entity_names) > 1:
                         inputs.append(entity_names[0])
 
-            label = f"{os.path.split(a_name)[1]}" # the file name and possible extension
+            # the file name and possible extension
+            label = f"{os.path.split(a_name)[1]}"
 
             a = {
                 "@id": f"urn:{get_id()}",
@@ -336,7 +491,8 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
                      soft_ver="xxx", indent=2, verbose=False) -> None:  # TODO : add fsl version
 
-    graph, agent_id = get_default_graph(label="FSL", context_url=context_url, soft_ver=soft_ver)
+    graph, agent_id = get_default_graph(
+        label="FSL", context_url=context_url, soft_ver=soft_ver)
 
     lines = readlines(filename)
     records = build_records(lines, agent_id)
@@ -348,13 +504,19 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="./examples/fsl_default/report_log.html", help="fsl execution log file")
-    parser.add_argument("--output_file", type=str, default="./examples/fsl_default/report_log.jsonld", help="output dir where results are written")
-    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--input_file", type=str,
+                        default="./examples/fsl_default/report_log.html", help="fsl execution log file")
+    parser.add_argument("--output_file", type=str, default="./examples/fsl_default/report_log.jsonld",
+                        help="output dir where results are written")
+    parser.add_argument(
+        "--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
-    fsl_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
+    fsl_to_bids_prov(opt.input_file, context_url=opt.context_url,
+                     output_file=opt.output_file, verbose=opt.verbose)
+    # visualize(opt.output_file, output_file="res.png")
+
     # #
     # input_file = os.path.abspath("../../examples/from_parsers/fsl/fsl_full_examples001_report_log.html")
     # output_file = "../../res.jsonld"
