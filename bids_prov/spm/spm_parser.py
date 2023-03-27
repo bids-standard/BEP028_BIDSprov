@@ -318,7 +318,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
         output_entities, input_entities, params = list(), list(), {}
         output_ext_entities = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
         output_entities.extend(output_ext_entities)
-        add_ext_entity=add_entity= 0
+        add_ext_entity = 0
         for end_line in end_line_list:
             # split in 2 at the level of the equal the rest of the action
             left, right = end_line.split(" = ")
