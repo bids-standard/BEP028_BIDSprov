@@ -138,34 +138,85 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 #         return conf.bosh_config[key]
 #     return None
 
+
 def _get_kwarg(serie,  with_value=True):
+    """
+    Get the named arguments (kwarg) from a column ("used", "generatedBy", "parameters_value" or "parameters_no_value" ) of the dataframe coming frome in description_functions.json
+
+    Parameters
+    ----------
+
+    serie : pandas series
+        A list of the command arguments description.
+    with_value : boolean
+        A bool to specify if values are expected or not, in order to dicrimine "parameters_value" (with_value=True), and "parameters_no_value" (with_value=False)
+
+    Returns
+    -------
+    add_argument_list : list of named arguments (kwarg) to add to the argparse parser 
+    arg_list : list of the selected named arguments description. 
+
+    """
     arg_list = []
     add_argument_list = []
     for u_arg in serie:
         if type(u_arg) == dict:
             # parser.add_argument(u_arg["name"], nargs='+', action='append')
-            add_argument_list.append(
-                {"arg": u_arg["name"], "nargs": '+', "action": 'append'})
+            if "nargs" in u_arg:
+                add_argument_list.append(
+                    {"arg": u_arg["name"], "nargs": u_arg["nargs"], "action": 'append'})
+            else:
+                add_argument_list.append(
+                    {"arg": u_arg["name"], "nargs": "+", "action": 'append'})
             arg_list.append((u_arg["name"], [u_arg["index"]]))
         if type(u_arg) == str and ":" not in u_arg:
+
             if with_value:
-                # parser.add_argument(u_arg)
-                add_argument_list.append({"arg": u_arg})
-                arg_list.append((u_arg, [0]))
+                if u_arg == ">" or u_arg == ">>":
+                    # parser.add_argument("-" + u_arg)
+                    add_argument_list.append({"arg": "-" + u_arg})
+                    arg_list.append(("-" + u_arg, [0]))
+                else:
+                    # parser.add_argument(u_arg)
+                    add_argument_list.append({"arg": u_arg})
+                    arg_list.append((u_arg, [0]))
+
             else:
-                # parser.add_argument(u_arg, action='store_true')
-                add_argument_list.append(
-                    {"arg": u_arg, "action": 'store_true'})
-                arg_list.append((u_arg, []))
+                if u_arg == ">" or u_arg == ">>" or u_arg == "|&":
+                    # print("with_novalue > u_arg", u_arg)
+                    # parser.add_argument(u_arg, action='store_true')
+                    add_argument_list.append(
+                        {"arg": "-" + u_arg, "action": 'store_true'})
+                    arg_list.append(("-" + u_arg, []))
+                else:
+                    add_argument_list.append(
+                        {"arg": u_arg, "action": 'store_true'})
+                    arg_list.append((u_arg, []))
 
     return add_argument_list, arg_list
 
 
 def _get_arg(serie, arg_rest):
+    """
+    Get the ordinal arguments from a column ("used", "generatedBy") of the dataframe coming from in description_functions.json. _get_arg shoud be used when all named arguments are removed from the initial command.   
+
+    Parameters
+    ----------
+
+    serie : pandas series
+        A list of the command arguments description.
+    arg_rest : string of the command, (without all the named argument used in description_functions.json)
+
+    Returns
+    -------
+    arg_list : list of the ordinal arguments. 
+    """
+
     arg_list = []
     arg_purge = [arg for arg in arg_rest if not arg.startswith("-")]
     for u_arg in serie:
         if type(u_arg) == int:
+            # print("arg_purge", type(arg_purge), arg_purge, u_arg)
             if u_arg < len(arg_purge):
                 arg_list.append(arg_purge[u_arg])
 
@@ -187,6 +238,9 @@ def is_number(n):
 
 
 def _get_entities_from_kwarg(entities, opts, parse_kwarg):
+    """
+    Add to the list `entities`, the named argument in `parse_kwarg` in the `parser opts`. 
+    """
     for u_arg in parse_kwarg:
         param = u_arg[0]
         index = u_arg[1]
@@ -267,9 +321,18 @@ def get_entities(cmd_s, parameters):
     parameters_value = []
     parameters_no_value = []
 
+    # print("\n\n cmd_s", cmd_s)
+    # change cmd_s to add ">" , ">>", "|&"  as parameter for argparse
+    cmd_s = ["->" if it == ">" else it for it in cmd_s]
+    cmd_s = ["->>" if it == ">>" else it for it in cmd_s]
+    cmd_s = ["-|&" if it == "|&" else it for it in cmd_s]
+
+    # print("\n\n cmd_s change", cmd_s)
+
     if "used" in parameters:
         add_argument_list, inputs_kwarg = _get_kwarg(
             parameters["used"])
+
         for kwarg in add_argument_list:
             arg = kwarg.pop("arg")
             parser.add_argument(arg, **kwarg)
@@ -297,6 +360,7 @@ def get_entities(cmd_s, parameters):
 
     opts, arg_rest = parser.parse_known_args(cmd_s)
 
+    # print("\n\n parameters", parameters)
     # print("\n\n parse_known_args", opts)
     # print("\n\n inputs_kwarg", inputs_kwarg)
     # print("\n\n outputs_kwarg", outputs_kwarg)
@@ -321,45 +385,9 @@ def get_entities(cmd_s, parameters):
     if "generatedBy" in parameters:
         outputs.extend(_get_arg(parameters["generatedBy"], arg_rest))
 
-    # print("inputs", inputs)
-    # print("outputs", outputs)
-    # print("params", params)
-
-    # for u_arg in parameters:
-
-    #     if type(u_arg) == int:
-    #         if not cmd_s[u_arg].startswith("-"):
-    #             entities.append(cmd_s[u_arg])   # the "if" is useful for
-    #             arg_in_param.append(cmd_s[u_arg])
-    #         # Entities that are optional but indicated in the description file
-    #         # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "used": [1, 2]
-    #         # Sometimes, 2 is present. In the previous command, this is not the case
-    #     elif type(u_arg) == dict:
-    #         # Allows us to retrieve entities not directly attached to the parameter name
-    #         # Example : "/slicer rendered_thresh_zstat2 -A 750 zstat2.png" with "generatedBy":
-    #         # [{"name": "-A", "index": 2}]
-    #         if u_arg["name"] in cmd_s:
-    #             ent = [cmd_s[i + u_arg["index"]]
-    #                    for i, cmd_part in enumerate(cmd_s) if cmd_part == u_arg["name"]]
-    #             entities.extend(ent)
-    #             arg_in_param.append(ent)
-    #             # The for loop allows to retrieve the entities of the parameters appearing several times
-    #             # Example : /slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png
-    #     else:  # type(u_arg) == str
-    #         if u_arg in cmd_s:
-    #             # we add the entity located just after the parameter
-    #             ent = cmd_s[cmd_s.index(u_arg) + 1]
-    #             entities.append(ent)
-    #             arg_in_param.append(ent)
-    #         elif not u_arg.startswith("-"):  # case of slicing
-    #             u_arg_splitted = u_arg.split(":")
-    #             start = int(u_arg_splitted[0])
-    #             stop = None if u_arg_splitted[1] == "" else int(
-    #                 u_arg_splitted[-1])
-    #             ent = cmd_s[slice(start+1, stop)] if re.search(r"(-f|-rf)",
-    #                                                            cmd_s[1]) else cmd_s[slice(start, stop)]
-    #             entities.extend(ent)
-    #             arg_in_param.append(ent)
+    # print("\n\n inputs", inputs)
+    # print("\n\n outputs", outputs)
+    # print("\n\n params", params)
 
     return inputs, outputs, params
 
