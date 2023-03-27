@@ -140,6 +140,23 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 
 
 def _get_kwarg(serie,  with_value=True):
+    """
+    Get the named arguments (kwarg) from a column ("used", "generatedBy", "parameters_value" or "parameters_no_value" ) of the dataframe coming frome in description_functions.json
+
+    Parameters
+    ----------
+
+    serie : pandas series
+        A list of the command arguments description.
+    with_value : boolean
+        A bool to specify if values are expected or not, in order to dicrimine "parameters_value" (with_value=True), and "parameters_no_value" (with_value=False)
+
+    Returns
+    -------
+    add_argument_list : list of named arguments (kwarg) to add to the argparse parser 
+    arg_list : list of the selected named arguments description. 
+
+    """
     arg_list = []
     add_argument_list = []
     for u_arg in serie:
@@ -180,6 +197,21 @@ def _get_kwarg(serie,  with_value=True):
 
 
 def _get_arg(serie, arg_rest):
+    """
+    Get the ordinal arguments from a column ("used", "generatedBy") of the dataframe coming from in description_functions.json. _get_arg shoud be used when all named arguments are removed from the initial command.   
+
+    Parameters
+    ----------
+
+    serie : pandas series
+        A list of the command arguments description.
+    arg_rest : string of the command, (without all the named argument used in description_functions.json)
+
+    Returns
+    -------
+    arg_list : list of the ordinal arguments. 
+    """
+
     arg_list = []
     arg_purge = [arg for arg in arg_rest if not arg.startswith("-")]
     for u_arg in serie:
@@ -206,6 +238,9 @@ def is_number(n):
 
 
 def _get_entities_from_kwarg(entities, opts, parse_kwarg):
+    """
+    Add to the list `entities`, the named argument in `parse_kwarg` in the `parser opts`. 
+    """
     for u_arg in parse_kwarg:
         param = u_arg[0]
         index = u_arg[1]
@@ -297,6 +332,7 @@ def get_entities(cmd_s, parameters):
     if "used" in parameters:
         add_argument_list, inputs_kwarg = _get_kwarg(
             parameters["used"])
+
         for kwarg in add_argument_list:
             arg = kwarg.pop("arg")
             parser.add_argument(arg, **kwarg)
