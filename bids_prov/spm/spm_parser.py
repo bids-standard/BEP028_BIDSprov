@@ -312,6 +312,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
                     "associatedWith": "urn:" + agent_id,
+                    "command": "\n".join(end_line_list)
                     }
 
         output_entities, input_entities, params = list(), list(), {}
