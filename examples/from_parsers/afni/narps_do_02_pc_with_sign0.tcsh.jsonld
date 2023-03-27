@@ -5,7 +5,7 @@
   "records": {
     "prov:Agent": [
       {
-        "@id": "urn:2d8bd0b7-06b5-4701-b4cb-ddb6132d0064",
+        "@id": "urn:0d373b24-d958-4d4b-98d0-1f8a43103ff1",
         "RRID": "RRID:SCR_007037",
         "@type": "prov:SoftwareAgent",
         "label": "AFNI",
@@ -14,101 +14,94 @@
     ],
     "prov:Activity": [
       {
-        "@id": "urn:5c0819ab-e282-4aeb-ac6f-4a18611a8c93",
+        "@id": "urn:fabdc6c9-77cd-4339-92db-898e817e43ea",
         "label": "3dpc",
-        "associatedWith": "urn:2d8bd0b7-06b5-4701-b4cb-ddb6132d0064",
+        "associatedWith": "urn:0d373b24-d958-4d4b-98d0-1f8a43103ff1",
         "command": "3dpc -overwrite -mask ${dset_mask} -pcsave 5 -prefix ${dir_hyp}/PC_hyp${num} ${grp_dset}",
-        "parameters": {
-          "-overwrite": true,
-          "-pcsave": "5"
-        },
+        "parameters": {},
         "used": [
-          "urn:d7c248e4-cb1b-400f-a432-8ac3b5eab27b",
-          "urn:41993dc0-05da-43f2-8259-06fb0af09f48"
+          "urn:bdfa2d2c-56ab-4528-9835-810f4af4d408",
+          "urn:68081bc9-fb0d-43c4-b9f0-18a11b9f70b8"
         ]
       },
       {
-        "@id": "urn:4b586114-584b-48e0-af4b-3da90299d513",
+        "@id": "urn:05d129bb-490b-48b6-bc14-7ec8d0440645",
         "label": "3dresample",
-        "associatedWith": "urn:2d8bd0b7-06b5-4701-b4cb-ddb6132d0064",
+        "associatedWith": "urn:0d373b24-d958-4d4b-98d0-1f8a43103ff1",
         "command": "3dresample -overwrite -prefix tmp_REF_DSET.nii.gz -master ${dset_mask} -input \"${ref_dset}\"",
-        "parameters": {
-          "-overwrite": true
-        },
+        "parameters": {},
         "used": [
-          "urn:f507edd7-c890-4d13-898e-89b126e3ad6c",
-          "urn:41993dc0-05da-43f2-8259-06fb0af09f48"
+          "urn:e2f24c2c-fb96-47da-8ef9-315d5e4cbbe1",
+          "urn:bdfa2d2c-56ab-4528-9835-810f4af4d408"
         ]
       },
       {
-        "@id": "urn:cf5f51fd-a643-4a69-b423-ccd7bc76886c",
+        "@id": "urn:c9b3c719-2c1d-4fe8-b068-a010b892eec0",
         "label": "3dMatch",
-        "associatedWith": "urn:2d8bd0b7-06b5-4701-b4cb-ddb6132d0064",
+        "associatedWith": "urn:0d373b24-d958-4d4b-98d0-1f8a43103ff1",
         "command": "3dMatch -echo_edu -overwrite -mask ${dset_mask} -refset ${dir_hyp}/PC_hyp${num}+tlrc -inset tmp_REF_DSET.nii.gz -prefix tmp_MATCHED",
-        "parameters": {
-          "-echo_edu": true,
-          "-overwrite": true
-        },
+        "parameters": {},
         "used": [
-          "urn:6b1f94be-235f-4729-af99-538c7bf59f4d",
-          "urn:76f7ba75-279c-4e95-9855-f4443b049a5f",
-          "urn:41993dc0-05da-43f2-8259-06fb0af09f48"
+          "urn:7cc2da97-f2ca-49ed-ac7d-8b30da534de6",
+          "urn:15f3205a-f5f8-46ef-a29a-37fff7b0398d",
+          "urn:bdfa2d2c-56ab-4528-9835-810f4af4d408"
         ]
       },
       {
-        "@id": "urn:156f0596-5808-4004-a5f1-3f96c943393c",
+        "@id": "urn:c646bf5b-2181-416d-aef7-c9879c16ce20",
         "label": "3dcalc",
-        "associatedWith": "urn:2d8bd0b7-06b5-4701-b4cb-ddb6132d0064",
+        "associatedWith": "urn:0d373b24-d958-4d4b-98d0-1f8a43103ff1",
         "command": "3dcalc -echo_edu -overwrite -a ${dir_hyp}/PC_hyp${num}+tlrc -expr \"${signum}*a\" -prefix ${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
-        "parameters": {
-          "-echo_edu": true,
-          "-overwrite": true,
-          "-expr": "\"${signum}*a\""
-        },
+        "parameters": {},
         "used": [
-          "urn:76f7ba75-279c-4e95-9855-f4443b049a5f"
+          "urn:15f3205a-f5f8-46ef-a29a-37fff7b0398d"
         ]
       }
     ],
     "prov:Entity": [
       {
-        "@id": "urn:d7c248e4-cb1b-400f-a432-8ac3b5eab27b",
-        "label": "${grp_dset}",
-        "prov:atLocation": "${grp_dset}"
-      },
-      {
-        "@id": "urn:41993dc0-05da-43f2-8259-06fb0af09f48",
+        "@id": "urn:bdfa2d2c-56ab-4528-9835-810f4af4d408",
         "label": "${dset_mask}",
         "prov:atLocation": "${dset_mask}"
       },
       {
-        "@id": "urn:76f7ba75-279c-4e95-9855-f4443b049a5f",
-        "label": "PC_hyp${num}",
-        "prov:atLocation": "PC_hyp${num}",
-        "generatedBy": "urn:5c0819ab-e282-4aeb-ac6f-4a18611a8c93"
+        "@id": "urn:68081bc9-fb0d-43c4-b9f0-18a11b9f70b8",
+        "label": "${grp_dset}",
+        "prov:atLocation": "${grp_dset}"
       },
       {
-        "@id": "urn:f507edd7-c890-4d13-898e-89b126e3ad6c",
+        "@id": "urn:5e4b77c0-1faa-4c41-89b3-e9c6668c1263",
+        "label": "PC_hyp${num}",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}",
+        "generatedBy": "urn:fabdc6c9-77cd-4339-92db-898e817e43ea"
+      },
+      {
+        "@id": "urn:e2f24c2c-fb96-47da-8ef9-315d5e4cbbe1",
         "label": "\"${ref_dset}\"",
         "prov:atLocation": "\"${ref_dset}\""
       },
       {
-        "@id": "urn:6b1f94be-235f-4729-af99-538c7bf59f4d",
+        "@id": "urn:7cc2da97-f2ca-49ed-ac7d-8b30da534de6",
         "label": "tmp_REF_DSET.nii.gz",
         "prov:atLocation": "tmp_REF_DSET.nii.gz",
-        "generatedBy": "urn:4b586114-584b-48e0-af4b-3da90299d513"
+        "generatedBy": "urn:05d129bb-490b-48b6-bc14-7ec8d0440645"
       },
       {
-        "@id": "urn:00555ce9-a8c6-4cdd-ad66-65b1e8d43a52",
+        "@id": "urn:15f3205a-f5f8-46ef-a29a-37fff7b0398d",
+        "label": "PC_hyp${num}",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}+tlrc"
+      },
+      {
+        "@id": "urn:26409488-b4ad-4f72-8778-ea0678aed25e",
         "label": "tmp_MATCHED",
         "prov:atLocation": "tmp_MATCHED",
-        "generatedBy": "urn:cf5f51fd-a643-4a69-b423-ccd7bc76886c"
+        "generatedBy": "urn:c9b3c719-2c1d-4fe8-b068-a010b892eec0"
       },
       {
-        "@id": "urn:ec6c544a-0270-4464-af5e-8c767e69cc8f",
+        "@id": "urn:a47aa7f8-181e-4c45-90a2-510278eefae4",
         "label": "PC_hyp${num}_sign0.nii.gz",
-        "prov:atLocation": "PC_hyp${num}_sign0.nii.gz",
-        "generatedBy": "urn:156f0596-5808-4004-a5f1-3f96c943393c"
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
+        "generatedBy": "urn:c646bf5b-2181-416d-aef7-c9879c16ce20"
       }
     ]
   }
