@@ -45,7 +45,6 @@ def get_input_entity(right: str) -> List[dict]:
     Parameters
     ----------
     right : right side of ' = '
-    verbose : boolean to have more verbosity
 
     Returns
     -------
