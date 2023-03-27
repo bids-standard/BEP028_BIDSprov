@@ -35,11 +35,12 @@ def format_activity_name(activity_name: str) -> str:
 
 
 
-def get_input_entity(right: str, verbose=False) -> List[dict]:
+def get_input_entity(right: str) -> List[dict]:
     """Get input Entity if possible else return None
 
     # called if left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX, example :
-    'matlabbatch{4}.spm.stats.fmri_spec.sess.multi = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat'};"
+    'matlabbatch{4}.spm.stats.fmri_spec.sess.multi = {
+    '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat'};"
 
     Parameters
     ----------
@@ -326,7 +327,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
             if not conf.has_parameter(left)  and re.search(conf.PATH_REGEX, right) and re.search(conf.FILE_REGEX, right):
 
                 # left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX
-                in_entity = get_input_entity(right, verbose=verbose)
+                in_entity = get_input_entity(right)
                 input_entities.extend(in_entity)
 
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
