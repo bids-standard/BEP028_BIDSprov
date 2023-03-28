@@ -91,31 +91,32 @@ def compute_sha_256_entity(entities: dict):
     directory = 'bids_prov/file_generation'
     for entity in entities:
         if "prov:atLocation" in entity:
-            if entity["prov:atLocation"][0] == "/":
-                relative_path = os.path.abspath(directory + entity["prov:atLocation"])
-            else:
-                relative_path = os.path.abspath(directory + "/" + entity["prov:atLocation"])
+            if len(entity["prov:atLocation"]) > 0:
+                if entity["prov:atLocation"][0] == "/":
+                    relative_path = os.path.abspath(directory + entity["prov:atLocation"])
+                else:
+                    relative_path = os.path.abspath(directory + "/" + entity["prov:atLocation"])
 
-            # Temporary process. If the file does not exist then it is created to have a digest value
-            file_directory = os.path.dirname(relative_path)
-            if not os.path.exists(file_directory):
-                os.makedirs(file_directory)
+                # Temporary process. If the file does not exist then it is created to have a digest value
+                file_directory = os.path.dirname(relative_path)
+                if not os.path.exists(file_directory):
+                    os.makedirs(file_directory)
 
-            if not os.path.exists(relative_path):
-                try:
-                    with open(relative_path, 'w') as f:
-                        f.write(relative_path)
-                except NotADirectoryError as e:
-                    print(f"The file {relative_path} is the child of a parent folder that was created as a file "
-                          f"previously. To be fixed.")
+                if not os.path.exists(relative_path):
+                    try:
+                        with open(relative_path, 'w') as f:
+                            f.write(relative_path)
+                    except NotADirectoryError as e:
+                        print(f"The file {relative_path} is the child of a parent folder that was created as a file "
+                              f"previously. To be fixed.")
 
-            if os.path.exists(relative_path):
-                try:
-                    sha256_value = get_sha256(relative_path)
-                    checksum_name = "sha256"
-                    entity['digest'] = {checksum_name: sha256_value}
-                except IsADirectoryError as e:
-                    print(f"The file {relative_path} is a directory and also a file. To be fixed.")
+                if os.path.exists(relative_path):
+                    try:
+                        sha256_value = get_sha256(relative_path)
+                        checksum_name = "sha256"
+                        entity['digest'] = {checksum_name: sha256_value}
+                    except IsADirectoryError as e:
+                        print(f"The file {relative_path} is a directory and also a file. To be fixed.")
 
     if os.path.exists(directory):
         shutil.rmtree(directory)
