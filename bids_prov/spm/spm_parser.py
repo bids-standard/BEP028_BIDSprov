@@ -68,23 +68,6 @@ def get_input_entity(right: str) -> List[dict]:
                 "label": label_mapping(entity_label_short, "spm/spm_activity_labels.json"),
                 "prov:atLocation": file_location
             }
-            relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + file_location)
-            # this_path = os.path.abspath(__file__)
-
-            # Temporary process. If the file does not exist then it is created
-            directory = os.path.dirname(relative_path)
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-
-            if not os.path.exists(relative_path):
-                with open(relative_path, 'w') as f:
-                    f.write(relative_path)
-                    print("File created")
-
-            if os.path.exists(relative_path):
-                sha256_value = get_sha256(relative_path)
-                checksum_name = "sha256"
-                entity['digest'] = {checksum_name: sha256_value}
 
             entities.append(entity)
 
@@ -435,9 +418,27 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
     records = get_records(tasks, agent_id, verbose=verbose)
     graph["records"].update(records)
 
-
+    # Post-processing
     for activity in records["prov:Activity"]:  # Remove each activity number from the activity labels
         activity["label"] = re.sub(r'._\d+$', '', activity["label"])
+
+    for entity in records["prov:Entity"]:
+        if "prov:atLocation" in entity:
+            relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + entity["prov:atLocation"])
+
+            # Temporary process. If the file does not exist then it is created to have a digest value
+            directory = os.path.dirname(relative_path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            if not os.path.exists(relative_path):
+                with open(relative_path, 'w') as f:
+                    f.write(relative_path)
+
+            if os.path.exists(relative_path):
+                sha256_value = get_sha256(relative_path)
+                checksum_name = "sha256"
+                entity['digest'] = {checksum_name: sha256_value}
 
     if output_file is None:
         output_file = os.path.splitext(filename)[0] + '.jsonld'  # replace extension .m by .jsonld
