@@ -7,7 +7,7 @@ from itertools import chain
 
 
 from bids_prov.fsl.fsl_parser import get_entities
-from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
+from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping, compute_sha_256_entity
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
@@ -320,6 +320,9 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         label="AFNI", context_url=context_url, soft_ver=soft_ver)
     records = build_records(commands, agent_id, verbose=verbose)
     graph["records"].update(records)
+
+    compute_sha_256_entity(graph["records"]["prov:Entity"])
+
     with open(output_file, "w") as fd:
         json.dump(graph, fd, indent=indent)
 
