@@ -90,9 +90,7 @@ def test_get_input_entity():
     entities = [{
         "@id": "urn:c15521b1-b3dc-450a-9daa-37e51b591d75",
         "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
-        "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
-        'digest': {
-            'sha256': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
+        "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs"
     }]
     init_random_state()
     right_entity = get_input_entity(right)[0]
