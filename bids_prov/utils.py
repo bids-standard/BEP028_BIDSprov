@@ -71,3 +71,36 @@ def get_sha256(file_path: str):
         m.update(lines)
     sha256code = m.hexdigest()
     return sha256code
+
+
+def compute_sha_256_entity(entities: dict):
+    """
+    This method calculates the sha256 of all entities if they contain the key "prov:atLocation".
+    If the file does not exist, then it is generated.
+
+    Parameters
+    ----------
+    entities : dict
+        The prov:Entity part of our dictionary generated in bids-prov format
+
+    Returns
+    -------
+    None
+    """
+    for entity in entities:
+        if "prov:atLocation" in entity:
+            relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + entity["prov:atLocation"])
+
+            # Temporary process. If the file does not exist then it is created to have a digest value
+            directory = os.path.dirname(relative_path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            if not os.path.exists(relative_path):
+                with open(relative_path, 'w') as f:
+                    f.write(relative_path)
+
+            if os.path.exists(relative_path):
+                sha256_value = get_sha256(relative_path)
+                checksum_name = "sha256"
+                entity['digest'] = {checksum_name: sha256_value}
