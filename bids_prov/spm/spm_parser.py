@@ -35,11 +35,12 @@ def format_activity_name(activity_name: str) -> str:
 
 
 
-def get_input_entity(right: str, verbose=False) -> List[dict]:
+def get_input_entity(right: str) -> List[dict]:
     """Get input Entity if possible else return None
 
     # called if left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX, example :
-    'matlabbatch{4}.spm.stats.fmri_spec.sess.multi = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat'};"
+    'matlabbatch{4}.spm.stats.fmri_spec.sess.multi = {
+    '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat'};"
 
     Parameters
     ----------
@@ -69,6 +70,16 @@ def get_input_entity(right: str, verbose=False) -> List[dict]:
             }
             relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + file_location)
             # this_path = os.path.abspath(__file__)
+
+            # Temporary process. If the file does not exist then it is created
+            directory = os.path.dirname(relative_path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            if not os.path.exists(relative_path):
+                with open(relative_path, 'w') as f:
+                    print("File created")
+
 
             if os.path.exists(relative_path):
                 sha256_value = get_sha256(relative_path)
@@ -317,7 +328,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
         output_entities, input_entities, params = list(), list(), {}
         output_ext_entities = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
         output_entities.extend(output_ext_entities)
-        add_ext_entity=add_entity= 0
+        add_ext_entity= 0
         for end_line in end_line_list:
             # split in 2 at the level of the equal the rest of the action
             left, right = end_line.split(" = ")
@@ -325,7 +336,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
             if not conf.has_parameter(left)  and re.search(conf.PATH_REGEX, right) and re.search(conf.FILE_REGEX, right):
 
                 # left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX
-                in_entity = get_input_entity(right, verbose=verbose)
+                in_entity = get_input_entity(right)
                 input_entities.extend(in_entity)
 
             elif (conf.has_parameter(left) or conf.has_parameter(common_prefix_act)) \
