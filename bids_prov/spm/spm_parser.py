@@ -78,12 +78,12 @@ def get_input_entity(right: str) -> List[dict]:
 
             if not os.path.exists(relative_path):
                 with open(relative_path, 'w') as f:
+                    f.write(relative_path)
                     print("File created")
-
 
             if os.path.exists(relative_path):
                 sha256_value = get_sha256(relative_path)
-                checksum_name = "sha256_" + entity["@id"]
+                checksum_name = "sha256"
                 entity['digest'] = {checksum_name: sha256_value}
 
             entities.append(entity)

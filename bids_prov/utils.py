@@ -69,5 +69,5 @@ def get_sha256(file_path: str):
     with open(file_path, 'rb') as f:
         lines = f.read()
         m.update(lines)
-    md5code = m.hexdigest()
-    return md5code
+    sha256code = m.hexdigest()
+    return sha256code
