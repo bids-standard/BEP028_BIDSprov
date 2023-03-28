@@ -92,7 +92,7 @@ def test_get_input_entity():
         "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
         "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
         'digest': {
-            'sha256_urn:c15521b1-b3dc-450a-9daa-37e51b591d75': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
+            'sha256': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
     }]
     init_random_state()
     right_entity = get_input_entity(right)[0]
