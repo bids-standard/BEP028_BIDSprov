@@ -3,8 +3,9 @@ import random
 import hashlib
 import os
 import json
+import shutil
 
-from typing import Mapping, Union, Tuple, Dict
+from typing import Mapping, Union, Tuple
 
 CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
 
@@ -89,7 +90,7 @@ def compute_sha_256_entity(entities: dict):
     """
     for entity in entities:
         if "prov:atLocation" in entity:
-            relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + entity["prov:atLocation"])
+            relative_path = os.path.abspath('./bids_prov/file_generation/' + entity["prov:atLocation"])
 
             # Temporary process. If the file does not exist then it is created to have a digest value
             directory = os.path.dirname(relative_path)
@@ -97,10 +98,19 @@ def compute_sha_256_entity(entities: dict):
                 os.makedirs(directory)
 
             if not os.path.exists(relative_path):
-                with open(relative_path, 'w') as f:
-                    f.write(relative_path)
+                try:
+                    with open(relative_path, 'w') as f:
+                        f.write(relative_path)
+                except NotADirectoryError as e:
+                    print(f"The file {relative_path} is the child of a parent folder that was created as a file "
+                          f"previously. To be fixed")
 
             if os.path.exists(relative_path):
-                sha256_value = get_sha256(relative_path)
-                checksum_name = "sha256"
-                entity['digest'] = {checksum_name: sha256_value}
+                try:
+                    sha256_value = get_sha256(relative_path)
+                    checksum_name = "sha256"
+                    entity['digest'] = {checksum_name: sha256_value}
+                except IsADirectoryError as e:
+                    print(f"The file {relative_path} is a directory and also a file. To be fixed.")
+
+    shutil.rmtree("./bids_prov/file_generation/")
