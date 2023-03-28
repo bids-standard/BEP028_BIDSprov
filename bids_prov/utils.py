@@ -88,14 +88,18 @@ def compute_sha_256_entity(entities: dict):
     -------
     None
     """
+    directory = 'bids_prov/file_generation'
     for entity in entities:
         if "prov:atLocation" in entity:
-            relative_path = os.path.abspath('./bids_prov/file_generation/' + entity["prov:atLocation"])
+            if entity["prov:atLocation"][0] == "/":
+                relative_path = os.path.abspath(directory + entity["prov:atLocation"])
+            else:
+                relative_path = os.path.abspath(directory + "/" + entity["prov:atLocation"])
 
             # Temporary process. If the file does not exist then it is created to have a digest value
-            directory = os.path.dirname(relative_path)
-            if not os.path.exists(directory):
-                os.makedirs(directory)
+            file_directory = os.path.dirname(relative_path)
+            if not os.path.exists(file_directory):
+                os.makedirs(file_directory)
 
             if not os.path.exists(relative_path):
                 try:
@@ -103,7 +107,7 @@ def compute_sha_256_entity(entities: dict):
                         f.write(relative_path)
                 except NotADirectoryError as e:
                     print(f"The file {relative_path} is the child of a parent folder that was created as a file "
-                          f"previously. To be fixed")
+                          f"previously. To be fixed.")
 
             if os.path.exists(relative_path):
                 try:
@@ -113,4 +117,5 @@ def compute_sha_256_entity(entities: dict):
                 except IsADirectoryError as e:
                     print(f"The file {relative_path} is a directory and also a file. To be fixed.")
 
-    shutil.rmtree("./bids_prov/file_generation/")
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
