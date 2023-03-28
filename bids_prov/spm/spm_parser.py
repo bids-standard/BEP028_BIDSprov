@@ -312,8 +312,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
         command_prefix = f"matlabbatch{{{i+1}}}." + re.sub("_\d+", "", common_prefix_act)
         if len(end_line_list) == 1:  # if only one line in a batch, delete the dot at the end of the prefix
             command_prefix = command_prefix[:-1]
-        for c in end_line_list:
-            command += command_prefix + c + "\n"
+        command += '\n'.join([command_prefix + c for c in end_line_list])
 
         activity_id = "urn:" + get_id()
         activity = {"@id": activity_id,
