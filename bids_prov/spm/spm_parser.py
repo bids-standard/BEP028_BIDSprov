@@ -6,7 +6,7 @@ from collections import defaultdict
 from typing import List, Dict, Generator
 
 from bids_prov.spm import spm_config as conf
-from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL, label_mapping
+from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL, label_mapping, compute_sha_256_entity
 
 
 def format_activity_name(activity_name: str) -> str:
@@ -422,23 +422,7 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
     for activity in records["prov:Activity"]:  # Remove each activity number from the activity labels
         activity["label"] = re.sub(r'._\d+$', '', activity["label"])
 
-    for entity in records["prov:Entity"]:
-        if "prov:atLocation" in entity:
-            relative_path = os.path.abspath('./bids_prov/tests/samples_test/' + entity["prov:atLocation"])
-
-            # Temporary process. If the file does not exist then it is created to have a digest value
-            directory = os.path.dirname(relative_path)
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-
-            if not os.path.exists(relative_path):
-                with open(relative_path, 'w') as f:
-                    f.write(relative_path)
-
-            if os.path.exists(relative_path):
-                sha256_value = get_sha256(relative_path)
-                checksum_name = "sha256"
-                entity['digest'] = {checksum_name: sha256_value}
+    compute_sha_256_entity(records["prov:Entity"])
 
     if output_file is None:
         output_file = os.path.splitext(filename)[0] + '.jsonld'  # replace extension .m by .jsonld
