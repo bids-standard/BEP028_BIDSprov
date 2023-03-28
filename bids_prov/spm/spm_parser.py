@@ -305,14 +305,22 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
     records = defaultdict(list)
     entities_ids = set()
 
-    for common_prefix_act, end_line_list in task_groups.items():
+    for i, (common_prefix_act, end_line_list) in enumerate(task_groups.items()):
+
+        # Regeneration of the command
+        command = ""
+        command_prefix = f"matlabbatch{{{i+1}}}." + re.sub("_\d+", "", common_prefix_act)
+        if len(end_line_list) == 1:
+            command_prefix = command_prefix[:-1]
+        for c in end_line_list:
+            command += command_prefix + c + "\n"
 
         activity_id = "urn:" + get_id()
         activity = {"@id": activity_id,
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
                     "associatedWith": "urn:" + agent_id,
-                    "command": "\n".join(end_line_list)
+                    "command": command
                     }
 
         output_entities, input_entities, params = list(), list(), {}

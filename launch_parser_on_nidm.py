@@ -35,6 +35,9 @@ def main():
 
     opt = parser.parse_args()
 
+    opt.input_dir == "examples/from_parsers/spm"
+    opt.output_dir == "examples/from_parsers"
+
     if os.path.exists(opt.output_dir):
         shutil.rmtree(opt.output_dir)
     os.makedirs(opt.output_dir, exist_ok=True)
