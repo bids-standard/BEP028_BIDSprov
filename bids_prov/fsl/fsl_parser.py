@@ -475,7 +475,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 "@id": f"urn:{get_id()}",
                 "label": label_mapping(label, "fsl/fsl_labels.json"),
                 "associatedWith": "urn:" + agent_id,
-                "command": cmd + "hello",
+                "command": cmd,
                 # "attributes": [
                 #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
                 # ],
