@@ -517,7 +517,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
 
 def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                     soft_ver="xxx", indent=2, verbose=False) -> None:  # TODO : add fsl version
+                     soft_ver="xxx", indent=2, verbose=False) -> bool:  # TODO : add fsl version
 
     graph, agent_id = get_default_graph(
         label="FSL", context_url=context_url, soft_ver=soft_ver)

@@ -293,7 +293,7 @@ def readlines(input_file: str) -> list:
 
 
 def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                      soft_ver='afni24', indent=2, verbose=True) -> None:
+                      soft_ver='afni24', indent=2, verbose=True) -> bool:
     """
     afni parser
 
