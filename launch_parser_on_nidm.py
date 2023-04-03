@@ -81,10 +81,10 @@ def main():
                 process_file(context_write, root, file, output_dir_spm, spm_to_bids_prov, opt.verbose)
 
             elif file.endswith("report_log.html"):
-                process_file(context_write, root, file, output_dir_spm, fsl_to_bids_prov, opt.verbose)
+                process_file(context_write, root, file, output_dir_fsl, fsl_to_bids_prov, opt.verbose)
 
             elif file.endswith("proc.sub_001") or file.endswith(".tcsh"):
-                process_file(context_write, root, file, output_dir_spm, afni_to_bids_prov, opt.verbose)
+                process_file(context_write, root, file, output_dir_afni, afni_to_bids_prov, opt.verbose)
 
             else:
                 print(" -> Extension of file ", file , " not supported")
