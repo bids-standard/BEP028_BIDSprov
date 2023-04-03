@@ -36,8 +36,6 @@ def main():
 
     opt = parser.parse_args()
 
-    # if os.path.exists(opt.output_dir):
-    #     shutil.rmtree(opt.output_dir)
     os.makedirs(opt.output_dir, exist_ok=True)
 
     output_dir_spm = opt.output_dir + "/spm"
