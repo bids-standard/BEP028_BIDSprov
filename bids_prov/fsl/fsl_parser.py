@@ -482,7 +482,6 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 "used": list(),
             }
 
-            # input_id = ""
             for input_path in inputs:
                 # input_name = input_path.replace("/", "_") # TODO
                 input_id = f"urn:{get_id()}"  # def format_id
