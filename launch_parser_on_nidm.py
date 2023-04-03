@@ -1,6 +1,7 @@
 import os
 import shutil
 import argparse
+import random
 from datetime import datetime
 
 from bids_prov.afni.afni_parser import afni_to_bids_prov
@@ -32,6 +33,8 @@ def main():
     parser.add_argument("--output_dir", type=str, default="examples",
                         help="output dir where results are written")
     parser.add_argument("--verbose", action="store_true", help="more print")
+
+    random.seed(1)
 
     opt = parser.parse_args()
 
