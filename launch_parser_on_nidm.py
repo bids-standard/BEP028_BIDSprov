@@ -77,13 +77,13 @@ def main():
     for root, _, files in os.walk(opt.input_dir):
         for file in files:
 
-            if file.endswith("batch.m"):
+            if file.endswith("batch.m"):  # spm
                 process_file(context_write, root, file, output_dir_spm, spm_to_bids_prov, opt.verbose)
 
-            elif file.endswith("report_log.html"):
+            elif file.endswith("report_log.html"):  # fsl
                 process_file(context_write, root, file, output_dir_fsl, fsl_to_bids_prov, opt.verbose)
 
-            elif file.endswith("proc.sub_001") or file.endswith(".tcsh"):
+            elif file.endswith("proc.sub_001") or file.endswith(".tcsh"):  # afni
                 process_file(context_write, root, file, output_dir_afni, afni_to_bids_prov, opt.verbose)
 
             else:
