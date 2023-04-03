@@ -94,6 +94,5 @@ def main():
                         f"Time required: {datetime.now() - start_time}\n")
 
 
-
 if __name__ == "__main__":
     main()
