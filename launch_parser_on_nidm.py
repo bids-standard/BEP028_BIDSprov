@@ -50,7 +50,7 @@ def main():
     opt = parser.parse_args()
 
     # fix the seed to have identical jsonlds if there are no other modifications
-    random.seed(1)
+    random.seed(14)
 
     os.makedirs(opt.output_dir, exist_ok=True)
     output_dir_spm = opt.output_dir + "/spm"
