@@ -59,7 +59,8 @@ def main():
 
     for root, dirs, files in os.walk(opt.input_dir):
         for file in files:
-            print("File: ", file)
+            jsonld_same_as_existing = False
+
             # matlab extension the one of your choice.
             if file.endswith("batch.m"):
                 context_write.write(f"    file= {root}/{str(file)}\n")
@@ -92,7 +93,8 @@ def main():
                 print(" -> Extension of file ", file , " not supported")
                 continue
 
-            visualize(output_jsonld, output_file=output_png)
+            if not jsonld_same_as_existing:
+                visualize(output_jsonld, output_file=output_png)
 
     context_write.write(f"End of processed files. Results in dir : '{opt.output_dir}'. "
                         f"Time required: {datetime.now() - start_time}\n")
