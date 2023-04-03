@@ -97,6 +97,7 @@ def writing_jsonld(graph, indent, output_file):
 
             if existing_content == json.dumps(graph, indent=indent):
                 return True
+
     with open(output_file, "w") as fd:
         json.dump(graph, fd, indent=indent)
     return False

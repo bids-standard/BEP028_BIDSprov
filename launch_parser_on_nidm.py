@@ -31,10 +31,10 @@ def main():
     parser.add_argument("--output_dir", type=str, default="examples",
                         help="output dir where results are written")
     parser.add_argument("--verbose", action="store_true", help="more print")
-
-    random.seed(1)
-
     opt = parser.parse_args()
+
+    # fix the seed to have identical jsonlds if there are no other modifications
+    random.seed(1)
 
     os.makedirs(opt.output_dir, exist_ok=True)
 
@@ -45,6 +45,7 @@ def main():
     os.makedirs(output_dir_fsl, exist_ok=True)
     os.makedirs(output_dir_afni, exist_ok=True)
 
+    # each time, deleting the context file
     for filename in os.listdir(opt.output_dir):
         if filename.startswith("context_"):
             os.remove(os.path.join(opt.output_dir, filename))
@@ -59,7 +60,6 @@ def main():
 
     for root, dirs, files in os.walk(opt.input_dir):
         for file in files:
-            jsonld_same_as_existing = False
 
             # matlab extension the one of your choice.
             if file.endswith("batch.m"):
@@ -96,7 +96,7 @@ def main():
                 print(" -> Extension of file ", file , " not supported")
                 continue
 
-            if not jsonld_same_as_existing:
+            if not jsonld_same_as_existing:  # do not generate the png if the jsonld has not evolved
                 visualize(output_jsonld, output_file=output_png)
 
     context_write.write(f"End of processed files. Results in dir : '{opt.output_dir}'. "
