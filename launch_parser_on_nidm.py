@@ -10,8 +10,6 @@ from bids_prov.fsl.fsl_parser import fsl_to_bids_prov
 from bids_prov.visualize import main as visualize
 from bids_prov.utils import CONTEXT_URL
 
-
-
 def main():
     """
     Parse a set of files located (.m for SPM12 and .html for fsl) in the same directory (input_directory) to the
@@ -38,8 +36,8 @@ def main():
 
     opt = parser.parse_args()
 
-    if os.path.exists(opt.output_dir):
-        shutil.rmtree(opt.output_dir)
+    # if os.path.exists(opt.output_dir):
+    #     shutil.rmtree(opt.output_dir)
     os.makedirs(opt.output_dir, exist_ok=True)
 
     output_dir_spm = opt.output_dir + "/spm"
@@ -48,6 +46,10 @@ def main():
     os.makedirs(output_dir_spm, exist_ok=True)
     os.makedirs(output_dir_fsl, exist_ok=True)
     os.makedirs(output_dir_afni, exist_ok=True)
+
+    for filename in os.listdir(opt.output_dir):
+        if filename.startswith("context_"):
+            os.remove(os.path.join(opt.output_dir, filename))
 
     start_time = datetime.now()
     start_time_format = "{:%Y_%m_%d_%Hh%Mm%Ss}".format(start_time)
@@ -68,7 +70,8 @@ def main():
                 filename_ss_ext = file.split(".m")[0]
                 shutil.copyfile(filename, output_dir_spm + "/" + str(file))
                 output_jsonld = output_dir_spm + "/" + filename_ss_ext + ".jsonld"
-                spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
+                jsonld_same_as_existing = spm_to_bids_prov(root + "/" + str(file), CONTEXT_URL,
+                                                           output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_spm + "/" + filename_ss_ext + ".png"
 
             elif file.endswith("report_log.html"):

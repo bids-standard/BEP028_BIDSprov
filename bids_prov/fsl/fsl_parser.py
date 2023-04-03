@@ -7,7 +7,7 @@ from typing import List, Mapping
 from bs4 import BeautifulSoup
 import argparse
 
-from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
+from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping, writing_jsonld
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
@@ -526,8 +526,7 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     records = build_records(lines, agent_id)
     graph["records"].update(records)
 
-    with open(output_file, "w") as fd:
-        json.dump(graph, fd, indent=indent)
+    writing_jsonld(graph, indent, output_file)
 
 
 if __name__ == "__main__":
