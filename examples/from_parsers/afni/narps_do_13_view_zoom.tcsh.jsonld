@@ -1,0 +1,116 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:52506368-eb38-4a5b-bdfc-f2d4cd609e91",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "AFNI",
+        "version": "afni24"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:7edd353b-8579-473a-91e5-0608f76f4503",
+        "label": "Make directory",
+        "associatedWith": "urn:52506368-eb38-4a5b-bdfc-f2d4cd609e91",
+        "command": "mkdir -p ${odir}",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:3ace90df-5a61-4494-bc9f-8a3f371d9beb",
+        "label": "IsoSurface",
+        "associatedWith": "urn:52506368-eb38-4a5b-bdfc-f2d4cd609e91",
+        "command": "IsoSurface -overwrite -isorois+dsets -input ${ivol} -o_gii cc_${pref_surf} -Tsmooth 0 0 -remesh 1",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:52e6591c-b529-4396-9ff8-2fe0546bd680",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:52506368-eb38-4a5b-bdfc-f2d4cd609e91",
+        "command": "1d_tool.py -csim_pthr ${pthr} -csim_alpha ${alpha} -infile ${file_1D}",
+        "parameters": {},
+        "used": [
+          "urn:220db0b9-f5de-4063-9a00-abdeb8efc797"
+        ]
+      },
+      {
+        "@id": "urn:703daa85-249b-480c-8543-1f10851fa004",
+        "label": "plugout_drive",
+        "associatedWith": "urn:52506368-eb38-4a5b-bdfc-f2d4cd609e91",
+        "command": "plugout_drive -echo_edu -npb $portnum -com \"SWITCH_UNDERLAY ${dset_ref:t}\" -com \"SWITCH_OVERLAY ${dset_ttest:t}\" -com \"SET_XHAIRS OFF\" -com \"SET_SUBBRICKS ${subbb}\" -com \"SET_PBAR_ALL -99 1.0 ${cbar}\" -com \"SET_FUNC_ALPHA ${olay_alpha}\" -com \"SET_FUNC_BOXED ${olay_boxed}\" -com \"$coor_type $coors\" -com \"SET_THRESHNEW ${thr}\" -com \"SET_FUNC_VISIBLE +\" -com \"SET_FUNC_RANGE $frange\" -com \"$OW sagittalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[1]}:${mgap}:${mcolor}\" -com \"$OW coronalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[2]}:${mgap}:${mcolor}\" -com \"$OW axialimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[3]}:${mgap}:${mcolor}\" &",
+        "parameters": {
+          "-echo_edu": true,
+          "-npb": "$portnum",
+          "-com": true,
+          "-99": "1.0"
+        },
+        "used": [
+          "urn:ea77a101-4546-47a0-84de-d469595acec3"
+        ]
+      },
+      {
+        "@id": "urn:43193308-825a-4e10-be08-11f575abaf1d",
+        "label": "suma",
+        "associatedWith": "urn:52506368-eb38-4a5b-bdfc-f2d4cd609e91",
+        "command": "suma -echo_edu -npb $portnum -onestate -niml -i cc*.k*.gii -vol ${dset_ref} -sv ${dset_ref} &",
+        "parameters": {},
+        "used": [
+          "urn:08fa94a0-5236-4816-9f4d-900a6f4ce8f6"
+        ]
+      },
+      {
+        "@id": "urn:a39c8b2e-e1bf-4d5f-823f-602dab5495e6",
+        "label": "DriveSuma",
+        "associatedWith": "urn:52506368-eb38-4a5b-bdfc-f2d4cd609e91",
+        "command": "DriveSuma -npb $portnum -com viewer_cont -key \"t\" -key \".\" &",
+        "parameters": {
+          "-npb": "$portnum",
+          "-com": "viewer_cont",
+          "-key": true
+        },
+        "used": []
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:3c1d5179-3e72-4a00-b445-d51d251e4d20",
+        "label": "${odir}",
+        "prov:atLocation": "${odir}",
+        "generatedBy": "urn:7edd353b-8579-473a-91e5-0608f76f4503"
+      },
+      {
+        "@id": "urn:b1c62025-9f1e-4935-8fd0-5f95998fc158",
+        "label": "cc_${pref_surf}",
+        "prov:atLocation": "cc_${pref_surf}",
+        "generatedBy": "urn:3ace90df-5a61-4494-bc9f-8a3f371d9beb"
+      },
+      {
+        "@id": "urn:220db0b9-f5de-4063-9a00-abdeb8efc797",
+        "label": "${file_1D}",
+        "prov:atLocation": "${file_1D}"
+      },
+      {
+        "@id": "urn:ea77a101-4546-47a0-84de-d469595acec3",
+        "label": "portnum",
+        "prov:atLocation": "portnum"
+      },
+      {
+        "@id": "urn:0b2d73aa-f687-4a42-a7d8-be02669719e5",
+        "label": "mcolor",
+        "prov:atLocation": "mcolor",
+        "generatedBy": "urn:703daa85-249b-480c-8543-1f10851fa004"
+      },
+      {
+        "@id": "urn:08fa94a0-5236-4816-9f4d-900a6f4ce8f6",
+        "label": "cc*.k*.gii",
+        "prov:atLocation": "cc*.k*.gii"
+      }
+    ]
+  }
+}

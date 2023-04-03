@@ -1,0 +1,1077 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "FSL",
+        "version": "xxx"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:5efd6c90-9a0f-401e-bcf8-2399db8ac454",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths /storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/sub-01/func/sub-01_task-tonecounting_bold prefiltered_func_data -odt float",
+        "used": [
+          "urn:3d323b19-5882-4b4f-af10-55ddcc67f26a"
+        ]
+      },
+      {
+        "@id": "urn:dced66b9-4762-4fe3-96f6-066d298215bf",
+        "label": "fslroi",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslroi prefiltered_func_data example_func 52 1",
+        "used": [
+          "urn:30a25d4c-e927-4441-81aa-9018363825fe"
+        ]
+      },
+      {
+        "@id": "urn:64d144ca-2c62-4d0c-985b-4af836924cfb",
+        "label": "mainfeatreg",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/mainfeatreg -F 6.00 -d /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat -l /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/logs/feat2_pre -R /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/report_unwarp.html -r /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/report_reg.html  -i /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/example_func.nii.gz  -h /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w_brain -w  BBR -x 90 -s /usr/local/packages/fsl-5.0.8/data/standard/MNI152_T1_2mm_brain -y 12 -z 90",
+        "used": [
+          "urn:9ee47e76-35b3-4287-b53b-bfa0a54aaada",
+          "urn:60c21528-6580-4610-b69f-163c032aabc6",
+          "urn:5efd7dcf-aff3-4ce4-9933-7ee2f45bfbf6"
+        ]
+      },
+      {
+        "@id": "urn:409267b3-a5d7-4252-8220-eea29a20f3bf",
+        "label": "Make directory",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/bin/mkdir -p /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/reg",
+        "used": []
+      },
+      {
+        "@id": "urn:eaa0e3f5-0eed-42fc-bff7-c837d9787a36",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w_brain highres",
+        "used": [
+          "urn:60c21528-6580-4610-b69f-163c032aabc6"
+        ]
+      },
+      {
+        "@id": "urn:c4be038d-3200-493d-a37b-12cd4dfc38ac",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w  highres_head",
+        "used": [
+          "urn:4dcddcb1-d9c4-49b7-96ff-87ed9d266ead"
+        ]
+      },
+      {
+        "@id": "urn:33f2ee68-6757-4bc5-8179-345f7534de34",
+        "label": "epi_reg",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/epi_reg --epi=example_func --t1=highres_head --t1brain=highres --out=example_func2highres",
+        "used": []
+      },
+      {
+        "@id": "urn:79df9fe8-d557-45ca-9d29-9d488b9251d7",
+        "label": "convert_xfm",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/convert_xfm -inverse -omat highres2example_func.mat example_func2highres.mat",
+        "used": [
+          "urn:06106f3b-d42a-4add-8197-8d78c983356a"
+        ]
+      },
+      {
+        "@id": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8",
+        "label": "slicer",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/slicer example_func2highres highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:992d5488-c394-4b09-b3c2-93ca239e3534",
+          "urn:2f528005-66a8-48f5-b4ad-e7c0cc05d474"
+        ]
+      },
+      {
+        "@id": "urn:ee184745-9a4d-4ab6-a0a8-cdf118134b23",
+        "label": "pngappend",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2highres1.png",
+        "used": [
+          "urn:0920370d-54cd-4010-8362-3adba112bf09",
+          "urn:a1b4a140-0473-4c90-8a3a-2ce3629a9d07",
+          "urn:6cd79871-f667-4b9a-869b-96cd77cb65a9",
+          "urn:2c547a22-d58f-4225-9bff-6601040ba6b7",
+          "urn:04c881de-3f8f-4b4d-a98e-0f60ef91d8d2",
+          "urn:ff59cc30-d608-4c44-ab41-cbb8679d43e5",
+          "urn:c710730c-2755-45ae-b1e1-3dc69b7891bf",
+          "urn:c280fb7c-30e2-4f96-b6f9-927213b6544e",
+          "urn:ede9336c-9009-4e31-aaba-bc90d4586bd1",
+          "urn:5ba32b29-b1f7-492e-9362-8896ee1f1879",
+          "urn:1001eeb2-5e0e-4233-a3bc-de6dd9a3cadf",
+          "urn:324f826d-3863-41b0-88ba-9ad2b8af89a2"
+        ]
+      },
+      {
+        "@id": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0",
+        "label": "slicer",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/slicer highres example_func2highres -s 2 -x 0.35 sla.png -x 0.45 slb.png -x 0.55 slc.png -x 0.65 sld.png -y 0.35 sle.png -y 0.45 slf.png -y 0.55 slg.png -y 0.65 slh.png -z 0.35 sli.png -z 0.45 slj.png -z 0.55 slk.png -z 0.65 sll.png",
+        "used": [
+          "urn:2f528005-66a8-48f5-b4ad-e7c0cc05d474",
+          "urn:992d5488-c394-4b09-b3c2-93ca239e3534"
+        ]
+      },
+      {
+        "@id": "urn:04e90dc4-d145-41a1-826c-bc717f87d8de",
+        "label": "pngappend",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/pngappend sla.png slb.png slc.png sld.png sle.png slf.png slg.png slh.png sli.png slj.png slk.png sll.png example_func2highres2.png",
+        "used": [
+          "urn:0920370d-54cd-4010-8362-3adba112bf09",
+          "urn:a1b4a140-0473-4c90-8a3a-2ce3629a9d07",
+          "urn:6cd79871-f667-4b9a-869b-96cd77cb65a9",
+          "urn:2c547a22-d58f-4225-9bff-6601040ba6b7",
+          "urn:04c881de-3f8f-4b4d-a98e-0f60ef91d8d2",
+          "urn:ff59cc30-d608-4c44-ab41-cbb8679d43e5",
+          "urn:c710730c-2755-45ae-b1e1-3dc69b7891bf",
+          "urn:c280fb7c-30e2-4f96-b6f9-927213b6544e",
+          "urn:ede9336c-9009-4e31-aaba-bc90d4586bd1",
+          "urn:5ba32b29-b1f7-492e-9362-8896ee1f1879",
+          "urn:1001eeb2-5e0e-4233-a3bc-de6dd9a3cadf",
+          "urn:324f826d-3863-41b0-88ba-9ad2b8af89a2"
+        ]
+      },
+      {
+        "@id": "urn:8ce1fb23-41b1-401b-bbce-1b6ccd653297",
+        "label": "pngappend",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/pngappend example_func2highres1.png example_func2highres2.png example_func2highres.png",
+        "used": [
+          "urn:682849b3-f2ed-4252-8498-0f55ea6dbe5b",
+          "urn:cc6fe68a-f166-42f0-a8c3-6917aa41eba6"
+        ]
+      },
+      {
+        "@id": "urn:edde5c6e-c308-4c52-bdfe-6af16fdf4c09",
+        "label": "rm",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/bin/rm -f sl?.png example_func2highres2.png",
+        "used": [
+          "urn:385682ce-524b-4f98-89ce-3364dc607dbb",
+          "urn:cc6fe68a-f166-42f0-a8c3-6917aa41eba6"
+        ]
+      },
+      {
+        "@id": "urn:cf6bedcb-2ea7-49e3-91be-5a8c159b5024",
+        "label": "rm",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/bin/rm example_func2highres1.png",
+        "used": [
+          "urn:682849b3-f2ed-4252-8498-0f55ea6dbe5b"
+        ]
+      },
+      {
+        "@id": "urn:977ab604-d2ee-4bb1-bdc8-01425a978007",
+        "label": "mcflirt",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/mcflirt -in prefiltered_func_data -out prefiltered_func_data_mcf -mats -plots -reffile example_func -rmsrel -rmsabs -spline_final",
+        "used": [
+          "urn:30a25d4c-e927-4441-81aa-9018363825fe"
+        ]
+      },
+      {
+        "@id": "urn:b8ca0638-c5da-4b93-ad13-5ffa73f2024c",
+        "label": "Make directory",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/bin/mkdir -p mc",
+        "used": []
+      },
+      {
+        "@id": "urn:88a27d9c-40f6-4006-9a2b-07fe07369a07",
+        "label": "mv",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/bin/mv -f prefiltered_func_data_mcf.mat prefiltered_func_data_mcf.par prefiltered_func_data_mcf_abs.rms prefiltered_func_data_mcf_abs_mean.rms prefiltered_func_data_mcf_rel.rms prefiltered_func_data_mcf_rel_mean.rms mc",
+        "used": [
+          "urn:b81693cc-1a72-4e5a-88e2-8f0f4e201499",
+          "urn:e7bcf92e-33db-4563-88bd-1f9ae5960dd6",
+          "urn:bd98c6ef-3987-4eba-ba5d-a90976798e12",
+          "urn:12f27052-c76b-4b01-aa58-113a074b889f",
+          "urn:73afc6d0-7725-430a-9700-8b95d65da3aa",
+          "urn:3935ade3-a3f6-4268-8f37-9d2d73a1bd1e"
+        ]
+      },
+      {
+        "@id": "urn:931cfd77-164e-44a9-94d4-4a32f35e0eb6",
+        "label": "fsl_tsplot",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fsl_tsplot -i prefiltered_func_data_mcf.par -t 'MCFLIRT estimated rotations (radians)' -u 1 --start=1 --finish=3 -a x,y,z -w 640 -h 144 -o rot.png",
+        "used": [
+          "urn:e7bcf92e-33db-4563-88bd-1f9ae5960dd6"
+        ]
+      },
+      {
+        "@id": "urn:e2931ef5-c462-4c9e-9278-dc59d84380d4",
+        "label": "fsl_tsplot",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fsl_tsplot -i prefiltered_func_data_mcf.par -t 'MCFLIRT estimated translations (mm)' -u 1 --start=4 --finish=6 -a x,y,z -w 640 -h 144 -o trans.png",
+        "used": [
+          "urn:e7bcf92e-33db-4563-88bd-1f9ae5960dd6"
+        ]
+      },
+      {
+        "@id": "urn:cc4ccc82-d2a6-4754-b725-8b8ca4b92517",
+        "label": "fsl_tsplot",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fsl_tsplot -i prefiltered_func_data_mcf_abs.rms,prefiltered_func_data_mcf_rel.rms -t 'MCFLIRT estimated mean displacement (mm)' -u 1 -w 640 -h 144 -a absolute,relative -o disp.png",
+        "used": [
+          "urn:1daa75d1-34ff-4548-8e88-ee9624189e42"
+        ]
+      },
+      {
+        "@id": "urn:dbda2f8a-b7fe-45a6-98db-7535fecb340f",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_mcf -Tmean mean_func",
+        "used": [
+          "urn:fbdad812-2ad1-44b4-8883-abd4cfba735f"
+        ]
+      },
+      {
+        "@id": "urn:c6f3bab5-35c7-4220-9280-843e16e48363",
+        "label": "bet2",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/bet2 mean_func mask -f 0.3 -n -m",
+        "used": [
+          "urn:4f97ef44-e0ee-4981-8075-8a0f57ff95dd"
+        ]
+      },
+      {
+        "@id": "urn:3d0ca1b0-b623-491a-b81e-565040b411f1",
+        "label": "immv",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/immv mask_mask mask",
+        "used": [
+          "urn:4c8e6960-c7c4-47ee-91bf-a16b1882361e"
+        ]
+      },
+      {
+        "@id": "urn:5b4e3fa3-8e33-4871-9400-ab6ed895585e",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_mcf -mas mask prefiltered_func_data_bet",
+        "used": [
+          "urn:a8e1778b-cfa9-4893-a414-34918c5c1062",
+          "urn:fbdad812-2ad1-44b4-8883-abd4cfba735f"
+        ]
+      },
+      {
+        "@id": "urn:23383bbe-8b07-4f0b-a7f6-857c20da6aba",
+        "label": "fslstats",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslstats prefiltered_func_data_bet -p 2 -p 98",
+        "used": [
+          "urn:542813b1-be5e-47e6-9e7f-85638dcedd3d"
+        ]
+      },
+      {
+        "@id": "urn:fabaaa1a-fe61-41a4-904a-6f7ad26bbbc4",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_bet -thr 74.4585571 -Tmin -bin mask -odt char",
+        "used": [
+          "urn:542813b1-be5e-47e6-9e7f-85638dcedd3d"
+        ]
+      },
+      {
+        "@id": "urn:d9e28917-5df1-4f8b-9825-4ed0f296f11b",
+        "label": "fslstats",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslstats prefiltered_func_data_mcf -k mask -p 50",
+        "used": [
+          "urn:fbdad812-2ad1-44b4-8883-abd4cfba735f"
+        ]
+      },
+      {
+        "@id": "urn:a2f0a4ac-74ab-45c3-af6d-07ecb992dfad",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths mask -dilF mask",
+        "used": [
+          "urn:a8e1778b-cfa9-4893-a414-34918c5c1062"
+        ]
+      },
+      {
+        "@id": "urn:0523d0b9-1474-4e86-bcaa-ca0740d7b213",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_mcf -mas mask prefiltered_func_data_thresh",
+        "used": [
+          "urn:a8e1778b-cfa9-4893-a414-34918c5c1062",
+          "urn:fbdad812-2ad1-44b4-8883-abd4cfba735f"
+        ]
+      },
+      {
+        "@id": "urn:238f8c3c-3745-4220-9ecf-4743526d7b24",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_thresh -Tmean mean_func",
+        "used": [
+          "urn:622c8d8b-a31b-4d41-8f81-60210dff80f8"
+        ]
+      },
+      {
+        "@id": "urn:f33891e2-678b-4ee4-83d9-bdfb36763f92",
+        "label": "susan",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/susan prefiltered_func_data_thresh 445.8289035 2.54777070064 3 1 1 mean_func 445.8289035 prefiltered_func_data_smooth",
+        "used": [
+          "urn:622c8d8b-a31b-4d41-8f81-60210dff80f8"
+        ]
+      },
+      {
+        "@id": "urn:7762f9bf-0453-409f-838f-256ec6379ce3",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_smooth -mas mask prefiltered_func_data_smooth",
+        "used": [
+          "urn:a8e1778b-cfa9-4893-a414-34918c5c1062",
+          "urn:7753f6de-981e-4ca8-8752-f2237cd4e3cd"
+        ]
+      },
+      {
+        "@id": "urn:2ca01513-f320-4e36-ab89-cb616ff8752d",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_smooth -mul 16.8225970571 prefiltered_func_data_intnorm",
+        "used": [
+          "urn:7753f6de-981e-4ca8-8752-f2237cd4e3cd"
+        ]
+      },
+      {
+        "@id": "urn:fbb49c72-3714-4ee7-a1ba-e5a005e4f136",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_intnorm -Tmean tempMean",
+        "used": [
+          "urn:850d2c9d-9f71-4d1f-9a9d-a56d8d5f4343"
+        ]
+      },
+      {
+        "@id": "urn:18d40eea-a0d3-4de0-9348-5c1310acda2b",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_intnorm -bptf 15.0 -1 -add tempMean prefiltered_func_data_tempfilt",
+        "used": [
+          "urn:72dd3819-b51f-4b13-a695-e07b0a4fa773",
+          "urn:850d2c9d-9f71-4d1f-9a9d-a56d8d5f4343"
+        ]
+      },
+      {
+        "@id": "urn:640679b6-8270-4e5e-bec4-15a3447bdb02",
+        "label": "imrm",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/imrm tempMean",
+        "used": [
+          "urn:72dd3819-b51f-4b13-a695-e07b0a4fa773"
+        ]
+      },
+      {
+        "@id": "urn:7f9bc559-47b0-44d1-b9a7-fdc6c360ef91",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths prefiltered_func_data_tempfilt filtered_func_data",
+        "used": [
+          "urn:69768d5d-abce-4502-bc85-04431dc6c69b"
+        ]
+      },
+      {
+        "@id": "urn:5e0c2d6f-7ceb-4ea6-980e-804fe9d43421",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths filtered_func_data -Tmean mean_func",
+        "used": [
+          "urn:0fcca679-d692-4ed2-98c6-19cb47a3c491"
+        ]
+      },
+      {
+        "@id": "urn:c04a3ffc-9116-48f5-ba48-cfff2b7d7d37",
+        "label": "rm",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/bin/rm -rf prefiltered_func_data*",
+        "used": [
+          "urn:5e652210-f222-4d51-a67d-0388fda083bb"
+        ]
+      },
+      {
+        "@id": "urn:71ffbb2a-d6ad-4539-8ff1-eac611e0cc1e",
+        "label": "Make directory",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "mkdir -p custom_timing_files",
+        "used": []
+      },
+      {
+        "@id": "urn:547cd2ec-33b8-41e7-9e40-4e0cedee8995",
+        "label": "fslFixText",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslFixText /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/FSL/ONSETS/sub-01_tone_counting.txt custom_timing_files/ev1.txt",
+        "used": [
+          "urn:d6795dbc-c5c3-4ee1-93ea-ec35627cc481"
+        ]
+      },
+      {
+        "@id": "urn:b89de74e-8bb3-40be-802f-fd665cb6122e",
+        "label": "Make directory",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "mkdir -p custom_timing_files",
+        "used": []
+      },
+      {
+        "@id": "urn:b7380eb7-aa3b-408b-9515-039c28d687f9",
+        "label": "fslFixText",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslFixText /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/FSL/ONSETS/sub-01_tone_counting_probe.txt custom_timing_files/ev2.txt",
+        "used": [
+          "urn:e0223910-238a-4f06-9fcb-9af00094b9f4"
+        ]
+      },
+      {
+        "@id": "urn:23f1e0ca-c1f2-468d-a1c1-46530cc739db",
+        "label": "film_gls",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/film_gls --in=filtered_func_data --rn=stats --pd=design.mat --thr=1000.0 --sa --ms=5 --con=design.con",
+        "used": []
+      },
+      {
+        "@id": "urn:76f5299e-78f0-451d-96f5-09ed2129bcba",
+        "label": "smoothest",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/smoothest -d 102   -m mask -r stats/res4d > stats/smoothness",
+        "used": [
+          "urn:a8e1778b-cfa9-4893-a414-34918c5c1062",
+          "urn:e4eb5d16-bf2e-4210-9611-ea1f610a444b"
+        ]
+      },
+      {
+        "@id": "urn:26b42478-4be7-43a6-829a-555b82601dcc",
+        "label": "fslmaths",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslmaths stats/zstat1 -mas mask thresh_zstat1",
+        "used": [
+          "urn:a8e1778b-cfa9-4893-a414-34918c5c1062",
+          "urn:af9d9e91-e35c-45f4-b942-55c655741f1b"
+        ]
+      },
+      {
+        "@id": "urn:f1b1ed34-c434-433c-8255-e1dc15ee8980",
+        "label": "echo",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "echo 38352 > thresh_zstat1.vol",
+        "used": []
+      },
+      {
+        "@id": "urn:f24ed00b-e9b7-4693-8323-7076a69d6e3f",
+        "label": "cluster",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/cluster -i thresh_zstat1 -t 2.3 --othresh=thresh_zstat1 -o cluster_mask_zstat1 --connectivity=26  --olmax=lmax_zstat1.txt --scalarname=Z -p 0.05 -d 0.70114 --volume=38352 -c stats/cope1 > cluster_zstat1.txt",
+        "used": [
+          "urn:716e9988-940f-4a1f-99be-3bfbb62a20ae",
+          "urn:1d4e83a7-707f-4a0f-b112-c66ff033deb7"
+        ]
+      },
+      {
+        "@id": "urn:dcc5c556-d4c5-4cf6-8e4d-49cbed86a757",
+        "label": "cluster2html",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/cluster2html . cluster_zstat1",
+        "used": [
+          "urn:adba61e1-a197-4726-8e05-32201abdc37f"
+        ]
+      },
+      {
+        "@id": "urn:a72f6c14-ec20-41ed-aab0-e234057bffd4",
+        "label": "fslstats",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/fslstats thresh_zstat1 -l 0.0001 -R 2>/dev/null",
+        "used": [
+          "urn:716e9988-940f-4a1f-99be-3bfbb62a20ae"
+        ]
+      },
+      {
+        "@id": "urn:b8227d25-42fd-48c1-98c5-2cf6990591e0",
+        "label": "overlay",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/overlay 1 0 example_func -a thresh_zstat1 2.300208 7.488793 rendered_thresh_zstat1",
+        "used": []
+      },
+      {
+        "@id": "urn:3022d732-3063-48cf-904d-310105e2edf4",
+        "label": "slicer",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/slicer rendered_thresh_zstat1 -A 750 rendered_thresh_zstat1.png",
+        "used": [
+          "urn:0bf6cc7e-d1cc-4d1c-ad0e-717eea7c9386"
+        ]
+      },
+      {
+        "@id": "urn:a9a1e640-a917-4f8b-b5d5-4648a99d94d2",
+        "label": "cp",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/bin/cp /usr/local/packages/fsl-5.0.10/etc/luts/ramp.gif .ramp.gif",
+        "used": [
+          "urn:2adb8b07-98ca-4a62-9c4a-0ba44f06faea"
+        ]
+      },
+      {
+        "@id": "urn:92321eaf-6bfb-466e-abee-2f193bc9e3e1",
+        "label": "Make directory",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "mkdir -p tsplot",
+        "used": []
+      },
+      {
+        "@id": "urn:ff7bcc08-779f-46fb-82e6-45eb01400426",
+        "label": "tsplot",
+        "associatedWith": "urn:cf7e92e4-4fe1-49cc-a14b-627d1ec828e5",
+        "command": "/usr/local/packages/fsl-5.0.10/bin/tsplot . -f filtered_func_data -o tsplot",
+        "used": []
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:3d323b19-5882-4b4f-af10-55ddcc67f26a",
+        "label": "sub-01_task-tonecounting_bold",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/sub-01/func/sub-01_task-tonecounting_bold"
+      },
+      {
+        "@id": "urn:30a25d4c-e927-4441-81aa-9018363825fe",
+        "label": "prefiltered_func_data",
+        "prov:atLocation": "prefiltered_func_data",
+        "generatedBy": "urn:5efd6c90-9a0f-401e-bcf8-2399db8ac454"
+      },
+      {
+        "@id": "urn:13faa8f1-097a-4955-aad9-88f75cc3a598",
+        "label": "example_func",
+        "prov:atLocation": "example_func",
+        "generatedBy": "urn:dced66b9-4762-4fe3-96f6-066d298215bf"
+      },
+      {
+        "@id": "urn:9ee47e76-35b3-4287-b53b-bfa0a54aaada",
+        "label": "example_func.nii.gz",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/example_func.nii.gz"
+      },
+      {
+        "@id": "urn:60c21528-6580-4610-b69f-163c032aabc6",
+        "label": "sub-01_T1w_brain",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w_brain"
+      },
+      {
+        "@id": "urn:5efd7dcf-aff3-4ce4-9933-7ee2f45bfbf6",
+        "label": "MNI152_T1_2mm_brain",
+        "prov:atLocation": "/usr/local/packages/fsl-5.0.8/data/standard/MNI152_T1_2mm_brain"
+      },
+      {
+        "@id": "urn:998f58be-d6ce-48e4-be18-eea8e304fb0d",
+        "label": "fsl_cluster_p005.feat",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat",
+        "generatedBy": "urn:64d144ca-2c62-4d0c-985b-4af836924cfb"
+      },
+      {
+        "@id": "urn:a9a1e151-cf9c-4bb6-93ca-6581bff58bfb",
+        "label": "reg",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/reg",
+        "generatedBy": "urn:409267b3-a5d7-4252-8220-eea29a20f3bf"
+      },
+      {
+        "@id": "urn:2f528005-66a8-48f5-b4ad-e7c0cc05d474",
+        "label": "highres",
+        "prov:atLocation": "highres",
+        "generatedBy": "urn:eaa0e3f5-0eed-42fc-bff7-c837d9787a36"
+      },
+      {
+        "@id": "urn:4dcddcb1-d9c4-49b7-96ff-87ed9d266ead",
+        "label": "sub-01_T1w",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w"
+      },
+      {
+        "@id": "urn:d2868970-09ee-4dc1-acb6-798207902047",
+        "label": "",
+        "prov:atLocation": "",
+        "generatedBy": "urn:c4be038d-3200-493d-a37b-12cd4dfc38ac"
+      },
+      {
+        "@id": "urn:06106f3b-d42a-4add-8197-8d78c983356a",
+        "label": "example_func2highres.mat",
+        "prov:atLocation": "example_func2highres.mat"
+      },
+      {
+        "@id": "urn:359d02c2-becf-4230-b1ee-fbaf992f789e",
+        "label": "highres2example_func.mat",
+        "prov:atLocation": "highres2example_func.mat",
+        "generatedBy": "urn:79df9fe8-d557-45ca-9d29-9d488b9251d7"
+      },
+      {
+        "@id": "urn:992d5488-c394-4b09-b3c2-93ca239e3534",
+        "label": "example_func2highres",
+        "prov:atLocation": "example_func2highres"
+      },
+      {
+        "@id": "urn:0920370d-54cd-4010-8362-3adba112bf09",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:a1b4a140-0473-4c90-8a3a-2ce3629a9d07",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:6cd79871-f667-4b9a-869b-96cd77cb65a9",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:2c547a22-d58f-4225-9bff-6601040ba6b7",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:04c881de-3f8f-4b4d-a98e-0f60ef91d8d2",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:ff59cc30-d608-4c44-ab41-cbb8679d43e5",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:c710730c-2755-45ae-b1e1-3dc69b7891bf",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:c280fb7c-30e2-4f96-b6f9-927213b6544e",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:ede9336c-9009-4e31-aaba-bc90d4586bd1",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:5ba32b29-b1f7-492e-9362-8896ee1f1879",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:1001eeb2-5e0e-4233-a3bc-de6dd9a3cadf",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:324f826d-3863-41b0-88ba-9ad2b8af89a2",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:a7344190-af2a-43e9-b92d-8cc4eabf3df8"
+      },
+      {
+        "@id": "urn:682849b3-f2ed-4252-8498-0f55ea6dbe5b",
+        "label": "example_func2highres1.png",
+        "prov:atLocation": "example_func2highres1.png",
+        "generatedBy": "urn:ee184745-9a4d-4ab6-a0a8-cdf118134b23"
+      },
+      {
+        "@id": "urn:0c5f1c3b-d405-4218-8145-6942707175fd",
+        "label": "sla.png",
+        "prov:atLocation": "sla.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:63a8b358-82be-4383-a055-6e294cbf57fa",
+        "label": "slb.png",
+        "prov:atLocation": "slb.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:94edf6d7-8dcf-4896-8b2e-2abf122c4f89",
+        "label": "slc.png",
+        "prov:atLocation": "slc.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:e0786ba0-5276-45c3-9292-14f720d1648b",
+        "label": "sld.png",
+        "prov:atLocation": "sld.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:a14572d6-e8a9-4624-b9c9-db5962de376e",
+        "label": "sle.png",
+        "prov:atLocation": "sle.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:d1011bac-2563-4e55-907b-9040ab6aadde",
+        "label": "slf.png",
+        "prov:atLocation": "slf.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:60849ad7-3f17-4bbc-b841-8fc741cdf9a1",
+        "label": "slg.png",
+        "prov:atLocation": "slg.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:9d75ebbd-5e58-4d12-91f9-0c35b6020d6a",
+        "label": "slh.png",
+        "prov:atLocation": "slh.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:0ccdaa6f-bf7c-45f4-8923-71449e05993c",
+        "label": "sli.png",
+        "prov:atLocation": "sli.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:ecea3ad9-8170-4d42-b68f-ec904d266cc8",
+        "label": "slj.png",
+        "prov:atLocation": "slj.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:a52c45ea-581e-4249-b2f4-8516d84f1537",
+        "label": "slk.png",
+        "prov:atLocation": "slk.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:79e31c25-263f-412c-8156-3521fd21072f",
+        "label": "sll.png",
+        "prov:atLocation": "sll.png",
+        "generatedBy": "urn:bca5633f-30cb-4210-a083-cfd916f0bef0"
+      },
+      {
+        "@id": "urn:cc6fe68a-f166-42f0-a8c3-6917aa41eba6",
+        "label": "example_func2highres2.png",
+        "prov:atLocation": "example_func2highres2.png",
+        "generatedBy": "urn:04e90dc4-d145-41a1-826c-bc717f87d8de"
+      },
+      {
+        "@id": "urn:901cd0be-33d0-4a43-944c-f976fa0261c9",
+        "label": "example_func2highres.png",
+        "prov:atLocation": "example_func2highres.png",
+        "generatedBy": "urn:8ce1fb23-41b1-401b-bbce-1b6ccd653297"
+      },
+      {
+        "@id": "urn:385682ce-524b-4f98-89ce-3364dc607dbb",
+        "label": "sl?.png",
+        "prov:atLocation": "sl?.png"
+      },
+      {
+        "@id": "urn:fbdad812-2ad1-44b4-8883-abd4cfba735f",
+        "label": "prefiltered_func_data_mcf",
+        "prov:atLocation": "prefiltered_func_data_mcf",
+        "generatedBy": "urn:977ab604-d2ee-4bb1-bdc8-01425a978007"
+      },
+      {
+        "@id": "urn:ae6e9628-fa79-4dad-9cc7-5fc8c0437814",
+        "label": "mc",
+        "prov:atLocation": "mc",
+        "generatedBy": "urn:b8ca0638-c5da-4b93-ad13-5ffa73f2024c"
+      },
+      {
+        "@id": "urn:b81693cc-1a72-4e5a-88e2-8f0f4e201499",
+        "label": "prefiltered_func_data_mcf.mat",
+        "prov:atLocation": "prefiltered_func_data_mcf.mat"
+      },
+      {
+        "@id": "urn:e7bcf92e-33db-4563-88bd-1f9ae5960dd6",
+        "label": "prefiltered_func_data_mcf.par",
+        "prov:atLocation": "prefiltered_func_data_mcf.par"
+      },
+      {
+        "@id": "urn:bd98c6ef-3987-4eba-ba5d-a90976798e12",
+        "label": "prefiltered_func_data_mcf_abs.rms",
+        "prov:atLocation": "prefiltered_func_data_mcf_abs.rms"
+      },
+      {
+        "@id": "urn:12f27052-c76b-4b01-aa58-113a074b889f",
+        "label": "prefiltered_func_data_mcf_abs_mean.rms",
+        "prov:atLocation": "prefiltered_func_data_mcf_abs_mean.rms"
+      },
+      {
+        "@id": "urn:73afc6d0-7725-430a-9700-8b95d65da3aa",
+        "label": "prefiltered_func_data_mcf_rel.rms",
+        "prov:atLocation": "prefiltered_func_data_mcf_rel.rms"
+      },
+      {
+        "@id": "urn:3935ade3-a3f6-4268-8f37-9d2d73a1bd1e",
+        "label": "prefiltered_func_data_mcf_rel_mean.rms",
+        "prov:atLocation": "prefiltered_func_data_mcf_rel_mean.rms"
+      },
+      {
+        "@id": "urn:996e20d8-612c-44cd-86b4-a6596eb2f834",
+        "label": "mc",
+        "prov:atLocation": "mc",
+        "generatedBy": "urn:88a27d9c-40f6-4006-9a2b-07fe07369a07"
+      },
+      {
+        "@id": "urn:5d5efe90-1ab6-4e8c-9997-9531658843fb",
+        "label": "rot.png",
+        "prov:atLocation": "rot.png",
+        "generatedBy": "urn:931cfd77-164e-44a9-94d4-4a32f35e0eb6"
+      },
+      {
+        "@id": "urn:34b6cb71-ee98-4362-ab1e-02597ca9feb6",
+        "label": "trans.png",
+        "prov:atLocation": "trans.png",
+        "generatedBy": "urn:e2931ef5-c462-4c9e-9278-dc59d84380d4"
+      },
+      {
+        "@id": "urn:1daa75d1-34ff-4548-8e88-ee9624189e42",
+        "label": "prefiltered_func_data_mcf_abs.rms,prefiltered_func_data_mcf_rel.rms",
+        "prov:atLocation": "prefiltered_func_data_mcf_abs.rms,prefiltered_func_data_mcf_rel.rms"
+      },
+      {
+        "@id": "urn:92d42cb0-038d-429c-9289-c408bc462635",
+        "label": "disp.png",
+        "prov:atLocation": "disp.png",
+        "generatedBy": "urn:cc4ccc82-d2a6-4754-b725-8b8ca4b92517"
+      },
+      {
+        "@id": "urn:4f97ef44-e0ee-4981-8075-8a0f57ff95dd",
+        "label": "mean_func",
+        "prov:atLocation": "mean_func",
+        "generatedBy": "urn:dbda2f8a-b7fe-45a6-98db-7535fecb340f"
+      },
+      {
+        "@id": "urn:a8e1778b-cfa9-4893-a414-34918c5c1062",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:c6f3bab5-35c7-4220-9280-843e16e48363"
+      },
+      {
+        "@id": "urn:4c8e6960-c7c4-47ee-91bf-a16b1882361e",
+        "label": "mask_mask",
+        "prov:atLocation": "mask_mask"
+      },
+      {
+        "@id": "urn:526a6ca8-6a96-40c5-85e0-3367f631ddf0",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:3d0ca1b0-b623-491a-b81e-565040b411f1"
+      },
+      {
+        "@id": "urn:542813b1-be5e-47e6-9e7f-85638dcedd3d",
+        "label": "prefiltered_func_data_bet",
+        "prov:atLocation": "prefiltered_func_data_bet",
+        "generatedBy": "urn:5b4e3fa3-8e33-4871-9400-ab6ed895585e"
+      },
+      {
+        "@id": "urn:68215e5d-08cb-473a-94fc-9871b6273043",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:fabaaa1a-fe61-41a4-904a-6f7ad26bbbc4"
+      },
+      {
+        "@id": "urn:549b38df-c02d-4449-ad61-8e446775d49a",
+        "label": "mask",
+        "prov:atLocation": "mask",
+        "generatedBy": "urn:a2f0a4ac-74ab-45c3-af6d-07ecb992dfad"
+      },
+      {
+        "@id": "urn:622c8d8b-a31b-4d41-8f81-60210dff80f8",
+        "label": "prefiltered_func_data_thresh",
+        "prov:atLocation": "prefiltered_func_data_thresh",
+        "generatedBy": "urn:0523d0b9-1474-4e86-bcaa-ca0740d7b213"
+      },
+      {
+        "@id": "urn:3993b03f-013e-4abe-9736-c9c2488b3126",
+        "label": "mean_func",
+        "prov:atLocation": "mean_func",
+        "generatedBy": "urn:238f8c3c-3745-4220-9ecf-4743526d7b24"
+      },
+      {
+        "@id": "urn:7753f6de-981e-4ca8-8752-f2237cd4e3cd",
+        "label": "prefiltered_func_data_smooth",
+        "prov:atLocation": "prefiltered_func_data_smooth",
+        "generatedBy": "urn:f33891e2-678b-4ee4-83d9-bdfb36763f92"
+      },
+      {
+        "@id": "urn:a2f188ee-5db8-4b0e-9892-e7c637ce2585",
+        "label": "prefiltered_func_data_smooth",
+        "prov:atLocation": "prefiltered_func_data_smooth",
+        "generatedBy": "urn:7762f9bf-0453-409f-838f-256ec6379ce3"
+      },
+      {
+        "@id": "urn:850d2c9d-9f71-4d1f-9a9d-a56d8d5f4343",
+        "label": "prefiltered_func_data_intnorm",
+        "prov:atLocation": "prefiltered_func_data_intnorm",
+        "generatedBy": "urn:2ca01513-f320-4e36-ab89-cb616ff8752d"
+      },
+      {
+        "@id": "urn:72dd3819-b51f-4b13-a695-e07b0a4fa773",
+        "label": "tempMean",
+        "prov:atLocation": "tempMean",
+        "generatedBy": "urn:fbb49c72-3714-4ee7-a1ba-e5a005e4f136"
+      },
+      {
+        "@id": "urn:3c0363fe-59fd-4463-be48-5f4a2106ea18",
+        "label": "15.0",
+        "prov:atLocation": "15.0",
+        "generatedBy": "urn:18d40eea-a0d3-4de0-9348-5c1310acda2b"
+      },
+      {
+        "@id": "urn:69768d5d-abce-4502-bc85-04431dc6c69b",
+        "label": "prefiltered_func_data_tempfilt",
+        "prov:atLocation": "prefiltered_func_data_tempfilt"
+      },
+      {
+        "@id": "urn:0fcca679-d692-4ed2-98c6-19cb47a3c491",
+        "label": "filtered_func_data",
+        "prov:atLocation": "filtered_func_data",
+        "generatedBy": "urn:7f9bc559-47b0-44d1-b9a7-fdc6c360ef91"
+      },
+      {
+        "@id": "urn:61fa5d28-b9ab-4e9c-adb1-c6b33358bb84",
+        "label": "mean_func",
+        "prov:atLocation": "mean_func",
+        "generatedBy": "urn:5e0c2d6f-7ceb-4ea6-980e-804fe9d43421"
+      },
+      {
+        "@id": "urn:5e652210-f222-4d51-a67d-0388fda083bb",
+        "label": "prefiltered_func_data*",
+        "prov:atLocation": "prefiltered_func_data*"
+      },
+      {
+        "@id": "urn:be4ff402-e476-48b8-b842-18a4482b92f3",
+        "label": "custom_timing_files",
+        "prov:atLocation": "custom_timing_files",
+        "generatedBy": "urn:71ffbb2a-d6ad-4539-8ff1-eac611e0cc1e"
+      },
+      {
+        "@id": "urn:d6795dbc-c5c3-4ee1-93ea-ec35627cc481",
+        "label": "sub-01_tone_counting.txt",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/FSL/ONSETS/sub-01_tone_counting.txt"
+      },
+      {
+        "@id": "urn:71fc771b-e252-40d0-ab9e-783a5e72efa0",
+        "label": "ev1.txt",
+        "prov:atLocation": "custom_timing_files/ev1.txt",
+        "generatedBy": "urn:547cd2ec-33b8-41e7-9e40-4e0cedee8995"
+      },
+      {
+        "@id": "urn:dd10876a-be78-4527-b8ab-5af920bada39",
+        "label": "custom_timing_files",
+        "prov:atLocation": "custom_timing_files",
+        "generatedBy": "urn:b89de74e-8bb3-40be-802f-fd665cb6122e"
+      },
+      {
+        "@id": "urn:e0223910-238a-4f06-9fcb-9af00094b9f4",
+        "label": "sub-01_tone_counting_probe.txt",
+        "prov:atLocation": "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/FSL/ONSETS/sub-01_tone_counting_probe.txt"
+      },
+      {
+        "@id": "urn:81a36762-8f3c-4164-a1a6-cd95337a9c5a",
+        "label": "ev2.txt",
+        "prov:atLocation": "custom_timing_files/ev2.txt",
+        "generatedBy": "urn:b7380eb7-aa3b-408b-9515-039c28d687f9"
+      },
+      {
+        "@id": "urn:e4eb5d16-bf2e-4210-9611-ea1f610a444b",
+        "label": "res4d",
+        "prov:atLocation": "stats/res4d"
+      },
+      {
+        "@id": "urn:15d7d78f-2220-4068-a3cd-89539ab042c7",
+        "label": "smoothness",
+        "prov:atLocation": "stats/smoothness",
+        "generatedBy": "urn:76f5299e-78f0-451d-96f5-09ed2129bcba"
+      },
+      {
+        "@id": "urn:af9d9e91-e35c-45f4-b942-55c655741f1b",
+        "label": "zstat1",
+        "prov:atLocation": "stats/zstat1"
+      },
+      {
+        "@id": "urn:716e9988-940f-4a1f-99be-3bfbb62a20ae",
+        "label": "thresh_zstat1",
+        "prov:atLocation": "thresh_zstat1",
+        "generatedBy": "urn:26b42478-4be7-43a6-829a-555b82601dcc"
+      },
+      {
+        "@id": "urn:1d4e83a7-707f-4a0f-b112-c66ff033deb7",
+        "label": "cope1",
+        "prov:atLocation": "stats/cope1"
+      },
+      {
+        "@id": "urn:9618d383-0465-4931-b050-341ef8ab6d8f",
+        "label": "cluster_mask_zstat1",
+        "prov:atLocation": "cluster_mask_zstat1",
+        "generatedBy": "urn:f24ed00b-e9b7-4693-8323-7076a69d6e3f"
+      },
+      {
+        "@id": "urn:af23723e-ca24-4b30-864b-f680cfb7bf75",
+        "label": "cope1",
+        "prov:atLocation": "stats/cope1",
+        "generatedBy": "urn:f24ed00b-e9b7-4693-8323-7076a69d6e3f"
+      },
+      {
+        "@id": "urn:adba61e1-a197-4726-8e05-32201abdc37f",
+        "label": "cluster_zstat1",
+        "prov:atLocation": "cluster_zstat1"
+      },
+      {
+        "@id": "urn:0bf6cc7e-d1cc-4d1c-ad0e-717eea7c9386",
+        "label": "rendered_thresh_zstat1",
+        "prov:atLocation": "rendered_thresh_zstat1",
+        "generatedBy": "urn:b8227d25-42fd-48c1-98c5-2cf6990591e0"
+      },
+      {
+        "@id": "urn:0c5004e7-5c02-4e84-a2da-90a51ef0e27c",
+        "label": "rendered_thresh_zstat1.png",
+        "prov:atLocation": "rendered_thresh_zstat1.png",
+        "generatedBy": "urn:3022d732-3063-48cf-904d-310105e2edf4"
+      },
+      {
+        "@id": "urn:2adb8b07-98ca-4a62-9c4a-0ba44f06faea",
+        "label": "ramp.gif",
+        "prov:atLocation": "/usr/local/packages/fsl-5.0.10/etc/luts/ramp.gif"
+      },
+      {
+        "@id": "urn:e8fb2f07-0cec-43e0-8007-87cf37661f83",
+        "label": ".ramp.gif",
+        "prov:atLocation": ".ramp.gif",
+        "generatedBy": "urn:a9a1e640-a917-4f8b-b5d5-4648a99d94d2"
+      },
+      {
+        "@id": "urn:f00450b3-2427-45b7-b956-34473beea9fd",
+        "label": "tsplot",
+        "prov:atLocation": "tsplot",
+        "generatedBy": "urn:92321eaf-6bfb-466e-abee-2f193bc9e3e1"
+      },
+      {
+        "@id": "urn:d2469743-f2ec-4fa8-8816-7ad57deba00b",
+        "label": "tsplot",
+        "prov:atLocation": "tsplot",
+        "generatedBy": "urn:ff7bcc08-779f-46fb-82e6-45eb01400426"
+      }
+    ]
+  }
+}
