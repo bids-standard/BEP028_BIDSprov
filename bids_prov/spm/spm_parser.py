@@ -96,7 +96,7 @@ def readlines(filename: str) -> Generator[str, None, None]:  # from https://docs
                 brace_with_multiline = False
                 while _line.count("{") != _line.count("}"):
                     brace_with_multiline = True
-                    _line += next(fd)[:-1].lstrip() + ","  #
+                    _line += next(fd)[:-1].lstrip() + ","
                 if brace_with_multiline:
                     _line = _line[:-1]  # drop last in case of multiline,
                 while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
