@@ -29,7 +29,8 @@ def viz_turtle(content=None, img_file=None, source=None, **kwargs) -> None:
     prov_doc = ProvDocument.deserialize(
         content=content, format="rdf", rdf_format="turtle", source=source)
     # TODO : show attributes has optional arg
-    dot = prov_to_dot(prov_doc, use_labels=True,
+    sorted_prov_doc = sorted(prov_doc.get_records(), key=lambda r: r.identifier)
+    dot = prov_to_dot(sorted_prov_doc, use_labels=True,
                       show_element_attributes=False, show_relation_attributes=False)
     dot.write_png(img_file)
 
