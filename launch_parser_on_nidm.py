@@ -80,7 +80,8 @@ def main():
                 filename_ss_ext = file.split(".html")[0]
                 shutil.copyfile(filename, output_dir_fsl + "/" + str(file))
                 output_jsonld = output_dir_fsl + "/" + filename_ss_ext + ".jsonld"
-                fsl_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
+                jsonld_same_as_existing = fsl_to_bids_prov(root + "/" + str(file), CONTEXT_URL,
+                                                           output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_fsl + "/" + filename_ss_ext + ".png"
 
             elif file.endswith("proc.sub_001") or file.endswith(".tcsh"):
@@ -89,7 +90,8 @@ def main():
                 filename_ss_ext = file.split(".sub_001")[0]
                 shutil.copyfile(filename, output_dir_afni + "/" + str(file))
                 output_jsonld = output_dir_afni + "/" + filename_ss_ext + ".jsonld"
-                afni_to_bids_prov(root + "/" + str(file), CONTEXT_URL, output_file=output_jsonld, verbose=opt.verbose)
+                jsonld_same_as_existing = afni_to_bids_prov(root + "/" + str(file), CONTEXT_URL,
+                                                            output_file=output_jsonld, verbose=opt.verbose)
                 output_png = output_dir_afni + "/" + filename_ss_ext + ".png"
 
             else:

@@ -321,7 +321,7 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     records = build_records(commands, agent_id, verbose=verbose)
     graph["records"].update(records)
 
-    writing_jsonld(graph, indent, output_file)
+    return writing_jsonld(graph, indent, output_file)
 
 
 

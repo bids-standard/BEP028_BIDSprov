@@ -526,7 +526,7 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     records = build_records(lines, agent_id)
     graph["records"].update(records)
 
-    writing_jsonld(graph, indent, output_file)
+    return writing_jsonld(graph, indent, output_file)
 
 
 if __name__ == "__main__":
