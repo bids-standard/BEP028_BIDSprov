@@ -1,13 +1,15 @@
+import argparse
+import json
+import os
 import re
 from collections import defaultdict
 from itertools import chain
-import json
-import os
 from typing import List, Mapping
-from bs4 import BeautifulSoup
-import argparse
 
-from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping
+from bs4 import BeautifulSoup
+
+from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping, compute_sha_256_entity, \
+    writing_jsonld
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
@@ -482,7 +484,6 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 "used": list(),
             }
 
-            # input_id = ""
             for input_path in inputs:
                 # input_name = input_path.replace("/", "_") # TODO
                 input_id = f"urn:{get_id()}"  # def format_id
@@ -517,7 +518,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
 
 def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                     soft_ver="xxx", indent=2, verbose=False) -> None:  # TODO : add fsl version
+                     soft_ver="xxx", indent=2, verbose=False) -> bool:  # TODO : add fsl version
 
     graph, agent_id = get_default_graph(
         label="FSL", context_url=context_url, soft_ver=soft_ver)
@@ -526,8 +527,9 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     records = build_records(lines, agent_id)
     graph["records"].update(records)
 
-    with open(output_file, "w") as fd:
-        json.dump(graph, fd, indent=indent)
+    compute_sha_256_entity(graph["records"]["prov:Entity"])
+
+    return writing_jsonld(graph, indent, output_file)
 
 
 if __name__ == "__main__":
