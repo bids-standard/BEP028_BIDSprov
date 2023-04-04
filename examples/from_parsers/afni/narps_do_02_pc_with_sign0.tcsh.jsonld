@@ -22,6 +22,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         "@id": "urn:2d8bd0b7-06b5-4701-b4cb-ddb6132d0064",
 =======
 <<<<<<< HEAD
@@ -80,6 +81,9 @@
 =======
         "@id": "urn:d8a8bab3-3d92-4f5d-a1e1-171be8186550",
 >>>>>>> 6496fd09 (automated nidm example computation from github action)
+=======
+        "@id": "urn:0aee2d80-a755-4f24-8b80-7758561c8768",
+>>>>>>> 0bff7b87b7264c2a3ff8db2d1d961eb9c497c744
         "RRID": "RRID:SCR_007037",
         "@type": "prov:SoftwareAgent",
         "label": "AFNI",
@@ -88,6 +92,7 @@
     ],
     "prov:Activity": [
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         "@id": "urn:cf553c3a-9e65-4b72-a4bd-e915c8f13bc2",
@@ -465,11 +470,55 @@
 =======
           "urn:8b06cd32-ce9c-4f27-a917-113b75b8b9a3"
 >>>>>>> 6496fd09 (automated nidm example computation from github action)
+=======
+        "@id": "urn:890edc65-2f24-4277-814d-305ef4e240b6",
+        "label": "3dpc",
+        "associatedWith": "urn:0aee2d80-a755-4f24-8b80-7758561c8768",
+        "command": "3dpc -overwrite -mask ${dset_mask} -pcsave 5 -prefix ${dir_hyp}/PC_hyp${num} ${grp_dset}",
+        "parameters": {},
+        "used": [
+          "urn:51ba8cb4-2925-4893-b723-6d698dc382a4",
+          "urn:a5dcc8d7-b212-430d-a49e-0b88be786f2c"
+        ]
+      },
+      {
+        "@id": "urn:3d485fcd-33d7-42a9-b5e6-303f7758ac0a",
+        "label": "3dresample",
+        "associatedWith": "urn:0aee2d80-a755-4f24-8b80-7758561c8768",
+        "command": "3dresample -overwrite -prefix tmp_REF_DSET.nii.gz -master ${dset_mask} -input \"${ref_dset}\"",
+        "parameters": {},
+        "used": [
+          "urn:ffa1efc9-0cbd-4dce-b617-da0d0c7236ed",
+          "urn:51ba8cb4-2925-4893-b723-6d698dc382a4"
+        ]
+      },
+      {
+        "@id": "urn:5b797c6a-468e-4070-8fd8-5513fd57a39b",
+        "label": "3dMatch",
+        "associatedWith": "urn:0aee2d80-a755-4f24-8b80-7758561c8768",
+        "command": "3dMatch -echo_edu -overwrite -mask ${dset_mask} -refset ${dir_hyp}/PC_hyp${num}+tlrc -inset tmp_REF_DSET.nii.gz -prefix tmp_MATCHED",
+        "parameters": {},
+        "used": [
+          "urn:ea954992-9170-42d4-be9f-9b8d47f3f6ec",
+          "urn:21c6e03c-b576-481c-b22f-e662ebaedc48",
+          "urn:51ba8cb4-2925-4893-b723-6d698dc382a4"
+        ]
+      },
+      {
+        "@id": "urn:7fc69645-c381-40cc-b395-4e3f0d67c2aa",
+        "label": "3dcalc",
+        "associatedWith": "urn:0aee2d80-a755-4f24-8b80-7758561c8768",
+        "command": "3dcalc -echo_edu -overwrite -a ${dir_hyp}/PC_hyp${num}+tlrc -expr \"${signum}*a\" -prefix ${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
+        "parameters": {},
+        "used": [
+          "urn:21c6e03c-b576-481c-b22f-e662ebaedc48"
+>>>>>>> 0bff7b87b7264c2a3ff8db2d1d961eb9c497c744
         ]
       }
     ],
     "prov:Entity": [
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -525,10 +574,14 @@
 =======
         "@id": "urn:fb77c99d-71e2-45e0-9499-04aa4b8eb125",
 >>>>>>> 6496fd09 (automated nidm example computation from github action)
+=======
+        "@id": "urn:51ba8cb4-2925-4893-b723-6d698dc382a4",
+>>>>>>> 0bff7b87b7264c2a3ff8db2d1d961eb9c497c744
         "label": "${dset_mask}",
         "prov:atLocation": "${dset_mask}"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -560,10 +613,14 @@
 =======
         "@id": "urn:1d4df94c-bd7d-4010-a99e-09bc1c573a23",
 >>>>>>> 6496fd09 (automated nidm example computation from github action)
+=======
+        "@id": "urn:a5dcc8d7-b212-430d-a49e-0b88be786f2c",
+>>>>>>> 0bff7b87b7264c2a3ff8db2d1d961eb9c497c744
         "label": "${grp_dset}",
         "prov:atLocation": "${grp_dset}"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -765,10 +822,20 @@
 =======
         "@id": "urn:3e1df72e-bf7a-4d12-bf43-b976f11715af",
 >>>>>>> 6496fd09 (automated nidm example computation from github action)
+=======
+        "@id": "urn:113a75db-d361-4fc4-bcce-5e542399f514",
+        "label": "PC_hyp${num}",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}",
+        "generatedBy": "urn:890edc65-2f24-4277-814d-305ef4e240b6"
+      },
+      {
+        "@id": "urn:ffa1efc9-0cbd-4dce-b617-da0d0c7236ed",
+>>>>>>> 0bff7b87b7264c2a3ff8db2d1d961eb9c497c744
         "label": "\"${ref_dset}\"",
         "prov:atLocation": "\"${ref_dset}\""
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         "@id": "urn:db607ee4-cb77-489d-9366-1526ff91ce0a",
@@ -853,10 +920,20 @@
 =======
         "@id": "urn:8b06cd32-ce9c-4f27-a917-113b75b8b9a3",
 >>>>>>> 6496fd09 (automated nidm example computation from github action)
+=======
+        "@id": "urn:ea954992-9170-42d4-be9f-9b8d47f3f6ec",
+        "label": "tmp_REF_DSET.nii.gz",
+        "prov:atLocation": "tmp_REF_DSET.nii.gz",
+        "generatedBy": "urn:3d485fcd-33d7-42a9-b5e6-303f7758ac0a"
+      },
+      {
+        "@id": "urn:21c6e03c-b576-481c-b22f-e662ebaedc48",
+>>>>>>> 0bff7b87b7264c2a3ff8db2d1d961eb9c497c744
         "label": "PC_hyp${num}",
         "prov:atLocation": "${dir_hyp}/PC_hyp${num}+tlrc"
       },
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -952,6 +1029,18 @@
 =======
         "generatedBy": "urn:ff53e6f6-d84b-49a4-bc04-648928048945"
 >>>>>>> 6496fd09 (automated nidm example computation from github action)
+=======
+        "@id": "urn:0e8d219b-e80f-47d4-9995-cf87dd982822",
+        "label": "tmp_MATCHED",
+        "prov:atLocation": "tmp_MATCHED",
+        "generatedBy": "urn:5b797c6a-468e-4070-8fd8-5513fd57a39b"
+      },
+      {
+        "@id": "urn:60327340-dbd6-483d-ae57-6f5a9dcaffb4",
+        "label": "PC_hyp${num}_sign0.nii.gz",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
+        "generatedBy": "urn:7fc69645-c381-40cc-b395-4e3f0d67c2aa"
+>>>>>>> 0bff7b87b7264c2a3ff8db2d1d961eb9c497c744
       }
     ]
   }
