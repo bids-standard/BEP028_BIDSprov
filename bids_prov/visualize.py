@@ -3,23 +3,19 @@ A Command Line Interface to generate `graphviz` graphs from bids-prov JSON-ld fi
 
 This facilitates debugging and design of the specifications
 """
-import sys
 
 # import click
 import argparse
-
-# from graphviz import Digraph
-from prov.model import ProvDocument
-from prov.dot import prov_to_dot
-import requests
-import os
-
-import rdflib as rl
-import pyld as ld
 import json
-
-from collections import defaultdict
+import os
 import warnings
+from collections import defaultdict
+
+import pyld as ld
+import rdflib as rl
+import requests
+from prov.dot import prov_to_dot
+from prov.model import ProvDocument
 
 OPTIONAL_FIELDS = {'Activity': ("startedAtTime", "endedAtTime"),
                    'Entity': ("atLocation", "generatedAt")}  # fields to omit if `--high-level` flag activated

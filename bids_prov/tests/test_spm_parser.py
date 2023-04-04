@@ -1,16 +1,16 @@
 import json
-import re
 import os
-import uuid
 import random
-import rdflib
+import re
+import uuid
 
+import rdflib
 from deepdiff import DeepDiff
 
-from bids_prov.utils import CONTEXT_URL
-from .compare_graph import load_jsonld11_for_rdf, is_included_rdf_graph
 from bids_prov.spm.spm_config import has_parameter, DEPENDENCY_REGEX
 from bids_prov.spm.spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov
+from bids_prov.utils import CONTEXT_URL
+from .compare_graph import load_jsonld11_for_rdf, is_included_rdf_graph
 
 random.seed(14)  # Control random generation for test, init at each import
 INIT_STATE = random.getstate()
@@ -85,14 +85,12 @@ def test_format_activity_name():
 
 def test_get_input_entity():
     left = "files"
-    right = "{'ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs'};"
+    right = "{'ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gz'};"
     # entity label : sub-01_task-tonecounting_bold.nii.gz
     entities = [{
         "@id": "urn:c15521b1-b3dc-450a-9daa-37e51b591d75",
-        "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gzs",
-        "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gzs",
-        'digest': {
-            'sha256_urn:c15521b1-b3dc-450a-9daa-37e51b591d75': '9c187711872d49e481be3cca2277055587d96bf20b982f5550d69b0a567f699b'},
+        "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gz",
+        "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gz"
     }]
     init_random_state()
     right_entity = get_input_entity(right)[0]
