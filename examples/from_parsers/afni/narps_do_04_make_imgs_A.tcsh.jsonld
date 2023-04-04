@@ -1,0 +1,128 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:dab2ef21-100c-46ae-bb8c-ce5d109a9db3",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "AFNI",
+        "version": "afni24"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:7f7f2c35-3da6-4e68-9c0b-3c2c6256d4e8",
+        "label": "Make directory",
+        "associatedWith": "urn:dab2ef21-100c-46ae-bb8c-ce5d109a9db3",
+        "command": "\\mkdir ${odir}",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:c12a4eb3-4e03-4a63-8149-d4afbf60aead",
+        "label": "@chauffeur_afni",
+        "associatedWith": "urn:dab2ef21-100c-46ae-bb8c-ce5d109a9db3",
+        "command": "@chauffeur_afni -ulay ${ref} -ulay_range \"2%\" \"110%\" -olay ${ff} -set_subbricks -1 0 0 -func_range 5 -thr_olay 3 -cbar Reds_and_Blues_Inv -olay_alpha Linear -olay_boxed Yes -opacity 7 -prefix ${odir}/img_${nnn}_alpha_${iid} -montx 1 -monty 1 -set_dicom_xyz 5 18 18 -set_xhairs OFF -label_string \"::${iid}\" -label_mode 1 -label_size 3 -do_clean",
+        "parameters": {},
+        "used": [
+          "urn:55180480-653f-45fa-a1cc-f0b41d7ea921"
+        ]
+      },
+      {
+        "@id": "urn:c04c4a6f-05c3-476f-be2b-fc0a8db2a865",
+        "label": "@chauffeur_afni",
+        "associatedWith": "urn:dab2ef21-100c-46ae-bb8c-ce5d109a9db3",
+        "command": "@chauffeur_afni -ulay ${ref} -ulay_range \"2%\" \"110%\" -olay ${ff} -set_subbricks -1 0 0 -func_range 5 -thr_olay 3 -cbar Reds_and_Blues_Inv -olay_alpha No -olay_boxed No -opacity 7 -prefix ${odir}/img_${nnn}_psi_${iid} -montx 1 -monty 1 -set_dicom_xyz 5 18 18 -set_xhairs OFF -label_string \"::${iid}\" -label_mode 1 -label_size 3 -do_clean",
+        "parameters": {},
+        "used": [
+          "urn:55180480-653f-45fa-a1cc-f0b41d7ea921"
+        ]
+      },
+      {
+        "@id": "urn:330b2c2a-e745-4fcf-b927-cb71074e47a5",
+        "label": "adjunct_calc_mont_dims.py",
+        "associatedWith": "urn:dab2ef21-100c-46ae-bb8c-ce5d109a9db3",
+        "command": "adjunct_calc_mont_dims.py ${nallbase} __tmp_${hyp}",
+        "parameters": {},
+        "used": [
+          "urn:f9c1b32b-bf7a-4520-8ff6-461524ebfdb1"
+        ]
+      },
+      {
+        "@id": "urn:0ef02527-12c0-4774-942d-54aaeaaf07e6",
+        "label": "2dcat",
+        "associatedWith": "urn:dab2ef21-100c-46ae-bb8c-ce5d109a9db3",
+        "command": "2dcat -echo_edu -gap 5 -gap_col ${lcol} -ny ${dims[4]} -nx ${dims[3]} -zero_wrap -prefix ${odir}/ALL_alpha_${hyp}_sview_${ss}.jpg ${odir}/img_*_alpha*${ss}*",
+        "parameters": {},
+        "used": [
+          "urn:89347831-02ee-4569-b40d-017cdfd1aaac"
+        ]
+      },
+      {
+        "@id": "urn:1fb6272a-c426-4ae0-8210-fd27fb1652d2",
+        "label": "2dcat",
+        "associatedWith": "urn:dab2ef21-100c-46ae-bb8c-ce5d109a9db3",
+        "command": "2dcat -echo_edu -gap 5 -gap_col ${lcol} -ny ${dims[4]} -nx ${dims[3]} -zero_wrap -prefix ${odir}/ALL_psi_${hyp}_sview_${ss}.jpg ${odir}/img_*_psi*${ss}*",
+        "parameters": {},
+        "used": [
+          "urn:c55dfd14-ede5-41de-bb05-483607aaf0bb"
+        ]
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:55180480-653f-45fa-a1cc-f0b41d7ea921",
+        "label": "${ref}",
+        "prov:atLocation": "${ref}"
+      },
+      {
+        "@id": "urn:51b95c80-9535-4bc4-8bba-0be252de480c",
+        "label": "img_${nnn}_alpha_${iid}",
+        "prov:atLocation": "${odir}/img_${nnn}_alpha_${iid}",
+        "generatedBy": "urn:c12a4eb3-4e03-4a63-8149-d4afbf60aead"
+      },
+      {
+        "@id": "urn:878ebaab-6c5f-4254-912a-369776820110",
+        "label": "img_${nnn}_psi_${iid}",
+        "prov:atLocation": "${odir}/img_${nnn}_psi_${iid}",
+        "generatedBy": "urn:c04c4a6f-05c3-476f-be2b-fc0a8db2a865"
+      },
+      {
+        "@id": "urn:f9c1b32b-bf7a-4520-8ff6-461524ebfdb1",
+        "label": "nallbase",
+        "prov:atLocation": "nallbase"
+      },
+      {
+        "@id": "urn:8b194ab6-819a-4f52-bd2c-e799d56c6b5a",
+        "label": "__tmp_",
+        "prov:atLocation": "__tmp_",
+        "generatedBy": "urn:330b2c2a-e745-4fcf-b927-cb71074e47a5"
+      },
+      {
+        "@id": "urn:89347831-02ee-4569-b40d-017cdfd1aaac",
+        "label": "img_*_alpha*${ss}*",
+        "prov:atLocation": "${odir}/img_*_alpha*${ss}*"
+      },
+      {
+        "@id": "urn:43d5f730-10cd-49b4-b273-aa3e9b86b126",
+        "label": "ALL_alpha_${hyp}_sview_${ss}.jpg",
+        "prov:atLocation": "${odir}/ALL_alpha_${hyp}_sview_${ss}.jpg",
+        "generatedBy": "urn:0ef02527-12c0-4774-942d-54aaeaaf07e6"
+      },
+      {
+        "@id": "urn:c55dfd14-ede5-41de-bb05-483607aaf0bb",
+        "label": "img_*_psi*${ss}*",
+        "prov:atLocation": "${odir}/img_*_psi*${ss}*"
+      },
+      {
+        "@id": "urn:b35f9348-e886-4b8d-8915-d7a37fdb2256",
+        "label": "ALL_psi_${hyp}_sview_${ss}.jpg",
+        "prov:atLocation": "${odir}/ALL_psi_${hyp}_sview_${ss}.jpg",
+        "generatedBy": "urn:1fb6272a-c426-4ae0-8210-fd27fb1652d2"
+      }
+    ]
+  }
+}

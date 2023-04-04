@@ -20,6 +20,7 @@
           "urn:d5386c91-5ada-400f-83fc-797c866bcda8"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.files = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};\nmatlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.action.copyto = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/FUNCTIONAL'};",
         "parameters": {
           "action.copyto": "{'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/FUNCTIONAL'}"
         }
@@ -31,6 +32,7 @@
           "urn:3c794f07-df83-4255-8909-cab774f309e8"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.files = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/sub-01/anat/sub-01_T1w.nii.gz'};\nmatlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.action.copyto = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL'};",
         "parameters": {
           "action.copyto": "{'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL'}"
         }
@@ -41,7 +43,8 @@
         "used": [
           "urn:f7ab9db0-4633-4055-b84d-47151f548011"
         ],
-        "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b"
+        "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{3}.cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1) = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));"
       },
       {
         "@id": "urn:52e31558-5fbf-4a21-b96c-c9ecf2088065",
@@ -49,7 +52,8 @@
         "used": [
           "urn:3a2fb18e-9936-4c27-bc14-c49eaf2730cd"
         ],
-        "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b"
+        "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{4}.cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1) = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));"
       },
       {
         "@id": "urn:0ad32554-eb1a-4d7a-9d8a-da76202aa10a",
@@ -58,6 +62,7 @@
           "urn:7e922751-88ef-48e2-b7b0-91a6d51a8754"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{5}.spm.spatial.realign.estwrite.data{1}(1) = cfg_dep('GunZip Files: GunZipped Files', substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{':'}));\nmatlabbatch{5}.spm.spatial.realign.estwrite.eoptions.quality = 0.9;\nmatlabbatch{5}.spm.spatial.realign.estwrite.eoptions.sep = 4;\nmatlabbatch{5}.spm.spatial.realign.estwrite.eoptions.fwhm = 5;\nmatlabbatch{5}.spm.spatial.realign.estwrite.eoptions.rtm = 1;\nmatlabbatch{5}.spm.spatial.realign.estwrite.eoptions.interp = 2;\nmatlabbatch{5}.spm.spatial.realign.estwrite.eoptions.wrap = [0 0 0];\nmatlabbatch{5}.spm.spatial.realign.estwrite.eoptions.weight = '';\nmatlabbatch{5}.spm.spatial.realign.estwrite.roptions.which = [0 1];\nmatlabbatch{5}.spm.spatial.realign.estwrite.roptions.interp = 4;\nmatlabbatch{5}.spm.spatial.realign.estwrite.roptions.wrap = [0 0 0];\nmatlabbatch{5}.spm.spatial.realign.estwrite.roptions.mask = 1;\nmatlabbatch{5}.spm.spatial.realign.estwrite.roptions.prefix = 'r';",
         "parameters": {
           "eoptions.quality": "0.9",
           "eoptions.sep": "4",
@@ -81,6 +86,7 @@
           "urn:4bc4b59a-df17-4f71-9f87-a8164f2587fc"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{6}.spm.spatial.coreg.estimate.ref(1) = cfg_dep('Realign: Estimate & Reslice: Mean Image', substruct('.','val', '{}',{5}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','rmean'));\nmatlabbatch{6}.spm.spatial.coreg.estimate.source(1) = cfg_dep('GunZip Files: GunZipped Files', substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{':'}));\nmatlabbatch{6}.spm.spatial.coreg.estimate.other = {''};\nmatlabbatch{6}.spm.spatial.coreg.estimate.eoptions.cost_fun = 'nmi';\nmatlabbatch{6}.spm.spatial.coreg.estimate.eoptions.sep = [4 2];\nmatlabbatch{6}.spm.spatial.coreg.estimate.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];\nmatlabbatch{6}.spm.spatial.coreg.estimate.eoptions.fwhm = [7 7];",
         "parameters": {
           "other": "{''}",
           "eoptions.cost_fun": "'nmi'",
@@ -96,6 +102,7 @@
           "urn:4bc4b59a-df17-4f71-9f87-a8164f2587fc"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{7}.spm.spatial.preproc.channel.vols(1) = cfg_dep('GunZip Files: GunZipped Files', substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{':'}));\nmatlabbatch{7}.spm.spatial.preproc.channel.biasreg = 0.001;\nmatlabbatch{7}.spm.spatial.preproc.channel.biasfwhm = 60;\nmatlabbatch{7}.spm.spatial.preproc.channel.write = [0 1];\nmatlabbatch{7}.spm.spatial.preproc.tissue(1).tpm = {'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,1'};\nmatlabbatch{7}.spm.spatial.preproc.tissue(1).ngaus = 1;\nmatlabbatch{7}.spm.spatial.preproc.tissue(1).native = [1 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(1).warped = [0 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(2).tpm = {'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,2'};\nmatlabbatch{7}.spm.spatial.preproc.tissue(2).ngaus = 1;\nmatlabbatch{7}.spm.spatial.preproc.tissue(2).native = [1 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(2).warped = [0 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(3).tpm = {'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,3'};\nmatlabbatch{7}.spm.spatial.preproc.tissue(3).ngaus = 2;\nmatlabbatch{7}.spm.spatial.preproc.tissue(3).native = [1 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(3).warped = [0 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(4).tpm = {'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,4'};\nmatlabbatch{7}.spm.spatial.preproc.tissue(4).ngaus = 3;\nmatlabbatch{7}.spm.spatial.preproc.tissue(4).native = [1 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(4).warped = [0 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(5).tpm = {'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,5'};\nmatlabbatch{7}.spm.spatial.preproc.tissue(5).ngaus = 4;\nmatlabbatch{7}.spm.spatial.preproc.tissue(5).native = [1 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(5).warped = [0 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(6).tpm = {'/storage/essicd/data/NIDM-Ex/spm12_update/tpm/TPM.nii,6'};\nmatlabbatch{7}.spm.spatial.preproc.tissue(6).ngaus = 2;\nmatlabbatch{7}.spm.spatial.preproc.tissue(6).native = [0 0];\nmatlabbatch{7}.spm.spatial.preproc.tissue(6).warped = [0 0];\nmatlabbatch{7}.spm.spatial.preproc.warp.mrf = 1;\nmatlabbatch{7}.spm.spatial.preproc.warp.cleanup = 1;\nmatlabbatch{7}.spm.spatial.preproc.warp.reg = [0 0.001 0.5 0.05 0.2];\nmatlabbatch{7}.spm.spatial.preproc.warp.affreg = 'mni';\nmatlabbatch{7}.spm.spatial.preproc.warp.fwhm = 0;\nmatlabbatch{7}.spm.spatial.preproc.warp.samp = 3;\nmatlabbatch{7}.spm.spatial.preproc.warp.write = [0 1];",
         "parameters": {
           "channel.biasreg": "0.001",
           "channel.biasfwhm": "60",
@@ -141,6 +148,7 @@
           "urn:bd6df541-22ee-4ac9-877c-84ae4768a726"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{8}.spm.spatial.normalise.write.subj.def(1) = cfg_dep('Segment: Forward Deformations', substruct('.','val', '{}',{7}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','fordef', '()',{':'}));\nmatlabbatch{8}.spm.spatial.normalise.write.subj.resample(1) = cfg_dep('Realign: Estimate & Reslice: Realigned Images (Sess 1)', substruct('.','val', '{}',{5}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','sess', '()',{1}, '.','cfiles'));\nmatlabbatch{8}.spm.spatial.normalise.write.woptions.bb = [-78 -112 -70 78 76 85];\nmatlabbatch{8}.spm.spatial.normalise.write.woptions.vox = [2 2 2];\nmatlabbatch{8}.spm.spatial.normalise.write.woptions.interp = 4;\nmatlabbatch{8}.spm.spatial.normalise.write.woptions.prefix = 'w';",
         "parameters": {
           "woptions.bb": "[-78, -112, -70, 78, 76, 85]",
           "woptions.vox": "[2, 2, 2]",
@@ -156,6 +164,7 @@
           "urn:df8f4a65-c11b-411c-bb8e-a590238f5643"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{9}.spm.spatial.normalise.write.subj.def(1) = cfg_dep('Segment: Forward Deformations', substruct('.','val', '{}',{7}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','fordef', '()',{':'}));\nmatlabbatch{9}.spm.spatial.normalise.write.subj.resample(1) = cfg_dep('Segment: Bias Corrected (1)', substruct('.','val', '{}',{7}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','channel', '()',{1}, '.','biascorr', '()',{':'}));\nmatlabbatch{9}.spm.spatial.normalise.write.woptions.bb = [-78 -112 -70 78 76 85];\nmatlabbatch{9}.spm.spatial.normalise.write.woptions.vox = [2 2 2];\nmatlabbatch{9}.spm.spatial.normalise.write.woptions.interp = 4;\nmatlabbatch{9}.spm.spatial.normalise.write.woptions.prefix = 'w';",
         "parameters": {
           "woptions.bb": "[-78, -112, -70, 78, 76, 85]",
           "woptions.vox": "[2, 2, 2]",
@@ -170,6 +179,7 @@
           "urn:c290da90-9494-48c5-822f-947f1168f274"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{10}.spm.spatial.smooth.data(1) = cfg_dep('Normalise: Write: Normalised Images (Subj 1)', substruct('.','val', '{}',{8}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{1}, '.','files'));\nmatlabbatch{10}.spm.spatial.smooth.fwhm = [6 6 6];\nmatlabbatch{10}.spm.spatial.smooth.dtype = 0;\nmatlabbatch{10}.spm.spatial.smooth.im = 0;\nmatlabbatch{10}.spm.spatial.smooth.prefix = 's';",
         "parameters": {
           "fwhm": "[6, 6, 6]",
           "dtype": "0",
@@ -185,6 +195,7 @@
           "urn:fe0dab03-b97b-4c4e-920c-ec29d36e0707"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{11}.spm.stats.fmri_spec.dir = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/spm_2_T_test'};\nmatlabbatch{11}.spm.stats.fmri_spec.timing.units = 'secs';\nmatlabbatch{11}.spm.stats.fmri_spec.timing.RT = 2;\nmatlabbatch{11}.spm.stats.fmri_spec.timing.fmri_t = 16;\nmatlabbatch{11}.spm.stats.fmri_spec.timing.fmri_t0 = 8;\nmatlabbatch{11}.spm.stats.fmri_spec.sess.scans(1) = cfg_dep('Smooth: Smoothed Images', substruct('.','val', '{}',{10}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));\nmatlabbatch{11}.spm.stats.fmri_spec.sess.cond = struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {});\nmatlabbatch{11}.spm.stats.fmri_spec.sess.multi = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat'};\nmatlabbatch{11}.spm.stats.fmri_spec.sess.regress = struct('name', {}, 'val', {});\nmatlabbatch{11}.spm.stats.fmri_spec.sess.multi_reg = {''};\nmatlabbatch{11}.spm.stats.fmri_spec.sess.hpf = 128;\nmatlabbatch{11}.spm.stats.fmri_spec.fact = struct('name', {}, 'levels', {});\nmatlabbatch{11}.spm.stats.fmri_spec.bases.hrf.derivs = [0 0];\nmatlabbatch{11}.spm.stats.fmri_spec.volt = 1;\nmatlabbatch{11}.spm.stats.fmri_spec.global = 'None';\nmatlabbatch{11}.spm.stats.fmri_spec.mthresh = 0.8;\nmatlabbatch{11}.spm.stats.fmri_spec.mask = {''};\nmatlabbatch{11}.spm.stats.fmri_spec.cvi = 'AR(1)';",
         "parameters": {
           "dir": "{'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/spm_2_T_test'}",
           "timing.units": "'secs'",
@@ -211,6 +222,7 @@
           "urn:7329dacf-1f1a-4421-b1c1-a186371bd08c"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{12}.spm.stats.fmri_est.spmmat(1) = cfg_dep('fMRI model specification: SPM.mat File', substruct('.','val', '{}',{11}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));\nmatlabbatch{12}.spm.stats.fmri_est.write_residuals = 0;\nmatlabbatch{12}.spm.stats.fmri_est.method.Classical = 1;",
         "parameters": {
           "write_residuals": "0",
           "method.Classical": "1"
@@ -223,6 +235,7 @@
           "urn:a9bfdb6e-ec73-4cc5-8671-06daf48b1190"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{13}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File', substruct('.','val', '{}',{12}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));\nmatlabbatch{13}.spm.stats.con.consess{1}.tcon.name = 'tone counting vs baseline';\nmatlabbatch{13}.spm.stats.con.consess{1}.tcon.weights = [1 0];\nmatlabbatch{13}.spm.stats.con.consess{1}.tcon.sessrep = 'none';\nmatlabbatch{13}.spm.stats.con.consess{2}.tcon.name = 'tone counting probe vs baseline';\nmatlabbatch{13}.spm.stats.con.consess{2}.tcon.weights = [0 1];\nmatlabbatch{13}.spm.stats.con.consess{2}.tcon.sessrep = 'none';\nmatlabbatch{13}.spm.stats.con.delete = 0;",
         "parameters": {
           "consess{1}.tcon.name": "'tone counting vs baseline'",
           "consess{1}.tcon.weights": "[1, 0]",
@@ -240,6 +253,7 @@
           "urn:19c0d5bd-aa50-40b0-9902-bd71567b0b67"
         ],
         "associatedWith": "urn:f2fe7a50-a9a2-408f-83cb-962f5872202b",
+        "command": "matlabbatch{14}.spm.stats.results.spmmat(1) = cfg_dep('Contrast Manager: SPM.mat File', substruct('.','val', '{}',{13}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));\nmatlabbatch{14}.spm.stats.results.conspec.titlestr = '';\nmatlabbatch{14}.spm.stats.results.conspec.contrasts = Inf;\nmatlabbatch{14}.spm.stats.results.conspec.threshdesc = 'none';\nmatlabbatch{14}.spm.stats.results.conspec.thresh = 0.001;\nmatlabbatch{14}.spm.stats.results.conspec.extent = 0;\nmatlabbatch{14}.spm.stats.results.conspec.conjunction = 1;\nmatlabbatch{14}.spm.stats.results.conspec.mask.none = 1;\nmatlabbatch{14}.spm.stats.results.units = 1;\nmatlabbatch{14}.spm.stats.results.print = 'pdf';\nmatlabbatch{14}.spm.stats.results.write.none = 1;",
         "parameters": {
           "conspec.titlestr": "''",
           "conspec.contrasts": "Inf",

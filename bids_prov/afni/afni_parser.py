@@ -1,13 +1,13 @@
 import argparse
-import re
 import json
 import os
+import re
 from collections import defaultdict
 from itertools import chain
 
-
 from bids_prov.fsl.fsl_parser import get_entities
-from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping, compute_sha_256_entity, writing_jsonld
+from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping, compute_sha_256_entity, \
+    writing_jsonld
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match

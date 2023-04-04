@@ -1,16 +1,16 @@
 import json
-import re
 import os
-import uuid
 import random
-import rdflib
+import re
+import uuid
 
+import rdflib
 from deepdiff import DeepDiff
 
-from bids_prov.utils import CONTEXT_URL
-from .compare_graph import load_jsonld11_for_rdf, is_included_rdf_graph
 from bids_prov.spm.spm_config import has_parameter, DEPENDENCY_REGEX
 from bids_prov.spm.spm_parser import get_records, group_lines, get_input_entity, format_activity_name, spm_to_bids_prov
+from bids_prov.utils import CONTEXT_URL
+from .compare_graph import load_jsonld11_for_rdf, is_included_rdf_graph
 
 random.seed(14)  # Control random generation for test, init at each import
 INIT_STATE = random.getstate()
