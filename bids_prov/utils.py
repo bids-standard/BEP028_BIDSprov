@@ -3,8 +3,9 @@ import random
 import hashlib
 import os
 import json
+import shutil
 
-from typing import Mapping, Union, Tuple, Dict
+from typing import Mapping, Union, Tuple
 
 CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
 
@@ -69,8 +70,56 @@ def get_sha256(file_path: str):
     with open(file_path, 'rb') as f:
         lines = f.read()
         m.update(lines)
-    md5code = m.hexdigest()
-    return md5code
+    sha256code = m.hexdigest()
+    return sha256code
+
+
+def compute_sha_256_entity(entities: dict):
+    """
+    This method calculates the sha256 of all entities if they contain the key "prov:atLocation".
+    If the file does not exist, then it is generated.
+
+    Parameters
+    ----------
+    entities : dict
+        The prov:Entity part of our dictionary generated in bids-prov format
+
+    Returns
+    -------
+    None
+    """
+    directory = 'bids_prov/file_generation'
+    for entity in entities:
+        if "prov:atLocation" in entity:
+            if len(entity["prov:atLocation"]) > 0:
+                if entity["prov:atLocation"][0] == "/":
+                    relative_path = os.path.abspath(directory + entity["prov:atLocation"])
+                else:
+                    relative_path = os.path.abspath(directory + "/" + entity["prov:atLocation"])
+
+                # Temporary process. If the file does not exist then it is created to have a digest value
+                file_directory = os.path.dirname(relative_path)
+                if not os.path.exists(file_directory):
+                    os.makedirs(file_directory)
+
+                if not os.path.exists(relative_path):
+                    try:
+                        with open(relative_path, 'w') as f:
+                            f.write(relative_path)
+                    except NotADirectoryError as e:
+                        print(f"The file {relative_path} is the child of a parent folder that was created as a file "
+                              f"previously. To be fixed.")
+
+                if os.path.exists(relative_path):
+                    try:
+                        sha256_value = get_sha256(relative_path)
+                        checksum_name = "sha256"
+                        entity['digest'] = {checksum_name: sha256_value}
+                    except IsADirectoryError as e:
+                        print(f"The file {relative_path} is a directory and also a file. To be fixed.")
+
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
 
 
 def writing_jsonld(graph, indent, output_file):
