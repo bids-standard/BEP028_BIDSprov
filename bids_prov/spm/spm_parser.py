@@ -6,7 +6,7 @@ from collections import defaultdict
 from typing import List, Dict, Generator
 
 from bids_prov.spm import spm_config as conf
-from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL, label_mapping
+from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL, label_mapping, writing_jsonld
 
 
 def format_activity_name(activity_name: str) -> str:
@@ -96,7 +96,7 @@ def readlines(filename: str) -> Generator[str, None, None]:  # from https://docs
                 brace_with_multiline = False
                 while _line.count("{") != _line.count("}"):
                     brace_with_multiline = True
-                    _line += next(fd)[:-1].lstrip() + ","  #
+                    _line += next(fd)[:-1].lstrip() + ","
                 if brace_with_multiline:
                     _line = _line[:-1]  # drop last in case of multiline,
                 while _line.count("[") != _line.count("]"):  # case of multiline for 1 instruction  matlabbatch
@@ -400,7 +400,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
 
 
 def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, spm_ver="SPM12r7224", verbose=False,
-                     indent=2) -> None:
+                     indent=2) -> bool:
     """ Exporter from batch.m to an output jsonld
 
     Parameters
@@ -416,6 +416,11 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
         False with less verbosity by default
     indent : int, optional
         2, number of indentation in jsonfile between each object
+
+    Returns
+    -------
+    bool
+        If true, nothing is written in memory because the existing file (if it exists) contains the same content.
     """
 
     graph, agent_id = get_default_graph(label="SPM", context_url=context_url, soft_ver=spm_ver)
@@ -431,8 +436,7 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
     if output_file is None:
         output_file = os.path.splitext(filename)[0] + '.jsonld'  # replace extension .m by .jsonld
 
-    with open(output_file, "w") as fd:
-        json.dump(graph, fd, indent=indent)
+    return writing_jsonld(graph, indent, output_file)
 
 
 if __name__ == "__main__":
