@@ -71,3 +71,33 @@ def get_sha256(file_path: str):
         m.update(lines)
     md5code = m.hexdigest()
     return md5code
+
+
+def writing_jsonld(graph, indent, output_file):
+    """
+    Write a json-ld in memory unless it already exists and contains the same content
+
+    Parameters
+    ----------
+    graph : dict
+        The content of the calculated json-ld graph
+    indent : int
+        The desired indentation of the json file
+    output_file : str
+        The desired file path
+
+    Returns
+    -------
+    bool
+        If the file already exists and contains the same content as `graph` then return True otherwise False.
+    """
+    if os.path.isfile(output_file):
+        with open(output_file, "r") as f:
+            existing_content = f.read()
+
+            if existing_content == json.dumps(graph, indent=indent):
+                return True
+
+    with open(output_file, "w") as fd:
+        json.dump(graph, fd, indent=indent)
+    return False
