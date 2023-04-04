@@ -1,10 +1,9 @@
-import uuid
-import random
 import hashlib
-import os
 import json
+import os
+import random
 import shutil
-
+import uuid
 from typing import Mapping, Union, Tuple
 
 CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"

@@ -1,12 +1,12 @@
 import argparse
-import json
 import os
 import re
 from collections import defaultdict
 from typing import List, Dict, Generator
 
 from bids_prov.spm import spm_config as conf
-from bids_prov.utils import get_id, get_default_graph, get_sha256, CONTEXT_URL, label_mapping, compute_sha_256_entity, writing_jsonld
+from bids_prov.utils import get_id, get_default_graph, CONTEXT_URL, label_mapping, compute_sha_256_entity, \
+    writing_jsonld
 
 
 def format_activity_name(activity_name: str) -> str:
@@ -45,7 +45,6 @@ def get_input_entity(right: str) -> List[dict]:
     Parameters
     ----------
     right : right side of ' = '
-    verbose : boolean to have more verbosity
 
     Returns
     -------
@@ -299,19 +298,27 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
     records = defaultdict(list)
     entities_ids = set()
 
-    for common_prefix_act, end_line_list in task_groups.items():
+    for i, (common_prefix_act, end_line_list) in enumerate(task_groups.items()):
+
+        # Regeneration of the command
+        command = ""
+        command_prefix = f"matlabbatch{{{i+1}}}." + re.sub("_\d+", "", common_prefix_act)
+        if len(end_line_list) == 1:  # if only one line in a batch, delete the dot at the end of the prefix
+            command_prefix = command_prefix[:-1]
+        command += '\n'.join([command_prefix + c for c in end_line_list])
 
         activity_id = "urn:" + get_id()
         activity = {"@id": activity_id,
                     "label": format_activity_name(common_prefix_act),
                     "used": list(),
                     "associatedWith": "urn:" + agent_id,
+                    "command": command
                     }
 
         output_entities, input_entities, params = list(), list(), {}
         output_ext_entities = get_entities_from_ext_config(conf.static["activities"], common_prefix_act, activity_id)
         output_entities.extend(output_ext_entities)
-        add_ext_entity= 0
+        add_ext_entity = 0
         for end_line in end_line_list:
             # split in 2 at the level of the equal the rest of the action
             left, right = end_line.split(" = ")
