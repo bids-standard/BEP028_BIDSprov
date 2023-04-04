@@ -5,15 +5,12 @@ This repository contains **BIDS Extension Proposal 028 : BIDS-prov, a provenance
 ## Our goal
 **Interpreting and comparing scientific results** and enabling reusable data and analysis output require understanding provenance, i.e. how the data were generated and processed. To be useful, the provenance must be understandable, easily communicated, and captured automatically in machine accessible form. Provenance records are thus used to encode transformations between digital objects
 
-### Who is building BEP 028
+### Who is building BEP 028  ✨
 
-Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Satrajit Ghosh ([@satra](https://github.com/satra)) are the BEP co-moderators.
-
-List of all contributors
+Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Satrajit Ghosh ([@satra](https://github.com/satra)) are the BEP co-moderators. Here is the list of all contributors ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 - Camille Maumet ([@cmaumet](https://github.com/cmaumet))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cmaumet" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Acmaumet" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cmaumet" title="Documentation">📖</a>
 <a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Acmaumet" title="Bug reports">🐛</a><a href="#content-dorahermes" title="Content">🖋</a> <a href="#ideas-dorahermes" title="Ideas, Planning, & Feedback">🤔</a><a href="#maintenance-dorahermes" title="Maintenance">🚧</a>
-
 
 - Satrajit Ghosh ([@satra](https://github.com/satra))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=satra" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Asatra" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=satra" title="Documentation">📖</a>
 <a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Asatra" title="Bug reports">🐛</a>
@@ -38,6 +35,9 @@ List of all contributors
 - Cyril Regan ([@cyril-data](https://github.com/cyril-data))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cyril-data" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Acyril-data" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cyril-data" title="Documentation">📖</a>
 <a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Acyril-data" title="Bug reports">🐛</a>
 
+This project follows the
+[all-contributors](https://github.com/all-contributors/all-contributors)
+specification. Contributions of any kind welcome!
 
 
 ### BIDS-prov in the NIDM project
