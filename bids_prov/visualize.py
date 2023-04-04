@@ -8,7 +8,6 @@ import sys
 # import click
 import argparse
 
-# from graphviz import Digraph
 from prov.model import ProvDocument
 from prov.dot import prov_to_dot
 import requests
