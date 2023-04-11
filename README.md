@@ -15,13 +15,13 @@ Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Satrajit Ghosh ([@sa
 - Satrajit Ghosh ([@satra](https://github.com/satra))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=satra" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Asatra" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=satra" title="Documentation">📖</a>
 <a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Asatra" title="Bug reports">🐛</a>
 
-- Stefan Appelhoff ([@sappelhoff](https://github.com/sappelhoff))
+- Stefan Appelhoff ([@sappelhoff](https://github.com/sappelhoff))<a href="#ideas-dorahermes" title="Ideas, Planning, & Feedback">🤔</a>
 
-- Chris Markiewicz ([@effigies](https://github.com/effigies))
+- Chris Markiewicz ([@effigies](https://github.com/effigies))<a href="#ideas-dorahermes" title="Ideas, Planning, & Feedback">🤔</a>
 
-- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))<a href="#ideas-dorahermes" title="Ideas, Planning, & Feedback">🤔</a>
 
-- Jean-Baptiste Poline ([@jbpoline](https://github.com/jbpoline))
+- Jean-Baptiste Poline ([@jbpoline](https://github.com/jbpoline))<a href="#ideas-dorahermes" title="Ideas, Planning, & Feedback">🤔</a>
 
 - Rémi Adon ([@remiadon](https://github.com/remiadon))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=remiadon" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Aremiadon" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=remiadon" title="Documentation">📖</a>
 <a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Aremiadon" title="Bug reports">🐛</a>
