@@ -26,8 +26,8 @@ def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_
     if not jsonld_same_as_existing:  # do not generate the png if the jsonld has not evolved
         visualize(output_jsonld, output_file=output_png)
         if parser_function == afni_to_bids_prov:
-            visualize(output_dir + "/" + filename_ss_ext + "_bloc.jsonld", output_file=output_dir +
-                      "/" + filename_ss_ext + "_bloc.png")
+            visualize(output_dir + "/" + filename_ss_ext + "_bloc.jsonld",
+                      output_file=output_dir + "/" + filename_ss_ext + "_bloc.png")
 
 
 def main():
