@@ -50,7 +50,7 @@ The file that you are most likely to propose changes to is [src/03-modality-agno
 The BEP028 is in a [google doc](https://docs.google.com/document/d/1vw3VNDof5cecv2PkFp7Lw_pNUTUo8-m8V4SIdtGJVKs/edit?usp=sharing)
 
 ### BIDS-Prov calls
-We meet every two weeks by videoconference on Mondays at 7-8am PDT / 10am-11am EDT / 3-4pm BST. The group is always open to new contributors interested in neuroimaging data sharing. To join the call or to ask any question, please email us at incf-nidash-nidm@googlegroups.com.  
+We meet every two weeks by videoconference on Mondays at 7-8am PDT / 10am-11am EDT / 3-4pm BST. The group is always open to new contributors interested in neuroimaging data sharing. To join the call or to ask any question, please email us at incf-nidash-nidm@googlegroups.com.
 
 ## Additional resources
 Mature building blocks of NIDM:
@@ -59,6 +59,12 @@ Mature building blocks of NIDM:
 
 
 [New features (to be included)](new_features.md)
+
+
+## Run parsers on the SPM, FSL and AFNI data
+
+To obtain data in **bids-prov format**, you can use the developed parsers.
+* [Tutorial](https://github.com/bids-standard/BEP028_BIDSprov/blob/master/bids_prov/README.md)
 
 
 ## Code of conduct
