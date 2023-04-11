@@ -1,0 +1,134 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:72eaa85b-1d14-43ec-b59b-ba9598401b53",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "AFNI",
+        "version": "afni24"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:4316dd80-22a1-469e-8f7d-247e5ee3cc6d",
+        "label": "Make directory",
+        "associatedWith": "urn:72eaa85b-1d14-43ec-b59b-ba9598401b53",
+        "command": "mkdir -p ${odir}",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:e11beee5-6c6b-453c-8060-fcffbb708e37",
+        "label": "IsoSurface",
+        "associatedWith": "urn:72eaa85b-1d14-43ec-b59b-ba9598401b53",
+        "command": "IsoSurface -overwrite -isorois+dsets -input ${ivol} -o_gii cc_${pref_surf} -Tsmooth 0 0 -remesh 1",
+        "parameters": {},
+        "used": []
+      },
+      {
+        "@id": "urn:6314e193-6e8a-45e4-8fe3-45ee8c4f8897",
+        "label": "1d_tool.py",
+        "associatedWith": "urn:72eaa85b-1d14-43ec-b59b-ba9598401b53",
+        "command": "1d_tool.py -csim_pthr ${pthr} -csim_alpha ${alpha} -infile ${file_1D}",
+        "parameters": {},
+        "used": [
+          "urn:1b9fb723-ecb9-4035-9235-b15638d971fd"
+        ]
+      },
+      {
+        "@id": "urn:f8ab6eb6-f5f5-4cec-a58e-20cab6d8bc24",
+        "label": "plugout_drive",
+        "associatedWith": "urn:72eaa85b-1d14-43ec-b59b-ba9598401b53",
+        "command": "plugout_drive -echo_edu -npb $portnum -com \"SWITCH_UNDERLAY ${dset_ref:t}\" -com \"SWITCH_OVERLAY ${dset_ttest:t}\" -com \"SET_XHAIRS OFF\" -com \"SET_SUBBRICKS ${subbb}\" -com \"SET_PBAR_ALL -99 1.0 ${cbar}\" -com \"SET_FUNC_ALPHA ${olay_alpha}\" -com \"SET_FUNC_BOXED ${olay_boxed}\" -com \"$coor_type $coors\" -com \"SET_THRESHNEW ${thr}\" -com \"SET_FUNC_VISIBLE +\" -com \"SET_FUNC_RANGE $frange\" -com \"$OW sagittalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[1]}:${mgap}:${mcolor}\" -com \"$OW coronalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[2]}:${mgap}:${mcolor}\" -com \"$OW axialimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[3]}:${mgap}:${mcolor}\" &",
+        "parameters": {
+          "-echo_edu": true,
+          "-npb": "$portnum",
+          "-com": true,
+          "-99": "1.0"
+        },
+        "used": [
+          "urn:aec7aa6f-2588-4bea-bcce-99b4ab634b80"
+        ]
+      },
+      {
+        "@id": "urn:77f10da2-0c84-4d84-8210-4f92dc30ed68",
+        "label": "suma",
+        "associatedWith": "urn:72eaa85b-1d14-43ec-b59b-ba9598401b53",
+        "command": "suma -echo_edu -npb $portnum -onestate -niml -i cc*.k*.gii -vol ${dset_ref} -sv ${dset_ref} &",
+        "parameters": {},
+        "used": [
+          "urn:78b95913-a8e5-461c-8c1c-93afbeaae3e2"
+        ]
+      },
+      {
+        "@id": "urn:6f60d331-157c-4056-a0fe-271a0884e0d9",
+        "label": "DriveSuma",
+        "associatedWith": "urn:72eaa85b-1d14-43ec-b59b-ba9598401b53",
+        "command": "DriveSuma -npb $portnum -com viewer_cont -key \"t\" -key \".\" &",
+        "parameters": {
+          "-npb": "$portnum",
+          "-com": "viewer_cont",
+          "-key": true
+        },
+        "used": []
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:ff74b4aa-4b12-49aa-8d16-dc16168bb90e",
+        "label": "${odir}",
+        "prov:atLocation": "${odir}",
+        "generatedBy": "urn:4316dd80-22a1-469e-8f7d-247e5ee3cc6d",
+        "digest": {
+          "sha256": "b1fc5ec0acec0bf1a5d6697b7f63ed3b4c8e33adcb77445bc544e124ade50c60"
+        }
+      },
+      {
+        "@id": "urn:895829c6-73b7-43eb-abad-4ec4d5d191b5",
+        "label": "cc_${pref_surf}",
+        "prov:atLocation": "cc_${pref_surf}",
+        "generatedBy": "urn:e11beee5-6c6b-453c-8060-fcffbb708e37",
+        "digest": {
+          "sha256": "5e02dacb1f0d92310532c03d04b14d6bdc19634a71800752df6d2e4f1adadf06"
+        }
+      },
+      {
+        "@id": "urn:1b9fb723-ecb9-4035-9235-b15638d971fd",
+        "label": "${file_1D}",
+        "prov:atLocation": "${file_1D}",
+        "digest": {
+          "sha256": "1ceba5dd08283170f6a477b939a39fb36475056b3d34302ed53ba3a87f0273e5"
+        }
+      },
+      {
+        "@id": "urn:aec7aa6f-2588-4bea-bcce-99b4ab634b80",
+        "label": "portnum",
+        "prov:atLocation": "portnum",
+        "digest": {
+          "sha256": "57ee6a2e1e697861e7126c005b19b9b7c0bad8d9cf3d2791e6c9663b3442c8b2"
+        }
+      },
+      {
+        "@id": "urn:cc250c42-d8dd-474b-9ff8-6256276cb9d6",
+        "label": "mcolor",
+        "prov:atLocation": "mcolor",
+        "generatedBy": "urn:f8ab6eb6-f5f5-4cec-a58e-20cab6d8bc24",
+        "digest": {
+          "sha256": "a757facd6497c040401a26469144a2df7ad28984bf0e7688a2f32d607fcd6797"
+        }
+      },
+      {
+        "@id": "urn:78b95913-a8e5-461c-8c1c-93afbeaae3e2",
+        "label": "cc*.k*.gii",
+        "prov:atLocation": "cc*.k*.gii",
+        "digest": {
+          "sha256": "8316e018f1f924e85f980916c33a30b32d50cb56a113fd4e4e12a21d24c192bd"
+        }
+      }
+    ]
+  }
+}
