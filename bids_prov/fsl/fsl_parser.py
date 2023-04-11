@@ -160,6 +160,7 @@ def _get_kwarg(serie,  with_value=True):
 
     """
     arg_list = []
+
     add_argument_list = []
     for u_arg in serie:
         if type(u_arg) == dict:
@@ -387,7 +388,7 @@ def get_entities(cmd_s, parameters):
     if "generatedBy" in parameters:
         outputs.extend(_get_arg(parameters["generatedBy"], arg_rest))
 
-    # print("\n\n inputs", inputs)
+     # print("\n\n inputs", inputs)
     # print("\n\n outputs", outputs)
     # print("\n\n params", params)
 
