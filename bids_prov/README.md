@@ -1,6 +1,6 @@
 ## CLI scripts for BIDS PROV
 
-### Calculate JSON-LDs in BIDS-PROV format of examples for SPM, FSL and AFNI
+### Compute JSON-LDs in BIDS-PROV format for SPM, FSL and AFNI data
 #### Task which is performed by the Github actions
 
 - Put all your example files in a folder (for example: `input_examples`)
