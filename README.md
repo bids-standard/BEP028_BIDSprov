@@ -1,5 +1,5 @@
 # BEP028
-This repository contains **BIDS Extension Proposal 028 : BIDS-prov, a provenance framework for BIDS**
+This repository contains **BIDS Extension Proposal 028 : BIDS-prov, a provenance framework for BIDS**.
 
 ## Our goal
 **Interpreting and comparing scientific results** and enabling reusable data and analysis output require understanding provenance, i.e. how the data were generated and processed. To be useful, the provenance must be understandable, easily communicated, and captured automatically in machine accessible form. Provenance records are thus used to encode transformations between digital objects.
