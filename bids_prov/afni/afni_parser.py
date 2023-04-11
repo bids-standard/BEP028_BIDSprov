@@ -485,7 +485,12 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     graph_bloc["records"]["prov:Entity"] = entities_blocs
 
     if with_blocs:
+        print("\n\n\n *********output_file", output_file, "\n",  output_file.split(".")[
+            :-1], "\n", output_file.split(".")[-1], "\n", ''.join(output_file.split(".")[
+                :-1]) + "_bloc." + output_file.split(".")[-1])
         writing_jsonld(graph_bloc, indent, ''.join(output_file.split(".")[
+            :-1]) + "_bloc." + output_file.split(".")[-1])
+        print("\n*********************** name bloc_output", ''.join(output_file.split(".")[
             :-1]) + "_bloc." + output_file.split(".")[-1])
 
     return writing_jsonld(graph, indent, output_file)
