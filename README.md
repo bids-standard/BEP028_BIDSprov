@@ -13,7 +13,7 @@ Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Satrajit Ghosh ([@sa
 <a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Acmaumet" title="Bug reports">🐛</a><a href="#content-dorahermes" title="Content">🖋</a> <a href="#ideas-dorahermes" title="Ideas, Planning, & Feedback">🤔</a><a href="#maintenance-dorahermes" title="Maintenance">🚧</a>
 
 - Satrajit Ghosh ([@satra](https://github.com/satra))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=satra" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Asatra" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=satra" title="Documentation">📖</a>
-<a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Asatra" title="Bug reports">🐛</a>
+<a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Asatra" title="Bug reports">🐛</a><a href="#ideas-dorahermes" title="Ideas, Planning, & Feedback">🤔</a>
 
 - Stefan Appelhoff ([@sappelhoff](https://github.com/sappelhoff))<a href="#ideas-dorahermes" title="Ideas, Planning, & Feedback">🤔</a>
 
