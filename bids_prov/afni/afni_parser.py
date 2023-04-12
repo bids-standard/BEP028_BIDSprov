@@ -87,7 +87,7 @@ def find_param(cmd_args_remain: list) -> dict:
     return param_dic
 
 
-def build_records(commands_bloc: list, agent_id: str, verbose=False):
+def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
     """
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (e.g. `Registration`, `Post-stats`)
@@ -95,11 +95,11 @@ def build_records(commands_bloc: list, agent_id: str, verbose=False):
     Parameters
     ----------
 
-    commands : list of str
+    commands_bloc : list of str
         all commands extracted from afni file
     agent_id : int
         random uuid for software agent (here afni)
-     verbose : bool
+     verbose : bool, default=False
         True to have more verbosity
 
     Returns
@@ -451,47 +451,39 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     """
     commands_bloc = readlines(filename)
 
-    # commands = [cmd for (bloc, cmd) in commands_bloc]
-
     graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
     records, bloc_act = build_records(commands_bloc, agent_id, verbose=verbose)
 
     graph["records"].update(records)
     compute_sha_256_entity(graph["records"]["prov:Entity"])
 
-    bl_name = set([bl for (bl, id) in bloc_act])
-    blocs = [{
-        "bloc_name":  bl,
-        "act_ids": [id_ for (b, id_) in bloc_act if b == bl]} for bl in bl_name]
-
-    graph_bloc = copy.deepcopy(graph)
-    activities_blocs = []
-    entities_blocs = []
-    for bloc in blocs:
-        activities = get_activities_by_ids(graph_bloc, bloc["act_ids"])
-        fus_activities = fusion_activities(activities, bloc["bloc_name"])
-        ext_entities = get_extern_entities_from_activities(
-            graph_bloc, activities, fus_activities["@id"])
-        for ent in ext_entities:
-            if ent["@id"] not in entities_blocs:
-                entities_blocs.append(ent)
-
-        for ent_used in fus_activities["used"]:
-            if ent_used not in [id_["@id"] for id_ in ext_entities]:
-                fus_activities["used"].remove(ent_used)
-        activities_blocs.append(fus_activities)
-
-    graph_bloc["records"]["prov:Activity"] = activities_blocs
-    graph_bloc["records"]["prov:Entity"] = entities_blocs
-
     if with_blocs:
-        print("\n\n\n *********output_file", output_file, "\n",  output_file.split(".")[
-            :-1], "\n", output_file.split(".")[-1], "\n", ''.join(output_file.split(".")[
-                :-1]) + "_bloc." + output_file.split(".")[-1])
-        writing_jsonld(graph_bloc, indent, ''.join(output_file.split(".")[
-            :-1]) + "_bloc." + output_file.split(".")[-1])
-        print("\n*********************** name bloc_output", ''.join(output_file.split(".")[
-            :-1]) + "_bloc." + output_file.split(".")[-1])
+        bl_name = set([bl for (bl, id) in bloc_act])
+        blocs = [{
+            "bloc_name":  bl,
+            "act_ids": [id_ for (b, id_) in bloc_act if b == bl]} for bl in bl_name]
+
+        graph_bloc = copy.deepcopy(graph)
+        activities_blocs = []
+        entities_blocs = []
+        for bloc in blocs:
+            activities = get_activities_by_ids(graph_bloc, bloc["act_ids"])
+            fus_activities = fusion_activities(activities, bloc["bloc_name"])
+            ext_entities = get_extern_entities_from_activities(
+                graph_bloc, activities, fus_activities["@id"])
+            for ent in ext_entities:
+                if ent["@id"] not in entities_blocs:
+                    entities_blocs.append(ent)
+
+            for ent_used in fus_activities["used"]:
+                if ent_used not in [id_["@id"] for id_ in ext_entities]:
+                    fus_activities["used"].remove(ent_used)
+            activities_blocs.append(fus_activities)
+
+        graph_bloc["records"]["prov:Activity"] = activities_blocs
+        graph_bloc["records"]["prov:Entity"] = entities_blocs
+
+        writing_jsonld(graph_bloc, indent, ''.join(output_file.split(".")[:-1]) + "_bloc." + output_file.split(".")[-1])
 
     return writing_jsonld(graph, indent, output_file)
 
