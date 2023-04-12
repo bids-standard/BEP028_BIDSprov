@@ -1,0 +1,132 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:65fccdc3-0cf4-46b6-b5ae-6472af9204c6",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "AFNI",
+        "version": "afni24"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:d7a66507-3350-42b8-9e9f-f37d0e3d31f7",
+        "label": "3dpc",
+        "associatedWith": "urn:65fccdc3-0cf4-46b6-b5ae-6472af9204c6",
+        "command": "3dpc -overwrite -mask ${dset_mask} -pcsave 5 -prefix ${dir_hyp}/PC_hyp${num} ${grp_dset}",
+        "parameters": {},
+        "used": [
+          "urn:ef69e3aa-d7be-4960-b129-6ad43fc9442c",
+          "urn:abda5291-509b-40dd-b303-74ba3f8fe26f"
+        ]
+      },
+      {
+        "@id": "urn:6fd64536-641a-413b-8d77-390f0514fea8",
+        "label": "3dresample",
+        "associatedWith": "urn:65fccdc3-0cf4-46b6-b5ae-6472af9204c6",
+        "command": "3dresample -overwrite -prefix tmp_REF_DSET.nii.gz -master ${dset_mask} -input \"${ref_dset}\"",
+        "parameters": {},
+        "used": [
+          "urn:598ab807-45ed-4acf-a417-d0bcb23a4959",
+          "urn:ef69e3aa-d7be-4960-b129-6ad43fc9442c"
+        ]
+      },
+      {
+        "@id": "urn:74362364-33c0-47db-81df-fe5bc8a25c49",
+        "label": "3dMatch",
+        "associatedWith": "urn:65fccdc3-0cf4-46b6-b5ae-6472af9204c6",
+        "command": "3dMatch -echo_edu -overwrite -mask ${dset_mask} -refset ${dir_hyp}/PC_hyp${num}+tlrc -inset tmp_REF_DSET.nii.gz -prefix tmp_MATCHED",
+        "parameters": {},
+        "used": [
+          "urn:b60f8029-dace-4def-b134-96c533ed2469",
+          "urn:231336c7-5029-499e-aa70-72035c9d8213",
+          "urn:ef69e3aa-d7be-4960-b129-6ad43fc9442c"
+        ]
+      },
+      {
+        "@id": "urn:9381c42a-f942-49f3-bcf2-577fbb62b05c",
+        "label": "3dcalc",
+        "associatedWith": "urn:65fccdc3-0cf4-46b6-b5ae-6472af9204c6",
+        "command": "3dcalc -echo_edu -overwrite -a ${dir_hyp}/PC_hyp${num}+tlrc -expr \"${signum}*a\" -prefix ${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
+        "parameters": {},
+        "used": [
+          "urn:231336c7-5029-499e-aa70-72035c9d8213"
+        ]
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:ef69e3aa-d7be-4960-b129-6ad43fc9442c",
+        "label": "${dset_mask}",
+        "prov:atLocation": "${dset_mask}",
+        "digest": {
+          "sha256": "aad93a52efcf1938cc27b6cfe707fe2b1f74b1bd4b13217516525ff60fa0a2cd"
+        }
+      },
+      {
+        "@id": "urn:abda5291-509b-40dd-b303-74ba3f8fe26f",
+        "label": "${grp_dset}",
+        "prov:atLocation": "${grp_dset}",
+        "digest": {
+          "sha256": "b1baa298b8599a501c11bb588cf53f5f808f115ea112431351bbf5c494bb9298"
+        }
+      },
+      {
+        "@id": "urn:6b77283c-0366-4a19-b108-5a6f3bafe64f",
+        "label": "PC_hyp${num}",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}",
+        "generatedBy": "urn:d7a66507-3350-42b8-9e9f-f37d0e3d31f7",
+        "digest": {
+          "sha256": "915832134c7f76c64fd48179b53dfb05de128b50ef451380b440cff2ec1990fb"
+        }
+      },
+      {
+        "@id": "urn:598ab807-45ed-4acf-a417-d0bcb23a4959",
+        "label": "\"${ref_dset}\"",
+        "prov:atLocation": "\"${ref_dset}\"",
+        "digest": {
+          "sha256": "be3e8ce0897c76f6b02c76da87ee56fc125ab1ea836bd57f388f3caf2df02028"
+        }
+      },
+      {
+        "@id": "urn:b60f8029-dace-4def-b134-96c533ed2469",
+        "label": "tmp_REF_DSET.nii.gz",
+        "prov:atLocation": "tmp_REF_DSET.nii.gz",
+        "generatedBy": "urn:6fd64536-641a-413b-8d77-390f0514fea8",
+        "digest": {
+          "sha256": "e943c60b478a75e89c043bc4a7a6e6c629c3f075007ff501f7b2ab3a253e8d3d"
+        }
+      },
+      {
+        "@id": "urn:231336c7-5029-499e-aa70-72035c9d8213",
+        "label": "PC_hyp${num}",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}+tlrc",
+        "digest": {
+          "sha256": "c04239860983b8514d0cddedd56525b497ec99d5e4c48976b7cbea1d51baf3a8"
+        }
+      },
+      {
+        "@id": "urn:ceafbca0-7a13-4165-b3bb-60120eef23cb",
+        "label": "tmp_MATCHED",
+        "prov:atLocation": "tmp_MATCHED",
+        "generatedBy": "urn:74362364-33c0-47db-81df-fe5bc8a25c49",
+        "digest": {
+          "sha256": "a251065c7203a21b76c1fb6acd1edb6da1c29896ad2df1f5479c71e16a29c302"
+        }
+      },
+      {
+        "@id": "urn:cb9a8af7-6454-46d3-8072-d4fb735a7949",
+        "label": "PC_hyp${num}_sign0.nii.gz",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
+        "generatedBy": "urn:9381c42a-f942-49f3-bcf2-577fbb62b05c",
+        "digest": {
+          "sha256": "5f0818d820edebe892295ffc1dd6f69823f2fb843bc2c3b0b5304054fa227af0"
+        }
+      }
+    ]
+  }
+}
