@@ -15,7 +15,7 @@
     "prov:Activity": [
       {
         "@id": "urn:055e6616-8da2-44c5-aeb2-418931734dc0",
-        "label": "Make directory",
+        "label": "testMake directory",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "mkdir $output_dir",
         "parameters": {},
@@ -23,7 +23,7 @@
       },
       {
         "@id": "urn:f0febda5-28f8-4a7a-970e-4517c40e4ee5",
-        "label": "Make directory",
+        "label": "testMake directory",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "mkdir $output_dir/stimuli",
         "parameters": {},
@@ -31,7 +31,7 @@
       },
       {
         "@id": "urn:05b5627a-a04e-4d7c-8a0f-a8208774ad82",
-        "label": "cp",
+        "label": "testcp",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "cp ./afni_clusterwise_fwe/tone_counting_onset_times.txt ./afni_clusterwise_fwe/tone_counting_probe_duration.txt $output_dir/stimuli",
         "parameters": {},
@@ -42,7 +42,7 @@
       },
       {
         "@id": "urn:aa3780c6-2017-4f4c-ae10-2b0ec098f095",
-        "label": "3dcopy",
+        "label": "test3dcopy",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dcopy sub-01_T1w.nii.gz $output_dir/sub-01_T1w",
         "parameters": {},
@@ -52,7 +52,7 @@
       },
       {
         "@id": "urn:63f0031d-eb88-40a7-9545-42781f2da105",
-        "label": "3dTcat",
+        "label": "test3dTcat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTcat -prefix $output_dir/pb00.$subj.r01.tcat sub-01_task-tonecounting_bold.nii.gz'[0..$]'",
         "parameters": {},
@@ -62,7 +62,7 @@
       },
       {
         "@id": "urn:18577179-bd3c-4dbb-b1eb-6a32757ed46f",
-        "label": "3dToutcount",
+        "label": "test3dToutcount",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dToutcount -automask -fraction -polort 2 -legendre pb00.$subj.r$run.tcat+orig > outcount.r$run.1D",
         "parameters": {},
@@ -72,7 +72,7 @@
       },
       {
         "@id": "urn:3e01c911-337e-4cb1-9895-651a60dd23c8",
-        "label": "cat",
+        "label": "testcat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "cat outcount.r*.1D > outcount_rall.1D",
         "parameters": {},
@@ -82,7 +82,7 @@
       },
       {
         "@id": "urn:41c44de2-105b-4f51-a55d-9fb249a151ed",
-        "label": "3dTshift",
+        "label": "test3dTshift",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTshift -tzero 0 -quintic -prefix pb01.$subj.r$run.tshift pb00.$subj.r$run.tcat+orig",
         "parameters": {},
@@ -92,7 +92,7 @@
       },
       {
         "@id": "urn:798791af-c988-414c-b76e-7d4b43099a24",
-        "label": "align_epi_anat.py",
+        "label": "testalign_epi_anat.py",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "align_epi_anat.py -anat2epi -anat sub-01_T1w+orig -save_skullstrip -suffix _al_junk -epi pb01.$subj.r01.tshift+orig -epi_base 2 -epi_strip 3dAutomask -volreg off -tshift off",
         "parameters": {},
@@ -103,7 +103,7 @@
       },
       {
         "@id": "urn:af751746-66f4-45a0-930b-c16311618f34",
-        "label": "@auto_tlrc",
+        "label": "test@auto_tlrc",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "@auto_tlrc -base TT_N27+tlrc -input sub-01_T1w_ns+orig -no_ss",
         "parameters": {},
@@ -114,7 +114,7 @@
       },
       {
         "@id": "urn:3bc61e8b-94a4-47fe-bbcd-8af24b2a709b",
-        "label": "cat_matvec",
+        "label": "testcat_matvec",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "cat_matvec sub-01_T1w_ns+tlrc::WARP_DATA -I > warp.anat.Xat.1D",
         "parameters": {},
@@ -124,7 +124,7 @@
       },
       {
         "@id": "urn:518d211c-544f-47e0-935d-d420c3a17f4d",
-        "label": "3dvolreg",
+        "label": "test3dvolreg",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dvolreg -verbose -zpad 1 -base pb01.$subj.r01.tshift+orig'[2]' -1Dfile dfile.r$run.1D -prefix rm.epi.volreg.r$run -cubic -1Dmatrix_save mat.r$run.vr.aff12.1D pb01.$subj.r$run.tshift+orig",
         "parameters": {},
@@ -134,7 +134,7 @@
       },
       {
         "@id": "urn:a43093fa-48c6-4d94-9392-d68edb15a82b",
-        "label": "3dcalc",
+        "label": "test3dcalc",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dcalc -overwrite -a pb01.$subj.r$run.tshift+orig -expr 1 -prefix rm.epi.all1",
         "parameters": {},
@@ -144,7 +144,7 @@
       },
       {
         "@id": "urn:3adea154-ab1b-43fd-9127-a12ecff84884",
-        "label": "cat_matvec",
+        "label": "testcat_matvec",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "cat_matvec -ONELINE sub-01_T1w_ns+tlrc::WARP_DATA -I sub-01_T1w_al_junk_mat.aff12.1D -I mat.r$run.vr.aff12.1D > mat.r$run.warp.aff12.1D",
         "parameters": {},
@@ -154,7 +154,7 @@
       },
       {
         "@id": "urn:b8da4d90-84a0-4f64-9a74-fcfc3fad2a0d",
-        "label": "3dAllineate",
+        "label": "test3dAllineate",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dAllineate -base sub-01_T1w_ns+tlrc -input pb01.$subj.r$run.tshift+orig -1Dmatrix_apply mat.r$run.warp.aff12.1D -mast_dxyz 3 -prefix rm.epi.nomask.r$run",
         "parameters": {},
@@ -166,7 +166,7 @@
       },
       {
         "@id": "urn:17db490b-6935-4543-9638-2df1ae98971d",
-        "label": "3dAllineate",
+        "label": "test3dAllineate",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dAllineate -base sub-01_T1w_ns+tlrc -input rm.epi.all1+orig -1Dmatrix_apply mat.r$run.warp.aff12.1D -mast_dxyz 3 -final NN -quiet -prefix rm.epi.1.r$run",
         "parameters": {},
@@ -178,7 +178,7 @@
       },
       {
         "@id": "urn:259849bd-cf05-4538-84d0-59b5540fffdd",
-        "label": "3dTstat",
+        "label": "test3dTstat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTstat -min -prefix rm.epi.min.r$run rm.epi.1.r$run+tlrc",
         "parameters": {},
@@ -188,7 +188,7 @@
       },
       {
         "@id": "urn:c35adba0-7fc6-485a-9a6e-546aeb651594",
-        "label": "cat",
+        "label": "testcat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "cat dfile.r*.1D > dfile_rall.1D",
         "parameters": {},
@@ -198,7 +198,7 @@
       },
       {
         "@id": "urn:ee53297a-5ce2-4932-92b8-8550b3b89d1c",
-        "label": "3dcopy",
+        "label": "test3dcopy",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dcopy rm.epi.min.r01+tlrc mask_epi_extents",
         "parameters": {},
@@ -208,7 +208,7 @@
       },
       {
         "@id": "urn:a8f99aa2-3c57-4b7e-a166-10298ab6e2bd",
-        "label": "3dcalc",
+        "label": "test3dcalc",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dcalc -a rm.epi.nomask.r$run+tlrc -b mask_epi_extents+tlrc -expr 'a*b' -prefix pb02.$subj.r$run.volreg",
         "parameters": {},
@@ -219,7 +219,7 @@
       },
       {
         "@id": "urn:80894f34-5436-4a99-bd8c-cd28bd86ba6d",
-        "label": "3dcopy",
+        "label": "test3dcopy",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dcopy sub-01_T1w_ns+tlrc anat_final.$subj",
         "parameters": {},
@@ -229,7 +229,7 @@
       },
       {
         "@id": "urn:a15c84dd-d081-4919-b897-d046a70498ec",
-        "label": "3dAllineate",
+        "label": "test3dAllineate",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dAllineate -source sub-01_T1w+orig -master anat_final.$subj+tlrc -final wsinc5 -1Dmatrix_apply warp.anat.Xat.1D -prefix anat_w_skull_warped",
         "parameters": {},
@@ -239,7 +239,7 @@
       },
       {
         "@id": "urn:6a309aaf-e36f-4234-aee9-c8be9fdc3ddb",
-        "label": "3dmerge",
+        "label": "test3dmerge",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dmerge -1blur_fwhm 4.0 -doall -prefix pb03.$subj.r$run.blur pb02.$subj.r$run.volreg+tlrc",
         "parameters": {},
@@ -250,7 +250,7 @@
       },
       {
         "@id": "urn:d9c02ef8-ae4f-49fe-9649-3b35f4674c1e",
-        "label": "3dAutomask",
+        "label": "test3dAutomask",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dAutomask -dilate 1 -prefix rm.mask_r$run pb03.$subj.r$run.blur+tlrc",
         "parameters": {},
@@ -260,7 +260,7 @@
       },
       {
         "@id": "urn:eec7ccce-0779-437f-8450-c4b6f536a7bc",
-        "label": "3dmask_tool",
+        "label": "test3dmask_tool",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dmask_tool -inputs rm.mask_r*+tlrc.HEAD -union -prefix full_mask.$subj",
         "parameters": {},
@@ -268,7 +268,7 @@
       },
       {
         "@id": "urn:5ecbb2f9-d628-4980-8bed-9166dcee801a",
-        "label": "3dresample",
+        "label": "test3dresample",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dresample -master full_mask.$subj+tlrc -input sub-01_T1w_ns+tlrc -prefix rm.resam.anat",
         "parameters": {},
@@ -279,7 +279,7 @@
       },
       {
         "@id": "urn:e4344175-20ec-4b1d-b49f-7542d37e6caa",
-        "label": "3dmask_tool",
+        "label": "test3dmask_tool",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dmask_tool -dilate_input 5 -5 -fill_holes -input rm.resam.anat+tlrc -prefix mask_anat.$subj",
         "parameters": {},
@@ -289,7 +289,7 @@
       },
       {
         "@id": "urn:e9dcd1ce-f9a5-4c85-8831-8e2118f3e436",
-        "label": "3dABoverlap",
+        "label": "test3dABoverlap",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dABoverlap -no_automask full_mask.$subj+tlrc mask_anat.$subj+tlrc |& tee out.mask_ae_overlap.txt",
         "parameters": {},
@@ -300,7 +300,7 @@
       },
       {
         "@id": "urn:57c70746-bc5d-4d0f-ac6b-cf37f0e790d1",
-        "label": "3ddot",
+        "label": "test3ddot",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3ddot -dodice full_mask.$subj+tlrc mask_anat.$subj+tlrc |& tee out.mask_ae_dice.txt",
         "parameters": {},
@@ -311,7 +311,7 @@
       },
       {
         "@id": "urn:1dc5978a-3a2c-41fe-93da-da44031facdc",
-        "label": "3dresample",
+        "label": "test3dresample",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dresample -master full_mask.$subj+tlrc -prefix ./rm.resam.group -input /Users/u1591557/abin/TT_N27+tlrc",
         "parameters": {},
@@ -322,7 +322,7 @@
       },
       {
         "@id": "urn:0ae1180e-9758-449b-96a6-998f6c382716",
-        "label": "3dmask_tool",
+        "label": "test3dmask_tool",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dmask_tool -dilate_input 5 -5 -fill_holes -input rm.resam.group+tlrc -prefix mask_group",
         "parameters": {},
@@ -332,7 +332,7 @@
       },
       {
         "@id": "urn:48508920-4ce5-4213-a180-264259df2d8f",
-        "label": "3dTstat",
+        "label": "test3dTstat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTstat -prefix rm.mean_r$run pb03.$subj.r$run.blur+tlrc",
         "parameters": {},
@@ -342,7 +342,7 @@
       },
       {
         "@id": "urn:d124a1ec-ede9-4c55-9f3b-5534ba2d4bf1",
-        "label": "3dcalc",
+        "label": "test3dcalc",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dcalc -a pb03.$subj.r$run.blur+tlrc -b rm.mean_r$run+tlrc -c mask_epi_extents+tlrc -expr 'c * min(200, a/b*100)*step(a)*step(b)' -prefix pb04.$subj.r$run.scale",
         "parameters": {},
@@ -354,7 +354,7 @@
       },
       {
         "@id": "urn:987e241d-ef25-4cbc-a063-20943d5391b1",
-        "label": "1d_tool.py",
+        "label": "test1d_tool.py",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -demean -write motion_demean.1D",
         "parameters": {},
@@ -364,7 +364,7 @@
       },
       {
         "@id": "urn:f7c6cade-4218-4595-9786-416f1729ab69",
-        "label": "1d_tool.py",
+        "label": "test1d_tool.py",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -derivative -demean -write motion_deriv.1D",
         "parameters": {},
@@ -374,7 +374,7 @@
       },
       {
         "@id": "urn:10dfb433-94b4-4ea4-b283-3fec0ed1cbd2",
-        "label": "1d_tool.py",
+        "label": "test1d_tool.py",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -show_censor_count -censor_prev_TR -censor_motion 0.3 motion_${subj}",
         "parameters": {},
@@ -384,7 +384,7 @@
       },
       {
         "@id": "urn:14281794-e920-4a57-9fc3-b130a5687c98",
-        "label": "3dDeconvolve",
+        "label": "test3dDeconvolve",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dDeconvolve -input pb04.$subj.r*.scale+tlrc.HEAD -censor motion_${subj}_censor.1D -polort 2 -num_stimts 8 -stim_times 1 stimuli/tone_counting_onset_times.txt 'BLOCK(4)' -stim_label 1 tone_counting -stim_times_AM1 2 stimuli/tone_counting_probe_duration.txt 'dmBLOCK' -stim_label 2 probe -stim_file 3 motion_demean.1D'[0]' -stim_base 3 -stim_label 3 roll -stim_file 4 motion_demean.1D'[1]' -stim_base 4 -stim_label 4 pitch -stim_file 5 motion_demean.1D'[2]' -stim_base 5 -stim_label 5 yaw -stim_file 6 motion_demean.1D'[3]' -stim_base 6 -stim_label 6 dS -stim_file 7 motion_demean.1D'[4]' -stim_base 7 -stim_label 7 dL -stim_file 8 motion_demean.1D'[5]' -stim_base 8 -stim_label 8 dP -fout -tout -x1D X.xmat.1D -xjpeg X.jpg -x1D_uncensored X.nocensor.xmat.1D -fitts fitts.$subj -errts errts.${subj} -bucket stats.$subj",
         "parameters": {},
@@ -394,7 +394,7 @@
       },
       {
         "@id": "urn:9a7421be-512a-4690-b023-7d1996cf5544",
-        "label": "1d_tool.py",
+        "label": "test1d_tool.py",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "1d_tool.py -show_cormat_warnings -infile X.xmat.1D |& tee out.cormat_warn.txt",
         "parameters": {},
@@ -404,7 +404,7 @@
       },
       {
         "@id": "urn:816a65be-5552-4100-89ab-2eb490723213",
-        "label": "3dTcat",
+        "label": "test3dTcat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTcat -prefix all_runs.$subj pb04.$subj.r*.scale+tlrc.HEAD",
         "parameters": {},
@@ -414,7 +414,7 @@
       },
       {
         "@id": "urn:ee9492d3-dd42-42d4-8ccd-d465757bf39e",
-        "label": "3dTstat",
+        "label": "test3dTstat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTstat -mean -prefix rm.signal.all all_runs.$subj+tlrc\"[$ktrs]\"",
         "parameters": {},
@@ -424,7 +424,7 @@
       },
       {
         "@id": "urn:d0c4406f-db80-4b51-8651-292b0bd35f81",
-        "label": "3dTstat",
+        "label": "test3dTstat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTstat -stdev -prefix rm.noise.all errts.${subj}+tlrc\"[$ktrs]\"",
         "parameters": {},
@@ -434,7 +434,7 @@
       },
       {
         "@id": "urn:3199a455-85e5-4b30-94e5-bb3c78222246",
-        "label": "3dcalc",
+        "label": "test3dcalc",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dcalc -a rm.signal.all+tlrc -b rm.noise.all+tlrc -c full_mask.$subj+tlrc -expr 'c*a/b' -prefix TSNR.$subj",
         "parameters": {},
@@ -446,7 +446,7 @@
       },
       {
         "@id": "urn:59f89e09-43f9-4f11-a93f-2fc0517e82f3",
-        "label": "3dTnorm",
+        "label": "test3dTnorm",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTnorm -norm2 -prefix rm.errts.unit errts.${subj}+tlrc",
         "parameters": {},
@@ -456,7 +456,7 @@
       },
       {
         "@id": "urn:8880cc2d-05aa-4bcd-894f-f104ec88d7ae",
-        "label": "3dmaskave",
+        "label": "test3dmaskave",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dmaskave -quiet -mask full_mask.$subj+tlrc rm.errts.unit+tlrc > gmean.errts.unit.1D",
         "parameters": {},
@@ -464,7 +464,7 @@
       },
       {
         "@id": "urn:b97857bc-8e1c-448e-82f9-d862603dac3a",
-        "label": "3dTstat",
+        "label": "test3dTstat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTstat -sos -prefix - gmean.errts.unit.1D\\' > out.gcor.1D",
         "parameters": {},
@@ -474,7 +474,7 @@
       },
       {
         "@id": "urn:bd2f401f-0ae4-4b9f-bd5e-9110c7b9bbcc",
-        "label": "3dcalc",
+        "label": "test3dcalc",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dcalc -a rm.errts.unit+tlrc -b gmean.errts.unit.1D -expr 'a*b' -prefix rm.DP",
         "parameters": {},
@@ -485,7 +485,7 @@
       },
       {
         "@id": "urn:9b02e101-35be-41fb-81cb-4ebd4c4fb7ad",
-        "label": "3dTstat",
+        "label": "test3dTstat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTstat -sum -prefix corr_brain rm.DP+tlrc",
         "parameters": {},
@@ -495,7 +495,7 @@
       },
       {
         "@id": "urn:3ab3463b-3e76-4459-b00c-557a44d4c9c9",
-        "label": "1dcat",
+        "label": "test1dcat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "1dcat X.nocensor.xmat.1D'[3]' > ideal_tone_counting.1D",
         "parameters": {},
@@ -505,7 +505,7 @@
       },
       {
         "@id": "urn:791a37dd-7139-4be3-8f65-6c9aeb2c26fc",
-        "label": "1dcat",
+        "label": "test1dcat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "1dcat X.nocensor.xmat.1D'[4]' > ideal_probe.1D",
         "parameters": {},
@@ -515,7 +515,7 @@
       },
       {
         "@id": "urn:76cbe384-e9c5-4aee-a9eb-7366d46724c1",
-        "label": "3dTstat",
+        "label": "test3dTstat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dTstat -sum -prefix sum_ideal.1D X.nocensor.xmat.1D\"[$reg_cols]\"",
         "parameters": {},
@@ -525,7 +525,7 @@
       },
       {
         "@id": "urn:efc1dbaf-a1c8-49b6-b914-9345dbbaebc0",
-        "label": "1dcat",
+        "label": "test1dcat",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "1dcat X.nocensor.xmat.1D\"[$reg_cols]\" > X.stim.xmat.1D",
         "parameters": {},
@@ -535,7 +535,7 @@
       },
       {
         "@id": "urn:5c5699fb-c65a-4996-825d-ce14595563a1",
-        "label": "3dFWHMx",
+        "label": "test3dFWHMx",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dFWHMx -detrend -mask full_mask.$subj+tlrc all_runs.$subj+tlrc\"[$trs]\" >> blur.epits.1D",
         "parameters": {},
@@ -545,7 +545,7 @@
       },
       {
         "@id": "urn:ae87f8ec-8897-45c2-ad21-3a90f68cc8a3",
-        "label": "3dFWHMx",
+        "label": "test3dFWHMx",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dFWHMx -detrend -mask full_mask.$subj+tlrc errts.${subj}+tlrc\"[$trs]\" >> blur.errts.1D",
         "parameters": {},
@@ -555,7 +555,7 @@
       },
       {
         "@id": "urn:62bdae8b-6b1c-4858-b2cf-d5c2ff2cb091",
-        "label": "3dClustSim",
+        "label": "test3dClustSim",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "3dClustSim -both -mask full_mask.$subj+tlrc -fwhmxyz $fxyz[1-3] -prefix ClustSim",
         "parameters": {},
@@ -565,7 +565,7 @@
       },
       {
         "@id": "urn:6a92fc75-06fa-4645-ada0-51d2db7973ff",
-        "label": "gen_epi_review.py",
+        "label": "testgen_epi_review.py",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "gen_epi_review.py -script @epi_review.$subj -dsets pb00.$subj.r*.tcat+orig.HEAD",
         "parameters": {},
@@ -575,7 +575,7 @@
       },
       {
         "@id": "urn:900be763-05f7-4164-9443-f02cdb6474bb",
-        "label": "gen_ss_review_scripts.py",
+        "label": "testgen_ss_review_scripts.py",
         "associatedWith": "urn:1c4d8379-a962-4530-b203-961ea5164edd",
         "command": "gen_ss_review_scripts.py -mot_limit 0.3 -exit0",
         "parameters": {
