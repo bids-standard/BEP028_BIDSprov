@@ -3,7 +3,7 @@ import copy
 import json
 import os
 import re
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from itertools import chain
 
 from bids_prov.fsl.fsl_parser import get_entities
@@ -459,7 +459,7 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     compute_sha_256_entity(graph["records"]["prov:Entity"])
 
     if with_blocs:
-        bl_name = set([bl for (bl, id) in bloc_act])
+        bl_name = list(OrderedDict.fromkeys(bl for (bl, id) in bloc_act))
         blocs = [{
             "bloc_name": bl,
             "act_ids": [id_ for (b, id_) in bloc_act if b == bl]} for bl in bl_name]
