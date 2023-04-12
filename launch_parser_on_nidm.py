@@ -92,7 +92,7 @@ def main():
                     filename_ss_ext = file.split(".tcsh")[0]
                 process_file(context_write, root, file, filename_ss_ext, output_dir_afni, afni_to_bids_prov, opt.verbose)
                 # afni bloc
-                process_file(context_write, root, filename_ss_ext + "_bloc.jsonld", output_dir_afni, afni_to_bids_prov, opt.verbose)
+                process_file(context_write, root, file, filename_ss_ext + "_bloc.jsonld", output_dir_afni, afni_to_bids_prov, opt.verbose)
 
             else:
                 print(" -> Extension of file ", file, " not supported")
