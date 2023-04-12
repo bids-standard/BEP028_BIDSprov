@@ -1,4 +1,5 @@
 import argparse
+import copy
 import json
 import os
 import re
@@ -8,8 +9,6 @@ from itertools import chain
 from bids_prov.fsl.fsl_parser import get_entities
 from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping, compute_sha_256_entity, \
     writing_jsonld
-
-import copy
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
@@ -291,18 +290,15 @@ def readlines(input_file: str) -> list:
 
     # commands = [cmd for cmd in commands if not any(
     #     cmd.startswith(begin) for begin in dropline_begin)]
-    regex_bloc = re.compile(r'# =* (\w+) =*')
+    regex_bloc = re.compile(r'# =+ ([^=]+) =+')
     commands_bloc = []
     bloc = ""
     for cmd in commands:
         if cmd.startswith("# ==="):
 
-            bloc = "bloc " + \
-                regex_bloc.match(cmd).groups()[0] if regex_bloc.match(
-                    cmd) != None else "bloc ..."
+            bloc = regex_bloc.match(cmd).groups()[0] if regex_bloc.match(cmd) is not None else "bloc ..."
 
-        if not any(
-                cmd.startswith(begin) for begin in dropline_begin):
+        if not any(cmd.startswith(begin) for begin in dropline_begin):
             commands_bloc.append((bloc, cmd))
 
     commands_bloc = [(bloc, re.sub(r"\s+", " ", cmd))
@@ -440,20 +436,24 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         name of output parsed file with extension json.ld
     soft_ver:str
         version of sofware afni
-    indent :int
+    indent : int
         number of indentation in jsonld
     verbose : bool
         True to have more verbosity
+    with_blocs : bool
+        To retrieve or not the results of the parser in block mode and not only for each command
 
-
-
+    Returns
+    -------
+    None
+        Write the json-ld to the location indicated in output_file.
+        the function also writes a json-ld file (in block mode) to the following location: `output_file` + "bloc" + ".jsonld"
     """
     commands_bloc = readlines(filename)
 
     # commands = [cmd for (bloc, cmd) in commands_bloc]
 
-    graph, agent_id = get_default_graph(
-        label="AFNI", context_url=context_url, soft_ver=soft_ver)
+    graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
     records, bloc_act = build_records(commands_bloc, agent_id, verbose=verbose)
 
     graph["records"].update(records)
@@ -507,38 +507,5 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
-    afni_to_bids_prov(opt.input_file, context_url=opt.context_url,
-                      output_file=opt.output_file, verbose=opt.verbose)
+    afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.afni.afni_parser --input_file ./afni_test_local/afni_default_proc.sub_001  --output_file res.jsonld
-
-    # input_file = os.path.abspath("../../nidmresults-examples/narps_do_13_view_zoom.tcsh")
-    # # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
-    # output_file = "../../res.jsonld"
-    # # commands = readlines(input_file)
-    # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24',verbose=True)
-
-    # Finding PREAMBULE
-    # with open(input_file, "r") as file:
-    #     all_lines= file.readlines()
-    # all_lines = [line.strip() for line in all_lines]
-    # idx_line_set_runs = all_lines.index('set runs = (`count -digits 2 1 1`)')
-    # preambule, main_part = all_lines[:idx_line_set_runs+1], all_lines[idx_line_set_runs+1:]
-    #
-    # # print('\n'.join(preambule))
-    # # print("="*50)
-    # # print("END PREAMBULE")
-    # # print("="*50)
-    # main_part_joined ='\n'.join(main_part)
-    # print('\n'.join(main_part[:45]))
-    # FINDING FOREACH BLOCK with RE
-    # find_foreach_block = re.findall("foreach run \(\s*\$runs\s*\)\s*([\s\S]*?)end\n", main_part_joined)
-    # for_block = re.search("foreach run \(\s*\$runs\s*\)\s*([\s\S]*?)end\n", filtered)
-    # print(for_block)
-    # # for e in exp:
-    # #     print(e)
-    # for idx, match in enumerate(find_foreach_block):
-    #     print("*"*60, f"\nMatch {idx}")
-    #     lines = match.strip().split('\n')
-    #     for line in lines:
-    #         # Do something with the line
-    #         print(line)
