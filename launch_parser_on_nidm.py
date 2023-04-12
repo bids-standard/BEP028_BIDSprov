@@ -11,12 +11,13 @@ from bids_prov.utils import CONTEXT_URL
 from bids_prov.visualize import main as visualize
 
 
-def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_function, verbose):
+def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_function, verbose, copy=True):
     """Process a file using the given parser function and save the output to the output directory."""
     context_write.write(f"    file= {root}/{str(file)}\n")
     print(parser_function)
     filename = root + "/" + str(file)
-    shutil.copyfile(filename, output_dir + "/" + str(file))
+    if copy:
+        shutil.copyfile(filename, output_dir + "/" + str(file))
     output_jsonld = output_dir + "/" + filename_ss_ext + ".jsonld"
 
     jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
@@ -92,7 +93,7 @@ def main():
                     filename_ss_ext = file.split(".tcsh")[0]
                 process_file(context_write, root, file, filename_ss_ext, output_dir_afni, afni_to_bids_prov, opt.verbose)
                 # afni bloc
-                process_file(context_write, root, file, filename_ss_ext + "_bloc.jsonld", output_dir_afni, afni_to_bids_prov, opt.verbose)
+                process_file(context_write, root, file + "_bloc", filename_ss_ext + "_bloc", output_dir_afni, afni_to_bids_prov, opt.verbose, copy=False)
 
             else:
                 print(" -> Extension of file ", file, " not supported")
