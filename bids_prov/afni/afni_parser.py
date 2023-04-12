@@ -69,13 +69,14 @@ def find_param(cmd_args_remain: list) -> dict:
     Returns
     -------
     dict :
-        [key:value} where key is parameter name and value is True if no value is given in command arguments, else its value
+        [key:value} where key is parameter name and value is True if no value is given in command arguments,
+        else its value
     """
     param_dic = {}
     for arg_remain in cmd_args_remain:
         if arg_remain.startswith("-"):
             if arg_remain != cmd_args_remain[-1]:
-                succesor = cmd_args_remain[cmd_args_remain.index(arg_remain)+1]
+                succesor = cmd_args_remain[cmd_args_remain.index(arg_remain) + 1]
                 if not succesor.startswith("-"):
                     param_dic[arg_remain] = succesor
                     cmd_args_remain.remove(succesor)
@@ -176,10 +177,10 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
 
             # if a key of attributes is in INPUT_TAGS, we add her value in inputs
             inputs = list(chain(*(attributes.pop(k)
-                          for k in attributes.keys() & INPUT_TAGS)))
+                                  for k in attributes.keys() & INPUT_TAGS)))
             # same process with OUTPUT_TAGS
             outputs = list(chain(*(attributes.pop(k)
-                           for k in attributes.keys() & OUTPUT_TAGS)))
+                                   for k in attributes.keys() & OUTPUT_TAGS)))
             entity_names = [_ for _ in re.findall(
                 INPUT_RE, cmd_without_attributes[len(a_name):])]
 
@@ -260,7 +261,7 @@ def gather_multiline(input_file: str) -> list:
             if command_:  # drop blank line
                 while command_.endswith('\\'):
                     command_ = command_[:-1].strip() + ' ' + \
-                        next(fd)[:-1].strip()
+                               next(fd)[:-1].strip()
                 commands.append(command_)
 
     return commands
@@ -295,7 +296,6 @@ def readlines(input_file: str) -> list:
     bloc = ""
     for cmd in commands:
         if cmd.startswith("# ==="):
-
             bloc = regex_bloc.match(cmd).groups()[0] if regex_bloc.match(cmd) is not None else "bloc ..."
 
         if not any(cmd.startswith(begin) for begin in dropline_begin):
@@ -445,9 +445,10 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
 
     Returns
     -------
-    None
+    bool
         Write the json-ld to the location indicated in output_file.
-        the function also writes a json-ld file (in block mode) to the following location: `output_file` + "bloc" + ".jsonld"
+        the function also writes a json-ld file (in block mode) to the following location: `output_file` + "bloc" +
+        ".jsonld"
     """
     commands_bloc = readlines(filename)
 
@@ -460,7 +461,7 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     if with_blocs:
         bl_name = set([bl for (bl, id) in bloc_act])
         blocs = [{
-            "bloc_name":  bl,
+            "bloc_name": bl,
             "act_ids": [id_ for (b, id_) in bloc_act if b == bl]} for bl in bl_name]
 
         graph_bloc = copy.deepcopy(graph)
@@ -490,12 +491,10 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str,
-                        default="./examples/from_parsers/afni/afni_default_proc.sub_001", help="afni execution log file")
-    parser.add_argument("--output_file", type=str, default="res.jsonld",
-                        help="output dir where results are written")
-    parser.add_argument(
-        "--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--input_file", type=str, default="./examples/from_parsers/afni/afni_default_proc.sub_001",
+                        help="afni execution log file")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 

@@ -82,21 +82,18 @@ def main():
 
             if file.endswith("batch.m"):  # spm
                 filename_ss_ext = file.split(".m")[0]
-                process_file(context_write, root, file, filename_ss_ext,
-                             output_dir_spm, spm_to_bids_prov, opt.verbose)
+                process_file(context_write, root, file, filename_ss_ext, output_dir_spm, spm_to_bids_prov, opt.verbose)
 
             elif file.endswith("report_log.html"):  # fsl
                 filename_ss_ext = file.split(".html")[0]
-                process_file(context_write, root, file, filename_ss_ext,
-                             output_dir_fsl, fsl_to_bids_prov, opt.verbose)
+                process_file(context_write, root, file, filename_ss_ext, output_dir_fsl, fsl_to_bids_prov, opt.verbose)
 
             elif file.endswith("proc.sub_001") or file.endswith(".tcsh"):  # afni
                 if ".sub_001" in file:
                     filename_ss_ext = file.split(".sub_001")[0]
                 else:
                     filename_ss_ext = file.split(".tcsh")[0]
-                process_file(context_write, root, file, filename_ss_ext,
-                             output_dir_afni, afni_to_bids_prov, opt.verbose)
+                process_file(context_write, root, file, filename_ss_ext, output_dir_afni, afni_to_bids_prov, opt.verbose)
 
             else:
                 print(" -> Extension of file ", file, " not supported")
