@@ -1,0 +1,110 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "@id": "http://example.org/ds00000X",
+  "records": {
+    "prov:Agent": [
+      {
+        "@id": "urn:fc4f2b90-f6c6-410a-a8ff-78d8206b5df0",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "label": "AFNI",
+        "version": "afni24"
+      }
+    ],
+    "prov:Activity": [
+      {
+        "@id": "urn:4fe9ad80-620c-406c-a242-7f323181a475",
+        "label": "",
+        "associatedWith": "urn:fc4f2b90-f6c6-410a-a8ff-78d8206b5df0",
+        "command": "3dpc -overwrite -mask ${dset_mask} -pcsave 5 -prefix ${dir_hyp}/PC_hyp${num} ${grp_dset}; ",
+        "used": [
+          "urn:5a3ed7a7-f404-4238-9a73-9992979af9d4",
+          "urn:5d73a76e-4df1-4fd3-a040-769dac5ac08d"
+        ]
+      },
+      {
+        "@id": "urn:5c602888-1bca-4c78-8710-3274acc87d5e",
+        "label": "bloc ...",
+        "associatedWith": "urn:fc4f2b90-f6c6-410a-a8ff-78d8206b5df0",
+        "command": "3dresample -overwrite -prefix tmp_REF_DSET.nii.gz -master ${dset_mask} -input \"${ref_dset}\"; 3dMatch -echo_edu -overwrite -mask ${dset_mask} -refset ${dir_hyp}/PC_hyp${num}+tlrc -inset tmp_REF_DSET.nii.gz -prefix tmp_MATCHED; 3dcalc -echo_edu -overwrite -a ${dir_hyp}/PC_hyp${num}+tlrc -expr \"${signum}*a\" -prefix ${dir_hyp}/PC_hyp${num}_sign0.nii.gz; ",
+        "used": [
+          "urn:cbc9b629-6395-406a-8661-234f76bf6faa",
+          "urn:5a3ed7a7-f404-4238-9a73-9992979af9d4",
+          "urn:715350ea-baf9-4e67-af8b-4c223751977f",
+          "urn:5a3ed7a7-f404-4238-9a73-9992979af9d4",
+          "urn:715350ea-baf9-4e67-af8b-4c223751977f"
+        ]
+      }
+    ],
+    "prov:Entity": [
+      {
+        "@id": "urn:5a3ed7a7-f404-4238-9a73-9992979af9d4",
+        "label": "${dset_mask}",
+        "prov:atLocation": "${dset_mask}",
+        "digest": {
+          "sha256": "aad93a52efcf1938cc27b6cfe707fe2b1f74b1bd4b13217516525ff60fa0a2cd"
+        }
+      },
+      {
+        "@id": "urn:5d73a76e-4df1-4fd3-a040-769dac5ac08d",
+        "label": "${grp_dset}",
+        "prov:atLocation": "${grp_dset}",
+        "digest": {
+          "sha256": "b1baa298b8599a501c11bb588cf53f5f808f115ea112431351bbf5c494bb9298"
+        }
+      },
+      {
+        "@id": "urn:cf41eab2-9285-40e8-ac6d-f47cd151abb4",
+        "label": "PC_hyp${num}",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}",
+        "generatedBy": "urn:4fe9ad80-620c-406c-a242-7f323181a475",
+        "digest": {
+          "sha256": "915832134c7f76c64fd48179b53dfb05de128b50ef451380b440cff2ec1990fb"
+        }
+      },
+      {
+        "@id": "urn:5a3ed7a7-f404-4238-9a73-9992979af9d4",
+        "label": "${dset_mask}",
+        "prov:atLocation": "${dset_mask}",
+        "digest": {
+          "sha256": "aad93a52efcf1938cc27b6cfe707fe2b1f74b1bd4b13217516525ff60fa0a2cd"
+        }
+      },
+      {
+        "@id": "urn:cbc9b629-6395-406a-8661-234f76bf6faa",
+        "label": "\"${ref_dset}\"",
+        "prov:atLocation": "\"${ref_dset}\"",
+        "digest": {
+          "sha256": "be3e8ce0897c76f6b02c76da87ee56fc125ab1ea836bd57f388f3caf2df02028"
+        }
+      },
+      {
+        "@id": "urn:715350ea-baf9-4e67-af8b-4c223751977f",
+        "label": "PC_hyp${num}",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}+tlrc",
+        "digest": {
+          "sha256": "c04239860983b8514d0cddedd56525b497ec99d5e4c48976b7cbea1d51baf3a8"
+        }
+      },
+      {
+        "@id": "urn:cbb044da-cc8b-4ef7-977c-2c3794c9027a",
+        "label": "tmp_MATCHED",
+        "prov:atLocation": "tmp_MATCHED",
+        "generatedBy": "urn:5c602888-1bca-4c78-8710-3274acc87d5e",
+        "digest": {
+          "sha256": "a251065c7203a21b76c1fb6acd1edb6da1c29896ad2df1f5479c71e16a29c302"
+        }
+      },
+      {
+        "@id": "urn:fcf71ded-26d2-4518-a3e8-bb58b66bdb22",
+        "label": "PC_hyp${num}_sign0.nii.gz",
+        "prov:atLocation": "${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
+        "generatedBy": "urn:5c602888-1bca-4c78-8710-3274acc87d5e",
+        "digest": {
+          "sha256": "5f0818d820edebe892295ffc1dd6f69823f2fb843bc2c3b0b5304054fa227af0"
+        }
+      }
+    ]
+  }
+}
