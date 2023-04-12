@@ -194,7 +194,7 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
 
         activity = {
             "@id": f"urn:{get_id()}",
-            "label": label_mapping(label, "afni/afni_labels.json"),
+            "label": "test" + label_mapping(label, "afni/afni_labels.json"),
             "associatedWith": "urn:" + agent_id,
             "command": cmd,
             "parameters": param_dic,
