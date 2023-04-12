@@ -20,8 +20,13 @@ def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_
         shutil.copyfile(filename, output_dir + "/" + str(file))
     output_jsonld = output_dir + "/" + filename_ss_ext + ".jsonld"
 
-    jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
-                                              output_file=output_jsonld, verbose=verbose)
+    if parser_function != afni_to_bids_prov:
+        jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
+                                                  output_file=output_jsonld, verbose=verbose)
+    else:
+        with_blocs = True if copy is False else False
+        jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
+                                                  output_file=output_jsonld, verbose=verbose, with_blocs=with_blocs)
 
     output_png = output_dir + "/" + filename_ss_ext + ".png"
     if not jsonld_same_as_existing:  # do not generate the png if the jsonld has not evolved
