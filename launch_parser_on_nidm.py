@@ -25,9 +25,6 @@ def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_
     output_png = output_dir + "/" + filename_ss_ext + ".png"
     if not jsonld_same_as_existing:  # do not generate the png if the jsonld has not evolved
         visualize(output_jsonld, output_file=output_png)
-        if parser_function == afni_to_bids_prov:
-            visualize(output_dir + "/" + filename_ss_ext + "_bloc.jsonld",
-                      output_file=output_dir + "/" + filename_ss_ext + "_bloc.png")
 
 
 def main():
@@ -94,6 +91,8 @@ def main():
                 else:
                     filename_ss_ext = file.split(".tcsh")[0]
                 process_file(context_write, root, file, filename_ss_ext, output_dir_afni, afni_to_bids_prov, opt.verbose)
+                # afni bloc
+                process_file(context_write, root, filename_ss_ext + "_bloc.jsonld", output_dir_afni, afni_to_bids_prov, opt.verbose)
 
             else:
                 print(" -> Extension of file ", file, " not supported")
