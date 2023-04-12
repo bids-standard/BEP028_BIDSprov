@@ -5,7 +5,7 @@
   "records": {
     "prov:Agent": [
       {
-        "@id": "urn:2cf39d2b-1f46-4df9-9f1f-0ee01340ad6d",
+        "@id": "urn:d965b6df-759f-418b-a6e5-0eac46db33da",
         "RRID": "RRID:SCR_007037",
         "@type": "prov:SoftwareAgent",
         "label": "AFNI",
@@ -14,53 +14,32 @@
     ],
     "prov:Activity": [
       {
-        "@id": "urn:65fc9308-a754-4214-9ca2-53d26cab2a5f",
-        "label": "3dpc",
-        "associatedWith": "urn:2cf39d2b-1f46-4df9-9f1f-0ee01340ad6d",
-        "command": "3dpc -overwrite -mask ${dset_mask} -pcsave 5 -prefix ${dir_hyp}/PC_hyp${num} ${grp_dset}",
-        "parameters": {},
+        "@id": "urn:2ec46422-3d77-4635-82fc-107101bfe479",
+        "label": "",
+        "associatedWith": "urn:d965b6df-759f-418b-a6e5-0eac46db33da",
+        "command": "3dpc -overwrite -mask ${dset_mask} -pcsave 5 -prefix ${dir_hyp}/PC_hyp${num} ${grp_dset}; ",
         "used": [
-          "urn:e5c7fec3-13ac-43b2-b147-e6c89efc06ad",
-          "urn:b53afaae-06e1-49f4-a9ef-f5b4ee03da6b"
+          "urn:8357220e-6ce0-4b76-a86e-9e52f8105a66",
+          "urn:efe55a24-f1b1-4b61-8343-0087b38ed521"
         ]
       },
       {
-        "@id": "urn:0105302f-6dee-4f56-b390-8f4c7b70f68b",
-        "label": "3dresample",
-        "associatedWith": "urn:2cf39d2b-1f46-4df9-9f1f-0ee01340ad6d",
-        "command": "3dresample -overwrite -prefix tmp_REF_DSET.nii.gz -master ${dset_mask} -input \"${ref_dset}\"",
-        "parameters": {},
+        "@id": "urn:f8728d5a-b3f1-4f75-b4cd-73ed82ad1764",
+        "label": "bloc ...",
+        "associatedWith": "urn:d965b6df-759f-418b-a6e5-0eac46db33da",
+        "command": "3dresample -overwrite -prefix tmp_REF_DSET.nii.gz -master ${dset_mask} -input \"${ref_dset}\"; 3dMatch -echo_edu -overwrite -mask ${dset_mask} -refset ${dir_hyp}/PC_hyp${num}+tlrc -inset tmp_REF_DSET.nii.gz -prefix tmp_MATCHED; 3dcalc -echo_edu -overwrite -a ${dir_hyp}/PC_hyp${num}+tlrc -expr \"${signum}*a\" -prefix ${dir_hyp}/PC_hyp${num}_sign0.nii.gz; ",
         "used": [
-          "urn:43302e4a-2df7-4b56-ba7c-61f14009fe14",
-          "urn:e5c7fec3-13ac-43b2-b147-e6c89efc06ad"
-        ]
-      },
-      {
-        "@id": "urn:82368305-14a5-444d-9f57-a96589e51937",
-        "label": "3dMatch",
-        "associatedWith": "urn:2cf39d2b-1f46-4df9-9f1f-0ee01340ad6d",
-        "command": "3dMatch -echo_edu -overwrite -mask ${dset_mask} -refset ${dir_hyp}/PC_hyp${num}+tlrc -inset tmp_REF_DSET.nii.gz -prefix tmp_MATCHED",
-        "parameters": {},
-        "used": [
-          "urn:482a00bc-4f3f-4866-adff-1ca4914f0f9c",
-          "urn:6facd168-6205-4eab-902a-051b05e0d300",
-          "urn:e5c7fec3-13ac-43b2-b147-e6c89efc06ad"
-        ]
-      },
-      {
-        "@id": "urn:0840ffaf-344d-4b50-b9b5-1a4dd76fe080",
-        "label": "3dcalc",
-        "associatedWith": "urn:2cf39d2b-1f46-4df9-9f1f-0ee01340ad6d",
-        "command": "3dcalc -echo_edu -overwrite -a ${dir_hyp}/PC_hyp${num}+tlrc -expr \"${signum}*a\" -prefix ${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
-        "parameters": {},
-        "used": [
-          "urn:6facd168-6205-4eab-902a-051b05e0d300"
+          "urn:dda849d1-c75a-4abc-88ae-d29ae70310b1",
+          "urn:8357220e-6ce0-4b76-a86e-9e52f8105a66",
+          "urn:fa8d9523-1bbe-4d63-99df-ddfc0e3f8fd7",
+          "urn:8357220e-6ce0-4b76-a86e-9e52f8105a66",
+          "urn:fa8d9523-1bbe-4d63-99df-ddfc0e3f8fd7"
         ]
       }
     ],
     "prov:Entity": [
       {
-        "@id": "urn:e5c7fec3-13ac-43b2-b147-e6c89efc06ad",
+        "@id": "urn:8357220e-6ce0-4b76-a86e-9e52f8105a66",
         "label": "${dset_mask}",
         "prov:atLocation": "${dset_mask}",
         "digest": {
@@ -68,7 +47,7 @@
         }
       },
       {
-        "@id": "urn:b53afaae-06e1-49f4-a9ef-f5b4ee03da6b",
+        "@id": "urn:efe55a24-f1b1-4b61-8343-0087b38ed521",
         "label": "${grp_dset}",
         "prov:atLocation": "${grp_dset}",
         "digest": {
@@ -76,16 +55,24 @@
         }
       },
       {
-        "@id": "urn:213ba206-6549-42b3-90f5-5dbaa5443c31",
+        "@id": "urn:32473147-0c61-422a-b307-54b33fdc4cc7",
         "label": "PC_hyp${num}",
         "prov:atLocation": "${dir_hyp}/PC_hyp${num}",
-        "generatedBy": "urn:65fc9308-a754-4214-9ca2-53d26cab2a5f",
+        "generatedBy": "urn:2ec46422-3d77-4635-82fc-107101bfe479",
         "digest": {
           "sha256": "915832134c7f76c64fd48179b53dfb05de128b50ef451380b440cff2ec1990fb"
         }
       },
       {
-        "@id": "urn:43302e4a-2df7-4b56-ba7c-61f14009fe14",
+        "@id": "urn:8357220e-6ce0-4b76-a86e-9e52f8105a66",
+        "label": "${dset_mask}",
+        "prov:atLocation": "${dset_mask}",
+        "digest": {
+          "sha256": "aad93a52efcf1938cc27b6cfe707fe2b1f74b1bd4b13217516525ff60fa0a2cd"
+        }
+      },
+      {
+        "@id": "urn:dda849d1-c75a-4abc-88ae-d29ae70310b1",
         "label": "\"${ref_dset}\"",
         "prov:atLocation": "\"${ref_dset}\"",
         "digest": {
@@ -93,16 +80,7 @@
         }
       },
       {
-        "@id": "urn:482a00bc-4f3f-4866-adff-1ca4914f0f9c",
-        "label": "tmp_REF_DSET.nii.gz",
-        "prov:atLocation": "tmp_REF_DSET.nii.gz",
-        "generatedBy": "urn:0105302f-6dee-4f56-b390-8f4c7b70f68b",
-        "digest": {
-          "sha256": "e943c60b478a75e89c043bc4a7a6e6c629c3f075007ff501f7b2ab3a253e8d3d"
-        }
-      },
-      {
-        "@id": "urn:6facd168-6205-4eab-902a-051b05e0d300",
+        "@id": "urn:fa8d9523-1bbe-4d63-99df-ddfc0e3f8fd7",
         "label": "PC_hyp${num}",
         "prov:atLocation": "${dir_hyp}/PC_hyp${num}+tlrc",
         "digest": {
@@ -110,19 +88,19 @@
         }
       },
       {
-        "@id": "urn:3a2f1b8e-942c-4178-8f58-491c55c796a7",
+        "@id": "urn:ca9a4718-ff12-4c49-bc9b-c8e5d0c67304",
         "label": "tmp_MATCHED",
         "prov:atLocation": "tmp_MATCHED",
-        "generatedBy": "urn:82368305-14a5-444d-9f57-a96589e51937",
+        "generatedBy": "urn:f8728d5a-b3f1-4f75-b4cd-73ed82ad1764",
         "digest": {
           "sha256": "a251065c7203a21b76c1fb6acd1edb6da1c29896ad2df1f5479c71e16a29c302"
         }
       },
       {
-        "@id": "urn:d227a590-b746-4e62-a756-06959e2f290e",
+        "@id": "urn:794883bf-d745-44bf-880c-8341377bd9ec",
         "label": "PC_hyp${num}_sign0.nii.gz",
         "prov:atLocation": "${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
-        "generatedBy": "urn:0840ffaf-344d-4b50-b9b5-1a4dd76fe080",
+        "generatedBy": "urn:f8728d5a-b3f1-4f75-b4cd-73ed82ad1764",
         "digest": {
           "sha256": "5f0818d820edebe892295ffc1dd6f69823f2fb843bc2c3b0b5304054fa227af0"
         }

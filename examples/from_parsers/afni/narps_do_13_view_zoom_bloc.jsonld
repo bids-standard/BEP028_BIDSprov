@@ -5,7 +5,7 @@
   "records": {
     "prov:Agent": [
       {
-        "@id": "urn:2865335c-14e3-4c09-91ec-1c2ce71c403a",
+        "@id": "urn:d1335ad7-52c8-4e1f-b59e-17bd7ba6b484",
         "RRID": "RRID:SCR_007037",
         "@type": "prov:SoftwareAgent",
         "label": "AFNI",
@@ -14,90 +14,36 @@
     ],
     "prov:Activity": [
       {
-        "@id": "urn:8b8a94b6-8b6a-4ed3-a0f3-b6d878264dc4",
-        "label": "Make directory",
-        "associatedWith": "urn:2865335c-14e3-4c09-91ec-1c2ce71c403a",
-        "command": "mkdir -p ${odir}",
-        "parameters": {},
+        "@id": "urn:c7ebc85c-e88c-400a-8e89-237b22c196fe",
+        "label": "",
+        "associatedWith": "urn:d1335ad7-52c8-4e1f-b59e-17bd7ba6b484",
+        "command": "mkdir -p ${odir}; ",
         "used": []
       },
       {
-        "@id": "urn:127b8467-890e-43b5-bada-c2e7aad0f3b5",
-        "label": "IsoSurface",
-        "associatedWith": "urn:2865335c-14e3-4c09-91ec-1c2ce71c403a",
-        "command": "IsoSurface -overwrite -isorois+dsets -input ${ivol} -o_gii cc_${pref_surf} -Tsmooth 0 0 -remesh 1",
-        "parameters": {},
-        "used": []
-      },
-      {
-        "@id": "urn:f0025fe9-879f-4469-a137-261e544d5478",
-        "label": "1d_tool.py",
-        "associatedWith": "urn:2865335c-14e3-4c09-91ec-1c2ce71c403a",
-        "command": "1d_tool.py -csim_pthr ${pthr} -csim_alpha ${alpha} -infile ${file_1D}",
-        "parameters": {},
+        "@id": "urn:a0b9bd52-1f4c-449a-a30b-716616d3920b",
+        "label": "bloc ...",
+        "associatedWith": "urn:d1335ad7-52c8-4e1f-b59e-17bd7ba6b484",
+        "command": "IsoSurface -overwrite -isorois+dsets -input ${ivol} -o_gii cc_${pref_surf} -Tsmooth 0 0 -remesh 1; 1d_tool.py -csim_pthr ${pthr} -csim_alpha ${alpha} -infile ${file_1D}; plugout_drive -echo_edu -npb $portnum -com \"SWITCH_UNDERLAY ${dset_ref:t}\" -com \"SWITCH_OVERLAY ${dset_ttest:t}\" -com \"SET_XHAIRS OFF\" -com \"SET_SUBBRICKS ${subbb}\" -com \"SET_PBAR_ALL -99 1.0 ${cbar}\" -com \"SET_FUNC_ALPHA ${olay_alpha}\" -com \"SET_FUNC_BOXED ${olay_boxed}\" -com \"$coor_type $coors\" -com \"SET_THRESHNEW ${thr}\" -com \"SET_FUNC_VISIBLE +\" -com \"SET_FUNC_RANGE $frange\" -com \"$OW sagittalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[1]}:${mgap}:${mcolor}\" -com \"$OW coronalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[2]}:${mgap}:${mcolor}\" -com \"$OW axialimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[3]}:${mgap}:${mcolor}\" &; suma -echo_edu -npb $portnum -onestate -niml -i cc*.k*.gii -vol ${dset_ref} -sv ${dset_ref} &; DriveSuma -npb $portnum -com viewer_cont -key \"t\" -key \".\" &; ",
         "used": [
-          "urn:1407a659-fd7a-4484-8d8e-01defef6f7b1"
+          "urn:c9073dc8-0f92-4a58-87c6-462a9196c888",
+          "urn:223b5f50-2b03-45d3-b424-40d1fa650516",
+          "urn:efc86a01-5f01-4b48-9380-fdb30ecd01b2"
         ]
-      },
-      {
-        "@id": "urn:29a0b4f6-b17a-4d53-bd4a-e72f596a9372",
-        "label": "plugout_drive",
-        "associatedWith": "urn:2865335c-14e3-4c09-91ec-1c2ce71c403a",
-        "command": "plugout_drive -echo_edu -npb $portnum -com \"SWITCH_UNDERLAY ${dset_ref:t}\" -com \"SWITCH_OVERLAY ${dset_ttest:t}\" -com \"SET_XHAIRS OFF\" -com \"SET_SUBBRICKS ${subbb}\" -com \"SET_PBAR_ALL -99 1.0 ${cbar}\" -com \"SET_FUNC_ALPHA ${olay_alpha}\" -com \"SET_FUNC_BOXED ${olay_boxed}\" -com \"$coor_type $coors\" -com \"SET_THRESHNEW ${thr}\" -com \"SET_FUNC_VISIBLE +\" -com \"SET_FUNC_RANGE $frange\" -com \"$OW sagittalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[1]}:${mgap}:${mcolor}\" -com \"$OW coronalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[2]}:${mgap}:${mcolor}\" -com \"$OW axialimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[3]}:${mgap}:${mcolor}\" &",
-        "parameters": {
-          "-echo_edu": true,
-          "-npb": "$portnum",
-          "-com": true,
-          "-99": "1.0"
-        },
-        "used": [
-          "urn:14523d74-cb30-454d-aa4c-0d3ec2b47bb5"
-        ]
-      },
-      {
-        "@id": "urn:bc442431-361a-4ce5-971c-cf8eddac2c4c",
-        "label": "suma",
-        "associatedWith": "urn:2865335c-14e3-4c09-91ec-1c2ce71c403a",
-        "command": "suma -echo_edu -npb $portnum -onestate -niml -i cc*.k*.gii -vol ${dset_ref} -sv ${dset_ref} &",
-        "parameters": {},
-        "used": [
-          "urn:842792ba-2db2-4b4b-95e0-8f7230ec3bb1"
-        ]
-      },
-      {
-        "@id": "urn:ceeead2a-ad34-47d3-90e6-938a3309d894",
-        "label": "DriveSuma",
-        "associatedWith": "urn:2865335c-14e3-4c09-91ec-1c2ce71c403a",
-        "command": "DriveSuma -npb $portnum -com viewer_cont -key \"t\" -key \".\" &",
-        "parameters": {
-          "-npb": "$portnum",
-          "-com": "viewer_cont",
-          "-key": true
-        },
-        "used": []
       }
     ],
     "prov:Entity": [
       {
-        "@id": "urn:5ff1801c-9116-43a9-aa4a-c72b55bfef4e",
+        "@id": "urn:df92cbe6-0bd4-4c06-8a1f-c506d04e61aa",
         "label": "${odir}",
         "prov:atLocation": "${odir}",
-        "generatedBy": "urn:8b8a94b6-8b6a-4ed3-a0f3-b6d878264dc4",
+        "generatedBy": "urn:c7ebc85c-e88c-400a-8e89-237b22c196fe",
         "digest": {
           "sha256": "b1fc5ec0acec0bf1a5d6697b7f63ed3b4c8e33adcb77445bc544e124ade50c60"
         }
       },
       {
-        "@id": "urn:a41cf029-3f2e-42b7-bdbf-e8d710365518",
-        "label": "cc_${pref_surf}",
-        "prov:atLocation": "cc_${pref_surf}",
-        "generatedBy": "urn:127b8467-890e-43b5-bada-c2e7aad0f3b5",
-        "digest": {
-          "sha256": "5e02dacb1f0d92310532c03d04b14d6bdc19634a71800752df6d2e4f1adadf06"
-        }
-      },
-      {
-        "@id": "urn:1407a659-fd7a-4484-8d8e-01defef6f7b1",
+        "@id": "urn:c9073dc8-0f92-4a58-87c6-462a9196c888",
         "label": "${file_1D}",
         "prov:atLocation": "${file_1D}",
         "digest": {
@@ -105,7 +51,7 @@
         }
       },
       {
-        "@id": "urn:14523d74-cb30-454d-aa4c-0d3ec2b47bb5",
+        "@id": "urn:223b5f50-2b03-45d3-b424-40d1fa650516",
         "label": "portnum",
         "prov:atLocation": "portnum",
         "digest": {
@@ -113,20 +59,29 @@
         }
       },
       {
-        "@id": "urn:99999a49-6cab-4a7e-98b1-7839f9f69243",
-        "label": "mcolor",
-        "prov:atLocation": "mcolor",
-        "generatedBy": "urn:29a0b4f6-b17a-4d53-bd4a-e72f596a9372",
-        "digest": {
-          "sha256": "a757facd6497c040401a26469144a2df7ad28984bf0e7688a2f32d607fcd6797"
-        }
-      },
-      {
-        "@id": "urn:842792ba-2db2-4b4b-95e0-8f7230ec3bb1",
+        "@id": "urn:efc86a01-5f01-4b48-9380-fdb30ecd01b2",
         "label": "cc*.k*.gii",
         "prov:atLocation": "cc*.k*.gii",
         "digest": {
           "sha256": "8316e018f1f924e85f980916c33a30b32d50cb56a113fd4e4e12a21d24c192bd"
+        }
+      },
+      {
+        "@id": "urn:caa8a218-5221-431d-844c-4b289f771d4c",
+        "label": "cc_${pref_surf}",
+        "prov:atLocation": "cc_${pref_surf}",
+        "generatedBy": "urn:a0b9bd52-1f4c-449a-a30b-716616d3920b",
+        "digest": {
+          "sha256": "5e02dacb1f0d92310532c03d04b14d6bdc19634a71800752df6d2e4f1adadf06"
+        }
+      },
+      {
+        "@id": "urn:678905c1-d3f9-4079-8e8a-ebeff7b289ba",
+        "label": "mcolor",
+        "prov:atLocation": "mcolor",
+        "generatedBy": "urn:a0b9bd52-1f4c-449a-a30b-716616d3920b",
+        "digest": {
+          "sha256": "a757facd6497c040401a26469144a2df7ad28984bf0e7688a2f32d607fcd6797"
         }
       }
     ]
