@@ -17,8 +17,9 @@ def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_
     filename = root + "/" + str(file)
     if with_blocs is False:
         shutil.copyfile(filename, output_dir + "/" + str(file))
-    output_jsonld = output_dir + "/" + filename_ss_ext + ".jsonld"  # suffit "_bloc" is automatically added if with_blocs
-    output_png = output_dir + "/" + filename_ss_ext + ".png" if with_blocs is False else output_dir + "/" + filename_ss_ext + "_bloc" + ".png"
+    output_base = output_dir + "/" + filename_ss_ext if with_blocs is False else output_dir + "/" + filename_ss_ext + "_bloc"
+    output_jsonld = output_base + ".jsonld"
+    output_png = output_base + ".png"
 
     if parser_function != afni_to_bids_prov:
         jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
