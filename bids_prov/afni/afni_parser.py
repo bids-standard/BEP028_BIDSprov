@@ -447,7 +447,7 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     -------
     bool
         Write the json-ld to the location indicated in output_file.
-        If `with_blocs` is True, it generates the file to the following location: `output_file` + "bloc" + ".jsonld"
+        If `with_blocs` is True, it generates the file to the location indicated in output_file.
     """
     commands_bloc = readlines(filename)
 
@@ -483,7 +483,7 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         graph_bloc["records"]["prov:Activity"] = activities_blocs
         graph_bloc["records"]["prov:Entity"] = entities_blocs
 
-        return writing_jsonld(graph_bloc, indent, ''.join(output_file.split(".")[:-1]) + "_bloc." + output_file.split(".")[-1])
+        return writing_jsonld(graph_bloc, indent, output_file)
 
     return writing_jsonld(graph, indent, output_file)
 
