@@ -1,8 +1,9 @@
 import argparse
+import copy
 import json
 import os
 import re
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from itertools import chain
 
 from bids_prov.fsl.fsl_parser import get_entities
@@ -68,13 +69,14 @@ def find_param(cmd_args_remain: list) -> dict:
     Returns
     -------
     dict :
-        [key:value} where key is parameter name and value is True if no value is given in command arguments, else its value
+        [key:value} where key is parameter name and value is True if no value is given in command arguments,
+        else its value
     """
     param_dic = {}
     for arg_remain in cmd_args_remain:
         if arg_remain.startswith("-"):
             if arg_remain != cmd_args_remain[-1]:
-                succesor = cmd_args_remain[cmd_args_remain.index(arg_remain)+1]
+                succesor = cmd_args_remain[cmd_args_remain.index(arg_remain) + 1]
                 if not succesor.startswith("-"):
                     param_dic[arg_remain] = succesor
                     cmd_args_remain.remove(succesor)
@@ -86,7 +88,7 @@ def find_param(cmd_args_remain: list) -> dict:
     return param_dic
 
 
-def build_records(commands: list, agent_id: str, verbose=False):
+def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
     """
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (e.g. `Registration`, `Post-stats`)
@@ -94,11 +96,11 @@ def build_records(commands: list, agent_id: str, verbose=False):
     Parameters
     ----------
 
-    commands : list of str
+    commands_bloc : list of str
         all commands extracted from afni file
     agent_id : int
         random uuid for software agent (here afni)
-     verbose : bool
+     verbose : bool, default=False
         True to have more verbosity
 
     Returns
@@ -111,7 +113,9 @@ def build_records(commands: list, agent_id: str, verbose=False):
     with open(filepath) as f:
         description_functions = json.load(f)
 
-    for cmd in commands:
+    bloc_act = []
+
+    for (bloc, cmd) in commands_bloc:
         cmd_s = re.split(" |=", cmd)
         a_name = cmd_s[0]
         cmd_args_remain = cmd_s[1:]
@@ -173,10 +177,10 @@ def build_records(commands: list, agent_id: str, verbose=False):
 
             # if a key of attributes is in INPUT_TAGS, we add her value in inputs
             inputs = list(chain(*(attributes.pop(k)
-                          for k in attributes.keys() & INPUT_TAGS)))
+                                  for k in attributes.keys() & INPUT_TAGS)))
             # same process with OUTPUT_TAGS
             outputs = list(chain(*(attributes.pop(k)
-                           for k in attributes.keys() & OUTPUT_TAGS)))
+                                   for k in attributes.keys() & OUTPUT_TAGS)))
             entity_names = [_ for _ in re.findall(
                 INPUT_RE, cmd_without_attributes[len(a_name):])]
 
@@ -225,12 +229,13 @@ def build_records(commands: list, agent_id: str, verbose=False):
                     # "derivedFrom": input_id,
                 }
             )
+        bloc_act.append((bloc, activity["@id"]))
 
         records["prov:Activity"].append(activity)
         if verbose:
             print('-------------------------')
 
-    return dict(records)
+    return dict(records), bloc_act
 
 
 def gather_multiline(input_file: str) -> list:
@@ -256,7 +261,7 @@ def gather_multiline(input_file: str) -> list:
             if command_:  # drop blank line
                 while command_.endswith('\\'):
                     command_ = command_[:-1].strip() + ' ' + \
-                        next(fd)[:-1].strip()
+                               next(fd)[:-1].strip()
                 commands.append(command_)
 
     return commands
@@ -283,17 +288,141 @@ def readlines(input_file: str) -> list:
     commands = filtered.split("\n")
     dropline_begin = ["#", "cd", "printf", "\\rm", "$cmd", 'touch', 'sleep',
                       'afni', "echo", "set", "foreach", "end", "if", "endif", "else", "exit"]
-    commands = [cmd for cmd in commands if not any(
-        cmd.startswith(begin) for begin in dropline_begin)]
-    commands = [re.sub(r"\s+", " ", cmd)
-                for cmd in commands]  # drop multiple space between args
-    commands = [cmd for cmd in commands if cmd]  # drop empty commands
 
-    return commands
+    # commands = [cmd for cmd in commands if not any(
+    #     cmd.startswith(begin) for begin in dropline_begin)]
+    regex_bloc = re.compile(r'# =+ ([^=]+) =+')
+    commands_bloc = []
+    bloc = ""
+    for cmd in commands:
+        if cmd.startswith("# ==="):
+            bloc = regex_bloc.match(cmd).groups()[0] if regex_bloc.match(cmd) is not None else "bloc ..."
+
+        if not any(cmd.startswith(begin) for begin in dropline_begin):
+            commands_bloc.append((bloc, cmd))
+
+    commands_bloc = [(bloc, re.sub(r"\s+", " ", cmd))
+                     for (bloc, cmd) in commands_bloc]  # drop multiple space between args
+
+    commands_bloc = [(bloc, cmd)
+                     for (bloc, cmd) in commands_bloc if cmd]  # drop empty commands
+
+    return commands_bloc
+
+
+def get_activities_by_ids(graph, ids):
+    """
+    Get activities from graph by ids
+
+    Parameters
+    ----------
+    graph : dict
+        The bids-prov graph
+
+    ids : list
+        list of int that are id of activities 
+
+    Returns
+    -------
+    activities : list 
+        list of activities 
+    """
+    activities = []
+    for activity in graph["records"]["prov:Activity"]:
+        if activity["@id"] in ids:
+            activities.append(activity)
+    return activities
+
+
+def fusion_activities(activities, label):
+    """
+    Fusion in a single activity the activities
+
+    Parameters
+    ----------
+    activities : list 
+        list of activities 
+
+    label : string
+        name of the group
+
+    Returns
+    -------
+    activities : fict 
+        The final activity 
+    """
+    if len(activities) > 0:
+        used_entities = []
+        command = ""
+
+        for activity in activities:
+            used_entities.extend(activity["used"])
+            command += activity["command"] + "; "
+
+        return {
+            "@id": f"urn:{get_id()}",
+            "label": label,
+            "associatedWith": activities[0]["associatedWith"],
+            "command": command,
+            "used": used_entities,
+        }
+
+
+def get_extern_entities_from_activities(graph, activities, id_fusion_activity):
+    """
+    Get the extern entities from activities
+
+    Parameters
+    ----------
+    graph : dict
+        The bids-prov graph
+
+    activities : list 
+        list of activities 
+
+    id_fusion_activity : int
+        id of the final activity
+
+    Returns
+    -------
+    activities : list 
+        List extern entities
+    """
+    if len(activities) > 0:
+        activities_ids = [act["@id"] for act in activities]
+        used_ents_ids = []
+        for act in activities:
+            used_ents_ids.extend(act["used"])
+        used_ents_ids = set(used_ents_ids)
+
+        used_ents = []
+        generated_entities = []
+        for ent in graph["records"]["prov:Entity"]:
+            if ent["@id"] in used_ents_ids:
+                if "generatedBy" in ent:
+                    if ent["generatedBy"] not in activities_ids:
+                        used_ents.append(ent)
+                else:
+                    used_ents.append(ent)
+
+            if "generatedBy" in ent:
+                if ent["generatedBy"] in activities_ids:
+                    if ent["@id"] not in used_ents_ids:
+                        generated_entities.append(ent)
+
+        # for ent in used_ents:
+        #     if "generatedBy" in ent:
+        #         ent["generatedBy"] = id_fusion_activity
+
+        for ent in generated_entities:
+            if "generatedBy" in ent:
+                ent["generatedBy"] = id_fusion_activity
+
+        return used_ents + generated_entities
 
 
 def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                      soft_ver='afni24', indent=2, verbose=True) -> bool:
+                      soft_ver='afni24', indent=2, verbose=True, with_blocs=True) -> bool:
     """
     afni parser
 
@@ -307,69 +436,66 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         name of output parsed file with extension json.ld
     soft_ver:str
         version of sofware afni
-    indent :int
+    indent : int
         number of indentation in jsonld
     verbose : bool
         True to have more verbosity
+    with_blocs : bool
+        To retrieve or not the results of the parser in block mode and not only for each command
 
-
-
+    Returns
+    -------
+    bool
+        Write the json-ld to the location indicated in output_file.
+        If `with_blocs` is True, it generates the file to the location indicated in output_file.
     """
-    commands = readlines(filename)
-    graph, agent_id = get_default_graph(
-        label="AFNI", context_url=context_url, soft_ver=soft_ver)
-    records = build_records(commands, agent_id, verbose=verbose)
-    graph["records"].update(records)
+    commands_bloc = readlines(filename)
 
+    graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
+    records, bloc_act = build_records(commands_bloc, agent_id, verbose=verbose)
+
+    graph["records"].update(records)
     compute_sha_256_entity(graph["records"]["prov:Entity"])
+
+    if with_blocs:
+        bl_name = list(OrderedDict.fromkeys(bl for (bl, id) in bloc_act))
+        blocs = [{
+            "bloc_name": bl,
+            "act_ids": [id_ for (b, id_) in bloc_act if b == bl]} for bl in bl_name]
+
+        graph_bloc = copy.deepcopy(graph)
+        activities_blocs = []
+        entities_blocs = []
+        for bloc in blocs:
+            activities = get_activities_by_ids(graph_bloc, bloc["act_ids"])
+            fus_activities = fusion_activities(activities, bloc["bloc_name"])
+            ext_entities = get_extern_entities_from_activities(
+                graph_bloc, activities, fus_activities["@id"])
+            for ent in ext_entities:
+                if ent["@id"] not in entities_blocs:
+                    entities_blocs.append(ent)
+
+            for ent_used in fus_activities["used"]:
+                if ent_used not in [id_["@id"] for id_ in ext_entities]:
+                    fus_activities["used"].remove(ent_used)
+            activities_blocs.append(fus_activities)
+
+        graph_bloc["records"]["prov:Activity"] = activities_blocs
+        graph_bloc["records"]["prov:Entity"] = entities_blocs
+
+        return writing_jsonld(graph_bloc, indent, output_file)
 
     return writing_jsonld(graph, indent, output_file)
 
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str,
-                        default="./examples/from_parsers/afni/afni_default_proc.sub_001", help="afni execution log file")
-    parser.add_argument("--output_file", type=str, default="res.jsonld",
-                        help="output dir where results are written")
-    parser.add_argument(
-        "--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
+    parser.add_argument("--input_file", type=str, default="./examples/from_parsers/afni/afni_default_proc.sub_001",
+                        help="afni execution log file")
+    parser.add_argument("--output_file", type=str, default="res.jsonld", help="output dir where results are written")
+    parser.add_argument("--context_url", default=CONTEXT_URL, help="CONTEXT_URL")
     parser.add_argument("--verbose", action="store_true", help="more print")
     opt = parser.parse_args()
 
-    afni_to_bids_prov(opt.input_file, context_url=opt.context_url,
-                      output_file=opt.output_file, verbose=opt.verbose)
+    afni_to_bids_prov(opt.input_file, context_url=opt.context_url, output_file=opt.output_file, verbose=opt.verbose)
     # > python -m   bids_prov.afni.afni_parser --input_file ./afni_test_local/afni_default_proc.sub_001  --output_file res.jsonld
-
-    # input_file = os.path.abspath("../../nidmresults-examples/narps_do_13_view_zoom.tcsh")
-    # # # # # input_file = os.path.abspath("../../afni_test_local/afni/toy_afni")
-    # output_file = "../../res.jsonld"
-    # # commands = readlines(input_file)
-    # afni_to_bids_prov(input_file, context_url = CONTEXT_URL, output_file = output_file,soft_ver = 'afni24',verbose=True)
-
-    # Finding PREAMBULE
-    # with open(input_file, "r") as file:
-    #     all_lines= file.readlines()
-    # all_lines = [line.strip() for line in all_lines]
-    # idx_line_set_runs = all_lines.index('set runs = (`count -digits 2 1 1`)')
-    # preambule, main_part = all_lines[:idx_line_set_runs+1], all_lines[idx_line_set_runs+1:]
-    #
-    # # print('\n'.join(preambule))
-    # # print("="*50)
-    # # print("END PREAMBULE")
-    # # print("="*50)
-    # main_part_joined ='\n'.join(main_part)
-    # print('\n'.join(main_part[:45]))
-    # FINDING FOREACH BLOCK with RE
-    # find_foreach_block = re.findall("foreach run \(\s*\$runs\s*\)\s*([\s\S]*?)end\n", main_part_joined)
-    # for_block = re.search("foreach run \(\s*\$runs\s*\)\s*([\s\S]*?)end\n", filtered)
-    # print(for_block)
-    # # for e in exp:
-    # #     print(e)
-    # for idx, match in enumerate(find_foreach_block):
-    #     print("*"*60, f"\nMatch {idx}")
-    #     lines = match.strip().split('\n')
-    #     for line in lines:
-    #         # Do something with the line
-    #         print(line)

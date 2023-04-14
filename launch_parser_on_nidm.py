@@ -11,21 +11,26 @@ from bids_prov.utils import CONTEXT_URL
 from bids_prov.visualize import main as visualize
 
 
-def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_function, verbose):
+def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_function, verbose, with_blocs=False):
     """Process a file using the given parser function and save the output to the output directory."""
     context_write.write(f"    file= {root}/{str(file)}\n")
-    print(parser_function)
-
     filename = root + "/" + str(file)
-    shutil.copyfile(filename, output_dir + "/" + str(file))
-    output_jsonld = output_dir + "/" + filename_ss_ext + ".jsonld"
+    if with_blocs is False:
+        shutil.copyfile(filename, output_dir + "/" + str(file))
+    output_base = output_dir + "/" + filename_ss_ext if with_blocs is False else output_dir + "/" + filename_ss_ext + "_bloc"
+    output_jsonld = output_base + ".jsonld"
+    output_png = output_base + ".png"
 
-    jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
-                                               output_file=output_jsonld, verbose=verbose)
+    if parser_function != afni_to_bids_prov:
+        jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
+                                                  output_file=output_jsonld, verbose=verbose)
+    else:
+        jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
+                                                  output_file=output_jsonld, verbose=verbose, with_blocs=with_blocs)
 
-    output_png = output_dir + "/" + filename_ss_ext + ".png"
     if not jsonld_same_as_existing:  # do not generate the png if the jsonld has not evolved
         visualize(output_jsonld, output_file=output_png)
+
 
 def main():
     """
@@ -91,9 +96,11 @@ def main():
                 else:
                     filename_ss_ext = file.split(".tcsh")[0]
                 process_file(context_write, root, file, filename_ss_ext, output_dir_afni, afni_to_bids_prov, opt.verbose)
+                # afni bloc
+                process_file(context_write, root, file, filename_ss_ext, output_dir_afni, afni_to_bids_prov, opt.verbose, with_blocs=True)
 
             else:
-                print(" -> Extension of file ", file , " not supported")
+                print(" -> Extension of file ", file, " not supported")
                 continue
 
     context_write.write(f"End of processed files. Results in dir : '{opt.output_dir}'. "
