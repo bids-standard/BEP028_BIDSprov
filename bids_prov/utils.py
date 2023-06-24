@@ -19,7 +19,6 @@ def get_default_graph(label: str, context_url: str = CONTEXT_URL, soft_ver: str 
     return {
                "@context": context_url,
                "BIDSProvVersion": "dev",  # TODO ?
-               "@id": "http://example.org/ds00000X",  # TODO ?
                "records": {
                    "prov:Agent": [
                        {
