@@ -125,7 +125,7 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
         command_name_end = os.path.split(a_name)[1]
 
         for df in description_functions:
-            if df["name"] == command_name_end:
+            if df["Name"] == command_name_end:
                 function_in_description_functions = True
 
                 inputs, outputs, cmd_args_remain = get_entities(cmd_s[1:], df)

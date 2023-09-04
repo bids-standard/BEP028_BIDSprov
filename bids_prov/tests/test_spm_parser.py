@@ -21,6 +21,7 @@ def init_random_state():  # force init to initial state
 
 
 def test_spm_to_bids_prov(verbose=False):
+    verbose=True
     """
     Test if {batch_name}_ref.jsonld (which has been defined in advance) is included in the result of the input file parser
     {batch_name}.m
@@ -64,6 +65,7 @@ def test_spm_to_bids_prov(verbose=False):
 
             if verbose:
                 print(f"TEST n°{idx}: {name}.m // reference {name}_ref.jsonld -> {res_compare}")
+                print(json.dumps(jsonld11_new, indent=2))
 
             assert res_compare
 
@@ -117,7 +119,7 @@ def test_get_records_copy_attributes():
                                    ]
                        )
     recs = get_records(task_groups, str(uuid.uuid4()))
-    attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
+    attrs = [activity["Parameters"] for activity in recs["Activities"]]
     assert "action.copyto" in json.dumps(attrs)
 
 
@@ -126,7 +128,7 @@ def test_get_records_attrs():
                                    ".fwhm = 5;", ]
                        )
     recs = get_records(task_groups, "agentUUID")
-    attrs = [activity["parameters"] for activity in recs["prov:Activity"]]
+    attrs = [activity["Parameters"] for activity in recs["Activities"]]
     assert "4" in json.dumps(attrs)
 
 

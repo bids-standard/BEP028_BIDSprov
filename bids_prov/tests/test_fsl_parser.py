@@ -78,7 +78,7 @@ mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
 def test_get_entities():
     # positionnal argument
     df = {
-        "name": "Command",
+        "Name": "Command",
         "Used": [0],
         "GeneratedBy": [1]
     }
@@ -88,7 +88,7 @@ def test_get_entities():
 
     # inputs, outputs : arg and kwarg
     df = {
-        "name": "Command",
+        "Name": "Command",
         "Used": [0, "-a"],
         "GeneratedBy": [1, "-b"]
     }
@@ -103,7 +103,7 @@ def test_get_entities():
 
     # inputs, outputs : shuffle arg and kwarg
     df = {
-        "name": "Command",
+        "Name": "Command",
         "Used": [0, "-a"],
         "GeneratedBy": [1, "-b"]
     }
@@ -118,7 +118,7 @@ def test_get_entities():
 
     # inputs, outputs : arg -1 and kwarg
     df = {
-        "name": "Command",
+        "Name": "Command",
         "Used": [0, "-a"],
         "GeneratedBy": [-1, "-b"]
     }
@@ -133,7 +133,7 @@ def test_get_entities():
 
     # inputs, outputs : arg "0:-1" and kwarg
     df = {
-        "name": "Command",
+        "Name": "Command",
         "Used": ["0:-1", "-a"],
         "GeneratedBy": [-1, "-b"]
     }
@@ -149,15 +149,15 @@ def test_get_entities():
 
     # inputs, outputs : arg and kwarg dict
     df = {
-        "name": "Command",
+        "Name": "Command",
         "Used": ["0:-1", "-a"],
         "GeneratedBy": [-1, "-b",  {
-            "name": "-c",
-            "index": ["0:2"]
+            "Name": "-c",
+            "Index": ["0:2"]
         },
             {
-            "name": "-d",
-            "index": [3]
+            "Name": "-d",
+            "Index": [3]
         },]
     }
     cmd_s = [
@@ -182,13 +182,13 @@ def test_get_entities():
 
     # inputs, outputs, parameters : arg and kwarg, parameters
     df = {
-        "name": "Command",
+        "Name": "Command",
         "Used": [0, "-a"],
         "GeneratedBy": [-1, "-b"],
-        "parameters_value": ["-c",
+        "ParametersValue": ["-c",
                              {
-                                 "name": "-d",
-                                 "index": ["0:2"]
+                                 "Name": "-d",
+                                 "Index": ["0:2"]
                              }],
         "parameters_no_value": ["-e", "-f"]
     }
@@ -213,17 +213,17 @@ def test_get_entities():
 
     # inputs, outputs : arg and kwarg dict and nargs
     df = {
-        "name": "Command",
+        "Name": "Command",
         "Used": ["0:-1", "-a"],
         "GeneratedBy": [-1, "-b",  {
-            "name": "-c",
-            "index": ["0:2"],
-            "nargs": 3,
+            "Name": "-c",
+            "Index": ["0:2"],
+            "Nargs": 3,
         },
             {
-            "name": "-d",
-            "index": [3],
-            "nargs": 5,
+            "Name": "-d",
+            "Index": [3],
+            "Nargs": 5,
         },]
     }
     cmd_s = [
@@ -249,7 +249,7 @@ def test_get_entities():
 
 def test_get_entities_rm():
     df = {
-        "name": "rm",
+        "Name": "rm",
         "Used": ["0:"]
     }
     cmd = "/bin/rm -f sl?.png highres2standard2.png"
@@ -267,7 +267,7 @@ def test_get_entities_rm():
 
 def test_get_entities_mv():
     df = {
-        "name": "mv",
+        "Name": "mv",
         "Used": ["0:-1"],
         "GeneratedBy": [-1]
     }

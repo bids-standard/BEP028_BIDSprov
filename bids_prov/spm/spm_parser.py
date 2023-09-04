@@ -166,7 +166,7 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
     for activity in conf_dic.keys():
         if activity in activity_name:
             # {'name': 'segment', 'outputs': ['c1xxx.nii.gz','c2xxx.nii.gz']}
-            # act_preproc = next((activity for activity in records["prov:Activity"] if activity['@id'] ==
+            # act_preproc = next((activity for activity in records["Activities"] if activity['@id'] ==
             # activity_id), None)
             for output in conf_dic[activity]['outputs']:
                 name = conf_dic[activity]['name']
@@ -293,7 +293,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
     Returns
     -------
     dict[str, list]
-        records : dict with key "@context", ... "Records":{"prov:Agent": ..."prov:Activity":..."Entities":....}
+        records : dict with key "@context", ... "Records":{"prov:Agent": ..."Activities":..."Entities":....}
 
     """
 
