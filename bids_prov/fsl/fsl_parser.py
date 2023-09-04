@@ -143,7 +143,7 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 
 def _get_kwarg(serie,  with_value=True):
     """
-    Get the named arguments (kwarg) from a column ("used", "generatedBy", "parameters_value" or "parameters_no_value" ) of the dataframe coming frome in description_functions.json
+    Get the named arguments (kwarg) from a column ("Used", "GeneratedBy", "ParametersValue" or "ParametersNoValue" ) of the dataframe coming frome in description_functions.json
 
     Parameters
     ----------
@@ -151,7 +151,7 @@ def _get_kwarg(serie,  with_value=True):
     serie : pandas series
         A list of the command arguments description.
     with_value : boolean
-        A bool to specify if values are expected or not, in order to dicrimine "parameters_value" (with_value=True), and "parameters_no_value" (with_value=False)
+        A bool to specify if values are expected or not, in order to dicrimine "ParametersValue" (with_value=True), and "ParametersNoValue" (with_value=False)
 
     Returns
     -------
@@ -165,13 +165,13 @@ def _get_kwarg(serie,  with_value=True):
     for u_arg in serie:
         if type(u_arg) == dict:
             # parser.add_argument(u_arg["name"], nargs='+', action='append')
-            if "nargs" in u_arg:
+            if "Nargs" in u_arg:
                 add_argument_list.append(
-                    {"arg": u_arg["name"], "nargs": u_arg["nargs"], "action": 'append'})
+                    {"arg": u_arg["Name"], "nargs": u_arg["Nargs"], "action": 'append'})
             else:
                 add_argument_list.append(
-                    {"arg": u_arg["name"], "nargs": "+", "action": 'append'})
-            arg_list.append((u_arg["name"], [u_arg["index"]]))
+                    {"arg": u_arg["Name"], "nargs": "+", "action": 'append'})
+            arg_list.append((u_arg["Name"], [u_arg["Index"]]))
         if type(u_arg) == str and ":" not in u_arg:
 
             if with_value:
@@ -201,7 +201,7 @@ def _get_kwarg(serie,  with_value=True):
 
 def _get_arg(serie, arg_rest):
     """
-    Get the ordinal arguments from a column ("used", "generatedBy") of the dataframe coming from in description_functions.json. _get_arg shoud be used when all named arguments are removed from the initial command.   
+    Get the ordinal arguments from a column ("Used", "GeneratedBy") of the dataframe coming from in description_functions.json. _get_arg shoud be used when all named arguments are removed from the initial command.   
 
     Parameters
     ----------
@@ -306,11 +306,11 @@ def get_entities(cmd_s, parameters):
     -------
 
     >>> df = {
-            "name": "command",
-            "used": [0, "-a"],
-            "generatedBy": [-1, "-b"]
+            "Name": "Command",
+            "Used": [0, "-a"],
+            "GeneratedBy": [-1, "-b"]
         }
-    >>> cmd_s = ["command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
+    >>> cmd_s = ["Command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
     >>> inputs, outputs, parameters = get_entities(cmd_s[1:], df)
     >>> (["kwarg_0", "arg_0"], ["kwarg_1", "arg_1"], [])
 
@@ -321,8 +321,8 @@ def get_entities(cmd_s, parameters):
 
     inputs_kwarg = []
     outputs_kwarg = []
-    parameters_value = []
-    parameters_no_value = []
+    ParametersValue = []
+    ParametersNoValue = []
 
     # print("\n\n cmd_s", cmd_s)
     # change cmd_s to add ">" , ">>", "|&"  as parameter for argparse
@@ -332,31 +332,31 @@ def get_entities(cmd_s, parameters):
 
     # print("\n\n cmd_s change", cmd_s)
 
-    if "used" in parameters:
+    if "Used" in parameters:
         add_argument_list, inputs_kwarg = _get_kwarg(
-            parameters["used"])
+            parameters["Used"])
 
         for kwarg in add_argument_list:
             arg = kwarg.pop("arg")
             parser.add_argument(arg, **kwarg)
 
-    if "generatedBy" in parameters:
+    if "GeneratedBy" in parameters:
         add_argument_list, outputs_kwarg = _get_kwarg(
-            parameters["generatedBy"])
+            parameters["GeneratedBy"])
         for kwarg in add_argument_list:
             arg = kwarg.pop("arg")
             parser.add_argument(arg, **kwarg)
 
-    if "parameters_value" in parameters:
-        add_argument_list, parameters_value = _get_kwarg(
-            parameters["parameters_value"])
+    if "ParametersValue" in parameters:
+        add_argument_list, ParametersValue = _get_kwarg(
+            parameters["ParametersValue"])
         for kwarg in add_argument_list:
             arg = kwarg.pop("arg")
             parser.add_argument(arg, **kwarg)
 
-    if "parameters_no_value" in parameters:
-        add_argument_list, parameters_no_value = _get_kwarg(
-            parameters["parameters_no_value"], with_value=False)
+    if "ParametersNoValue" in parameters:
+        add_argument_list, ParametersNoValue = _get_kwarg(
+            parameters["ParametersNoValue"], with_value=False)
         for kwarg in add_argument_list:
             arg = kwarg.pop("arg")
             parser.add_argument(arg, **kwarg)
@@ -367,8 +367,8 @@ def get_entities(cmd_s, parameters):
     # print("\n\n parse_known_args", opts)
     # print("\n\n inputs_kwarg", inputs_kwarg)
     # print("\n\n outputs_kwarg", outputs_kwarg)
-    # print("\n\n parameters_value", parameters_value)
-    # print("\n\n parameters_no_value", parameters_no_value)
+    # print("\n\n ParametersValue", ParametersValue)
+    # print("\n\n ParametersNoValue", ParametersNoValue)
     # print("\n\n arg_rest", arg_rest)
 
     entities = []
@@ -379,14 +379,14 @@ def get_entities(cmd_s, parameters):
     params = []
     inputs = _get_entities_from_kwarg(inputs, opts, inputs_kwarg)
     outputs = _get_entities_from_kwarg(outputs, opts, outputs_kwarg)
-    params = _get_entities_from_kwarg(params, opts, parameters_value)
-    params = _get_entities_from_kwarg(params, opts, parameters_no_value)
+    params = _get_entities_from_kwarg(params, opts, ParametersValue)
+    params = _get_entities_from_kwarg(params, opts, ParametersNoValue)
 
-    if "used" in parameters:
-        inputs.extend(_get_arg(parameters["used"], arg_rest))
+    if "Used" in parameters:
+        inputs.extend(_get_arg(parameters["Used"], arg_rest))
 
-    if "generatedBy" in parameters:
-        outputs.extend(_get_arg(parameters["generatedBy"], arg_rest))
+    if "GeneratedBy" in parameters:
+        outputs.extend(_get_arg(parameters["GeneratedBy"], arg_rest))
 
      # print("\n\n inputs", inputs)
     # print("\n\n outputs", outputs)
@@ -432,7 +432,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             command_name_end = os.path.split(a_name)[1]
             for df in description_functions:
-                if df["name"] == command_name_end:
+                if df["Name"] == command_name_end:
                     description_of_command = df
                     function_in_description_functions = True
                     inputs, outputs, parameters = get_entities(
@@ -476,13 +476,13 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             a = {
                 "@id": f"urn:{get_id()}",
-                "label": label_mapping(label, "fsl/fsl_labels.json"),
-                "associatedWith": "urn:" + agent_id,
-                "command": cmd,
+                "Label": label_mapping(label, "fsl/fsl_labels.json"),
+                "AssociatedWith": "urn:" + agent_id,
+                "Command": cmd,
                 # "attributes": [
                 #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
                 # ],
-                "used": list(),
+                "Used": list(),
             }
 
             for input_path in inputs:
@@ -490,31 +490,31 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 input_id = f"urn:{get_id()}"  # def format_id
 
                 existing_input = next(
-                    (entity for entity in records["prov:Entity"] if entity["prov:atLocation"] == input_path), None)
+                    (entity for entity in records["Entities"] if entity["AtLocation"] == input_path), None)
                 if existing_input is None:
                     e = {
                         "@id": input_id,
-                        "label": os.path.split(input_path)[1],
-                        "prov:atLocation": input_path,
+                        "Label": os.path.split(input_path)[1],
+                        "AtLocation": input_path,
                     }
-                    records["prov:Entity"].append(e)
-                    a["used"].append(input_id)
+                    records["Entities"].append(e)
+                    a["Used"].append(input_id)
                 else:
-                    a["used"].append(existing_input["@id"])
+                    a["Used"].append(existing_input["@id"])
 
             for output_path in outputs:
                 # output_name = output_path.replace("/", "_") # TODO
-                records["prov:Entity"].append(
+                records["Entities"].append(
                     {
                         "@id": f"urn:{get_id()}",
-                        "label": os.path.split(output_path)[1],
-                        "prov:atLocation": output_path,
-                        "generatedBy": a["@id"],
+                        "Label": os.path.split(output_path)[1],
+                        "AtLocation": output_path,
+                        "GeneratedBy": a["@id"],
                         # "derivedFrom": input_id,
                     }
                 )
 
-            records["prov:Activity"].append(a)
+            records["Activities"].append(a)
     return dict(records)
 
 
@@ -526,9 +526,9 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
 
     lines = readlines(filename)
     records = build_records(lines, agent_id)
-    graph["records"].update(records)
+    graph["Records"].update(records)
 
-    compute_sha_256_entity(graph["records"]["prov:Entity"])
+    compute_sha_256_entity(graph["Records"]["Entities"])
 
     return writing_jsonld(graph, indent, output_file)
 
