@@ -14,12 +14,12 @@ def get_id():
 
 
 def get_default_graph(label: str, context_url: str = CONTEXT_URL, soft_ver: str = "dev", ) \
-        -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["records"].update
+        -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["Records"].update
     agent_id = get_id()
     return {
                "@context": context_url,
                "BIDSProvVersion": "dev",  # TODO ?
-               "records": {
+               "Records": {
                    "prov:Agent": [
                        {
                            "@id": "urn:" + agent_id,

@@ -526,9 +526,9 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
 
     lines = readlines(filename)
     records = build_records(lines, agent_id)
-    graph["records"].update(records)
+    graph["Records"].update(records)
 
-    compute_sha_256_entity(graph["records"]["prov:Entity"])
+    compute_sha_256_entity(graph["Records"]["prov:Entity"])
 
     return writing_jsonld(graph, indent, output_file)
 
