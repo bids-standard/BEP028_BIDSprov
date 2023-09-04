@@ -89,8 +89,8 @@ def test_get_input_entity():
     # entity label : sub-01_task-tonecounting_bold.nii.gz
     entities = [{
         "@id": "urn:c15521b1-b3dc-450a-9daa-37e51b591d75",
-        "label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gz",
-        "prov:atLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gz"
+        "Label": "func_sub-01_task-tonecounting_bold_trunctest.nii.gz",
+        "AtLocation": "ds011/sub-01/func/sub-01_task-tonecounting_bold_trunctest.nii.gz"
     }]
     init_random_state()
     right_entity = get_input_entity(right)[0]

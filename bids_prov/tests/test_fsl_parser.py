@@ -78,21 +78,21 @@ mkdir .files;cp /usr/share/fsl-5.0/doc/fsl.css .files
 def test_get_entities():
     # positionnal argument
     df = {
-        "name": "command",
-        "used": [0],
-        "generatedBy": [1]
+        "name": "Command",
+        "Used": [0],
+        "GeneratedBy": [1]
     }
-    cmd_s = ["command", "arg_0", "arg_1"]
+    cmd_s = ["Command", "arg_0", "arg_1"]
     expected_results = (['arg_0'], ['arg_1'], [])
     assert get_entities(cmd_s[1:], df) == expected_results
 
     # inputs, outputs : arg and kwarg
     df = {
-        "name": "command",
-        "used": [0, "-a"],
-        "generatedBy": [1, "-b"]
+        "name": "Command",
+        "Used": [0, "-a"],
+        "GeneratedBy": [1, "-b"]
     }
-    cmd_s = ["command", "arg_0", "arg_1", "-a", "kwarg_0",  "-b", "kwarg_1"]
+    cmd_s = ["Command", "arg_0", "arg_1", "-a", "kwarg_0",  "-b", "kwarg_1"]
     inputs, outputs, parameters = get_entities(cmd_s[1:], df)
     expected_inputs = ["kwarg_0", "arg_0"]
     expected_outputs = ["kwarg_1", "arg_1"]
@@ -103,11 +103,11 @@ def test_get_entities():
 
     # inputs, outputs : shuffle arg and kwarg
     df = {
-        "name": "command",
-        "used": [0, "-a"],
-        "generatedBy": [1, "-b"]
+        "name": "Command",
+        "Used": [0, "-a"],
+        "GeneratedBy": [1, "-b"]
     }
-    cmd_s = ["command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
+    cmd_s = ["Command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
     inputs, outputs, parameters = get_entities(cmd_s[1:], df)
     expected_inputs = ["kwarg_0", "arg_0"]
     expected_outputs = ["kwarg_1", "arg_1"]
@@ -118,11 +118,11 @@ def test_get_entities():
 
     # inputs, outputs : arg -1 and kwarg
     df = {
-        "name": "command",
-        "used": [0, "-a"],
-        "generatedBy": [-1, "-b"]
+        "name": "Command",
+        "Used": [0, "-a"],
+        "GeneratedBy": [-1, "-b"]
     }
-    cmd_s = ["command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
+    cmd_s = ["Command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
     inputs, outputs, parameters = get_entities(cmd_s[1:], df)
     expected_inputs = ["kwarg_0", "arg_0"]
     expected_outputs = ["kwarg_1", "arg_1"]
@@ -133,11 +133,11 @@ def test_get_entities():
 
     # inputs, outputs : arg "0:-1" and kwarg
     df = {
-        "name": "command",
-        "used": ["0:-1", "-a"],
-        "generatedBy": [-1, "-b"]
+        "name": "Command",
+        "Used": ["0:-1", "-a"],
+        "GeneratedBy": [-1, "-b"]
     }
-    cmd_s = ["command", "-a", "kwarg_0", "arg_0",
+    cmd_s = ["Command", "-a", "kwarg_0", "arg_0",
              "arg_1",  "-b", "kwarg_1", "arg_2"]
     inputs, outputs, parameters = get_entities(cmd_s[1:], df)
     expected_inputs = ["kwarg_0", "arg_0", "arg_1"]
@@ -149,9 +149,9 @@ def test_get_entities():
 
     # inputs, outputs : arg and kwarg dict
     df = {
-        "name": "command",
-        "used": ["0:-1", "-a"],
-        "generatedBy": [-1, "-b",  {
+        "name": "Command",
+        "Used": ["0:-1", "-a"],
+        "GeneratedBy": [-1, "-b",  {
             "name": "-c",
             "index": ["0:2"]
         },
@@ -161,7 +161,7 @@ def test_get_entities():
         },]
     }
     cmd_s = [
-        "command",
+        "Command",
         "-a", "kwarg_0",
         "arg_0",
         "arg_1",
@@ -182,9 +182,9 @@ def test_get_entities():
 
     # inputs, outputs, parameters : arg and kwarg, parameters
     df = {
-        "name": "command",
-        "used": [0, "-a"],
-        "generatedBy": [-1, "-b"],
+        "name": "Command",
+        "Used": [0, "-a"],
+        "GeneratedBy": [-1, "-b"],
         "parameters_value": ["-c",
                              {
                                  "name": "-d",
@@ -193,7 +193,7 @@ def test_get_entities():
         "parameters_no_value": ["-e", "-f"]
     }
     cmd_s = [
-        "command",
+        "Command",
         "-a", "kwarg_0",
         "arg_0",
         "arg_1",
@@ -213,9 +213,9 @@ def test_get_entities():
 
     # inputs, outputs : arg and kwarg dict and nargs
     df = {
-        "name": "command",
-        "used": ["0:-1", "-a"],
-        "generatedBy": [-1, "-b",  {
+        "name": "Command",
+        "Used": ["0:-1", "-a"],
+        "GeneratedBy": [-1, "-b",  {
             "name": "-c",
             "index": ["0:2"],
             "nargs": 3,
@@ -227,7 +227,7 @@ def test_get_entities():
         },]
     }
     cmd_s = [
-        "command",
+        "Command",
         "-a", "kwarg_0",
         "arg_0",
         "arg_1",
@@ -250,7 +250,7 @@ def test_get_entities():
 def test_get_entities_rm():
     df = {
         "name": "rm",
-        "used": ["0:"]
+        "Used": ["0:"]
     }
     cmd = "/bin/rm -f sl?.png highres2standard2.png"
     cmd_s = cmd.split(" ")
@@ -268,8 +268,8 @@ def test_get_entities_rm():
 def test_get_entities_mv():
     df = {
         "name": "mv",
-        "used": ["0:-1"],
-        "generatedBy": [-1]
+        "Used": ["0:-1"],
+        "GeneratedBy": [-1]
     }
     cmd = "/bin/mv -f prefiltered_func_data_mcf.mat prefiltered_func_data_mcf.par prefiltered_func_data_mcf_abs.rms " \
           "prefiltered_func_data_mcf_abs_mean.rms prefiltered_func_data_mcf_rel.rms " \

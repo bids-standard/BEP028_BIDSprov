@@ -32,13 +32,13 @@ def test_get_default_graph():
     # Test the default arguments
     graph, agent_id = get_default_graph(label)
     assert graph["@context"] == CONTEXT_URL
-    assert graph["records"]["prov:Agent"][0]["label"] == label
+    assert graph["records"]["prov:Agent"][0]["Label"] == label
     assert agent_id is not None
 
     # Test custom arguments
     graph, agent_id = get_default_graph(label, context_url, spm_ver)
     assert graph["@context"] == context_url
-    assert graph["records"]["prov:Agent"][0]["label"] == label
+    assert graph["records"]["prov:Agent"][0]["Label"] == label
     assert graph["records"]["prov:Agent"][0]["version"] == spm_ver
     assert agent_id is not None
 
