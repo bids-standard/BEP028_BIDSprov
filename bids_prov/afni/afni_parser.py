@@ -220,7 +220,7 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
                 activity["Used"].append(existing_input["@id"])
 
         for output_path in outputs:
-            records["prov:Entity"].append(
+            records["Entities"].append(
                 {
                     "@id": f"urn:{get_id()}",
                     "Label": os.path.split(output_path)[1],

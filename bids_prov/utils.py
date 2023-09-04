@@ -30,7 +30,7 @@ def get_default_graph(label: str, context_url: str = CONTEXT_URL, soft_ver: str 
                        }
                    ],
                    "prov:Activity": [],
-                   "prov:Entity": [],
+                   "Entities": [],
                },
            }, agent_id
 
