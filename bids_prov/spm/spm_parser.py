@@ -293,7 +293,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
     Returns
     -------
     dict[str, list]
-        records : dict with key "@context", ... "records":{"prov:Agent": ..."prov:Activity":..."prov:Entity":....}
+        records : dict with key "@context", ... "Records":{"prov:Agent": ..."prov:Activity":..."prov:Entity":....}
 
     """
 
