@@ -193,7 +193,7 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
         label = f"{os.path.split(a_name)[1]}"
 
         activity = {
-            "Id": f"urn:{get_id()}",
+            "@id": f"urn:{get_id()}",
             "Label": label_mapping(label, "afni/afni_labels.json"),
             "AssociatedWith": "urn:" + agent_id,
             "Command": cmd,
@@ -210,26 +210,26 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
                 new_label = os.path.split(input_path)[1]
                 new_label_rename = clean_label_suffix(new_label)
                 ent = {
-                    "Id": input_id,
+                    "@id": input_id,
                     "Label": new_label_rename,
                     "AtLocation": input_path,
                 }
                 records["Entities"].append(ent)
                 activity["Used"].append(input_id)
             else:
-                activity["Used"].append(existing_input["Id"])
+                activity["Used"].append(existing_input["@id"])
 
         for output_path in outputs:
             records["prov:Entity"].append(
                 {
-                    "Id": f"urn:{get_id()}",
+                    "@id": f"urn:{get_id()}",
                     "Label": os.path.split(output_path)[1],
                     "AtLocation": output_path,
-                    "GeneratedBy": activity["Id"],
+                    "GeneratedBy": activity["@id"],
                     # "derivedFrom": input_id,
                 }
             )
-        bloc_act.append((bloc, activity["Id"]))
+        bloc_act.append((bloc, activity["@id"]))
 
         records["Activities"].append(activity)
         if verbose:
@@ -329,7 +329,7 @@ def get_activities_by_ids(graph, ids):
     """
     activities = []
     for activity in graph["Records"]["Activities"]:
-        if activity["Id"] in ids:
+        if activity["@id"] in ids:
             activities.append(activity)
     return activities
 
@@ -360,7 +360,7 @@ def fusion_activities(activities, label):
             command += activity["Command"] + "; "
 
         return {
-            "Id": f"urn:{get_id()}",
+            "@id": f"urn:{get_id()}",
             "Label": label,
             "AssociatedWith": activities[0]["associatedWith"],
             "Command": command,
@@ -389,7 +389,7 @@ def get_extern_entities_from_activities(graph, activities, id_fusion_activity):
         List extern entities
     """
     if len(activities) > 0:
-        activities_ids = [act["Id"] for act in activities]
+        activities_ids = [act["@id"] for act in activities]
         used_ents_ids = []
         for act in activities:
             used_ents_ids.extend(act["Used"])
@@ -398,7 +398,7 @@ def get_extern_entities_from_activities(graph, activities, id_fusion_activity):
         used_ents = []
         generated_entities = []
         for ent in graph["Records"]["Entities"]:
-            if ent["Id"] in used_ents_ids:
+            if ent["@id"] in used_ents_ids:
                 if "GeneratedBy" in ent:
                     if ent["GeneratedBy"] not in activities_ids:
                         used_ents.append(ent)
@@ -407,7 +407,7 @@ def get_extern_entities_from_activities(graph, activities, id_fusion_activity):
 
             if "GeneratedBy" in ent:
                 if ent["GeneratedBy"] in activities_ids:
-                    if ent["Id"] not in used_ents_ids:
+                    if ent["@id"] not in used_ents_ids:
                         generated_entities.append(ent)
 
         # for ent in used_ents:
@@ -470,13 +470,13 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
             activities = get_activities_by_ids(graph_bloc, bloc["act_ids"])
             fus_activities = fusion_activities(activities, bloc["bloc_name"])
             ext_entities = get_extern_entities_from_activities(
-                graph_bloc, activities, fus_activities["Id"])
+                graph_bloc, activities, fus_activities["@id"])
             for ent in ext_entities:
-                if ent["Id"] not in entities_blocs:
+                if ent["@id"] not in entities_blocs:
                     entities_blocs.append(ent)
 
             for ent_used in fus_activities["Used"]:
-                if ent_used not in [id_["Id"] for id_ in ext_entities]:
+                if ent_used not in [id_["@id"] for id_ in ext_entities]:
                     fus_activities["Used"].remove(ent_used)
             activities_blocs.append(fus_activities)
 

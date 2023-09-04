@@ -475,7 +475,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             label = f"{os.path.split(a_name)[1]}"
 
             a = {
-                "Id": f"urn:{get_id()}",
+                "@id": f"urn:{get_id()}",
                 "Label": label_mapping(label, "fsl/fsl_labels.json"),
                 "AssociatedWith": "urn:" + agent_id,
                 "Command": cmd,
@@ -493,23 +493,23 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     (entity for entity in records["Entities"] if entity["AtLocation"] == input_path), None)
                 if existing_input is None:
                     e = {
-                        "Id": input_id,
+                        "@id": input_id,
                         "Label": os.path.split(input_path)[1],
                         "AtLocation": input_path,
                     }
                     records["Entities"].append(e)
                     a["Used"].append(input_id)
                 else:
-                    a["Used"].append(existing_input["Id"])
+                    a["Used"].append(existing_input["@id"])
 
             for output_path in outputs:
                 # output_name = output_path.replace("/", "_") # TODO
                 records["Entities"].append(
                     {
-                        "Id": f"urn:{get_id()}",
+                        "@id": f"urn:{get_id()}",
                         "Label": os.path.split(output_path)[1],
                         "AtLocation": output_path,
-                        "GeneratedBy": a["Id"],
+                        "GeneratedBy": a["@id"],
                         # "derivedFrom": input_id,
                     }
                 )
