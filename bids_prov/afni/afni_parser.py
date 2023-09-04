@@ -193,45 +193,45 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
         label = f"{os.path.split(a_name)[1]}"
 
         activity = {
-            "@id": f"urn:{get_id()}",
-            "label": label_mapping(label, "afni/afni_labels.json"),
-            "associatedWith": "urn:" + agent_id,
-            "command": cmd,
-            "parameters": param_dic,
-            "used": list(),
+            "Id": f"urn:{get_id()}",
+            "Label": label_mapping(label, "afni/afni_labels.json"),
+            "AssociatedWith": "urn:" + agent_id,
+            "Command": cmd,
+            "Parameters": param_dic,
+            "Used": list(),
         }
 
         for input_path in inputs:
             input_id = f"urn:{get_id()}"  # def format_id
             existing_input = next(
-                (entity for entity in records["prov:Entity"] if entity["prov:atLocation"] == input_path), None)
+                (entity for entity in records["Entities"] if entity["AtLocation"] == input_path), None)
 
             if existing_input is None:
                 new_label = os.path.split(input_path)[1]
                 new_label_rename = clean_label_suffix(new_label)
                 ent = {
-                    "@id": input_id,
-                    "label": new_label_rename,
-                    "prov:atLocation": input_path,
+                    "Id": input_id,
+                    "Label": new_label_rename,
+                    "AtLocation": input_path,
                 }
-                records["prov:Entity"].append(ent)
-                activity["used"].append(input_id)
+                records["Entities"].append(ent)
+                activity["Used"].append(input_id)
             else:
-                activity["used"].append(existing_input["@id"])
+                activity["Used"].append(existing_input["Id"])
 
         for output_path in outputs:
             records["prov:Entity"].append(
                 {
-                    "@id": f"urn:{get_id()}",
-                    "label": os.path.split(output_path)[1],
-                    "prov:atLocation": output_path,
-                    "generatedBy": activity["@id"],
+                    "Id": f"urn:{get_id()}",
+                    "Label": os.path.split(output_path)[1],
+                    "AtLocation": output_path,
+                    "GeneratedBy": activity["Id"],
                     # "derivedFrom": input_id,
                 }
             )
-        bloc_act.append((bloc, activity["@id"]))
+        bloc_act.append((bloc, activity["Id"]))
 
-        records["prov:Activity"].append(activity)
+        records["Activities"].append(activity)
         if verbose:
             print('-------------------------')
 
@@ -328,8 +328,8 @@ def get_activities_by_ids(graph, ids):
         list of activities 
     """
     activities = []
-    for activity in graph["records"]["prov:Activity"]:
-        if activity["@id"] in ids:
+    for activity in graph["Records"]["Activities"]:
+        if activity["Id"] in ids:
             activities.append(activity)
     return activities
 
@@ -356,15 +356,15 @@ def fusion_activities(activities, label):
         command = ""
 
         for activity in activities:
-            used_entities.extend(activity["used"])
-            command += activity["command"] + "; "
+            used_entities.extend(activity["Used"])
+            command += activity["Command"] + "; "
 
         return {
-            "@id": f"urn:{get_id()}",
-            "label": label,
-            "associatedWith": activities[0]["associatedWith"],
-            "command": command,
-            "used": used_entities,
+            "Id": f"urn:{get_id()}",
+            "Label": label,
+            "AssociatedWith": activities[0]["associatedWith"],
+            "Command": command,
+            "Used": used_entities,
         }
 
 
@@ -389,25 +389,25 @@ def get_extern_entities_from_activities(graph, activities, id_fusion_activity):
         List extern entities
     """
     if len(activities) > 0:
-        activities_ids = [act["@id"] for act in activities]
+        activities_ids = [act["Id"] for act in activities]
         used_ents_ids = []
         for act in activities:
-            used_ents_ids.extend(act["used"])
+            used_ents_ids.extend(act["Used"])
         used_ents_ids = set(used_ents_ids)
 
         used_ents = []
         generated_entities = []
-        for ent in graph["records"]["prov:Entity"]:
-            if ent["@id"] in used_ents_ids:
-                if "generatedBy" in ent:
-                    if ent["generatedBy"] not in activities_ids:
+        for ent in graph["Records"]["Entities"]:
+            if ent["Id"] in used_ents_ids:
+                if "GeneratedBy" in ent:
+                    if ent["GeneratedBy"] not in activities_ids:
                         used_ents.append(ent)
                 else:
                     used_ents.append(ent)
 
-            if "generatedBy" in ent:
-                if ent["generatedBy"] in activities_ids:
-                    if ent["@id"] not in used_ents_ids:
+            if "GeneratedBy" in ent:
+                if ent["GeneratedBy"] in activities_ids:
+                    if ent["Id"] not in used_ents_ids:
                         generated_entities.append(ent)
 
         # for ent in used_ents:
@@ -415,8 +415,8 @@ def get_extern_entities_from_activities(graph, activities, id_fusion_activity):
         #         ent["generatedBy"] = id_fusion_activity
 
         for ent in generated_entities:
-            if "generatedBy" in ent:
-                ent["generatedBy"] = id_fusion_activity
+            if "GeneratedBy" in ent:
+                ent["GeneratedBy"] = id_fusion_activity
 
         return used_ents + generated_entities
 
@@ -454,8 +454,8 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
     records, bloc_act = build_records(commands_bloc, agent_id, verbose=verbose)
 
-    graph["records"].update(records)
-    compute_sha_256_entity(graph["records"]["prov:Entity"])
+    graph["Records"].update(records)
+    compute_sha_256_entity(graph["Records"]["Entities"])
 
     if with_blocs:
         bl_name = list(OrderedDict.fromkeys(bl for (bl, id) in bloc_act))
@@ -470,18 +470,18 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
             activities = get_activities_by_ids(graph_bloc, bloc["act_ids"])
             fus_activities = fusion_activities(activities, bloc["bloc_name"])
             ext_entities = get_extern_entities_from_activities(
-                graph_bloc, activities, fus_activities["@id"])
+                graph_bloc, activities, fus_activities["Id"])
             for ent in ext_entities:
-                if ent["@id"] not in entities_blocs:
+                if ent["Id"] not in entities_blocs:
                     entities_blocs.append(ent)
 
-            for ent_used in fus_activities["used"]:
-                if ent_used not in [id_["@id"] for id_ in ext_entities]:
-                    fus_activities["used"].remove(ent_used)
+            for ent_used in fus_activities["Used"]:
+                if ent_used not in [id_["Id"] for id_ in ext_entities]:
+                    fus_activities["Used"].remove(ent_used)
             activities_blocs.append(fus_activities)
 
-        graph_bloc["records"]["prov:Activity"] = activities_blocs
-        graph_bloc["records"]["prov:Entity"] = entities_blocs
+        graph_bloc["Records"]["Activities"] = activities_blocs
+        graph_bloc["Records"]["Entities"] = entities_blocs
 
         return writing_jsonld(graph_bloc, indent, output_file)
 

@@ -332,17 +332,17 @@ def get_entities(cmd_s, parameters):
 
     # print("\n\n cmd_s change", cmd_s)
 
-    if "used" in parameters:
+    if "Used" in parameters:
         add_argument_list, inputs_kwarg = _get_kwarg(
-            parameters["used"])
+            parameters["Used"])
 
         for kwarg in add_argument_list:
             arg = kwarg.pop("arg")
             parser.add_argument(arg, **kwarg)
 
-    if "generatedBy" in parameters:
+    if "GeneratedBy" in parameters:
         add_argument_list, outputs_kwarg = _get_kwarg(
-            parameters["generatedBy"])
+            parameters["GeneratedBy"])
         for kwarg in add_argument_list:
             arg = kwarg.pop("arg")
             parser.add_argument(arg, **kwarg)
@@ -382,11 +382,11 @@ def get_entities(cmd_s, parameters):
     params = _get_entities_from_kwarg(params, opts, parameters_value)
     params = _get_entities_from_kwarg(params, opts, parameters_no_value)
 
-    if "used" in parameters:
-        inputs.extend(_get_arg(parameters["used"], arg_rest))
+    if "Used" in parameters:
+        inputs.extend(_get_arg(parameters["Used"], arg_rest))
 
-    if "generatedBy" in parameters:
-        outputs.extend(_get_arg(parameters["generatedBy"], arg_rest))
+    if "GeneratedBy" in parameters:
+        outputs.extend(_get_arg(parameters["GeneratedBy"], arg_rest))
 
      # print("\n\n inputs", inputs)
     # print("\n\n outputs", outputs)
@@ -475,14 +475,14 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             label = f"{os.path.split(a_name)[1]}"
 
             a = {
-                "@id": f"urn:{get_id()}",
-                "label": label_mapping(label, "fsl/fsl_labels.json"),
-                "associatedWith": "urn:" + agent_id,
-                "command": cmd,
+                "Id": f"urn:{get_id()}",
+                "Label": label_mapping(label, "fsl/fsl_labels.json"),
+                "AssociatedWith": "urn:" + agent_id,
+                "Command": cmd,
                 # "attributes": [
                 #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
                 # ],
-                "used": list(),
+                "Used": list(),
             }
 
             for input_path in inputs:
@@ -490,31 +490,31 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 input_id = f"urn:{get_id()}"  # def format_id
 
                 existing_input = next(
-                    (entity for entity in records["prov:Entity"] if entity["prov:atLocation"] == input_path), None)
+                    (entity for entity in records["Entities"] if entity["AtLocation"] == input_path), None)
                 if existing_input is None:
                     e = {
-                        "@id": input_id,
-                        "label": os.path.split(input_path)[1],
-                        "prov:atLocation": input_path,
+                        "Id": input_id,
+                        "Label": os.path.split(input_path)[1],
+                        "AtLocation": input_path,
                     }
-                    records["prov:Entity"].append(e)
-                    a["used"].append(input_id)
+                    records["Entities"].append(e)
+                    a["Used"].append(input_id)
                 else:
-                    a["used"].append(existing_input["@id"])
+                    a["Used"].append(existing_input["Id"])
 
             for output_path in outputs:
                 # output_name = output_path.replace("/", "_") # TODO
-                records["prov:Entity"].append(
+                records["Entities"].append(
                     {
-                        "@id": f"urn:{get_id()}",
-                        "label": os.path.split(output_path)[1],
-                        "prov:atLocation": output_path,
-                        "generatedBy": a["@id"],
+                        "Id": f"urn:{get_id()}",
+                        "Label": os.path.split(output_path)[1],
+                        "AtLocation": output_path,
+                        "GeneratedBy": a["Id"],
                         # "derivedFrom": input_id,
                     }
                 )
 
-            records["prov:Activity"].append(a)
+            records["Activities"].append(a)
     return dict(records)
 
 
