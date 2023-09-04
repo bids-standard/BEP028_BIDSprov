@@ -130,8 +130,8 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
 
                 inputs, outputs, cmd_args_remain = get_entities(cmd_s[1:], df)
 
-                # if "used" in df:
-                #     arg = df["used"]
+                # if "Used" in df:
+                #     arg = df["Used"]
                 #     entities, args_consumed_list = get_entities(cmd_s, arg)
                 #     renamed_entities = [clean_label_suffix(
                 #         os.path.split(ent)[1]) for ent in entities]
@@ -139,8 +139,8 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
                 #     for arg in args_consumed_list:
                 #         cmd_args_remain.remove(arg)
 
-                # if "generatedBy" in df:
-                #     arg = df["generatedBy"]
+                # if "GeneratedBy" in df:
+                #     arg = df["GeneratedBy"]
                 #     entities, args_consumed_list = get_entities(cmd_s, arg)
                 #     renamed_entities = [clean_label_suffix(
                 #         os.path.split(ent)[1]) for ent in entities]
@@ -362,7 +362,7 @@ def fusion_activities(activities, label):
         return {
             "@id": f"urn:{get_id()}",
             "Label": label,
-            "AssociatedWith": activities[0]["associatedWith"],
+            "AssociatedWith": activities[0]["AssociatedWith"],
             "Command": command,
             "Used": used_entities,
         }
@@ -411,8 +411,8 @@ def get_extern_entities_from_activities(graph, activities, id_fusion_activity):
                         generated_entities.append(ent)
 
         # for ent in used_ents:
-        #     if "generatedBy" in ent:
-        #         ent["generatedBy"] = id_fusion_activity
+        #     if "GeneratedBy" in ent:
+        #         ent["GeneratedBy"] = id_fusion_activity
 
         for ent in generated_entities:
             if "GeneratedBy" in ent:

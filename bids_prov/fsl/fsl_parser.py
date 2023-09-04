@@ -143,7 +143,7 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 
 def _get_kwarg(serie,  with_value=True):
     """
-    Get the named arguments (kwarg) from a column ("used", "generatedBy", "parameters_value" or "parameters_no_value" ) of the dataframe coming frome in description_functions.json
+    Get the named arguments (kwarg) from a column ("Used", "GeneratedBy", "parameters_value" or "parameters_no_value" ) of the dataframe coming frome in description_functions.json
 
     Parameters
     ----------
@@ -201,7 +201,7 @@ def _get_kwarg(serie,  with_value=True):
 
 def _get_arg(serie, arg_rest):
     """
-    Get the ordinal arguments from a column ("used", "generatedBy") of the dataframe coming from in description_functions.json. _get_arg shoud be used when all named arguments are removed from the initial command.   
+    Get the ordinal arguments from a column ("Used", "GeneratedBy") of the dataframe coming from in description_functions.json. _get_arg shoud be used when all named arguments are removed from the initial command.   
 
     Parameters
     ----------
@@ -306,11 +306,11 @@ def get_entities(cmd_s, parameters):
     -------
 
     >>> df = {
-            "name": "command",
-            "used": [0, "-a"],
-            "generatedBy": [-1, "-b"]
+            "name": "Command",
+            "Used": [0, "-a"],
+            "GeneratedBy": [-1, "-b"]
         }
-    >>> cmd_s = ["command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
+    >>> cmd_s = ["Command", "-a", "kwarg_0", "arg_0", "arg_1",  "-b", "kwarg_1"]
     >>> inputs, outputs, parameters = get_entities(cmd_s[1:], df)
     >>> (["kwarg_0", "arg_0"], ["kwarg_1", "arg_1"], [])
 
