@@ -170,7 +170,7 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
             # activity_id), None)
             for output in conf_dic[activity]['outputs']:
                 name = conf_dic[activity]['name']
-                entity = {"Id": "urn:" + get_id(),
+                entity = {"@id": "urn:" + get_id(),
                           "Label": label_mapping(name, "spm/spm_activity_labels.json"),
                           "Atlocation": output,
                           "GeneratedBy": activity_id,
@@ -221,8 +221,8 @@ def find_output_id_from_closest(closest_activity: dict, records: dict) -> str:
     """
     for entity in records["Entities"]:
         if "GeneratedBy" in entity:
-            if entity["GeneratedBy"] == closest_activity["Id"]:  # entity["label"] == parts[-1]
-                output_id = entity["Id"]
+            if entity["GeneratedBy"] == closest_activity["@id"]:  # entity["label"] == parts[-1]
+                output_id = entity["@id"]
                 break
     else:
         output_id = "urn:" + get_id()
@@ -274,7 +274,7 @@ def find_entity_from_id(idx, entities):
       """
     input_entity = None  # next((entity for entity in entities ), None)
     for entity in entities:
-        if entity["Id"] == idx:
+        if entity["@id"] == idx:
             input_entity = entity
             break
 
@@ -310,7 +310,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
         command += '\n'.join([command_prefix + c for c in end_line_list])
 
         activity_id = "urn:" + get_id()
-        activity = {"Id": activity_id,
+        activity = {"@id": activity_id,
                     "Label": format_activity_name(common_prefix_act),
                     "Used": list(),
                     "AssociatedWith": "urn:" + agent_id,
@@ -363,10 +363,10 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                     out_label = mapping_label_entity(name_cfg_dep, filename)
 
                     output_entity = {  # output for closest activity but input for current one
-                        "Id": output_id,
+                        "@id": output_id,
                         "Label": out_label,  # label_mapping(parts[-1], "spm/spm_labels.json"),
                         # "prov:atLocation": TODO
-                        "GeneratedBy": closest_activity["Id"],
+                        "GeneratedBy": closest_activity["@id"],
                     }
                     output_entities.append(output_entity)
 
@@ -385,15 +385,15 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
             activity["Parameters"] = params
 
         if input_entities:
-            used_entities = [entity["Id"] for entity in input_entities]
+            used_entities = [entity["@id"] for entity in input_entities]
             activity["Used"].extend(used_entities)  # we add entities from input_entities
 
         entities = input_entities + output_entities
 
         for entity in entities:
-            if entity["Id"] not in entities_ids:
+            if entity["@id"] not in entities_ids:
                 records["Entities"].append(entity)  # ADD entity if not present
-            entities_ids.add(entity["Id"])
+            entities_ids.add(entity["@id"])
 
         records["Activities"].append(activity)  # ADD activity
 
