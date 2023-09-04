@@ -14,23 +14,23 @@ def get_id():
 
 
 def get_default_graph(label: str, context_url: str = CONTEXT_URL, soft_ver: str = "dev", ) \
-        -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["records"].update
+        -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["Records"].update
     agent_id = get_id()
     return {
                "@context": context_url,
                "BIDSProvVersion": "dev",  # TODO ?
-               "records": {
+               "Records": {
                    "prov:Agent": [
                        {
                            "@id": "urn:" + agent_id,
                            "RRID": "RRID:SCR_007037",
                            "@type": "prov:SoftwareAgent",
-                           "label": label,
+                           "Label": label,
                            "version": soft_ver
                        }
                    ],
-                   "prov:Activity": [],
-                   "prov:Entity": [],
+                   "Activities": [],
+                   "Entities": [],
                },
            }, agent_id
 
@@ -74,7 +74,7 @@ def get_sha256(file_path: str):
 
 def compute_sha_256_entity(entities: dict):
     """
-    This method calculates the sha256 of all entities if they contain the key "prov:atLocation".
+    This method calculates the sha256 of all entities if they contain the key "AtLocation".
     If the file does not exist, then it is generated.
 
     Parameters
@@ -88,12 +88,12 @@ def compute_sha_256_entity(entities: dict):
     """
     directory = 'bids_prov/file_generation'
     for entity in entities:
-        if "prov:atLocation" in entity:
-            if len(entity["prov:atLocation"]) > 0:
-                if entity["prov:atLocation"][0] == "/":
-                    relative_path = os.path.abspath(directory + entity["prov:atLocation"])
+        if "AtLocation" in entity:
+            if len(entity["AtLocation"]) > 0:
+                if entity["AtLocation"][0] == "/":
+                    relative_path = os.path.abspath(directory + entity["AtLocation"])
                 else:
-                    relative_path = os.path.abspath(directory + "/" + entity["prov:atLocation"])
+                    relative_path = os.path.abspath(directory + "/" + entity["AtLocation"])
 
                 # Temporary process. If the file does not exist then it is created to have a digest value
                 file_directory = os.path.dirname(relative_path)
