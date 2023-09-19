@@ -2,46 +2,46 @@
   "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
   "BIDSProvVersion": "dev",
   "Records": {
-    "prov:Agent": [
+    "Software": [
       {
-        "@id": "urn:e6e2b2a3-2877-473a-ac88-37bc4f7b79e6",
+        "@id": "urn:041e9560-07b0-4ac8-84af-83551a8abcd5",
         "RRID": "RRID:SCR_007037",
         "@type": "prov:SoftwareAgent",
         "Label": "AFNI",
-        "version": "afni24"
+        "Version": "afni24"
       }
     ],
     "Activities": [
       {
-        "@id": "urn:fa33d422-288f-482a-9654-1817f7f1f217",
+        "@id": "urn:8d09e527-652f-4076-80ce-0cf83cc38ddc",
         "Label": "Make directory",
-        "AssociatedWith": "urn:e6e2b2a3-2877-473a-ac88-37bc4f7b79e6",
+        "AssociatedWith": "urn:041e9560-07b0-4ac8-84af-83551a8abcd5",
         "Command": "mkdir -p ${odir}",
         "Parameters": {},
         "Used": []
       },
       {
-        "@id": "urn:cc3c31ab-c304-46e8-a45d-d21331ec0eba",
+        "@id": "urn:dbde917c-9ba0-4d04-bd2d-fd2c34c2d061",
         "Label": "IsoSurface",
-        "AssociatedWith": "urn:e6e2b2a3-2877-473a-ac88-37bc4f7b79e6",
+        "AssociatedWith": "urn:041e9560-07b0-4ac8-84af-83551a8abcd5",
         "Command": "IsoSurface -overwrite -isorois+dsets -input ${ivol} -o_gii cc_${pref_surf} -Tsmooth 0 0 -remesh 1",
         "Parameters": {},
         "Used": []
       },
       {
-        "@id": "urn:4a128eec-b732-498f-9681-9f876d4f414a",
+        "@id": "urn:907eef82-bdc1-44ab-b082-0dfa2a28a026",
         "Label": "1d_tool.py",
-        "AssociatedWith": "urn:e6e2b2a3-2877-473a-ac88-37bc4f7b79e6",
+        "AssociatedWith": "urn:041e9560-07b0-4ac8-84af-83551a8abcd5",
         "Command": "1d_tool.py -csim_pthr ${pthr} -csim_alpha ${alpha} -infile ${file_1D}",
         "Parameters": {},
         "Used": [
-          "urn:8da457f6-6aae-4cbb-8ed8-dd30f4cf4c30"
+          "urn:349bfb32-1123-4a2f-8fe3-09f4f6f984ec"
         ]
       },
       {
-        "@id": "urn:8fa49467-d795-4959-b9a5-b348e239e62c",
+        "@id": "urn:67e45d40-4521-44a7-9a69-4a557fce1120",
         "Label": "plugout_drive",
-        "AssociatedWith": "urn:e6e2b2a3-2877-473a-ac88-37bc4f7b79e6",
+        "AssociatedWith": "urn:041e9560-07b0-4ac8-84af-83551a8abcd5",
         "Command": "plugout_drive -echo_edu -npb $portnum -com \"SWITCH_UNDERLAY ${dset_ref:t}\" -com \"SWITCH_OVERLAY ${dset_ttest:t}\" -com \"SET_XHAIRS OFF\" -com \"SET_SUBBRICKS ${subbb}\" -com \"SET_PBAR_ALL -99 1.0 ${cbar}\" -com \"SET_FUNC_ALPHA ${olay_alpha}\" -com \"SET_FUNC_BOXED ${olay_boxed}\" -com \"$coor_type $coors\" -com \"SET_THRESHNEW ${thr}\" -com \"SET_FUNC_VISIBLE +\" -com \"SET_FUNC_RANGE $frange\" -com \"$OW sagittalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[1]}:${mgap}:${mcolor}\" -com \"$OW coronalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[2]}:${mgap}:${mcolor}\" -com \"$OW axialimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[3]}:${mgap}:${mcolor}\" &",
         "Parameters": {
           "-echo_edu": true,
@@ -50,23 +50,23 @@
           "-99": "1.0"
         },
         "Used": [
-          "urn:a39b454f-e907-4aa9-8514-34bce78645df"
+          "urn:6d0e42e6-fee1-4138-92a2-dc17b126e960"
         ]
       },
       {
-        "@id": "urn:fa61b105-1d73-47fc-93f5-be09bf53c7cc",
+        "@id": "urn:20e019c2-47db-4582-bbbf-757165739cfb",
         "Label": "suma",
-        "AssociatedWith": "urn:e6e2b2a3-2877-473a-ac88-37bc4f7b79e6",
+        "AssociatedWith": "urn:041e9560-07b0-4ac8-84af-83551a8abcd5",
         "Command": "suma -echo_edu -npb $portnum -onestate -niml -i cc*.k*.gii -vol ${dset_ref} -sv ${dset_ref} &",
         "Parameters": {},
         "Used": [
-          "urn:4a159e34-28e3-4caf-acb3-9d8efe32ce7b"
+          "urn:5a5ed666-cf2f-4213-b4c3-9fb49c784d57"
         ]
       },
       {
-        "@id": "urn:c62ca834-1e3b-484c-a623-8c68dedbd2ee",
+        "@id": "urn:023a2890-483b-47d2-b7f8-7df9cdbe3d0a",
         "Label": "DriveSuma",
-        "AssociatedWith": "urn:e6e2b2a3-2877-473a-ac88-37bc4f7b79e6",
+        "AssociatedWith": "urn:041e9560-07b0-4ac8-84af-83551a8abcd5",
         "Command": "DriveSuma -npb $portnum -com viewer_cont -key \"t\" -key \".\" &",
         "Parameters": {
           "-npb": "$portnum",
@@ -78,25 +78,25 @@
     ],
     "Entities": [
       {
-        "@id": "urn:d11afa04-c763-4db2-99d2-2deb38f3189d",
+        "@id": "urn:e5f10ca6-7c17-452e-8bb8-60d5ef7cbcbe",
         "Label": "${odir}",
         "AtLocation": "${odir}",
-        "GeneratedBy": "urn:fa33d422-288f-482a-9654-1817f7f1f217",
+        "GeneratedBy": "urn:8d09e527-652f-4076-80ce-0cf83cc38ddc",
         "digest": {
           "sha256": "b1fc5ec0acec0bf1a5d6697b7f63ed3b4c8e33adcb77445bc544e124ade50c60"
         }
       },
       {
-        "@id": "urn:90916e20-80a6-4f45-93dc-07564c491938",
+        "@id": "urn:d93acab0-193e-49b6-a16f-d6b155678698",
         "Label": "cc_${pref_surf}",
         "AtLocation": "cc_${pref_surf}",
-        "GeneratedBy": "urn:cc3c31ab-c304-46e8-a45d-d21331ec0eba",
+        "GeneratedBy": "urn:dbde917c-9ba0-4d04-bd2d-fd2c34c2d061",
         "digest": {
           "sha256": "5e02dacb1f0d92310532c03d04b14d6bdc19634a71800752df6d2e4f1adadf06"
         }
       },
       {
-        "@id": "urn:8da457f6-6aae-4cbb-8ed8-dd30f4cf4c30",
+        "@id": "urn:349bfb32-1123-4a2f-8fe3-09f4f6f984ec",
         "Label": "${file_1D}",
         "AtLocation": "${file_1D}",
         "digest": {
@@ -104,7 +104,7 @@
         }
       },
       {
-        "@id": "urn:a39b454f-e907-4aa9-8514-34bce78645df",
+        "@id": "urn:6d0e42e6-fee1-4138-92a2-dc17b126e960",
         "Label": "portnum",
         "AtLocation": "portnum",
         "digest": {
@@ -112,16 +112,16 @@
         }
       },
       {
-        "@id": "urn:de3b0abf-5f0c-4836-84f6-bc9644c12c1f",
+        "@id": "urn:7762d334-53ef-4c9a-8721-c344e757d3bd",
         "Label": "mcolor",
         "AtLocation": "mcolor",
-        "GeneratedBy": "urn:8fa49467-d795-4959-b9a5-b348e239e62c",
+        "GeneratedBy": "urn:67e45d40-4521-44a7-9a69-4a557fce1120",
         "digest": {
           "sha256": "a757facd6497c040401a26469144a2df7ad28984bf0e7688a2f32d607fcd6797"
         }
       },
       {
-        "@id": "urn:4a159e34-28e3-4caf-acb3-9d8efe32ce7b",
+        "@id": "urn:5a5ed666-cf2f-4213-b4c3-9fb49c784d57",
         "Label": "cc*.k*.gii",
         "AtLocation": "cc*.k*.gii",
         "digest": {
