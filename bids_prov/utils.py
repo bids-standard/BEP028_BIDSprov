@@ -20,13 +20,13 @@ def get_default_graph(label: str, context_url: str = CONTEXT_URL, soft_ver: str 
                "@context": context_url,
                "BIDSProvVersion": "dev",  # TODO ?
                "Records": {
-                   "prov:Agent": [
+                   "Software": [
                        {
                            "@id": "urn:" + agent_id,
                            "RRID": "RRID:SCR_007037",
                            "@type": "prov:SoftwareAgent",
                            "Label": label,
-                           "version": soft_ver
+                           "Version": soft_ver
                        }
                    ],
                    "Activities": [],
