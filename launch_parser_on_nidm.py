@@ -17,7 +17,7 @@ def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_
     filename = root + "/" + str(file)
     if with_blocs is False:
         shutil.copyfile(filename, output_dir + "/" + str(file))
-    output_base = output_dir + "/" + filename_ss_ext if with_blocs is False else output_dir + "/" + filename_ss_ext + "_bloc"
+    output_base = output_dir + "/" + filename_ss_ext if with_blocs is False else output_dir + "/" + filename_ss_ext + "_block"
     output_jsonld = output_base + ".jsonld"
     output_png = output_base + ".png"
 

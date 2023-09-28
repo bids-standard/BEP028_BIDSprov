@@ -88,7 +88,7 @@ def find_param(cmd_args_remain: list) -> dict:
     return param_dic
 
 
-def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
+def build_records(commands_block: list, agent_id: str, verbose: bool = False):
     """
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (e.g. `Registration`, `Post-stats`)
@@ -96,7 +96,7 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
     Parameters
     ----------
 
-    commands_bloc : list of str
+    commands_block : list of str
         all commands extracted from afni file
     agent_id : int
         random uuid for software agent (here afni)
@@ -115,7 +115,7 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
 
     bloc_act = []
 
-    for (block, cmd) in commands_bloc:
+    for (block, cmd) in commands_block:
         cmd_s = re.split(" |=", cmd)
         a_name = cmd_s[0]
         cmd_args_remain = cmd_s[1:]
@@ -294,23 +294,23 @@ def readlines(input_file: str) -> list:
 
     # commands = [cmd for cmd in commands if not any(
     #     cmd.startswith(begin) for begin in dropline_begin)]
-    regex_bloc = re.compile(r'# =+ ([^=]+) =+')
-    commands_bloc = []
+    regex_block = re.compile(r'# =+ ([^=]+) =+')
+    commands_block = []
     block = ""
     for cmd in commands:
         if cmd.startswith("# ==="):
-            block = regex_bloc.match(cmd).groups()[0] if regex_bloc.match(cmd) is not None else "block ..."
+            block = regex_block.match(cmd).groups()[0] if regex_block.match(cmd) is not None else "block ..."
 
         if not any(cmd.startswith(begin) for begin in dropline_begin):
-            commands_bloc.append((block, cmd))
+            commands_block.append((block, cmd))
 
-    commands_bloc = [(block, re.sub(r"\s+", " ", cmd))
-                     for (block, cmd) in commands_bloc]  # drop multiple space between args
+    commands_block = [(block, re.sub(r"\s+", " ", cmd))
+                     for (block, cmd) in commands_block]  # drop multiple space between args
 
-    commands_bloc = [(block, cmd)
-                     for (block, cmd) in commands_bloc if cmd]  # drop empty commands
+    commands_block = [(block, cmd)
+                     for (block, cmd) in commands_block if cmd]  # drop empty commands
 
-    return commands_bloc
+    return commands_block
 
 
 def get_activities_by_ids(graph, ids):
@@ -452,10 +452,10 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         Write the json-ld to the location indicated in output_file.
         If `with_blocs` is True, it generates the file to the location indicated in output_file.
     """
-    commands_bloc = readlines(filename)
+    commands_block = readlines(filename)
 
     graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
-    records, bloc_act = build_records(commands_bloc, agent_id, verbose=verbose)
+    records, bloc_act = build_records(commands_block, agent_id, verbose=verbose)
 
     graph["Records"].update(records)
     compute_sha_256_entity(graph["Records"]["Entities"])
@@ -466,14 +466,14 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
             "bloc_name": bl,
             "act_ids": [id_ for (b, id_) in bloc_act if b == bl]} for bl in bl_name]
 
-        graph_bloc = copy.deepcopy(graph)
+        graph_block = copy.deepcopy(graph)
         activities_blocs = []
         entities_blocs = []
         for block in blocks:
-            activities = get_activities_by_ids(graph_bloc, block["act_ids"])
+            activities = get_activities_by_ids(graph_block, block["act_ids"])
             fus_activities = fusion_activities(activities, block["bloc_name"])
             ext_entities = get_extern_entities_from_activities(
-                graph_bloc, activities, fus_activities["@id"])
+                graph_block, activities, fus_activities["@id"])
             for ent in ext_entities:
                 if ent["@id"] not in entities_blocs:
                     entities_blocs.append(ent)
@@ -483,10 +483,10 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
                     fus_activities["Used"].remove(ent_used)
             activities_blocs.append(fus_activities)
 
-        graph_bloc["Records"]["Activities"] = activities_blocs
-        graph_bloc["Records"]["Entities"] = entities_blocs
+        graph_block["Records"]["Activities"] = activities_blocs
+        graph_block["Records"]["Entities"] = entities_blocs
 
-        return writing_jsonld(graph_bloc, indent, output_file)
+        return writing_jsonld(graph_block, indent, output_file)
 
     return writing_jsonld(graph, indent, output_file)
 
