@@ -1,0 +1,88 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "Records": {
+    "Software": [
+      {
+        "@id": "urn:ef2fb089-5fca-41c9-8153-e4ea3c94cbe6",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "Label": "AFNI",
+        "Version": "afni24"
+      }
+    ],
+    "Activities": [
+      {
+        "@id": "urn:e9bde71d-f34d-46ad-bc01-2b70f5087e08",
+        "Label": "",
+        "AssociatedWith": "urn:ef2fb089-5fca-41c9-8153-e4ea3c94cbe6",
+        "Command": "mkdir -p ${odir}; ",
+        "Used": []
+      },
+      {
+        "@id": "urn:3abf1821-674f-43d7-bf35-eea0528ecc38",
+        "Label": "block ...",
+        "AssociatedWith": "urn:ef2fb089-5fca-41c9-8153-e4ea3c94cbe6",
+        "Command": "IsoSurface -overwrite -isorois+dsets -input ${ivol} -o_gii cc_${pref_surf} -Tsmooth 0 0 -remesh 1; 1d_tool.py -csim_pthr ${pthr} -csim_alpha ${alpha} -infile ${file_1D}; plugout_drive -echo_edu -npb $portnum -com \"SWITCH_UNDERLAY ${dset_ref:t}\" -com \"SWITCH_OVERLAY ${dset_ttest:t}\" -com \"SET_XHAIRS OFF\" -com \"SET_SUBBRICKS ${subbb}\" -com \"SET_PBAR_ALL -99 1.0 ${cbar}\" -com \"SET_FUNC_ALPHA ${olay_alpha}\" -com \"SET_FUNC_BOXED ${olay_boxed}\" -com \"$coor_type $coors\" -com \"SET_THRESHNEW ${thr}\" -com \"SET_FUNC_VISIBLE +\" -com \"SET_FUNC_RANGE $frange\" -com \"$OW sagittalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[1]}:${mgap}:${mcolor}\" -com \"$OW coronalimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[2]}:${mgap}:${mcolor}\" -com \"$OW axialimage ifrac=${ifrac} opacity=${opac} mont=${mx}x${my}:${gapord[3]}:${mgap}:${mcolor}\" &; suma -echo_edu -npb $portnum -onestate -niml -i cc*.k*.gii -vol ${dset_ref} -sv ${dset_ref} &; DriveSuma -npb $portnum -com viewer_cont -key \"t\" -key \".\" &; ",
+        "Used": [
+          "urn:c2f72589-1f04-4e3e-b32a-d89946bd5ced",
+          "urn:2b9046a4-2675-47b0-b2f6-fbfebe991c68",
+          "urn:ed07977b-6030-4daa-a75e-26c91008b808"
+        ]
+      }
+    ],
+    "Entities": [
+      {
+        "@id": "urn:acf8913a-9478-43b6-9eb7-6dcc45e2a69c",
+        "Label": "${odir}",
+        "AtLocation": "${odir}",
+        "GeneratedBy": "urn:e9bde71d-f34d-46ad-bc01-2b70f5087e08",
+        "digest": {
+          "sha256": "b1fc5ec0acec0bf1a5d6697b7f63ed3b4c8e33adcb77445bc544e124ade50c60"
+        }
+      },
+      {
+        "@id": "urn:c2f72589-1f04-4e3e-b32a-d89946bd5ced",
+        "Label": "${file_1D}",
+        "AtLocation": "${file_1D}",
+        "digest": {
+          "sha256": "1ceba5dd08283170f6a477b939a39fb36475056b3d34302ed53ba3a87f0273e5"
+        }
+      },
+      {
+        "@id": "urn:2b9046a4-2675-47b0-b2f6-fbfebe991c68",
+        "Label": "portnum",
+        "AtLocation": "portnum",
+        "digest": {
+          "sha256": "57ee6a2e1e697861e7126c005b19b9b7c0bad8d9cf3d2791e6c9663b3442c8b2"
+        }
+      },
+      {
+        "@id": "urn:ed07977b-6030-4daa-a75e-26c91008b808",
+        "Label": "cc*.k*.gii",
+        "AtLocation": "cc*.k*.gii",
+        "digest": {
+          "sha256": "8316e018f1f924e85f980916c33a30b32d50cb56a113fd4e4e12a21d24c192bd"
+        }
+      },
+      {
+        "@id": "urn:10560f83-0a91-456e-9358-48a8a5ea215a",
+        "Label": "cc_${pref_surf}",
+        "AtLocation": "cc_${pref_surf}",
+        "GeneratedBy": "urn:3abf1821-674f-43d7-bf35-eea0528ecc38",
+        "digest": {
+          "sha256": "5e02dacb1f0d92310532c03d04b14d6bdc19634a71800752df6d2e4f1adadf06"
+        }
+      },
+      {
+        "@id": "urn:25d73731-5632-459e-8971-ccf6f4acf1c3",
+        "Label": "mcolor",
+        "AtLocation": "mcolor",
+        "GeneratedBy": "urn:3abf1821-674f-43d7-bf35-eea0528ecc38",
+        "digest": {
+          "sha256": "a757facd6497c040401a26469144a2df7ad28984bf0e7688a2f32d607fcd6797"
+        }
+      }
+    ]
+  }
+}
