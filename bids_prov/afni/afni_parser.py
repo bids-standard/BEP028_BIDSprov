@@ -219,6 +219,9 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
             else:
                 activity["Used"].append(existing_input["@id"])
 
+        # Order does not matter and then makes sense to include only unique values
+        activity["Used"] = sorted(set(activity["Used"]))
+
         for output_path in outputs:
             records["Entities"].append(
                 {
