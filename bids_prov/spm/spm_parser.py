@@ -381,6 +381,9 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                 param_value = right_ if not right_.startswith("[") else right_.replace(" ", ", ")
                 params[param_name] = param_value  # example : [4 2] becomes [4, 2]
 
+        # Order does not matter and then makes sense to include only unique values
+        activity["Used"] = sorted(set(activity["Used"]))
+
         if params:
             activity["Parameters"] = params
 
