@@ -502,6 +502,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 else:
                     a["Used"].append(existing_input["@id"])
 
+            # Order does not matter and then makes sense to include only unique values
+            a["Used"] = sorted(set(a["Used"]))
+
             for output_path in outputs:
                 # output_name = output_path.replace("/", "_") # TODO
                 records["Entities"].append(
