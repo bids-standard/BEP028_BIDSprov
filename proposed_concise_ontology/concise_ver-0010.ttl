@@ -1,0 +1,1516 @@
+@prefix : <http://www.semanticweb.org/concise#> .
+@prefix co: <http://purl.org/co/> .
+@prefix sd: <https://w3id.org/okn/o/sd#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix provo: <http://www.w3.org/ns/prov-o#> .
+@prefix schema: <http://schema.org/> .
+@prefix provone: <http://purl.dataone.org/provone/2015/01/15/ontology#> .
+@base <http://www.semanticweb.org/concise> .
+
+<http://www.semanticweb.org/concise> rdf:type owl:Ontology ;
+                                      owl:imports <http://purl.org/co> ;
+                                      rdfs:comment "Include inferred axioms"@en ;
+                                      owl:versionInfo "0.0.10" .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://www.w3.org/ns/prov#definition
+prov:definition rdf:type owl:AnnotationProperty ;
+                rdfs:comment "A definition quoted from PROV-DM or PROV-CONSTRAINTS that describes the concept expressed with this OWL term."@en ;
+                rdfs:isDefinedBy provo: .
+
+
+###  http://www.w3.org/ns/prov#inverse
+prov:inverse rdf:type owl:AnnotationProperty ;
+             rdfs:comment "PROV-O does not define all property inverses. The directionalities defined in PROV-O should be given preference over those not defined. However, if users wish to name the inverse of a PROV-O property, the local name given by prov:inverse should be used."@en ;
+             rdfs:isDefinedBy provo: ;
+             rdfs:seeAlso <http://www.w3.org/TR/prov-o/#names-of-inverse-properties> .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://purl.dataone.org/provone/2015/01/15/ontology#hasSubProgram
+provone:hasSubProgram rdf:type owl:ObjectProperty ;
+                      rdfs:domain provone:Program ;
+                      rdfs:range provone:Program ;
+                      rdfs:comment "Specifies the recursive composition of Programs, where a parent Program includes a child Program as part of its specification." ;
+                      rdfs:label "hasSubProgram" .
+
+
+###  http://purl.dataone.org/provone/2015/01/15/ontology#wasPartOf
+provone:wasPartOf rdf:type owl:ObjectProperty ;
+                  rdfs:domain provone:Execution ;
+                  rdfs:range provone:Execution ;
+                  rdfs:comment "Specifies the structure of Execution instances, where a parent Execution (associated with a Workflow) had child Executions (associated with Programs and subworkflows)." ;
+                  rdfs:label "wasPartOf" .
+
+
+###  http://schema.org/author
+schema:author rdf:type owl:ObjectProperty .
+
+
+###  http://schema.org/contributor
+schema:contributor rdf:type owl:ObjectProperty .
+
+
+###  http://www.semanticweb.org/concise#hadExecutionCommand
+:hadExecutionCommand rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf owl:topObjectProperty ;
+                     rdfs:domain provone:Execution ;
+                     rdfs:range :ExecutionCommand .
+
+
+###  http://www.semanticweb.org/concise#hadInput
+:hadInput rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf prov:used ,
+                             [ owl:inverseOf prov:wasUsedBy
+                             ] ;
+          owl:inverseOf :wasInputOf ;
+          rdfs:domain provone:Execution ;
+          rdfs:range prov:Entity .
+
+
+###  http://www.semanticweb.org/concise#hadOutput
+:hadOutput rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf prov:generated ,
+                              [ owl:inverseOf prov:wasGeneratedBy
+                              ] ;
+           owl:inverseOf :wasOutputOf ;
+           rdfs:domain provone:Execution ;
+           rdfs:range prov:Entity .
+
+
+###  http://www.semanticweb.org/concise#hadPlan
+:hadPlan rdf:type owl:ObjectProperty ;
+         rdfs:subPropertyOf prov:wasInfluencedBy ,
+                            [ owl:inverseOf prov:influenced
+                            ] ;
+         rdfs:domain prov:Activity ;
+         rdfs:range prov:Plan .
+
+
+###  http://www.semanticweb.org/concise#hasArtefact
+:hasArtefact rdf:type owl:ObjectProperty ;
+             rdfs:domain provone:ParameterData ;
+             rdfs:range :Artefact .
+
+
+###  http://www.semanticweb.org/concise#hasBaseCommand
+:hasBaseCommand rdf:type owl:ObjectProperty ;
+                rdfs:domain provone:Program ;
+                rdfs:range :BaseCommand .
+
+
+###  http://www.semanticweb.org/concise#hasContent
+:hasContent rdf:type owl:ObjectProperty ;
+            rdfs:domain prov:Entity .
+
+
+###  http://www.semanticweb.org/concise#hasFormat
+:hasFormat rdf:type owl:ObjectProperty ;
+           rdfs:domain [ rdf:type owl:Class ;
+                         owl:unionOf ( provone:ParameterData
+                                       :Artefact
+                                     )
+                       ] ;
+           rdfs:range :DataFormat .
+
+
+###  http://www.semanticweb.org/concise#hasInput
+:hasInput rdf:type owl:ObjectProperty ;
+          owl:inverseOf :isInputOf ;
+          rdfs:domain provone:Program ;
+          rdfs:range provone:ParameterData ;
+          rdfs:comment "This is loosely related to provone:hasDefaultParam, except that the latter is related to a Program through an additional provone:hasInPort object property and provone:Port class."@en .
+
+
+###  http://www.semanticweb.org/concise#hasOutput
+:hasOutput rdf:type owl:ObjectProperty ;
+           owl:inverseOf :isOutputOf ;
+           rdfs:domain provone:Program ;
+           rdfs:range provone:ParameterData ;
+           rdfs:comment "This is loosely related to provone:hasDefaultParam, except that the latter is related to a Program through an additional provone:hasOutPort object property and provone:Port class."@en .
+
+
+###  http://www.semanticweb.org/concise#hasPurpose
+:hasPurpose rdf:type owl:ObjectProperty ;
+            rdfs:domain provone:Program ,
+                        sd:Software .
+
+
+###  http://www.semanticweb.org/concise#hasSource
+:hasSource rdf:type owl:ObjectProperty ;
+           rdfs:domain prov:Entity ;
+           rdfs:range prov:Entity .
+
+
+###  http://www.semanticweb.org/concise#isInputOf
+:isInputOf rdf:type owl:ObjectProperty .
+
+
+###  http://www.semanticweb.org/concise#isOutputOf
+:isOutputOf rdf:type owl:ObjectProperty .
+
+
+###  http://www.semanticweb.org/concise#wasDescribedBy
+:wasDescribedBy rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf prov:wasInfluencedBy ,
+                                   [ owl:inverseOf prov:influenced
+                                   ] ;
+                rdfs:domain prov:Entity ;
+                rdfs:range prov:Entity .
+
+
+###  http://www.semanticweb.org/concise#wasInputOf
+:wasInputOf rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf prov:wasUsedBy ,
+                               [ owl:inverseOf prov:used
+                               ] .
+
+
+###  http://www.semanticweb.org/concise#wasOutputOf
+:wasOutputOf rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf prov:wasGeneratedBy ,
+                                [ owl:inverseOf prov:generated
+                                ] .
+
+
+###  http://www.w3.org/2002/07/owl#topObjectProperty
+owl:topObjectProperty rdf:type owl:ObjectProperty ,
+                               owl:SymmetricProperty ,
+                               owl:TransitiveProperty ,
+                               owl:ReflexiveProperty .
+
+
+###  http://www.w3.org/ns/prov#actedOnBehalfOf
+prov:actedOnBehalfOf rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf prov:wasInfluencedBy ,
+                                        [ owl:inverseOf prov:influenced
+                                        ] ;
+                     owl:inverseOf prov:hadDelegate ;
+                     rdfs:domain prov:Agent ;
+                     rdfs:range prov:Agent ;
+                     rdfs:comment "An object property to express the accountability of an agent towards another agent. The subordinate agent acted on behalf of the responsible agent in an actual activity. "@en ;
+                     rdfs:isDefinedBy provo: ;
+                     rdfs:label "actedOnBehalfOf" ;
+                     prov:inverse "hadDelegate" .
+
+
+###  http://www.w3.org/ns/prov#alternateOf
+prov:alternateOf rdf:type owl:ObjectProperty ;
+                 owl:inverseOf prov:alternateOf ;
+                 rdf:type owl:SymmetricProperty ;
+                 rdfs:domain prov:Entity ;
+                 rdfs:range prov:Entity ;
+                 rdfs:isDefinedBy prov: ,
+                                  provo: ,
+                                  <http://www.w3.org/ns/prov-o-inverses#> ;
+                 rdfs:label "alternateOf" ;
+                 rdfs:seeAlso prov:specializationOf ;
+                 prov:definition "Two alternate entities present aspects of the same thing. These aspects may be the same or different, and the alternate entities may or may not overlap in time."@en ;
+                 prov:inverse "alternateOf" .
+
+
+###  http://www.w3.org/ns/prov#atLocation
+prov:atLocation rdf:type owl:ObjectProperty ;
+                owl:inverseOf prov:locationOf ;
+                rdfs:range prov:Location ;
+                rdfs:comment "The Location of any resource."@en ,
+                             "This property has multiple RDFS domains to suit multiple OWL Profiles. See <a href=\"#owl-profile\">PROV-O OWL Profile</a>." ;
+                rdfs:isDefinedBy provo: ;
+                rdfs:label "atLocation" ;
+                prov:inverse "locationOf" .
+
+
+###  http://www.w3.org/ns/prov#generalizationOf
+prov:generalizationOf rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf prov:alternateOf ,
+                                         [ owl:inverseOf prov:alternateOf
+                                         ] ;
+                      owl:inverseOf prov:specializationOf ;
+                      rdfs:isDefinedBy prov: ,
+                                       <http://www.w3.org/ns/prov-o-inverses#> ;
+                      rdfs:label "generalizationOf" .
+
+
+###  http://www.w3.org/ns/prov#generated
+prov:generated rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf prov:influenced ,
+                                  [ owl:inverseOf prov:wasInfluencedBy
+                                  ] ;
+               owl:inverseOf prov:wasGeneratedBy ;
+               rdfs:domain prov:Activity ;
+               rdfs:range prov:Entity ;
+               rdfs:isDefinedBy prov: ,
+                                provo: ,
+                                <http://www.w3.org/ns/prov-o-inverses#> ;
+               rdfs:label "generated" ;
+               prov:inverse "wasGeneratedBy" .
+
+
+###  http://www.w3.org/ns/prov#hadDelegate
+prov:hadDelegate rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf prov:influenced ,
+                                    [ owl:inverseOf prov:wasInfluencedBy
+                                    ] .
+
+
+###  http://www.w3.org/ns/prov#hadDictionaryMember
+prov:hadDictionaryMember rdf:type owl:ObjectProperty ;
+                         rdfs:domain prov:Dictionary ;
+                         rdfs:range prov:KeyEntityPair ;
+                         rdfs:isDefinedBy prov: ;
+                         rdfs:label "hadDictionaryMember" ;
+                         prov:definition "Describes the key-entity pair that was member of a prov:Dictionary. A dictionary can have multiple members." .
+
+
+###  http://www.w3.org/ns/prov#hadMember
+prov:hadMember rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf prov:wasInfluencedBy ,
+                                  [ owl:inverseOf prov:influenced
+                                  ] ;
+               owl:inverseOf prov:wasMemberOf ;
+               rdfs:domain prov:Collection ;
+               rdfs:isDefinedBy provo: ;
+               rdfs:label "hadMember" ;
+               prov:inverse "wasMemberOf" .
+
+
+###  http://www.w3.org/ns/prov#influenced
+prov:influenced rdf:type owl:ObjectProperty ;
+                owl:inverseOf prov:wasInfluencedBy ;
+                rdfs:isDefinedBy prov: ,
+                                 provo: ,
+                                 <http://www.w3.org/ns/prov-o-inverses#> ;
+                rdfs:label "influenced" ;
+                prov:inverse "wasInfluencedBy" .
+
+
+###  http://www.w3.org/ns/prov#informed
+prov:informed rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf prov:influenced ,
+                                 [ owl:inverseOf prov:wasInfluencedBy
+                                 ] ;
+              owl:inverseOf prov:wasInformedBy ;
+              rdfs:isDefinedBy prov: ,
+                               <http://www.w3.org/ns/prov-o-inverses#> ;
+              rdfs:label "informed" .
+
+
+###  http://www.w3.org/ns/prov#locationOf
+prov:locationOf rdf:type owl:ObjectProperty ;
+                rdfs:isDefinedBy prov: ,
+                                 <http://www.w3.org/ns/prov-o-inverses#> ;
+                rdfs:label "locationOf" .
+
+
+###  http://www.w3.org/ns/prov#pairEntity
+prov:pairEntity rdf:type owl:ObjectProperty ,
+                         owl:FunctionalProperty ;
+                rdfs:domain prov:KeyEntityPair ;
+                rdfs:range prov:Entity ;
+                rdfs:isDefinedBy prov: ;
+                rdfs:label "pairKey" ;
+                prov:definition "The entity of a prov:KeyEntityPair, which is an element of a prov:Dictionary." .
+
+
+###  http://www.w3.org/ns/prov#specializationOf
+prov:specializationOf rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf owl:topObjectProperty ,
+                                         prov:alternateOf ,
+                                         [ owl:inverseOf prov:alternateOf
+                                         ] ;
+                      rdfs:domain prov:Entity ;
+                      rdfs:isDefinedBy prov: ,
+                                       provo: ;
+                      rdfs:label "specializationOf" ;
+                      rdfs:seeAlso prov:alternateOf ;
+                      prov:definition "An entity that is a specialization of another shares all aspects of the latter, and additionally presents more specific aspects of the same thing as the latter. In particular, the lifetime of the entity being specialized contains that of any specialization. Examples of aspects include a time period, an abstraction, and a context associated with the entity."@en ;
+                      prov:inverse "generalizationOf" .
+
+
+###  http://www.w3.org/ns/prov#used
+prov:used rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf prov:wasInfluencedBy ,
+                             [ owl:inverseOf prov:influenced
+                             ] ;
+          owl:inverseOf prov:wasUsedBy ;
+          rdfs:domain provone:Execution ,
+                      prov:Activity ;
+          rdfs:range prov:Entity ;
+          rdfs:comment "A prov:Entity that was used by this prov:Activity. For example, :baking prov:used :spoon, :egg, :oven ."@en ;
+          rdfs:isDefinedBy provo: ;
+          rdfs:label "used" ;
+          prov:inverse "wasUsedBy" .
+
+
+###  http://www.w3.org/ns/prov#wasAssociateFor
+prov:wasAssociateFor rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf prov:influenced ,
+                                        [ owl:inverseOf prov:wasInfluencedBy
+                                        ] ;
+                     owl:inverseOf prov:wasAssociatedWith .
+
+
+###  http://www.w3.org/ns/prov#wasAssociatedWith
+prov:wasAssociatedWith rdf:type owl:ObjectProperty ;
+                       rdfs:subPropertyOf prov:wasInfluencedBy ,
+                                          [ owl:inverseOf prov:influenced
+                                          ] ;
+                       rdfs:domain provone:Execution ,
+                                   prov:Activity ;
+                       rdfs:range provone:User ,
+                                  prov:Agent ;
+                       rdfs:comment "An prov:Agent that had some (unspecified) responsibility for the occurrence of this prov:Activity."@en ;
+                       rdfs:isDefinedBy provo: ;
+                       rdfs:label "wasAssociatedWith" ;
+                       prov:inverse "wasAssociateFor" .
+
+
+###  http://www.w3.org/ns/prov#wasGeneratedBy
+prov:wasGeneratedBy rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf prov:wasInfluencedBy ,
+                                       [ owl:inverseOf prov:influenced
+                                       ] ;
+                    rdfs:domain prov:Entity ;
+                    rdfs:range provone:Execution ,
+                               prov:Activity ;
+                    rdfs:isDefinedBy prov: ,
+                                     provo: ,
+                                     <http://www.w3.org/ns/prov-o-inverses#> ;
+                    rdfs:label "wasGeneratedBy" ;
+                    prov:inverse "generated" .
+
+
+###  http://www.w3.org/ns/prov#wasInfluencedBy
+prov:wasInfluencedBy rdf:type owl:ObjectProperty ;
+                     rdfs:domain [ rdf:type owl:Class ;
+                                   owl:unionOf ( prov:Activity
+                                                 prov:Agent
+                                                 prov:Entity
+                                               )
+                                 ] ;
+                     rdfs:range [ rdf:type owl:Class ;
+                                  owl:unionOf ( prov:Activity
+                                                prov:Agent
+                                                prov:Entity
+                                              )
+                                ] ;
+                     rdfs:comment "Because prov:wasInfluencedBy is a broad relation, its more specific subproperties (e.g. prov:wasInformedBy, prov:actedOnBehalfOf, prov:wasEndedBy, etc.) should be used when applicable."@en ,
+                                  "This property has multiple RDFS domains to suit multiple OWL Profiles. See <a href=\"#owl-profile\">PROV-O OWL Profile</a>." ;
+                     rdfs:isDefinedBy prov: ,
+                                      provo: ,
+                                      <http://www.w3.org/ns/prov-o-inverses#> ;
+                     rdfs:label "wasInfluencedBy" ;
+                     prov:inverse "influenced" .
+
+
+###  http://www.w3.org/ns/prov#wasInformedBy
+prov:wasInformedBy rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf prov:wasInfluencedBy ,
+                                      [ owl:inverseOf prov:influenced
+                                      ] ;
+                   rdfs:domain provone:Execution ,
+                               prov:Activity ;
+                   rdfs:range provone:Execution ,
+                              prov:Activity ;
+                   rdfs:comment "An activity a2 is dependent on or informed by another activity a1, by way of some unspecified entity that is generated by a1 and used by a2."@en ;
+                   rdfs:isDefinedBy provo: ;
+                   rdfs:label "wasInformedBy" ;
+                   prov:inverse "informed" .
+
+
+###  http://www.w3.org/ns/prov#wasMemberOf
+prov:wasMemberOf rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf prov:influenced ,
+                                    [ owl:inverseOf prov:wasInfluencedBy
+                                    ] ;
+                 rdfs:isDefinedBy prov: ,
+                                  <http://www.w3.org/ns/prov-o-inverses#> ;
+                 rdfs:label "wasMemberOf" .
+
+
+###  http://www.w3.org/ns/prov#wasUsedBy
+prov:wasUsedBy rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf prov:influenced ,
+                                  [ owl:inverseOf prov:wasInfluencedBy
+                                  ] ;
+               rdfs:isDefinedBy prov: ,
+                                <http://www.w3.org/ns/prov-o-inverses#> ;
+               rdfs:label "wasUsedBy" .
+
+
+###  https://w3id.org/okn/o/sd#author
+sd:author rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf schema:author ;
+          rdfs:domain sd:Software ;
+          rdfs:range [ rdf:type owl:Class ;
+                       owl:unionOf ( sd:Organization
+                                     sd:Person
+                                   )
+                     ] ;
+          rdfs:comment "The creator of a software component"@en ;
+          rdfs:label "author"@en .
+
+
+###  https://w3id.org/okn/o/sd#contributor
+sd:contributor rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf schema:contributor ;
+               rdfs:domain sd:Software ;
+               rdfs:range sd:Person ;
+               rdfs:comment "Contributor to a software component"@en ;
+               rdfs:label "contributor"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasConfiguration
+sd:hasConfiguration rdf:type owl:ObjectProperty ;
+                    rdfs:domain sd:SoftwareVersion ;
+                    rdfs:range sd:SoftwareConfiguration ;
+                    rdfs:comment "Property that links a model to one of its configurations. A model may have multiple configurations, each of which is unique in terms of the inputs and outputs it uses."@en ;
+                    rdfs:label "hasConfiguration"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasParameter
+sd:hasParameter rdf:type owl:ObjectProperty ;
+                rdfs:domain sd:SoftwareConfiguration ;
+                rdfs:range :Literal ;
+                rdfs:comment "Property that indicates the parameters of a model configuration"@en ;
+                rdfs:label "hasParameter"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasSoftwareImage
+sd:hasSoftwareImage rdf:type owl:ObjectProperty ,
+                             owl:FunctionalProperty ;
+                    rdfs:domain sd:SoftwareConfiguration ;
+                    rdfs:range sd:SoftwareImage ;
+                    rdfs:comment "Function to link a function with its corresponding container"@en ;
+                    rdfs:label "hasSoftwareImage"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasSourceCode
+sd:hasSourceCode rdf:type owl:ObjectProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain sd:Software ;
+                 rdfs:range sd:SourceCode ;
+                 rdfs:comment "Property designed to link a software with its software source code (which may reside in a code repository such as GitHub)"@en ;
+                 rdfs:label "hasSourceCode"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasVersion
+sd:hasVersion rdf:type owl:ObjectProperty ;
+              rdfs:domain sd:Software ;
+              rdfs:range sd:SoftwareVersion ;
+              rdfs:comment "Property designed to link a software component with its corresponding versions"@en ;
+              rdfs:label "hasSoftwareVersion"@en .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://schema.org/codeRepository
+schema:codeRepository rdf:type owl:DatatypeProperty ;
+                      rdfs:isDefinedBy schema: .
+
+
+###  http://schema.org/dateCreated
+schema:dateCreated rdf:type owl:DatatypeProperty ;
+                   rdfs:isDefinedBy schema: .
+
+
+###  http://schema.org/datePublished
+schema:datePublished rdf:type owl:DatatypeProperty ;
+                     rdfs:isDefinedBy schema: .
+
+
+###  http://schema.org/description
+schema:description rdf:type owl:DatatypeProperty ;
+                   rdfs:isDefinedBy schema: .
+
+
+###  http://schema.org/email
+schema:email rdf:type owl:DatatypeProperty ;
+             rdfs:isDefinedBy schema: .
+
+
+###  http://schema.org/identifier
+schema:identifier rdf:type owl:DatatypeProperty ;
+                  rdfs:isDefinedBy schema: .
+
+
+###  http://schema.org/license
+schema:license rdf:type owl:DatatypeProperty ;
+               rdfs:isDefinedBy schema: .
+
+
+###  http://schema.org/programmingLanguage
+schema:programmingLanguage rdf:type owl:DatatypeProperty ;
+                           rdfs:isDefinedBy schema: .
+
+
+###  http://www.semanticweb.org/concise#hasFlag
+:hasFlag rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:domain provone:ParameterData ;
+         rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/concise#hasFlagSeparator
+:hasFlagSeparator rdf:type owl:DatatypeProperty ,
+                           owl:FunctionalProperty ;
+                  rdfs:domain provone:ParameterData ;
+                  rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/concise#isOptional
+:isOptional rdf:type owl:DatatypeProperty ;
+            rdfs:domain provone:ParameterData ;
+            rdfs:range xsd:boolean .
+
+
+###  http://www.semanticweb.org/concise#pairValue
+:pairValue rdf:type owl:DatatypeProperty ,
+                    owl:FunctionalProperty ;
+           rdfs:domain :KeyValPair ;
+           rdfs:range rdfs:Literal .
+
+
+###  http://www.w3.org/ns/prov#endedAtTime
+prov:endedAtTime rdf:type owl:DatatypeProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain prov:Activity ;
+                 rdfs:range xsd:dateTime ;
+                 rdfs:comment "The time at which an activity ended. See also prov:startedAtTime."@en ;
+                 rdfs:isDefinedBy provo: ;
+                 rdfs:label "endedAtTime" .
+
+
+###  http://www.w3.org/ns/prov#pairKey
+prov:pairKey rdf:type owl:DatatypeProperty ,
+                      owl:FunctionalProperty ;
+             rdfs:domain [ rdf:type owl:Class ;
+                           owl:unionOf ( :KeyValPair
+                                         prov:KeyEntityPair
+                                       )
+                         ] ;
+             rdfs:range rdfs:Literal ;
+             rdfs:isDefinedBy prov: ;
+             rdfs:label "pairKey" ;
+             prov:definition "The key of a prov:KeyEntityPair, which is an element of a prov:Dictionary." .
+
+
+###  http://www.w3.org/ns/prov#startedAtTime
+prov:startedAtTime rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain prov:Activity ;
+                   rdfs:range xsd:dateTime ;
+                   rdfs:comment "The time at which an activity started. See also prov:endedAtTime."@en ;
+                   rdfs:isDefinedBy provo: ;
+                   rdfs:label "startedAtTime" .
+
+
+###  http://www.w3.org/ns/prov#value
+prov:value rdf:type owl:DatatypeProperty ;
+           rdfs:domain prov:Entity ;
+           rdfs:comment """The editor's definition comes from http://www.w3.org/TR/rdf-primer/#rdfvalue
+
+This property serves the same purpose as rdf:value, but has been reintroduced to avoid some of the definitional ambiguity in the RDF specification (specifically, 'may be used in describing structured values')."""@en ;
+           rdfs:isDefinedBy provo: ;
+           rdfs:label "value" ;
+           prov:definition "Provides a value that is a direct representation of an entity."@en .
+
+
+###  https://codemeta.github.io/terms/issueTracker
+<https://codemeta.github.io/terms/issueTracker> rdf:type owl:DatatypeProperty .
+
+
+###  https://codemeta.github.io/terms/referencePublication
+<https://codemeta.github.io/terms/referencePublication> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:isDefinedBy <https://codemeta.github.io/terms/> .
+
+
+###  https://w3id.org/okn/o/sd#availableInRegistry
+sd:availableInRegistry rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain sd:SoftwareImage ;
+                       rdfs:range xsd:anyURI ;
+                       rdfs:comment "Property that indicates in which registry the software image being described can be found. For example, https://hub.docker.com"@en ;
+                       rdfs:label "available in registry"@en .
+
+
+###  https://w3id.org/okn/o/sd#codeRepository
+sd:codeRepository rdf:type owl:DatatypeProperty ;
+                  rdfs:subPropertyOf schema:codeRepository ;
+                  rdf:type owl:FunctionalProperty ;
+                  rdfs:domain sd:SourceCode ;
+                  rdfs:range xsd:anyURI ;
+                  rdfs:comment "URL to the code repository of a software component"@en ;
+                  rdfs:label "code repository"@en .
+
+
+###  https://w3id.org/okn/o/sd#dataCatalogIdentifier
+sd:dataCatalogIdentifier rdf:type owl:DatatypeProperty ;
+                         rdfs:subPropertyOf schema:identifier ;
+                         rdf:type owl:FunctionalProperty ;
+                         rdfs:domain sd:SampleResource ;
+                         rdfs:range xsd:string ;
+                         rdfs:comment "An identifier for resources with metadata entries in a data catalog"@en ;
+                         rdfs:label "data catalog identifier"@en .
+
+
+###  https://w3id.org/okn/o/sd#dateCreated
+sd:dateCreated rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf schema:dateCreated ;
+               rdf:type owl:FunctionalProperty ;
+               rdfs:domain sd:Software ;
+               rdfs:range xsd:dateTime ;
+               rdfs:comment "Date when a software component was created"@en ;
+               rdfs:label "date created"@en .
+
+
+###  https://w3id.org/okn/o/sd#datePublished
+sd:datePublished rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf schema:datePublished ;
+                 rdf:type owl:FunctionalProperty ;
+                 rdfs:domain sd:Software ;
+                 rdfs:range xsd:dateTime ;
+                 rdfs:comment "Date when a software component was published"@en ;
+                 rdfs:label "date published"@en .
+
+
+###  https://w3id.org/okn/o/sd#description
+sd:description rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf schema:description ;
+               rdf:type owl:FunctionalProperty ;
+               rdfs:domain [ rdf:type owl:Class ;
+                             owl:unionOf ( :Literal
+                                           owl:Thing
+                                           sd:NumericalIndex
+                                           sd:Organization
+                                           sd:Person
+                                           sd:SampleExecution
+                                           sd:SampleResource
+                                           sd:Software
+                                           sd:SourceCode
+                                           sd:Variable
+                                           sd:Visualization
+                                         )
+                           ] ;
+               rdfs:range xsd:string ;
+               rdfs:comment "A description of a resource"@en ;
+               rdfs:label "description"@en .
+
+
+###  https://w3id.org/okn/o/sd#doi
+sd:doi rdf:type owl:DatatypeProperty ;
+       rdfs:subPropertyOf sd:identifier ;
+       rdf:type owl:FunctionalProperty ;
+       rdfs:domain sd:Software ;
+       rdfs:range xsd:string ;
+       rdfs:comment "Digital Object Identifier associated with a software component"@en ;
+       rdfs:label "doi"@en .
+
+
+###  https://w3id.org/okn/o/sd#email
+sd:email rdf:type owl:DatatypeProperty ;
+         rdfs:subPropertyOf schema:email ;
+         rdf:type owl:FunctionalProperty ;
+         rdfs:domain sd:Person ;
+         rdfs:range xsd:string ;
+         rdfs:comment "Email of a person"@en ;
+         rdfs:label "email"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasAcceptedValues
+sd:hasAcceptedValues rdf:type owl:DatatypeProperty ,
+                              owl:FunctionalProperty ;
+                     rdfs:domain :Literal ;
+                     rdfs:range xsd:string ;
+                     rdfs:comment "Property that constraints which values are accepted for a parameter. For example, the name of a crop can only be \"Maize\" or \"Sorghum\""@en ;
+                     rdfs:label "has accepted values"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasAssumption
+sd:hasAssumption rdf:type owl:DatatypeProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain sd:Software ;
+                 rdfs:range xsd:string ;
+                 rdfs:comment "Assumptions of a software, e.g. the solver being used for a particular model, the source of the data (e.g., all data must have a given resolution), etc."@en ;
+                 rdfs:label "has assumption"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasDataType
+sd:hasDataType rdf:type owl:DatatypeProperty ,
+                        owl:FunctionalProperty ;
+               rdfs:domain :Literal ;
+               rdfs:range xsd:string ;
+               rdfs:comment "Property that indicates the data type of a parameter"@en ;
+               rdfs:label "has data type"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasDefaultValue
+sd:hasDefaultValue rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain [ rdf:type owl:Class ;
+                                 owl:unionOf ( :Literal
+                                               sd:VariablePresentation
+                                             )
+                               ] ;
+                   rdfs:range [ rdf:type rdfs:Datatype ;
+                                owl:unionOf ( xsd:anyURI
+                                              xsd:boolean
+                                              xsd:dateTime
+                                              xsd:float
+                                              xsd:integer
+                                              xsd:string
+                                            )
+                              ] ;
+                   rdfs:comment "Default accepted value of a variable presentation (or a parameter)"@en ;
+                   rdfs:label "has default value"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasDimensionality
+sd:hasDimensionality rdf:type owl:DatatypeProperty ,
+                              owl:FunctionalProperty ;
+                     rdfs:domain sd:DatasetSpecification ;
+                     rdfs:range xsd:integer ;
+                     rdfs:comment "Property to indicate dimensionality of the input or output of a dataset specification"@en ;
+                     rdfs:label "has dimensionality"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasDocumentation
+sd:hasDocumentation rdf:type owl:DatatypeProperty ,
+                             owl:FunctionalProperty ;
+                    rdfs:domain sd:Software ;
+                    rdfs:range xsd:anyURI ;
+                    rdfs:comment "Pointer to the documentation of the model"@en ;
+                    rdfs:label "has documentation"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasDownloadURL
+sd:hasDownloadURL rdf:type owl:DatatypeProperty ,
+                           owl:FunctionalProperty ;
+                  rdfs:domain sd:Software ;
+                  rdfs:range xsd:anyURI ;
+                  rdfs:comment "Download URL where to obtain the source/executable of the software"@en ;
+                  rdfs:label "has download URL"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasExample
+sd:hasExample rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain sd:Software ;
+              rdfs:range xsd:string ;
+              rdfs:comment "An example explaining a scenario where the software component was used in plain language."@en ;
+              rdfs:label "has example"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasExecutableInstructions
+sd:hasExecutableInstructions rdf:type owl:DatatypeProperty ,
+                                      owl:FunctionalProperty ;
+                             rdfs:domain sd:Software ;
+                             rdfs:range xsd:string ;
+                             rdfs:comment "Instructions that indicate how a software component should be executed. The difference with `hasExecutionCommand` is that the execution instructions aim to be human-readable, and have explanations between the different commands and instructions"@en ;
+                             rdfs:label "has executable instructions"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasExecutableNotebook
+sd:hasExecutableNotebook rdf:type owl:DatatypeProperty ,
+                                  owl:FunctionalProperty ;
+                         rdfs:domain sd:Software ;
+                         rdfs:range xsd:anyURI ;
+                         rdfs:comment "Property that links a software component with an executable notebook (e.g., Jupyter notebook) that illustrates how to use it in an executable manner."@en ;
+                         rdfs:label "has executable notebook"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasExecutionCommand
+sd:hasExecutionCommand rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain [ rdf:type owl:Class ;
+                                     owl:unionOf ( sd:SampleExecution
+                                                   sd:SoftwareConfiguration
+                                                   sd:SoftwareImage
+                                                 )
+                                   ] ;
+                       rdfs:range xsd:string ;
+                       rdfs:comment "Execution instructions on how to run the image"@en ;
+                       rdfs:label "hasExecutionCommand"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasFixedValue
+sd:hasFixedValue rdf:type owl:DatatypeProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain :Literal ;
+                 rdfs:range [ rdf:type rdfs:Datatype ;
+                              owl:unionOf ( xsd:anyURI
+                                            xsd:boolean
+                                            xsd:dateTime
+                                            xsd:float
+                                            xsd:integer
+                                            xsd:string
+                                          )
+                            ] ;
+                 rdfs:comment "Value of a parameter in a software setup."@en ;
+                 rdfs:label "has fixed value"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasFormat
+sd:hasFormat rdf:type owl:DatatypeProperty ,
+                      owl:FunctionalProperty ;
+             rdfs:domain [ rdf:type owl:Class ;
+                           owl:unionOf ( sd:DatasetSpecification
+                                         sd:Visualization
+                                       )
+                         ] ;
+             rdfs:range xsd:string ;
+             rdfs:comment "Format followed by a file. For example, txt, nc, etc."@en ;
+             rdfs:label "has format"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasImplementationScriptLocation
+sd:hasImplementationScriptLocation rdf:type owl:DatatypeProperty ,
+                                            owl:FunctionalProperty ;
+                                   rdfs:domain sd:SoftwareConfiguration ;
+                                   rdfs:range xsd:anyURI ;
+                                   rdfs:comment "Property that points to the main runnable script for the current function"@en ;
+                                   rdfs:label "has implementation script location"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasInstallationInstructions
+sd:hasInstallationInstructions rdf:type owl:DatatypeProperty ,
+                                        owl:FunctionalProperty ;
+                               rdfs:domain sd:Software ;
+                               rdfs:range xsd:string ;
+                               rdfs:comment "Instructions required to install this particular piece of software. Installation instructions usually are available in a human-readable manner."@en ;
+                               rdfs:label "has installation instructions"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasMaximumAcceptedValue
+sd:hasMaximumAcceptedValue rdf:type owl:DatatypeProperty ,
+                                    owl:FunctionalProperty ;
+                           rdfs:domain [ rdf:type owl:Class ;
+                                         owl:unionOf ( :Literal
+                                                       sd:VariablePresentation
+                                                     )
+                                       ] ;
+                           rdfs:range [ rdf:type rdfs:Datatype ;
+                                        owl:unionOf ( xsd:dateTime
+                                                      xsd:float
+                                                      xsd:integer
+                                                    )
+                                      ] ;
+                           rdfs:comment "Maximum accepted value of a variable presentation (or a parameter)"@en ;
+                           rdfs:label "has maximum accepted value"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasMinimumAcceptedValue
+sd:hasMinimumAcceptedValue rdf:type owl:DatatypeProperty ,
+                                    owl:FunctionalProperty ;
+                           rdfs:domain [ rdf:type owl:Class ;
+                                         owl:unionOf ( :Literal
+                                                       sd:VariablePresentation
+                                                     )
+                                       ] ;
+                           rdfs:range [ rdf:type rdfs:Datatype ;
+                                        owl:unionOf ( xsd:dateTime
+                                                      xsd:float
+                                                      xsd:integer
+                                                    )
+                                      ] ;
+                           rdfs:comment "Minimum accepted value of a variable presentation (or a parameter)"@en ;
+                           rdfs:label "has minimum accepted value"@en .
+
+
+###  https://w3id.org/okn/o/sd#hasVersionId
+sd:hasVersionId rdf:type owl:DatatypeProperty ;
+                rdfs:subPropertyOf schema:identifier ;
+                rdf:type owl:FunctionalProperty ;
+                rdfs:domain sd:SoftwareVersion ;
+                rdfs:range xsd:string ;
+                rdfs:comment "Identifier of the version of this software"@en ;
+                rdfs:label "has version id"@en .
+
+
+###  https://w3id.org/okn/o/sd#identifier
+sd:identifier rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf schema:identifier ;
+              rdf:type owl:FunctionalProperty ;
+              rdfs:domain [ rdf:type owl:Class ;
+                            owl:unionOf ( sd:Organization
+                                          sd:Person
+                                          sd:Software
+                                        )
+                          ] ;
+              rdfs:range xsd:string ;
+              rdfs:comment "Identifier of the resource being described"@en ;
+              rdfs:label "identifier"@en .
+
+
+###  https://w3id.org/okn/o/sd#issueTracker
+sd:issueTracker rdf:type owl:DatatypeProperty ;
+                rdfs:subPropertyOf <https://codemeta.github.io/terms/issueTracker> ;
+                rdf:type owl:FunctionalProperty ;
+                rdfs:domain sd:Software ;
+                rdfs:range xsd:anyURI ;
+                rdfs:comment "Pointer to the issue tracker of a software component"@en ;
+                rdfs:label "issue tracker"@en .
+
+
+###  https://w3id.org/okn/o/sd#license
+sd:license rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf schema:license ;
+           rdf:type owl:FunctionalProperty ;
+           rdfs:domain [ rdf:type owl:Class ;
+                         owl:unionOf ( sd:Software
+                                       sd:SourceCode
+                                     )
+                       ] ;
+           rdfs:range xsd:anyURI ;
+           rdfs:comment "License of a software component or its source code"@en ;
+           rdfs:label "license"@en .
+
+
+###  https://w3id.org/okn/o/sd#pathLocation
+sd:pathLocation rdf:type owl:DatatypeProperty ,
+                         owl:FunctionalProperty ;
+                rdfs:domain sd:DatasetSpecification ;
+                rdfs:range xsd:string ;
+                rdfs:comment """Property that indicates the relative path of an input or output with respect to the folder structure of the executable. 
+
+For example, let's assume we have an input that has to exist in the folder `/datasets` or the executable will not work. This property ensures that this knowledge is captured for a given software component execution.
+
+In this case the property would capture this as follows:
+
+```
+:input_prep a sd:DatasetSpecification .
+:input_prep rdfs:label \"precipitation file\" .
+:input_precip sd:pathLocation \"/datasets/\".
+```"""@en ;
+                rdfs:label "path location"@en .
+
+
+###  https://w3id.org/okn/o/sd#position
+sd:position rdf:type owl:DatatypeProperty ,
+                     owl:FunctionalProperty ;
+            rdfs:domain [ rdf:type owl:Class ;
+                          owl:unionOf ( :Literal
+                                        sd:DatasetSpecification
+                                      )
+                        ] ;
+            rdfs:range xsd:integer ;
+            rdfs:comment "Position of the parameter or input/output in the model configuration. This property is needed to know how to organize the I/O of the component on execution"@en ;
+            rdfs:label "position"@en .
+
+
+###  https://w3id.org/okn/o/sd#programmingLanguage
+sd:programmingLanguage rdf:type owl:DatatypeProperty ;
+                       rdfs:subPropertyOf schema:programmingLanguage ;
+                       rdf:type owl:FunctionalProperty ;
+                       rdfs:domain sd:SourceCode ;
+                       rdfs:range xsd:string ;
+                       rdfs:comment "Language used to code a software component"@en ;
+                       rdfs:label "programming language"@en .
+
+
+###  https://w3id.org/okn/o/sd#referencePublication
+sd:referencePublication rdf:type owl:DatatypeProperty ;
+                        rdfs:subPropertyOf <https://codemeta.github.io/terms/referencePublication> ;
+                        rdf:type owl:FunctionalProperty ;
+                        rdfs:domain sd:Software ;
+                        rdfs:range xsd:string ;
+                        rdfs:comment "Main publication to cite for this software component"@en ;
+                        rdfs:label "reference publication"@en .
+
+
+###  https://w3id.org/okn/o/sd#shortDescription
+sd:shortDescription rdf:type owl:DatatypeProperty ;
+                    rdfs:subPropertyOf sd:description ;
+                    rdf:type owl:FunctionalProperty ;
+                    rdfs:domain sd:Software ;
+                    rdfs:range xsd:string ;
+                    rdfs:comment "A summarized description of the resource"@en ;
+                    rdfs:label "short description" .
+
+
+###  https://w3id.org/okn/o/sd#status
+sd:status rdf:type owl:DatatypeProperty ,
+                   owl:FunctionalProperty ;
+          rdfs:domain sd:ConfigurationSetup ;
+          rdfs:range xsd:string ;
+          rdfs:comment "Data property to indicate the status of a configuration setups. For example, to indicate that a setup has been executed in a platform, that the setup should notbe shown to users (it's an auxiliary setup), etc."@en ;
+          rdfs:label "status"@en .
+
+
+###  https://w3id.org/okn/o/sd#value
+sd:value rdf:type owl:DatatypeProperty ;
+         rdfs:subPropertyOf prov:value ;
+         rdf:type owl:FunctionalProperty ;
+         rdfs:domain [ rdf:type owl:Class ;
+                       owl:unionOf ( sd:Image
+                                     sd:SampleResource
+                                     sd:Visualization
+                                   )
+                     ] ;
+         rdfs:range [ rdf:type rdfs:Datatype ;
+                      owl:unionOf ( xsd:anyURI
+                                    xsd:boolean
+                                    xsd:dateTime
+                                    xsd:float
+                                    xsd:integer
+                                    xsd:string
+                                  )
+                    ] ;
+         rdfs:comment "Value associated to the described entity"@en ;
+         rdfs:label "value"@en .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://purl.dataone.org/provone/2015/01/15/ontology#Execution
+provone:Execution rdf:type owl:Class ;
+                  rdfs:subClassOf prov:Activity ;
+                  owl:disjointWith provone:ParameterData ,
+                                   provone:Program ,
+                                   provone:Visualization ,
+                                   provone:Workflow ,
+                                   :Artefact ,
+                                   :DataCollection ,
+                                   :Float ,
+                                   :Int ,
+                                   :Literal ,
+                                   :Number ,
+                                   :String ,
+                                   :StructuredData ,
+                                   prov:Collection ,
+                                   prov:EmptyCollection ,
+                                   prov:EmptyDictionary ,
+                                   prov:Entity ,
+                                   prov:Plan ,
+                                   sd:ConfigurationSetup ,
+                                   sd:Software ,
+                                   sd:SoftwareConfiguration ,
+                                   sd:SoftwareImage ,
+                                   sd:SoftwareVersion ;
+                  rdfs:comment "An Execution represents the execution of a Program. If the Program in question is a Workflow, then the Execution represents a trace of its execution." ;
+                  rdfs:label "Execution" .
+
+
+###  http://purl.dataone.org/provone/2015/01/15/ontology#ParameterData
+provone:ParameterData rdf:type owl:Class ;
+                      rdfs:subClassOf prov:Entity ;
+                      owl:disjointWith :WorkflowExecution ,
+                                       prov:Activity ;
+                      rdfs:comment "A Data item represents the basic unit of information consumed and produced by a Program. Multiple Data items may be grouped into a Collection." ;
+                      rdfs:label "Parameter" ;
+                      rdfs:seeAlso provone:Data .
+
+
+###  http://purl.dataone.org/provone/2015/01/15/ontology#Program
+provone:Program rdf:type owl:Class ;
+                owl:equivalentClass sd:Software ;
+                rdfs:subClassOf schema:SoftwareApplication ,
+                                prov:Entity ,
+                                prov:Plan ;
+                owl:disjointWith :WorkflowExecution ,
+                                 prov:Activity ;
+                rdfs:label "Program" ;
+                prov:definition "A Program represents a computational task that consumes and produces data through its input and output ports, respectively. It can be atomic or composite, the latter case represented by a possibly nested Program. It is also subject to versioning by prov:wasDerivedFrom." .
+
+
+###  http://purl.dataone.org/provone/2015/01/15/ontology#User
+provone:User rdf:type owl:Class ;
+             rdfs:subClassOf prov:Agent ;
+             rdfs:label "User" ;
+             prov:definition "A User is the person responsible for the execution of a Program, which in turn can be a Workflow. Its specification serves attribution and accountability purposes." .
+
+
+###  http://purl.dataone.org/provone/2015/01/15/ontology#Visualization
+provone:Visualization rdf:type owl:Class ;
+                      rdfs:subClassOf prov:Entity ;
+                      owl:disjointWith :WorkflowExecution ,
+                                       prov:Activity ;
+                      rdfs:comment "A Visualization represents a visual product produced by a Program." ;
+                      rdfs:label "Visualization" .
+
+
+###  http://purl.dataone.org/provone/2015/01/15/ontology#Workflow
+provone:Workflow rdf:type owl:Class ;
+                 rdfs:subClassOf provone:Program ,
+                                 sd:Software ;
+                 owl:disjointWith :WorkflowExecution ,
+                                  prov:Activity ;
+                 rdfs:label "Workflow" ;
+                 prov:definition "A Workflow is a distinguished Program, which indicates that is meant to represent the computational experiment in its entirety. It is also subject to versioning by prov:wasDerivedFrom through its super-class provone:Program." .
+
+
+###  http://purl.org/co/List
+co:List rdf:type owl:Class .
+
+
+###  http://schema.org/SoftwareApplication
+schema:SoftwareApplication rdf:type owl:Class .
+
+
+###  http://schema.org/SoftwareSourceCode
+schema:SoftwareSourceCode rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/concise#Artefact
+:Artefact rdf:type owl:Class ;
+          rdfs:subClassOf prov:Entity ;
+          owl:disjointWith :WorkflowExecution ,
+                           prov:Activity .
+
+
+###  http://www.semanticweb.org/concise#BaseCommand
+:BaseCommand rdf:type owl:Class ;
+             rdfs:subClassOf co:List .
+
+
+###  http://www.semanticweb.org/concise#DataCollection
+:DataCollection rdf:type owl:Class ;
+                rdfs:subClassOf prov:Collection ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty prov:hadMember ;
+                                  owl:allValuesFrom [ rdf:type owl:Class ;
+                                                      owl:unionOf ( provone:ParameterData
+                                                                    :DataCollection
+                                                                  )
+                                                    ]
+                                ] ;
+                owl:disjointWith :WorkflowExecution ,
+                                 prov:Activity .
+
+
+###  http://www.semanticweb.org/concise#DataFormat
+:DataFormat rdf:type owl:Class ;
+            rdfs:subClassOf owl:Thing .
+
+
+###  http://www.semanticweb.org/concise#ExecutionCommand
+:ExecutionCommand rdf:type owl:Class ;
+                  rdfs:subClassOf co:List .
+
+
+###  http://www.semanticweb.org/concise#FileFormat
+:FileFormat rdf:type owl:Class ;
+            rdfs:subClassOf :DataFormat .
+
+
+###  http://www.semanticweb.org/concise#Float
+:Float rdf:type owl:Class ;
+       rdfs:subClassOf :Number ;
+       owl:disjointWith :WorkflowExecution ,
+                        prov:Activity .
+
+
+###  http://www.semanticweb.org/concise#Int
+:Int rdf:type owl:Class ;
+     rdfs:subClassOf :Number ;
+     owl:disjointWith :WorkflowExecution ,
+                      prov:Activity .
+
+
+###  http://www.semanticweb.org/concise#KeyValPair
+:KeyValPair rdf:type owl:Class ;
+            rdfs:subClassOf [ rdf:type owl:Restriction ;
+                              owl:onProperty :pairValue ;
+                              owl:cardinality "1"^^xsd:nonNegativeInteger
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty prov:pairKey ;
+                              owl:cardinality "1"^^xsd:nonNegativeInteger
+                            ] .
+
+
+###  http://www.semanticweb.org/concise#Literal
+:Literal rdf:type owl:Class ;
+         rdfs:subClassOf provone:ParameterData ;
+         owl:disjointWith :WorkflowExecution ,
+                          prov:Activity ;
+         rdfs:seeAlso sd:Parameter .
+
+
+###  http://www.semanticweb.org/concise#Number
+:Number rdf:type owl:Class ;
+        rdfs:subClassOf :Literal ;
+        owl:disjointWith :WorkflowExecution ,
+                         prov:Activity .
+
+
+###  http://www.semanticweb.org/concise#Organization
+:Organization rdf:type owl:Class ;
+              rdfs:subClassOf prov:Agent .
+
+
+###  http://www.semanticweb.org/concise#ParameterList
+:ParameterList rdf:type owl:Class ;
+               rdfs:subClassOf co:List .
+
+
+###  http://www.semanticweb.org/concise#ProgramPurpose
+:ProgramPurpose rdf:type owl:Class ;
+                rdfs:subClassOf provone:Program ,
+                                sd:Software .
+
+
+###  http://www.semanticweb.org/concise#StandardIO
+:StandardIO rdf:type owl:Class ;
+            rdfs:subClassOf :DataFormat .
+
+
+###  http://www.semanticweb.org/concise#String
+:String rdf:type owl:Class ;
+        rdfs:subClassOf :Literal ;
+        owl:disjointWith :WorkflowExecution ,
+                         prov:Activity .
+
+
+###  http://www.semanticweb.org/concise#StructuredData
+:StructuredData rdf:type owl:Class ;
+                rdfs:subClassOf provone:ParameterData ;
+                owl:disjointWith :WorkflowExecution ,
+                                 prov:Activity ;
+                rdfs:seeAlso <http://purl.org/linked-data/cube#DataStructureDefinition> .
+
+
+###  http://www.semanticweb.org/concise#WorkflowEngine
+:WorkflowEngine rdf:type owl:Class ;
+                rdfs:subClassOf prov:Agent .
+
+
+###  http://www.semanticweb.org/concise#WorkflowEngineExecution
+:WorkflowEngineExecution rdf:type owl:Class ;
+                         rdfs:subClassOf provone:Execution .
+
+
+###  http://www.semanticweb.org/concise#WorkflowExecution
+:WorkflowExecution rdf:type owl:Class ;
+                   rdfs:subClassOf provone:Execution ;
+                   owl:disjointWith prov:Collection ,
+                                    prov:EmptyCollection ,
+                                    prov:EmptyDictionary ,
+                                    prov:Entity ,
+                                    prov:Plan ,
+                                    sd:ConfigurationSetup ,
+                                    sd:Software ,
+                                    sd:SoftwareConfiguration ,
+                                    sd:SoftwareImage ,
+                                    sd:SoftwareVersion .
+
+
+###  http://www.w3.org/ns/prov#Activity
+prov:Activity rdf:type owl:Class ;
+              owl:disjointWith prov:Collection ,
+                               prov:EmptyCollection ,
+                               prov:EmptyDictionary ,
+                               prov:Entity ,
+                               prov:Plan ,
+                               sd:ConfigurationSetup ,
+                               sd:Software ,
+                               sd:SoftwareConfiguration ,
+                               sd:SoftwareImage ,
+                               sd:SoftwareVersion ;
+              rdfs:isDefinedBy provo: ;
+              rdfs:label "Activity" ;
+              prov:definition "An activity is something that occurs over a period of time and acts upon or with entities; it may include consuming, processing, transforming, modifying, relocating, using, or generating entities." .
+
+
+###  http://www.w3.org/ns/prov#Agent
+prov:Agent rdf:type owl:Class ;
+           rdfs:isDefinedBy provo: ;
+           rdfs:label "Agent" ;
+           prov:definition "An agent is something that bears some form of responsibility for an activity taking place, for the existence of an entity, or for another agent's activity. "@en .
+
+
+###  http://www.w3.org/ns/prov#Collection
+prov:Collection rdf:type owl:Class ;
+                rdfs:subClassOf prov:Entity ;
+                rdfs:isDefinedBy provo: ;
+                rdfs:label "Collection" ;
+                prov:definition "A collection is an entity that provides a structure to some constituents, which are themselves entities. These constituents are said to be member of the collections."@en .
+
+
+###  http://www.w3.org/ns/prov#Dictionary
+prov:Dictionary rdf:type owl:Class ;
+                rdfs:comment "A given dictionary forms a given structure for its members. A different structure (obtained either by insertion or removal of members) constitutes a different dictionary." ,
+                             "This concept allows for the provenance of the dictionary, but also of its constituents to be expressed. Such a notion of dictionary corresponds to a wide variety of concrete data structures, such as a maps or associative arrays." ;
+                rdfs:isDefinedBy prov: ;
+                rdfs:label "Dictionary" ;
+                prov:definition "A dictionary is an entity that provides a structure to some constituents, which are themselves entities. These constituents are said to be member of the dictionary." .
+
+
+###  http://www.w3.org/ns/prov#EmptyCollection
+prov:EmptyCollection rdf:type owl:Class ;
+                     rdfs:subClassOf prov:Collection ;
+                     rdfs:isDefinedBy provo: ;
+                     rdfs:label "EmptyCollection"@en ;
+                     prov:definition "An empty collection is a collection without members."@en .
+
+
+###  http://www.w3.org/ns/prov#EmptyDictionary
+prov:EmptyDictionary rdf:type owl:Class ;
+                     rdfs:subClassOf prov:Dictionary ,
+                                     prov:EmptyCollection ;
+                     rdfs:isDefinedBy prov: ;
+                     rdfs:label "Empty Dictionary" ;
+                     prov:definition "An empty dictionary (i.e. has no members)." .
+
+
+###  http://www.w3.org/ns/prov#Entity
+prov:Entity rdf:type owl:Class ;
+            rdfs:isDefinedBy provo: ;
+            rdfs:label "Entity" ;
+            prov:definition "An entity is a physical, digital, conceptual, or other kind of thing with some fixed aspects; entities may be real or imaginary. "@en .
+
+
+###  http://www.w3.org/ns/prov#KeyEntityPair
+prov:KeyEntityPair rdf:type owl:Class ;
+                   rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                     owl:onProperty prov:pairEntity ;
+                                     owl:cardinality "1"^^xsd:nonNegativeInteger
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty prov:pairKey ;
+                                     owl:cardinality "1"^^xsd:nonNegativeInteger
+                                   ] ;
+                   rdfs:isDefinedBy prov: ;
+                   rdfs:label "Key-Entity Pair" ;
+                   prov:definition "A key-entity pair. Part of a prov:Dictionary through prov:hadDictionaryMember. The key is any RDF Literal, the value is a prov:Entity." .
+
+
+###  http://www.w3.org/ns/prov#Location
+prov:Location rdf:type owl:Class ;
+              rdfs:isDefinedBy provo: ;
+              rdfs:label "Location" ;
+              rdfs:seeAlso prov:atLocation ;
+              prov:definition "A location can be an identifiable geographic place (ISO 19112), but it can also be a non-geographic place such as a directory, row, or column. As such, there are numerous ways in which location can be expressed, such as by a coordinate, address, landmark, and so forth."@en .
+
+
+###  http://www.w3.org/ns/prov#Person
+prov:Person rdf:type owl:Class ;
+            rdfs:subClassOf prov:Agent ;
+            rdfs:isDefinedBy provo: ;
+            rdfs:label "Person" ;
+            prov:definition "Person agents are people."@en .
+
+
+###  http://www.w3.org/ns/prov#Plan
+prov:Plan rdf:type owl:Class ;
+          rdfs:subClassOf prov:Entity ;
+          rdfs:comment "There exist no prescriptive requirement on the nature of plans, their representation, the actions or steps they consist of, or their intended goals. Since plans may evolve over time, it may become necessary to track their provenance, so plans themselves are entities. Representing the plan explicitly in the provenance can be useful for various tasks: for example, to validate the execution as represented in the provenance record, to manage expectation failures, or to provide explanations."@en ;
+          rdfs:isDefinedBy provo: ;
+          rdfs:label "Plan" ;
+          prov:definition "A plan is an entity that represents a set of actions or steps intended by one or more agents to achieve some goals." .
+
+
+###  http://www.w3.org/ns/prov#SoftwareAgent
+prov:SoftwareAgent rdf:type owl:Class ;
+                   rdfs:subClassOf owl:Thing ,
+                                   prov:Agent ;
+                   rdfs:isDefinedBy prov: ,
+                                    provo: ;
+                   rdfs:label "SoftwareAgent" ;
+                   prov:definition "A software agent is running software."@en .
+
+
+###  https://w3id.org/okn/o/sd#ConfigurationSetup
+sd:ConfigurationSetup rdf:type owl:Class ;
+                      rdfs:subClassOf sd:SoftwareConfiguration ;
+                      rdfs:comment "Special type of configuration in which some of the inputs or parameters are associated to files or values. A configuration may be associated to multiple setups to facilitate its execution."@en ;
+                      rdfs:label "SetupConfiguration"@en .
+
+
+###  https://w3id.org/okn/o/sd#DatasetSpecification
+sd:DatasetSpecification rdf:type owl:Class ;
+                        rdfs:comment "Class designed to describe a type of input or output used or produced by a model. For example, Topoflow has several inputs. One of them is a text file with precipitation values. The representation of this input is an instance of a dataset specification."@en ;
+                        rdfs:label "DatasetSpecification"@en .
+
+
+###  https://w3id.org/okn/o/sd#Image
+sd:Image rdf:type owl:Class .
+
+
+###  https://w3id.org/okn/o/sd#NumericalIndex
+sd:NumericalIndex rdf:type owl:Class .
+
+
+###  https://w3id.org/okn/o/sd#Organization
+sd:Organization rdf:type owl:Class .
+
+
+###  https://w3id.org/okn/o/sd#Person
+sd:Person rdf:type owl:Class .
+
+
+###  https://w3id.org/okn/o/sd#SampleExecution
+sd:SampleExecution rdf:type owl:Class .
+
+
+###  https://w3id.org/okn/o/sd#SampleResource
+sd:SampleResource rdf:type owl:Class .
+
+
+###  https://w3id.org/okn/o/sd#Software
+sd:Software rdf:type owl:Class ;
+            rdfs:subClassOf schema:SoftwareApplication ,
+                            prov:Plan ;
+            rdfs:comment "The set of instructions that indicate a machine how to work. In this ontology software is a general concept which acts as a superclass for software versions, docker images, data transformations, etc."@en ;
+            rdfs:label "Software"@en .
+
+
+###  https://w3id.org/okn/o/sd#SoftwareConfiguration
+sd:SoftwareConfiguration rdf:type owl:Class ;
+                         rdfs:subClassOf provone:Program ,
+                                         sd:Software ;
+                         rdfs:comment "A software / program configuration represents a particular way of invoking a function of a software component. A software configuration exposes the precise inputs and outputs that are used for that function. Multiple software configurations may be associated to a software component. A software configuration facilitates the encapsulation of software, and it can be used to represent components of scientific workflows."@en ;
+                         rdfs:label "ProgramConfiguration"@en .
+
+
+###  https://w3id.org/okn/o/sd#SoftwareImage
+sd:SoftwareImage rdf:type owl:Class ;
+                 rdfs:subClassOf provone:Program ,
+                                 sd:Software ;
+                 rdfs:comment "An image that virtualizes the functionality of a given software. For example, a Docker container."@en ;
+                 rdfs:label "SoftwareImage"@en .
+
+
+###  https://w3id.org/okn/o/sd#SoftwareVersion
+sd:SoftwareVersion rdf:type owl:Class ;
+                   rdfs:subClassOf provone:Program ,
+                                   sd:Software ;
+                   rdfs:comment "A software / program version is a specificf type of software / program that represents a particular set of functionalities. New functionalities and error fixes may occur between software /program versions"@en ;
+                   rdfs:label "ProgramVersion"@en .
+
+
+###  https://w3id.org/okn/o/sd#SourceCode
+sd:SourceCode rdf:type owl:Class ;
+              rdfs:subClassOf schema:SoftwareSourceCode ;
+              rdfs:comment "Class representing the characteristics of the code associated with a  software component"@en ;
+              rdfs:label "Source Code"@en .
+
+
+###  https://w3id.org/okn/o/sd#Variable
+sd:Variable rdf:type owl:Class .
+
+
+###  https://w3id.org/okn/o/sd#VariablePresentation
+sd:VariablePresentation rdf:type owl:Class .
+
+
+###  https://w3id.org/okn/o/sd#Visualization
+sd:Visualization rdf:type owl:Class .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
