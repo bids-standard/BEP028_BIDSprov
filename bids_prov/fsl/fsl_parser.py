@@ -37,7 +37,7 @@ INPUT_TAGS = frozenset(
     ]
 )
 
-# tags used to detect outputs from cammand lines
+# tags used to detect outputs from command lines
 # eg. convert_xfm -inverse -omat highres2example_func.mat example_func2highres.mat
 OUTPUT_TAGS = frozenset(
     [
@@ -141,14 +141,14 @@ def readlines(filename: str) -> Mapping[str, List[str]]:
 #     return None
 
 
-def _get_kwarg(serie,  with_value=True):
+def _get_kwarg(series,  with_value=True):
     """
-    Get the named arguments (kwarg) from a column ("Used", "GeneratedBy", "ParametersValue" or "ParametersNoValue" ) of the dataframe coming frome in description_functions.json
+    Get the named arguments (kwarg) from a column ("Used", "GeneratedBy", "ParametersValue" or "ParametersNoValue" ) of the dataframe coming from in description_functions.json
 
     Parameters
     ----------
 
-    serie : pandas series
+    series : pandas series
         A list of the command arguments description.
     with_value : boolean
         A bool to specify if values are expected or not, in order to dicrimine "ParametersValue" (with_value=True), and "ParametersNoValue" (with_value=False)
@@ -162,7 +162,7 @@ def _get_kwarg(serie,  with_value=True):
     arg_list = []
 
     add_argument_list = []
-    for u_arg in serie:
+    for u_arg in series:
         if type(u_arg) == dict:
             # parser.add_argument(u_arg["name"], nargs='+', action='append')
             if "Nargs" in u_arg:
@@ -199,14 +199,14 @@ def _get_kwarg(serie,  with_value=True):
     return add_argument_list, arg_list
 
 
-def _get_arg(serie, arg_rest):
+def _get_arg(series, arg_rest):
     """
-    Get the ordinal arguments from a column ("Used", "GeneratedBy") of the dataframe coming from in description_functions.json. _get_arg shoud be used when all named arguments are removed from the initial command.   
+    Get the ordinal arguments from a column ("Used", "GeneratedBy") of the dataframe coming from in description_functions.json. _get_arg should be used when all named arguments are removed from the initial command.   
 
     Parameters
     ----------
 
-    serie : pandas series
+    series : pandas series
         A list of the command arguments description.
     arg_rest : string of the command, (without all the named argument used in description_functions.json)
 
@@ -217,7 +217,7 @@ def _get_arg(serie, arg_rest):
 
     arg_list = []
     arg_purge = [arg for arg in arg_rest if not arg.startswith("-")]
-    for u_arg in serie:
+    for u_arg in series:
         if type(u_arg) == int:
             # print("arg_purge", type(arg_purge), arg_purge, u_arg)
             if u_arg < len(arg_purge):

@@ -96,7 +96,7 @@ def main():
                 else:
                     filename_ss_ext = file.split(".tcsh")[0]
                 process_file(context_write, root, file, filename_ss_ext, output_dir_afni, afni_to_bids_prov, opt.verbose)
-                # afni bloc
+                # afni block
                 process_file(context_write, root, file, filename_ss_ext, output_dir_afni, afni_to_bids_prov, opt.verbose, with_blocs=True)
 
             else:
