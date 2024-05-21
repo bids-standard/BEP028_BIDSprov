@@ -425,7 +425,7 @@ def get_extern_entities_from_activities(graph, activities, id_fusion_activity):
 
 
 def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
-                      soft_ver='afni24', indent=2, verbose=True, with_blocs=True) -> bool:
+                      soft_ver='afni24', indent=2, verbose=True, with_blocks=True) -> bool:
     """
     afni parser
 
@@ -443,14 +443,14 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         number of indentation in jsonld
     verbose : bool
         True to have more verbosity
-    with_blocs : bool
+    with_blocks : bool
         To retrieve or not the results of the parser in block mode and not only for each command
 
     Returns
     -------
     bool
         Write the json-ld to the location indicated in output_file.
-        If `with_blocs` is True, it generates the file to the location indicated in output_file.
+        If `with_blocks` is True, it generates the file to the location indicated in output_file.
     """
     commands_block = readlines(filename)
 
@@ -460,31 +460,31 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     graph["Records"].update(records)
     compute_sha_256_entity(graph["Records"]["Entities"])
 
-    if with_blocs:
+    if with_blocks:
         bl_name = list(OrderedDict.fromkeys(bl for (bl, id) in bloc_act))
         blocks = [{
             "bloc_name": bl,
             "act_ids": [id_ for (b, id_) in bloc_act if b == bl]} for bl in bl_name]
 
         graph_block = copy.deepcopy(graph)
-        activities_blocs = []
-        entities_blocs = []
+        activities_blocks = []
+        entities_blocks = []
         for block in blocks:
             activities = get_activities_by_ids(graph_block, block["act_ids"])
             fus_activities = fusion_activities(activities, block["bloc_name"])
             ext_entities = get_extern_entities_from_activities(
                 graph_block, activities, fus_activities["@id"])
             for ent in ext_entities:
-                if ent["@id"] not in entities_blocs:
-                    entities_blocs.append(ent)
+                if ent["@id"] not in entities_blocks:
+                    entities_blocks.append(ent)
 
             for ent_used in fus_activities["Used"]:
                 if ent_used not in [id_["@id"] for id_ in ext_entities]:
                     fus_activities["Used"].remove(ent_used)
-            activities_blocs.append(fus_activities)
+            activities_blocks.append(fus_activities)
 
-        graph_block["Records"]["Activities"] = activities_blocs
-        graph_block["Records"]["Entities"] = entities_blocs
+        graph_block["Records"]["Activities"] = activities_blocks
+        graph_block["Records"]["Entities"] = entities_blocks
 
         return writing_jsonld(graph_block, indent, output_file)
 
