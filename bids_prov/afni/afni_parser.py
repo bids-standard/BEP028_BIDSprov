@@ -76,10 +76,10 @@ def find_param(cmd_args_remain: list) -> dict:
     for arg_remain in cmd_args_remain:
         if arg_remain.startswith("-"):
             if arg_remain != cmd_args_remain[-1]:
-                succesor = cmd_args_remain[cmd_args_remain.index(arg_remain) + 1]
-                if not succesor.startswith("-"):
-                    param_dic[arg_remain] = succesor
-                    cmd_args_remain.remove(succesor)
+                successor = cmd_args_remain[cmd_args_remain.index(arg_remain) + 1]
+                if not successor.startswith("-"):
+                    param_dic[arg_remain] = successor
+                    cmd_args_remain.remove(successor)
                 else:
                     param_dic[arg_remain] = True
             else:
@@ -115,7 +115,7 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
 
     bloc_act = []
 
-    for (bloc, cmd) in commands_bloc:
+    for (block, cmd) in commands_bloc:
         cmd_s = re.split(" |=", cmd)
         a_name = cmd_s[0]
         cmd_args_remain = cmd_s[1:]
@@ -232,7 +232,7 @@ def build_records(commands_bloc: list, agent_id: str, verbose: bool = False):
                     # "derivedFrom": input_id,
                 }
             )
-        bloc_act.append((bloc, activity["@id"]))
+        bloc_act.append((block, activity["@id"]))
 
         records["Activities"].append(activity)
         if verbose:
@@ -296,19 +296,19 @@ def readlines(input_file: str) -> list:
     #     cmd.startswith(begin) for begin in dropline_begin)]
     regex_bloc = re.compile(r'# =+ ([^=]+) =+')
     commands_bloc = []
-    bloc = ""
+    block = ""
     for cmd in commands:
         if cmd.startswith("# ==="):
-            bloc = regex_bloc.match(cmd).groups()[0] if regex_bloc.match(cmd) is not None else "bloc ..."
+            block = regex_bloc.match(cmd).groups()[0] if regex_bloc.match(cmd) is not None else "block ..."
 
         if not any(cmd.startswith(begin) for begin in dropline_begin):
-            commands_bloc.append((bloc, cmd))
+            commands_bloc.append((block, cmd))
 
-    commands_bloc = [(bloc, re.sub(r"\s+", " ", cmd))
-                     for (bloc, cmd) in commands_bloc]  # drop multiple space between args
+    commands_bloc = [(block, re.sub(r"\s+", " ", cmd))
+                     for (block, cmd) in commands_bloc]  # drop multiple space between args
 
-    commands_bloc = [(bloc, cmd)
-                     for (bloc, cmd) in commands_bloc if cmd]  # drop empty commands
+    commands_bloc = [(block, cmd)
+                     for (block, cmd) in commands_bloc if cmd]  # drop empty commands
 
     return commands_bloc
 
@@ -438,7 +438,7 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     output_file : str
         name of output parsed file with extension json.ld
     soft_ver:str
-        version of sofware afni
+        version of software afni
     indent : int
         number of indentation in jsonld
     verbose : bool
@@ -462,16 +462,16 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
 
     if with_blocs:
         bl_name = list(OrderedDict.fromkeys(bl for (bl, id) in bloc_act))
-        blocs = [{
+        blocks = [{
             "bloc_name": bl,
             "act_ids": [id_ for (b, id_) in bloc_act if b == bl]} for bl in bl_name]
 
         graph_bloc = copy.deepcopy(graph)
         activities_blocs = []
         entities_blocs = []
-        for bloc in blocs:
-            activities = get_activities_by_ids(graph_bloc, bloc["act_ids"])
-            fus_activities = fusion_activities(activities, bloc["bloc_name"])
+        for block in blocks:
+            activities = get_activities_by_ids(graph_bloc, block["act_ids"])
+            fus_activities = fusion_activities(activities, block["bloc_name"])
             ext_entities = get_extern_entities_from_activities(
                 graph_bloc, activities, fus_activities["@id"])
             for ent in ext_entities:

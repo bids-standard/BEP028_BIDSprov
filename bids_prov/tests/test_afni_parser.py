@@ -63,7 +63,7 @@ def test_readlines():
                              "3dTcat -prefix $output_dir/pb00.$subj.r01.tcat ./afni_voxelwise_p0001/sub-01_task-tonecounting_bold.nii.gz'[0..$]'",
                              "3dToutcount -automask -fraction -polort 2 -legendre pb00.$subj.r$run.tcat+orig > outcount.r$run.1D"
                              ]
-        commands = [cmd.strip() for (bloc, cmd) in commands]
+        commands = [cmd.strip() for (block, cmd) in commands]
         # Replace multi (>=2 ) blank space to one
         commands = [re.sub(r"\s{2,}", " ", cmd) for cmd in commands]
         expected_commands = [cmd.strip() for cmd in expected_commands]

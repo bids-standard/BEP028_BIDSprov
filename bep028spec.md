@@ -360,7 +360,7 @@ Each Entity (as a record or a top-level entity) has the following fields:
   <tr>
    <td><code>wasGeneratedBy</code>
    </td>
-   <td>OPTIONAL. UUID. Identifier of the activity which generated this entity (the corresponding Activity must be defined with its own Activty record).
+   <td>OPTIONAL. UUID. Identifier of the activity which generated this entity (the corresponding Activity must be defined with its own Activity record).
    </td>
   </tr>
   <tr>
@@ -555,7 +555,7 @@ An example of this can be [fMRIPrep](https://fmriprep.org/en/stable/index.html),
 
 The most simplistic way you can think of is to have this container "black-boxed" in your workflow. You basically record the calling of this container (`command` section) and the output (see the outputs section from fMRIPrep)
 
-"prov:Activty": [
+"prov:Activity": [
 
   	{
 
