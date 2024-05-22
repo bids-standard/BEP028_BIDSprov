@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import os
 import random
@@ -79,8 +81,8 @@ def main():
     context_write.write("Processing files...\n")
 
     # Iteration on each example
-    for root, _, files in os.walk(opt.input_dir):
-        for file in files:
+    for root, _, files in sorted(os.walk(opt.input_dir)):
+        for file in sorted(files):
 
             if file.endswith("batch.m"):  # spm
                 filename_ss_ext = file.split(".m")[0]
