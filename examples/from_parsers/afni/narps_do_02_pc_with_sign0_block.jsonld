@@ -1,0 +1,109 @@
+{
+  "@context": "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json",
+  "BIDSProvVersion": "dev",
+  "Records": {
+    "Software": [
+      {
+        "@id": "urn:544d0fc1-89f3-4a63-b15c-b845ef1a2a66",
+        "RRID": "RRID:SCR_007037",
+        "@type": "prov:SoftwareAgent",
+        "Label": "AFNI",
+        "Version": "afni24"
+      }
+    ],
+    "Activities": [
+      {
+        "@id": "urn:a0ac5b56-4d0f-4af6-aea6-5c921500a958",
+        "Label": "",
+        "AssociatedWith": "urn:544d0fc1-89f3-4a63-b15c-b845ef1a2a66",
+        "Command": "3dpc -overwrite -mask ${dset_mask} -pcsave 5 -prefix ${dir_hyp}/PC_hyp${num} ${grp_dset}; ",
+        "Used": [
+          "urn:68638674-b35e-4ee2-ac81-93b0eed1dc4a",
+          "urn:8cb2d405-f78e-461f-a680-56abf991cd9e"
+        ]
+      },
+      {
+        "@id": "urn:cfaa20a5-21e5-49c6-bfed-2d23065164c6",
+        "Label": "block ...",
+        "AssociatedWith": "urn:544d0fc1-89f3-4a63-b15c-b845ef1a2a66",
+        "Command": "3dresample -overwrite -prefix tmp_REF_DSET.nii.gz -master ${dset_mask} -input \"${ref_dset}\"; 3dMatch -echo_edu -overwrite -mask ${dset_mask} -refset ${dir_hyp}/PC_hyp${num}+tlrc -inset tmp_REF_DSET.nii.gz -prefix tmp_MATCHED; 3dcalc -echo_edu -overwrite -a ${dir_hyp}/PC_hyp${num}+tlrc -expr \"${signum}*a\" -prefix ${dir_hyp}/PC_hyp${num}_sign0.nii.gz; ",
+        "Used": [
+          "urn:3629a684-e3d0-4d02-b46c-ba0aa897ca06",
+          "urn:68638674-b35e-4ee2-ac81-93b0eed1dc4a",
+          "urn:1b27e140-7a1e-44d0-b08b-6050245e2a3d",
+          "urn:68638674-b35e-4ee2-ac81-93b0eed1dc4a",
+          "urn:1b27e140-7a1e-44d0-b08b-6050245e2a3d"
+        ]
+      }
+    ],
+    "Entities": [
+      {
+        "@id": "urn:68638674-b35e-4ee2-ac81-93b0eed1dc4a",
+        "Label": "${dset_mask}",
+        "AtLocation": "${dset_mask}",
+        "digest": {
+          "sha256": "aad93a52efcf1938cc27b6cfe707fe2b1f74b1bd4b13217516525ff60fa0a2cd"
+        }
+      },
+      {
+        "@id": "urn:8cb2d405-f78e-461f-a680-56abf991cd9e",
+        "Label": "${grp_dset}",
+        "AtLocation": "${grp_dset}",
+        "digest": {
+          "sha256": "b1baa298b8599a501c11bb588cf53f5f808f115ea112431351bbf5c494bb9298"
+        }
+      },
+      {
+        "@id": "urn:5bcbb31a-da10-4a45-b7eb-04dac91e5b3c",
+        "Label": "PC_hyp${num}",
+        "AtLocation": "${dir_hyp}/PC_hyp${num}",
+        "GeneratedBy": "urn:a0ac5b56-4d0f-4af6-aea6-5c921500a958",
+        "digest": {
+          "sha256": "915832134c7f76c64fd48179b53dfb05de128b50ef451380b440cff2ec1990fb"
+        }
+      },
+      {
+        "@id": "urn:68638674-b35e-4ee2-ac81-93b0eed1dc4a",
+        "Label": "${dset_mask}",
+        "AtLocation": "${dset_mask}",
+        "digest": {
+          "sha256": "aad93a52efcf1938cc27b6cfe707fe2b1f74b1bd4b13217516525ff60fa0a2cd"
+        }
+      },
+      {
+        "@id": "urn:3629a684-e3d0-4d02-b46c-ba0aa897ca06",
+        "Label": "\"${ref_dset}\"",
+        "AtLocation": "\"${ref_dset}\"",
+        "digest": {
+          "sha256": "be3e8ce0897c76f6b02c76da87ee56fc125ab1ea836bd57f388f3caf2df02028"
+        }
+      },
+      {
+        "@id": "urn:1b27e140-7a1e-44d0-b08b-6050245e2a3d",
+        "Label": "PC_hyp${num}",
+        "AtLocation": "${dir_hyp}/PC_hyp${num}+tlrc",
+        "digest": {
+          "sha256": "c04239860983b8514d0cddedd56525b497ec99d5e4c48976b7cbea1d51baf3a8"
+        }
+      },
+      {
+        "@id": "urn:8c6a8fad-4a10-4e63-902e-cb713291e98b",
+        "Label": "tmp_MATCHED",
+        "AtLocation": "tmp_MATCHED",
+        "GeneratedBy": "urn:cfaa20a5-21e5-49c6-bfed-2d23065164c6",
+        "digest": {
+          "sha256": "a251065c7203a21b76c1fb6acd1edb6da1c29896ad2df1f5479c71e16a29c302"
+        }
+      },
+      {
+        "@id": "urn:2a27b562-f2c8-4d65-87e7-8324ee4b0b9a",
+        "Label": "PC_hyp${num}_sign0.nii.gz",
+        "AtLocation": "${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
+        "GeneratedBy": "urn:cfaa20a5-21e5-49c6-bfed-2d23065164c6",
+        "digest": {
+          "sha256": "5f0818d820edebe892295ffc1dd6f69823f2fb843bc2c3b0b5304054fa227af0"
+        }
+      }
+    ]
+  }
+}
