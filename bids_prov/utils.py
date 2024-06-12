@@ -136,8 +136,8 @@ def simplify_urns(graph: str) -> str:
         The input string with simplified urns.
     """
 
-    # Get all occurences of ("urn:" + 36 following chars)
-    urn_occurences = [i for i in re.finditer(r'urn:[a-zA-Z0-9\-]{36}', content)]
+    # Get all occurrences of ("urn:" + 36 following chars)
+    urn_occurrences = [i for i in re.finditer(r'urn:[a-zA-Z0-9\-]{36}', graph)]
 
     # Prepare a dict in which :
     #     - key is an urn as present in the original graph
@@ -146,7 +146,7 @@ def simplify_urns(graph: str) -> str:
     counter = 0
 
     # Assign one simpler id to each urn
-    for urn in urn_occurences:
+    for urn in urn_occurrences:
         if urn.group() not in known_urns:
             known_urns[urn.group()] = f"urn:{str(counter).zfill(36)}"
             counter += 1
