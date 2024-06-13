@@ -111,8 +111,8 @@ def main(filename: str, output_file=None, omit_details=True) -> None:
     viz_jsonld11(jsonld11, output_file)
 
 
-if __name__ == "__main__":
-
+def entry_point():
+    """ A command line tool for the visualize module """
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", type=str, default="res.jsonld", help="data jsonld file ")
     parser.add_argument("--output_file", type=str, default="res.png", help="output dir where results are written")
@@ -120,3 +120,6 @@ if __name__ == "__main__":
 
     main(opt.input_file, output_file=opt.output_file, omit_details=True)
     # >> python -m   bids_prov.visualize --input_file ./res_temp.jsonld  --output_file res.png
+
+if __name__ == "__main__":
+    entry_point()
