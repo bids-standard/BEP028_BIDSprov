@@ -24,7 +24,7 @@ def get_default_graph(label: str, context_url: str = CONTEXT_URL, soft_ver: str 
                    "Software": [
                        {
                            "@id": "urn:" + agent_id,
-                           "RRID": "RRID:SCR_007037",
+                           "AltIdentifier": "RRID:SCR_007037",
                            "@type": "prov:SoftwareAgent",
                            "Label": label,
                            "Version": soft_ver
