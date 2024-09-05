@@ -8,32 +8,71 @@ from typing import Mapping, Union, Tuple
 import re
 
 CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
-
+SOFTWARE_RRIDS = {
+        'AFNI': 'RRID:SCR_005927',
+        'FSL': 'RRID:SCR_002823',
+        'SPM': 'RRID:SCR_007037'
+    }
 
 def get_id():
     return str(uuid.UUID(int=random.getrandbits(128), version=4))
 
+def get_rrid(soft_label: str):
+    """ Return the RRID (see: https://rrid.site/about/Getting%20Started) for a software
 
-def get_default_graph(label: str, context_url: str = CONTEXT_URL, soft_ver: str = "dev", ) \
+    Parameters
+    ----------
+    soft_label : the label of the software (e.g.: FSL, SPM, etc.)
+
+    Returns
+    -------
+    str : the RRID of the software
+    or None if the software is not referenced in SOFTWARE_RRIDS
+    """
+    if soft_label in SOFTWARE_RRIDS:
+        return SOFTWARE_RRIDS[soft_label]
+
+    return None
+
+def get_default_graph(soft_label: str, soft_version: str = "dev", context_url: str = CONTEXT_URL) \
         -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["Records"].update
+    """ Return the base graph for a bids prov file
+
+    Parameters
+    ----------
+    soft_label : the label of the software generating the provenance tracks (e.g.: FSL, SPM, etc.)
+    soft_version : the version of the software generating the provenance tracks
+    context_url : the url to the json context
+
+    Returns
+    -------
+    tuple :
+        mapping : the base graph
+        str : the id generated for the software
+    """
     agent_id = get_id()
+    software_record = {
+        "@id": "urn:" + agent_id,
+        "@type": "prov:SoftwareAgent",
+        "Label": soft_label,
+        "Version": soft_version
+       }
+
+    agent_rrid = get_rrid(soft_label)
+    if agent_rrid is not None:
+        software_record["AltIdentifier"] = get_rrid(soft_label)
+
     return {
-               "@context": context_url,
-               "BIDSProvVersion": "dev",  # TODO ?
-               "Records": {
-                   "Software": [
-                       {
-                           "@id": "urn:" + agent_id,
-                           "AltIdentifier": "RRID:SCR_007037",
-                           "@type": "prov:SoftwareAgent",
-                           "Label": label,
-                           "Version": soft_ver
-                       }
-                   ],
-                   "Activities": [],
-                   "Entities": [],
-               },
-           }, agent_id
+        "@context": context_url,
+        "BIDSProvVersion": "dev",
+        "Records": {
+            "Software": [
+                software_record
+            ],
+            "Activities": [],
+            "Entities": [],
+        },
+    }, agent_id
 
 
 def label_mapping(label: str, mapping_filename: str) -> str:
