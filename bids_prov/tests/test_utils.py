@@ -5,7 +5,9 @@ import os
 import json
 import hashlib
 
-from bids_prov.utils import get_id, get_default_graph, CONTEXT_URL, label_mapping, get_sha256
+from bids_prov.utils import (
+    get_id, get_rrid, get_default_graph, CONTEXT_URL, label_mapping, get_sha256
+    )
 from unittest.mock import mock_open, patch
 
 
@@ -23,25 +25,36 @@ def test_get_id():
     id2 = get_id()
     assert id1 != id2
 
+def test_get_rrid():
+    # Test that the function returns a RRID string
+    result = get_rrid('FSL')
+    assert 'RRID:' in result
+    assert isinstance(result, str)
+    assert result != get_rrid('SPM')
+
+    # Test the the function returns None if the software is not referenced
+    assert get_rrid('unreferenced_software') is None
 
 def test_get_default_graph():
-    label = "SPM"
     context_url = "http://example.com/context"
     spm_ver = "v1.0"
 
     # Test the default arguments
+    label = 'SPM'
     graph, agent_id = get_default_graph(label)
     assert graph["@context"] == CONTEXT_URL
     assert graph["Records"]["Software"][0]["Label"] == label
+    assert graph["Records"]["Software"][0]["AltIdentifier"] == 'RRID:SCR_007037'
     assert agent_id is not None
 
     # Test custom arguments
-    graph, agent_id = get_default_graph(label, context_url, spm_ver)
+    label = 'Nipype'
+    graph, agent_id = get_default_graph('Nipype', spm_ver, context_url)
     assert graph["@context"] == context_url
     assert graph["Records"]["Software"][0]["Label"] == label
     assert graph["Records"]["Software"][0]["Version"] == spm_ver
+    assert 'AltIdentifier' not in graph["Records"]["Software"][0]
     assert agent_id is not None
-
 
 def test_label_mapping():
     label = "label1"
