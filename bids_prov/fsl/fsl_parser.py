@@ -525,7 +525,7 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
                      soft_ver="xxx", indent=2, verbose=False) -> bool:  # TODO : add fsl version
 
     graph, agent_id = get_default_graph(
-        label="FSL", context_url=context_url, soft_ver=soft_ver)
+        soft_label="FSL", context_url=context_url, soft_version=soft_ver)
 
     lines = readlines(filename)
     records = build_records(lines, agent_id)

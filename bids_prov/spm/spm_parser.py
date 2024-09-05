@@ -427,7 +427,8 @@ def spm_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None, s
         If true, nothing is written in memory because the existing file (if it exists) contains the same content.
     """
 
-    graph, agent_id = get_default_graph(label="SPM", context_url=context_url, soft_ver=spm_ver)
+    graph, agent_id = get_default_graph(
+        soft_label='SPM', context_url=context_url, soft_version=spm_ver)
     lines = readlines(filename)
     tasks = group_lines(lines)  # same as list(lines) to expand generator
     records = get_records(tasks, agent_id, verbose=verbose)

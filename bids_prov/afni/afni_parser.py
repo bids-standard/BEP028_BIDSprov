@@ -454,7 +454,8 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     """
     commands_block = readlines(filename)
 
-    graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
+    graph, agent_id = get_default_graph(
+        soft_label="AFNI", context_url=context_url, soft_version=soft_ver)
     records, bloc_act = build_records(commands_block, agent_id, verbose=verbose)
 
     graph["Records"].update(records)
