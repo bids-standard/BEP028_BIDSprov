@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import random
+import string
 import shutil
 import uuid
 from typing import Mapping, Union, Tuple
@@ -14,8 +15,24 @@ SOFTWARE_RRIDS = {
         'SPM': 'RRID:SCR_007037'
     }
 
-def get_id():
+def get_uuid() -> str:
     return str(uuid.UUID(int=random.getrandbits(128), version=4))
+
+def get_random_string(length: str = 8) -> str:
+    """ Return a random string of a given length.
+        The string may contain uppercase letters,
+        lowercase letters, and digits.
+
+    Parameters
+    ----------
+    length : length of the output string
+
+    Returns
+    -------
+    str : a random string
+    """
+    return ''.join(random.choices(
+        string.ascii_uppercase + string.ascii_lowercase + string.digits, k=length))
 
 def get_rrid(soft_label: str):
     """ Return the RRID (see: https://rrid.site/about/Getting%20Started) for a software
@@ -34,6 +51,58 @@ def get_rrid(soft_label: str):
 
     return None
 
+def make_alnum(input_string: str) -> str:
+    """ Remove all non alphanumeric form a string
+
+    Parameters
+    ----------
+    input_string : string to make alphanumeric
+
+    Returns
+    -------
+    str : input string with all non alphanumeric removed
+    """
+    return re.sub(re.compile(r'[^a-zA-Z0-9]'), '', input_string)
+
+def get_activity_urn(label: str) -> str:
+    """ Return a randomly generated yet human readable URN for a bids prov Activity
+
+    Parameters
+    ----------
+    label : the label of the Activity
+
+    Returns
+    -------
+    str : a new URN for the Activity
+    """
+    return f'urn:{make_alnum(label)[:8].lower()}-{get_random_string()}'
+
+def get_agent_urn(label: str) -> str:
+    """ Return a randomly generated yet human readable URN for a bids prov Agent
+
+    Parameters
+    ----------
+    label : the label of the Agent
+
+    Returns
+    -------
+    str : a new URN for the Agent
+    """
+    return f'urn:{make_alnum(label)[:8].lower()}-{get_random_string()}'
+
+def get_entity_urn(label: str) -> str:
+    """ Return a randomly generated URN for a bids prov Entity
+
+    Parameters
+    ----------
+    label : the label of the entity
+
+    Returns
+    -------
+    str : a new URN for the entity
+    """
+    return f'bids::{label}'
+
 def get_default_graph(soft_label: str, soft_version: str = "dev", context_url: str = CONTEXT_URL) \
         -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["Records"].update
     """ Return the base graph for a bids prov file
@@ -50,7 +119,7 @@ def get_default_graph(soft_label: str, soft_version: str = "dev", context_url: s
         mapping : the base graph
         str : the id generated for the software
     """
-    agent_id = get_id()
+    agent_id = get_agent_urn(soft_label)
     software_record = {
         "@id": "urn:" + agent_id,
         "@type": "prov:SoftwareAgent",

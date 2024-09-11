@@ -8,8 +8,11 @@ from typing import List, Mapping
 
 from bs4 import BeautifulSoup
 
-from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping, compute_sha_256_entity, \
+from bids_prov.utils import (
+    get_default_graph, CONTEXT_URL, label_mapping, compute_sha_256_entity,
+    get_activity_urn, get_agent_urn, get_entity_urn,
     writing_jsonld
+    )
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
@@ -421,7 +424,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
             # process to remove + and - in pngappend command
             cmd = cmd.replace(" + ", " ").replace(" - ", " ")
             cmd_s = re.split(" |=", cmd)
-            a_name = cmd_s[0]
+            activity_name = cmd_s[0]
 
             inputs = []
             outputs = []
@@ -430,7 +433,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             function_in_description_functions = False
 
-            command_name_end = os.path.split(a_name)[1]
+            command_name_end = os.path.split(activity_name)[1]
             for df in description_functions:
                 if df["Name"] == command_name_end:
                     description_of_command = df
@@ -457,9 +460,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 outputs = list(chain(*(attributes.pop(k)
                                for k in attributes.keys() & OUTPUT_TAGS)))
                 entity_names = [_ for _ in re.findall(
-                    INPUT_RE, cmd_without_attributes[len(a_name):])]
+                    INPUT_RE, cmd_without_attributes[len(activity_name):])]
 
-            # # cmd_conf = get_closest_config(a_name)  # with the module boutiques
+            # # cmd_conf = get_closest_config(activity_name)  # with the module boutiques
             # cmd_conf = None  # None because boutiques is not used at this time
             # # if cmd_conf:
             # #     pos_args = filter(lambda e: not e.startswith("-"), cmd_s)  # TODO use "-key value" mappings
@@ -471,12 +474,13 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     if len(entity_names) > 1:
                         inputs.append(entity_names[0])
 
-            # the file name and possible extension
-            label = f"{os.path.split(a_name)[1]}"
-
-            a = {
-                "@id": f"urn:{get_id()}",
-                "Label": label_mapping(label, "fsl/fsl_labels.json"),
+            # Create activity label & record
+            activity_label = label_mapping(
+                f'{os.path.split(activity_name)[1]}',
+                'fsl/fsl_labels.json')
+            activity = {
+                "@id": get_activity_urn(activity_label),
+                "Label": activity_label,
                 "AssociatedWith": "urn:" + agent_id,
                 "Command": cmd,
                 # "attributes": [
@@ -487,7 +491,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             for input_path in inputs:
                 # input_name = input_path.replace("/", "_") # TODO
-                input_id = f"urn:{get_id()}"  # def format_id
+                input_id = get_entity_urn(input_path)
 
                 existing_input = next(
                     (entity for entity in records["Entities"] if entity["AtLocation"] == input_path), None)
@@ -509,7 +513,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 # output_name = output_path.replace("/", "_") # TODO
                 records["Entities"].append(
                     {
-                        "@id": f"urn:{get_id()}",
+                        "@id": get_entity_urn(output_path),
                         "Label": os.path.split(output_path)[1],
                         "AtLocation": output_path,
                         "GeneratedBy": a["@id"],
