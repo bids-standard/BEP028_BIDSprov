@@ -12,13 +12,33 @@ from bids_prov.spm.spm_parser import spm_to_bids_prov
 from bids_prov.utils import CONTEXT_URL
 from bids_prov.visualize import main as visualize
 
+def clean_spm_paths(spm_file):
+    """Remove parts of file paths contained in a nidm-example spm batch.m file"""
+
+    with open(spm_file, 'r') as file:
+        lines = file.readlines()
+
+    for index, line in enumerate(lines):
+        lines[index] = line.replace(
+            '/storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/', 'ds011/')
+        lines[index] = lines[index].replace(
+            '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/', 'ds011/derivatives/')
+
+    with open(spm_file, 'w') as file:
+        for line in lines:
+            file.write(line)
 
 def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_function, verbose, with_blocks=False):
     """Process a file using the given parser function and save the output to the output directory."""
+
     context_write.write(f"    file= {root}/{str(file)}\n")
     filename = root + "/" + str(file)
     if with_blocks is False:
         shutil.copyfile(filename, output_dir + "/" + str(file))
+
+    if 'spm' in output_dir:
+        clean_spm_paths(output_dir + "/" + str(file))
+
     output_base = output_dir + "/" + filename_ss_ext if with_blocks is False else output_dir + "/" + filename_ss_ext + "_block"
     output_jsonld = output_base + ".jsonld"
     output_png = output_base + ".png"
