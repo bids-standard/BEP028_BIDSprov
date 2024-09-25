@@ -70,6 +70,8 @@ def test_get_entity_urn():
     assert get_entity_urn('') == 'bids::'
     assert get_entity_urn('sub-001/func/T1.nii') == 'bids::sub-001/func/T1.nii'
     assert get_entity_urn('T1.nii') == 'bids::T1.nii'
+    assert get_entity_urn('', 'ds04031') == 'bids:ds04031:'
+    assert get_entity_urn('sub-001/func/T1.nii', 'ds04031') == 'bids:ds04031:sub-001/func/T1.nii'
 
 def test_get_default_graph():
     context_url = "http://example.com/context"

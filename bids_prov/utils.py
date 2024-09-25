@@ -5,6 +5,7 @@ import random
 import string
 import shutil
 import uuid
+from rfc3986 import normalize_uri
 from typing import Mapping, Union, Tuple
 import re
 
@@ -90,18 +91,20 @@ def get_agent_urn(label: str) -> str:
     """
     return f'urn:{make_alnum(label)[:8].lower()}-{get_random_string()}'
 
-def get_entity_urn(label: str) -> str:
-    """ Return a randomly generated URN for a bids prov Entity
+def get_entity_urn(label: str, dataset: str = '') -> str:
+    """ Return a URN for a bids prov Entity, based on a given label and the
+    id of the BIDS dataset.
 
     Parameters
     ----------
     label : the label of the entity
+    dataset : id of the BIDS dataset
 
     Returns
     -------
     str : a new URN for the entity
     """
-    return f'bids::{label}'
+    return f'bids:{dataset}:{normalize_uri(label)}'
 
 def get_default_graph(soft_label: str, soft_version: str = "dev", context_url: str = CONTEXT_URL) \
         -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["Records"].update

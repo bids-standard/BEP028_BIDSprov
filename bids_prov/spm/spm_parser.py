@@ -41,7 +41,7 @@ def get_input_entity(right: str) -> List[dict]:
 
     # called if left has no parameter AND  right match with conf.PATH_REGEX and with conf.FILE_REGEX, example :
     'matlabbatch{4}.spm.stats.fmri_spec.sess.multi = {
-    '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat'};"
+    'ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat'};"
 
     Parameters
     ----------
@@ -64,7 +64,9 @@ def get_input_entity(right: str) -> List[dict]:
             file_location = re.sub(r"\,1", "", file_drop_quotes)  # ds000052/RESULTS/Sub01/con_0001.nii
             entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
-                "@id": get_entity_urn(file_location),
+                "@id": get_entity_urn(
+                    "/"+"/".join(file_location.split("/")[1:]),
+                    file_location.split("/")[0]),
                 "Label": label_mapping(entity_label_short, "spm/spm_activity_labels.json"),
                 "AtLocation": file_location
             }
