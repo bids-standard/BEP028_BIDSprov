@@ -276,7 +276,7 @@ def gather_multiline(input_file: str) -> list:
 
 def readlines(input_file: str) -> list:
     """
-    gather multiline command split by \ separator
+    Read lines form an input file and return the list of commands it contains
 
     Parameters
     ----------
