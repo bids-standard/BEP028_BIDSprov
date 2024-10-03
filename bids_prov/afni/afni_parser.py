@@ -199,7 +199,7 @@ def build_records(commands_block: list, agent_id: str, verbose: bool = False):
         activity = {
             "@id": get_activity_urn(activity_label),
             "Label": activity_label,
-            "AssociatedWith": "urn:" + agent_id,
+            "AssociatedWith": agent_id,
             "Command": cmd,
             "Parameters": param_dic,
             "Used": list(),

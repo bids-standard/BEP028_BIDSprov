@@ -318,7 +318,7 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
         activity = {"@id": activity_id,
                     "Label": activity_label,
                     "Used": list(),
-                    "AssociatedWith": "urn:" + agent_id,
+                    "AssociatedWith": agent_id,
                     "Command": command
                     }
 

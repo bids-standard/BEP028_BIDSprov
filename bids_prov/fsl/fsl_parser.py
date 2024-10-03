@@ -492,7 +492,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str, verbose: bool 
             activity = {
                 "@id": get_activity_urn(activity_label),
                 "Label": activity_label,
-                "AssociatedWith": "urn:" + agent_id,
+                "AssociatedWith": agent_id,
                 "Command": cmd,
                 # "attributes": [
                 #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
