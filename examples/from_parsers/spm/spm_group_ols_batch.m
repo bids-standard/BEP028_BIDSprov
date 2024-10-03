@@ -6,20 +6,20 @@
 matlabbatch{1}.spm.stats.factorial_design.dir = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/spm_t_test'};
 %%
 matlabbatch{1}.spm.stats.factorial_design.des.t1.scans = {
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-01/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-02/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-03/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-04/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-05/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-06/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-07/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-08/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-09/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-10/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-11/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-12/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-13/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-14/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-01/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-02/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-03/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-04/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-05/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-06/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-07/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-08/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-09/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-10/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-11/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-12/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-13/con_0001.nii,1'
+                                                          'ds011/derivatives/SPM/LEVEL1/sub-14/con_0001.nii,1'
                                                           };
 %%
 matlabbatch{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});

@@ -4,7 +4,7 @@
   "Records": {
     "Software": [
       {
-        "@id": "urn:333734aa-0214-4c5f-b7e9-f648101328da",
+        "@id": "urn:urn:afni-ZvsAtHNd",
         "@type": "prov:SoftwareAgent",
         "Label": "AFNI",
         "Version": "afni24",
@@ -13,53 +13,53 @@
     ],
     "Activities": [
       {
-        "@id": "urn:9565c071-19d4-4502-8f50-acf69e458431",
+        "@id": "urn:3dpc-zSEKMSc5",
         "Label": "3dpc",
-        "AssociatedWith": "urn:333734aa-0214-4c5f-b7e9-f648101328da",
+        "AssociatedWith": "urn:urn:afni-ZvsAtHNd",
         "Command": "3dpc -overwrite -mask ${dset_mask} -pcsave 5 -prefix ${dir_hyp}/PC_hyp${num} ${grp_dset}",
         "Parameters": {},
         "Used": [
-          "urn:242c05a1-10e3-45a9-aa34-8e4799bf79d6",
-          "urn:bd0e45d1-072d-4eb7-bf69-3fda63ddfba9"
+          "bids::$%7Bdset_mask%7D",
+          "bids::$%7Bgrp_dset%7D"
         ]
       },
       {
-        "@id": "urn:f2905fa3-7c8d-4629-bc94-3108b1af34f2",
+        "@id": "urn:3dresamp-xAJr0qAP",
         "Label": "3dresample",
-        "AssociatedWith": "urn:333734aa-0214-4c5f-b7e9-f648101328da",
+        "AssociatedWith": "urn:urn:afni-ZvsAtHNd",
         "Command": "3dresample -overwrite -prefix tmp_REF_DSET.nii.gz -master ${dset_mask} -input \"${ref_dset}\"",
         "Parameters": {},
         "Used": [
-          "urn:5deae2c5-d728-4f5b-9d1e-3ac865f0e162",
-          "urn:bd0e45d1-072d-4eb7-bf69-3fda63ddfba9"
+          "bids::$%7Bdset_mask%7D",
+          "bids::%22$%7Bref_dset%7D%22"
         ]
       },
       {
-        "@id": "urn:b281ae59-f7ca-40e4-a206-7c9fc41d6a24",
+        "@id": "urn:3dmatch-0E3O84FA",
         "Label": "3dMatch",
-        "AssociatedWith": "urn:333734aa-0214-4c5f-b7e9-f648101328da",
+        "AssociatedWith": "urn:urn:afni-ZvsAtHNd",
         "Command": "3dMatch -echo_edu -overwrite -mask ${dset_mask} -refset ${dir_hyp}/PC_hyp${num}+tlrc -inset tmp_REF_DSET.nii.gz -prefix tmp_MATCHED",
         "Parameters": {},
         "Used": [
-          "urn:643c3f61-e81e-440d-9d0a-da03147eb483",
-          "urn:a02c3dfa-efee-4642-a8db-093fed35d380",
-          "urn:bd0e45d1-072d-4eb7-bf69-3fda63ddfba9"
+          "bids::$%7Bdir_hyp%7D/PC_hyp$%7Bnum%7D+tlrc",
+          "bids::$%7Bdset_mask%7D",
+          "bids::tmp_REF_DSET.nii.gz"
         ]
       },
       {
-        "@id": "urn:71b7fd66-39e5-4104-bec8-598dafdea9cc",
+        "@id": "urn:3dcalc-NJBuzmnS",
         "Label": "3dcalc",
-        "AssociatedWith": "urn:333734aa-0214-4c5f-b7e9-f648101328da",
+        "AssociatedWith": "urn:urn:afni-ZvsAtHNd",
         "Command": "3dcalc -echo_edu -overwrite -a ${dir_hyp}/PC_hyp${num}+tlrc -expr \"${signum}*a\" -prefix ${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
         "Parameters": {},
         "Used": [
-          "urn:643c3f61-e81e-440d-9d0a-da03147eb483"
+          "bids::$%7Bdir_hyp%7D/PC_hyp$%7Bnum%7D+tlrc"
         ]
       }
     ],
     "Entities": [
       {
-        "@id": "urn:bd0e45d1-072d-4eb7-bf69-3fda63ddfba9",
+        "@id": "bids::$%7Bdset_mask%7D",
         "Label": "${dset_mask}",
         "AtLocation": "${dset_mask}",
         "digest": {
@@ -67,7 +67,7 @@
         }
       },
       {
-        "@id": "urn:242c05a1-10e3-45a9-aa34-8e4799bf79d6",
+        "@id": "bids::$%7Bgrp_dset%7D",
         "Label": "${grp_dset}",
         "AtLocation": "${grp_dset}",
         "digest": {
@@ -75,16 +75,16 @@
         }
       },
       {
-        "@id": "urn:ef481cba-a841-48ab-91a2-700b3b045a3e",
+        "@id": "bids::$%7Bdir_hyp%7D/PC_hyp$%7Bnum%7D",
         "Label": "PC_hyp${num}",
         "AtLocation": "${dir_hyp}/PC_hyp${num}",
-        "GeneratedBy": "urn:9565c071-19d4-4502-8f50-acf69e458431",
+        "GeneratedBy": "urn:3dpc-zSEKMSc5",
         "digest": {
           "sha256": "915832134c7f76c64fd48179b53dfb05de128b50ef451380b440cff2ec1990fb"
         }
       },
       {
-        "@id": "urn:5deae2c5-d728-4f5b-9d1e-3ac865f0e162",
+        "@id": "bids::%22$%7Bref_dset%7D%22",
         "Label": "\"${ref_dset}\"",
         "AtLocation": "\"${ref_dset}\"",
         "digest": {
@@ -92,16 +92,16 @@
         }
       },
       {
-        "@id": "urn:a02c3dfa-efee-4642-a8db-093fed35d380",
+        "@id": "bids::tmp_REF_DSET.nii.gz",
         "Label": "tmp_REF_DSET.nii.gz",
         "AtLocation": "tmp_REF_DSET.nii.gz",
-        "GeneratedBy": "urn:f2905fa3-7c8d-4629-bc94-3108b1af34f2",
+        "GeneratedBy": "urn:3dresamp-xAJr0qAP",
         "digest": {
           "sha256": "e943c60b478a75e89c043bc4a7a6e6c629c3f075007ff501f7b2ab3a253e8d3d"
         }
       },
       {
-        "@id": "urn:643c3f61-e81e-440d-9d0a-da03147eb483",
+        "@id": "bids::$%7Bdir_hyp%7D/PC_hyp$%7Bnum%7D+tlrc",
         "Label": "PC_hyp${num}",
         "AtLocation": "${dir_hyp}/PC_hyp${num}+tlrc",
         "digest": {
@@ -109,19 +109,19 @@
         }
       },
       {
-        "@id": "urn:0fc01c72-be31-41da-8050-498c6fc2f72d",
+        "@id": "bids::tmp_MATCHED",
         "Label": "tmp_MATCHED",
         "AtLocation": "tmp_MATCHED",
-        "GeneratedBy": "urn:b281ae59-f7ca-40e4-a206-7c9fc41d6a24",
+        "GeneratedBy": "urn:3dmatch-0E3O84FA",
         "digest": {
           "sha256": "a251065c7203a21b76c1fb6acd1edb6da1c29896ad2df1f5479c71e16a29c302"
         }
       },
       {
-        "@id": "urn:e3486423-f966-4ef5-be39-ed9946ed911d",
+        "@id": "bids::$%7Bdir_hyp%7D/PC_hyp$%7Bnum%7D_sign0.nii.gz",
         "Label": "PC_hyp${num}_sign0.nii.gz",
         "AtLocation": "${dir_hyp}/PC_hyp${num}_sign0.nii.gz",
-        "GeneratedBy": "urn:71b7fd66-39e5-4104-bec8-598dafdea9cc",
+        "GeneratedBy": "urn:3dcalc-NJBuzmnS",
         "digest": {
           "sha256": "5f0818d820edebe892295ffc1dd6f69823f2fb843bc2c3b0b5304054fa227af0"
         }
