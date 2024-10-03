@@ -398,7 +398,7 @@ def get_entities(cmd_s, parameters):
     return inputs, outputs, params
 
 
-def build_records(groups: Mapping[str, List[str]], agent_id: str):
+def build_records(groups: Mapping[str, List[str]], agent_id: str, verbose: bool = False):
     """
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (e.g. `Registration`, `Post-stats`)
@@ -442,7 +442,15 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         cmd_s[1:], description_of_command)
                     break
 
+            if verbose:
+                print("CMD", cmd)
+                print('-> inputs: ', inputs)
+                print('<- outputs: ', outputs)
+                print("  others args :", *parameters)
+
             if function_in_description_functions is False:
+                print(f"-> {command_name_end} : Not present in description_functions")
+
                 # if the function is not in our description file, the process is based on regex
                 attributes = defaultdict(list)
 
@@ -494,20 +502,20 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 input_id = get_entity_urn(input_path)
 
                 existing_input = next(
-                    (entity for entity in records["Entities"] if entity["AtLocation"] == input_path), None)
+                    (e for e in records["Entities"] if e["AtLocation"] == input_path), None)
                 if existing_input is None:
-                    e = {
+                    entity = {
                         "@id": input_id,
                         "Label": os.path.split(input_path)[1],
                         "AtLocation": input_path,
                     }
-                    records["Entities"].append(e)
-                    a["Used"].append(input_id)
+                    records["Entities"].append(entity)
+                    activity["Used"].append(input_id)
                 else:
-                    a["Used"].append(existing_input["@id"])
+                    activity["Used"].append(existing_input["@id"])
 
             # Order does not matter and then makes sense to include only unique values
-            a["Used"] = sorted(set(a["Used"]))
+            activity["Used"] = sorted(set(activity["Used"]))
 
             for output_path in outputs:
                 # output_name = output_path.replace("/", "_") # TODO
@@ -516,12 +524,14 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         "@id": get_entity_urn(output_path),
                         "Label": os.path.split(output_path)[1],
                         "AtLocation": output_path,
-                        "GeneratedBy": a["@id"],
+                        "GeneratedBy": activity["@id"],
                         # "derivedFrom": input_id,
                     }
                 )
 
-            records["Activities"].append(a)
+            records["Activities"].append(activity)
+            if verbose:
+                print('-------------------------')
     return dict(records)
 
 
@@ -532,7 +542,7 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
         soft_label="FSL", context_url=context_url, soft_version=soft_ver)
 
     lines = readlines(filename)
-    records = build_records(lines, agent_id)
+    records = build_records(lines, agent_id, verbose)
     graph["Records"].update(records)
 
     compute_sha_256_entity(graph["Records"]["Entities"])

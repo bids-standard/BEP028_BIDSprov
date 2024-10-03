@@ -177,7 +177,7 @@ def get_entities_from_ext_config(conf_dic: dict, activity_name: str, activity_id
                 name = conf_dic[activity]['name']
                 entity = {"@id": get_entity_urn(output),
                           "Label": label_mapping(name, "spm/spm_activity_labels.json"),
-                          "Atlocation": output,
+                          "AtLocation": output,
                           "GeneratedBy": activity_id,
                           }
                 output_entities.append(entity)
