@@ -9,7 +9,7 @@ from itertools import chain
 from bids_prov.fsl.fsl_parser import get_entities
 from bids_prov.utils import (
     get_default_graph, CONTEXT_URL, label_mapping, compute_sha_256_entity,
-    get_activity_urn, get_agent_urn, get_entity_urn,
+    get_activity_urn, get_agent_urn, get_entity_urn, make_alnum, get_uuid,
     writing_jsonld
     )
 
@@ -206,7 +206,11 @@ def build_records(commands_block: list, agent_id: str, verbose: bool = False):
         }
 
         for input_path in inputs:
-            input_id = get_entity_urn(input_path)
+            # Deal with not human readable paths
+            if not make_alnum(input_path):
+                input_id = 'urn:uuid:' + get_uuid()
+            else:
+                input_id = get_entity_urn(input_path)
             existing_input = next(
                 (entity for entity in records["Entities"] if entity["AtLocation"] == input_path), None)
 
@@ -227,9 +231,13 @@ def build_records(commands_block: list, agent_id: str, verbose: bool = False):
         activity["Used"] = sorted(set(activity["Used"]))
 
         for output_path in outputs:
+            if not make_alnum(output_path):
+                output_id = 'urn:uuid:' + get_uuid()
+            else:
+                output_id = get_entity_urn(output_path)
             records["Entities"].append(
                 {
-                    "@id": get_entity_urn(output_path),
+                    "@id": output_id,
                     "Label": os.path.split(output_path)[1],
                     "AtLocation": output_path,
                     "GeneratedBy": activity["@id"],

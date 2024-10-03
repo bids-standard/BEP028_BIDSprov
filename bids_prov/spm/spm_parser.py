@@ -65,12 +65,11 @@ def get_input_entity(right: str) -> List[dict]:
             entity_label_short = "_".join(file_location.split("/")[-2:])  # Sub01_con_0001.nii
             entity = {
                 "@id": get_entity_urn(
-                    "/"+"/".join(file_location.split("/")[1:]),
-                    file_location.split("/")[0]),
+                    "/"+"/".join(file_location.strip("/").split("/")[1:]),
+                    file_location.strip("/").split("/")[0]),
                 "Label": label_mapping(entity_label_short, "spm/spm_activity_labels.json"),
                 "AtLocation": file_location
             }
-
             entities.append(entity)
 
     return entities

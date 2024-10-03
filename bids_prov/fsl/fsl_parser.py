@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 from bids_prov.utils import (
     get_default_graph, CONTEXT_URL, label_mapping, compute_sha_256_entity,
-    get_activity_urn, get_agent_urn, get_entity_urn,
+    get_activity_urn, get_agent_urn, get_entity_urn, make_alnum, get_uuid,
     writing_jsonld
     )
 
@@ -502,7 +502,10 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str, verbose: bool 
 
             for input_path in inputs:
                 # input_name = input_path.replace("/", "_") # TODO
-                input_id = get_entity_urn(input_path)
+                if not make_alnum(input_path):
+                    input_id = 'urn:uuid:' + get_uuid()
+                else:
+                    input_id = get_entity_urn(input_path)
 
                 existing_input = next(
                     (e for e in records["Entities"] if e["AtLocation"] == input_path), None)
@@ -522,9 +525,14 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str, verbose: bool 
 
             for output_path in outputs:
                 # output_name = output_path.replace("/", "_") # TODO
+                if not make_alnum(output_path):
+                    output_id = 'urn:uuid:' + get_uuid()
+                else:
+                    output_id = get_entity_urn(output_path)
+
                 records["Entities"].append(
                     {
-                        "@id": get_entity_urn(output_path),
+                        "@id": output_id,
                         "Label": os.path.split(output_path)[1],
                         "AtLocation": output_path,
                         "GeneratedBy": activity["@id"],
