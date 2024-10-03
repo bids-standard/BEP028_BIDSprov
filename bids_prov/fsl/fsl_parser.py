@@ -423,6 +423,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str, verbose: bool 
         for cmd in v:
             # process to remove + and - in pngappend command
             cmd = cmd.replace(" + ", " ").replace(" - ", " ")
+            # remove multiple spaces
+            cmd = ' '.join(cmd.split())
+            # split according to the following chars " ", "|", and "="
             cmd_s = re.split(" |=", cmd)
             activity_name = cmd_s[0]
 
