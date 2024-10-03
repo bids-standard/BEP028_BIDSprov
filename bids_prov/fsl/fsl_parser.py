@@ -253,7 +253,7 @@ def _get_entities_from_kwarg(entities, opts, parse_kwarg):
         value = []
         for (arg, val) in opts._get_kwargs():
             # print("\n--arg, val", type(arg), type(val), arg, val)
-            if param.split("-")[1] == arg:
+            if param.strip('-') == arg:
                 # print("\n----arg select", type(arg), arg)
                 if val != None:
                     # print("\n------val != None", type(val), val)
@@ -391,7 +391,7 @@ def get_entities(cmd_s, parameters):
     if "GeneratedBy" in parameters:
         outputs.extend(_get_arg(parameters["GeneratedBy"], arg_rest))
 
-     # print("\n\n inputs", inputs)
+    # print("\n\n inputs", inputs)
     # print("\n\n outputs", outputs)
     # print("\n\n params", params)
 
