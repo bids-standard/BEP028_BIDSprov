@@ -355,7 +355,9 @@ def get_records(task_groups: dict, agent_id: str, verbose=False) -> dict:
                         for idx, entity in enumerate(output_ext_entities):
                             input_ent = find_entity_from_id(output_id, records["Entities"])
                             entity['Label'] = f"{entity['Label']}{str(idx + 1)}"
-                            entity['AtLocation'] = f"c{str(idx + 1)}{input_ent['Label']}"
+                            new_at_location = f"c{str(idx + 1)}{input_ent['Label']}"
+                            entity['AtLocation'] = new_at_location
+                            entity['@id'] = get_entity_urn(new_at_location)
                         add_ext_entity = 1
 
                     # TO DO whatif multiple
