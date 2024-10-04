@@ -34,6 +34,8 @@ Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Satrajit Ghosh ([@sa
 - Cyril Regan ([@cyril-data](https://github.com/cyril-data))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cyril-data" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/pulls?q=is%3Apr+reviewed-by%3Acyril-data" title="Reviewed Pull Requests">👀</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=cyril-data" title="Documentation">📖</a>
 <a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Acyril-data" title="Bug reports">🐛</a>
 
+- Boris Clénet ([@bclenet](https://github.com/bclenet))<a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=bclenet" title="Code">💻</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/commits?author=bclenet" title="Documentation">📖</a><a href="https://github.com/bids-standard/BEP028_BIDSprov/issues?q=author%3Abclenet" title="Bug reports">🐛</a>
+
 This project follows the
 [all-contributors](https://github.com/all-contributors/all-contributors)
 specification. Contributions of any kind welcome!
@@ -80,7 +82,36 @@ Mature building blocks of NIDM:
 [New features (to be included)](new_features.md)
 
 
-## Run parsers on the SPM, FSL and AFNI data
+## Using the code
+
+### Visualize your BIDSprov data
+
+To visualize your BIDSprov data, perform the following steps :
+1. [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the code inside a `BEP028_BIDSprov` directory ;
+2. in a terminal, change the current directory
+
+`cd BEP028_BIDSprov`
+
+3. install the `bids_prov` python package :
+
+`pip install .`
+
+4. you should be able to launch the visualizer on your .jsonld files with the command `bids_prov_visualizer`
+
+`bids_prov_visualizer --input_file graph.jsonld --output_file graph`
+
+```
+usage: bids_prov_visualizer [-h] --input_file INPUT_FILE [--output_file OUTPUT_FILE]
+
+options:
+  -h, --help            show this help message and exit
+  --input_file INPUT_FILE
+                        input BIDSprov data as a .jsonld file
+  --output_file OUTPUT_FILE
+                        output .png file showing BIDSprov graph
+```
+
+### Run parsers on the SPM, FSL and AFNI data
 
 To obtain data in **bids-prov format**, you can use the developed parsers.
 * [Tutorial](https://github.com/bids-standard/BEP028_BIDSprov/blob/master/bids_prov/README.md)

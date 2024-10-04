@@ -114,8 +114,8 @@ def main(filename: str, output_file=None, omit_details=True) -> None:
 def entry_point():
     """ A command line tool for the visualize module """
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, default="res.jsonld", help="data jsonld file ")
-    parser.add_argument("--output_file", type=str, default="res.png", help="output dir where results are written")
+    parser.add_argument("--input_file", type=str, help="input BIDSprov data as a .jsonld file ", required=True)
+    parser.add_argument("--output_file", type=str, default="output_graph.png", help="output .png file showing BIDSprov graph")
     opt = parser.parse_args()
 
     main(opt.input_file, output_file=opt.output_file, omit_details=True)
