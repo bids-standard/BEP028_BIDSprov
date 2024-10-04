@@ -2,6 +2,7 @@
 
 import argparse
 import os
+from os.path import join
 import random
 import shutil
 from datetime import datetime
@@ -12,17 +13,20 @@ from bids_prov.spm.spm_parser import spm_to_bids_prov
 from bids_prov.utils import CONTEXT_URL
 from bids_prov.visualize import main as visualize
 
-def clean_spm_paths(spm_file):
+def clean_bids_paths(spm_file):
     """Remove parts of file paths contained in a nidm-example spm batch.m file"""
 
     with open(spm_file, 'r') as file:
         lines = file.readlines()
 
     for index, line in enumerate(lines):
-        lines[index] = line.replace(
+        new_line = line.replace(
             '/storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/', 'ds011/')
-        lines[index] = lines[index].replace(
+        new_line = new_line.replace(
+            '/storage/essicd/data/NIDM-Ex/Data/ds000052/', 'ds000052/derivatives/')
+        new_line = new_line.replace(
             '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/', 'ds011/derivatives/')
+        lines[index] = new_line
 
     with open(spm_file, 'w') as file:
         for line in lines:
@@ -32,22 +36,23 @@ def process_file(context_write, root, file, filename_ss_ext, output_dir, parser_
     """Process a file using the given parser function and save the output to the output directory."""
 
     context_write.write(f"    file= {root}/{str(file)}\n")
-    filename = root + "/" + str(file)
+    filename = join(output_dir,str(file))
+
     if with_blocks is False:
-        shutil.copyfile(filename, output_dir + "/" + str(file))
-
-    if 'spm' in output_dir:
-        clean_spm_paths(output_dir + "/" + str(file))
-
-    output_base = output_dir + "/" + filename_ss_ext if with_blocks is False else output_dir + "/" + filename_ss_ext + "_block"
+        shutil.copyfile(join(root, str(file)), filename)
+        output_base = output_dir + "/" + filename_ss_ext
+    else:
+        output_base = output_dir + "/" + filename_ss_ext + "_block"
     output_jsonld = output_base + ".jsonld"
     output_png = output_base + ".png"
 
-    if parser_function != afni_to_bids_prov:
-        jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
+
+    if parser_function in [spm_to_bids_prov, fsl_to_bids_prov]:
+        clean_bids_paths(filename)
+        jsonld_same_as_existing = parser_function(filename, CONTEXT_URL,
                                                   output_file=output_jsonld, verbose=verbose)
     else:
-        jsonld_same_as_existing = parser_function(root + "/" + str(file), CONTEXT_URL,
+        jsonld_same_as_existing = parser_function(filename, CONTEXT_URL,
                                                   output_file=output_jsonld, verbose=verbose, with_blocks=with_blocks)
 
     if not jsonld_same_as_existing:  # do not generate the png if the jsonld has not evolved
