@@ -15,7 +15,7 @@
       {
         "@id": "urn:makedire-cRfuDYOz",
         "Label": "Make directory",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "mkdir $output_dir",
         "Parameters": {},
         "Used": []
@@ -23,7 +23,7 @@
       {
         "@id": "urn:makedire-EJ8DYuNJ",
         "Label": "Make directory",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "mkdir $output_dir/stimuli",
         "Parameters": {},
         "Used": []
@@ -31,7 +31,7 @@
       {
         "@id": "urn:cp-z68XKlh0",
         "Label": "cp",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "cp /Users/cmaumet/Projects/Data_sharing/dev/nidmresults-examples/afni_voxelwise_p0001/subject_results/group.DS0011/subj.sub_001/sub_001.results/stimuli/tone_counting_onset_times.txt /Users/cmaumet/Projects/Data_sharing/dev/nidmresults-examples/afni_voxelwise_p0001/subject_results/group.DS0011/subj.sub_001/sub_001.results/stimuli/tone_counting_probe_duration.txt $output_dir/stimuli",
         "Parameters": {},
         "Used": [
@@ -42,7 +42,7 @@
       {
         "@id": "urn:3dcopy-j7QzAy9Y",
         "Label": "3dcopy",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dcopy /Users/cmaumet/Projects/Data_sharing/dev/nidmresults-examples/raw/ds011/sub-01/anat/sub-01_T1w.nii.gz $output_dir/sub-01_T1w",
         "Parameters": {},
         "Used": [
@@ -52,7 +52,7 @@
       {
         "@id": "urn:3dtcat-dI1c6m9j",
         "Label": "3dTcat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTcat -prefix $output_dir/pb00.$subj.r01.tcat /Users/cmaumet/Projects/Data_sharing/dev/nidmresults-examples/raw/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'[0..$]'",
         "Parameters": {},
         "Used": [
@@ -62,7 +62,7 @@
       {
         "@id": "urn:3dtoutco-wsZI1sDP",
         "Label": "3dToutcount",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dToutcount -automask -fraction -polort 2 -legendre pb00.$subj.r$run.tcat+orig > outcount.r$run.1D",
         "Parameters": {},
         "Used": [
@@ -72,7 +72,7 @@
       {
         "@id": "urn:cat-u7xX4giX",
         "Label": "cat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "cat outcount.r*.1D > outcount_rall.1D",
         "Parameters": {},
         "Used": [
@@ -82,7 +82,7 @@
       {
         "@id": "urn:3dtshift-sItZf4Nw",
         "Label": "3dTshift",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTshift -tzero 0 -quintic -prefix pb01.$subj.r$run.tshift pb00.$subj.r$run.tcat+orig",
         "Parameters": {},
         "Used": [
@@ -92,7 +92,7 @@
       {
         "@id": "urn:alignepi-oXmvtYx9",
         "Label": "align_epi_anat.py",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "align_epi_anat.py -anat2epi -anat sub-01_T1w+orig -save_skullstrip -suffix _al_junk -epi pb01.$subj.r01.tshift+orig -epi_base 2 -epi_strip 3dAutomask -volreg off -tshift off",
         "Parameters": {},
         "Used": [
@@ -103,7 +103,7 @@
       {
         "@id": "urn:autotlrc-Aq2WvqW4",
         "Label": "@auto_tlrc",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "@auto_tlrc -base TT_N27+tlrc -input sub-01_T1w_ns+orig -no_ss",
         "Parameters": {},
         "Used": [
@@ -114,7 +114,7 @@
       {
         "@id": "urn:catmatve-J2zFwWGS",
         "Label": "cat_matvec",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "cat_matvec sub-01_T1w_ns+tlrc::WARP_DATA -I > warp.anat.Xat.1D",
         "Parameters": {},
         "Used": [
@@ -124,7 +124,7 @@
       {
         "@id": "urn:3dvolreg-Cq6T5XNy",
         "Label": "3dvolreg",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dvolreg -verbose -zpad 1 -base pb01.$subj.r01.tshift+orig'[2]' -1Dfile dfile.r$run.1D -prefix rm.epi.volreg.r$run -cubic -1Dmatrix_save mat.r$run.vr.aff12.1D pb01.$subj.r$run.tshift+orig",
         "Parameters": {},
         "Used": [
@@ -134,7 +134,7 @@
       {
         "@id": "urn:3dcalc-0Ja1pte4",
         "Label": "3dcalc",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dcalc -overwrite -a pb01.$subj.r$run.tshift+orig -expr 1 -prefix rm.epi.all1",
         "Parameters": {},
         "Used": [
@@ -144,7 +144,7 @@
       {
         "@id": "urn:catmatve-SKhupqPf",
         "Label": "cat_matvec",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "cat_matvec -ONELINE sub-01_T1w_ns+tlrc::WARP_DATA -I sub-01_T1w_al_junk_mat.aff12.1D -I mat.r$run.vr.aff12.1D > mat.r$run.warp.aff12.1D",
         "Parameters": {},
         "Used": [
@@ -154,7 +154,7 @@
       {
         "@id": "urn:3dalline-LTjxwict",
         "Label": "3dAllineate",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dAllineate -base sub-01_T1w_ns+tlrc -input pb01.$subj.r$run.tshift+orig -1Dmatrix_apply mat.r$run.warp.aff12.1D -mast_dxyz 3 -prefix rm.epi.nomask.r$run",
         "Parameters": {},
         "Used": [
@@ -166,7 +166,7 @@
       {
         "@id": "urn:3dalline-aadbI5yi",
         "Label": "3dAllineate",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dAllineate -base sub-01_T1w_ns+tlrc -input rm.epi.all1+orig -1Dmatrix_apply mat.r$run.warp.aff12.1D -mast_dxyz 3 -final NN -quiet -prefix rm.epi.1.r$run",
         "Parameters": {},
         "Used": [
@@ -178,7 +178,7 @@
       {
         "@id": "urn:3dtstat-y5G8BFbB",
         "Label": "3dTstat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTstat -min -prefix rm.epi.min.r$run rm.epi.1.r$run+tlrc",
         "Parameters": {},
         "Used": [
@@ -188,7 +188,7 @@
       {
         "@id": "urn:cat-253bV9ng",
         "Label": "cat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "cat dfile.r*.1D > dfile_rall.1D",
         "Parameters": {},
         "Used": [
@@ -198,7 +198,7 @@
       {
         "@id": "urn:3dcopy-XEa7vJeI",
         "Label": "3dcopy",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dcopy rm.epi.min.r01+tlrc mask_epi_extents",
         "Parameters": {},
         "Used": [
@@ -208,7 +208,7 @@
       {
         "@id": "urn:3dcalc-1YvbY0PC",
         "Label": "3dcalc",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dcalc -a rm.epi.nomask.r$run+tlrc -b mask_epi_extents+tlrc -expr 'a*b' -prefix pb02.$subj.r$run.volreg",
         "Parameters": {},
         "Used": [
@@ -219,7 +219,7 @@
       {
         "@id": "urn:3dcopy-dCftIe4a",
         "Label": "3dcopy",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dcopy sub-01_T1w_ns+tlrc anat_final.$subj",
         "Parameters": {},
         "Used": [
@@ -229,7 +229,7 @@
       {
         "@id": "urn:3dalline-UosLclnS",
         "Label": "3dAllineate",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dAllineate -source sub-01_T1w+orig -master anat_final.$subj+tlrc -final wsinc5 -1Dmatrix_apply warp.anat.Xat.1D -prefix anat_w_skull_warped",
         "Parameters": {},
         "Used": [
@@ -240,7 +240,7 @@
       {
         "@id": "urn:3dmerge-Ne0kAscL",
         "Label": "3dmerge",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dmerge -1blur_fwhm 4.0 -doall -prefix pb03.$subj.r$run.blur pb02.$subj.r$run.volreg+tlrc",
         "Parameters": {},
         "Used": [
@@ -251,7 +251,7 @@
       {
         "@id": "urn:3dautoma-s2OEFl98",
         "Label": "3dAutomask",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dAutomask -dilate 1 -prefix rm.mask_r$run pb03.$subj.r$run.blur+tlrc",
         "Parameters": {},
         "Used": [
@@ -261,7 +261,7 @@
       {
         "@id": "urn:3dmaskto-iHTEgBWH",
         "Label": "3dmask_tool",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dmask_tool -inputs rm.mask_r*+tlrc.HEAD -union -prefix full_mask.$subj",
         "Parameters": {},
         "Used": []
@@ -269,7 +269,7 @@
       {
         "@id": "urn:3dresamp-pocDgAWQ",
         "Label": "3dresample",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dresample -master full_mask.$subj+tlrc -input sub-01_T1w_ns+tlrc -prefix rm.resam.anat",
         "Parameters": {},
         "Used": [
@@ -280,7 +280,7 @@
       {
         "@id": "urn:3dmaskto-vqzd0AtF",
         "Label": "3dmask_tool",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dmask_tool -dilate_input 5 -5 -fill_holes -input rm.resam.anat+tlrc -prefix mask_anat.$subj",
         "Parameters": {},
         "Used": [
@@ -290,7 +290,7 @@
       {
         "@id": "urn:3dabover-1xpPMyYj",
         "Label": "3dABoverlap",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dABoverlap -no_automask full_mask.$subj+tlrc mask_anat.$subj+tlrc |& tee out.mask_ae_overlap.txt",
         "Parameters": {},
         "Used": [
@@ -301,7 +301,7 @@
       {
         "@id": "urn:3ddot-vG3Ho8HD",
         "Label": "3ddot",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3ddot -dodice full_mask.$subj+tlrc mask_anat.$subj+tlrc |& tee out.mask_ae_dice.txt",
         "Parameters": {},
         "Used": [
@@ -312,7 +312,7 @@
       {
         "@id": "urn:3dresamp-ZykKjp5v",
         "Label": "3dresample",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dresample -master full_mask.$subj+tlrc -prefix ./rm.resam.group -input /Users/cmaumet/Softs/external/AFNI/macosx_10.7_Intel_64/TT_N27+tlrc",
         "Parameters": {},
         "Used": [
@@ -323,7 +323,7 @@
       {
         "@id": "urn:3dmaskto-zk5klqdp",
         "Label": "3dmask_tool",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dmask_tool -dilate_input 5 -5 -fill_holes -input rm.resam.group+tlrc -prefix mask_group",
         "Parameters": {},
         "Used": [
@@ -333,7 +333,7 @@
       {
         "@id": "urn:3dtstat-wkDlzccF",
         "Label": "3dTstat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTstat -prefix rm.mean_r$run pb03.$subj.r$run.blur+tlrc",
         "Parameters": {},
         "Used": [
@@ -343,7 +343,7 @@
       {
         "@id": "urn:3dcalc-ND3i7gG2",
         "Label": "3dcalc",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dcalc -a pb03.$subj.r$run.blur+tlrc -b rm.mean_r$run+tlrc -c mask_epi_extents+tlrc -expr 'c * min(200, a/b*100)*step(a)*step(b)' -prefix pb04.$subj.r$run.scale",
         "Parameters": {},
         "Used": [
@@ -355,7 +355,7 @@
       {
         "@id": "urn:1dtoolpy-jmVZrg5v",
         "Label": "1d_tool.py",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -demean -write motion_demean.1D",
         "Parameters": {},
         "Used": [
@@ -365,7 +365,7 @@
       {
         "@id": "urn:1dtoolpy-WpZBMKSn",
         "Label": "1d_tool.py",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -derivative -demean -write motion_deriv.1D",
         "Parameters": {},
         "Used": [
@@ -375,7 +375,7 @@
       {
         "@id": "urn:1dtoolpy-qyqyePOj",
         "Label": "1d_tool.py",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "1d_tool.py -infile dfile_rall.1D -set_nruns 1 -show_censor_count -censor_prev_TR -censor_motion 0.3 motion_${subj}",
         "Parameters": {},
         "Used": [
@@ -385,7 +385,7 @@
       {
         "@id": "urn:3ddeconv-lGWPUoyd",
         "Label": "3dDeconvolve",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dDeconvolve -input pb04.$subj.r*.scale+tlrc.HEAD -censor motion_${subj}_censor.1D -polort 2 -num_stimts 8 -stim_times 1 stimuli/tone_counting_onset_times.txt 'SPMG1(4)' -stim_label 1 tone_counting -stim_times_AM1 2 stimuli/tone_counting_probe_duration.txt 'dmBLOCK' -stim_label 2 probe -stim_file 3 motion_demean.1D'[0]' -stim_base 3 -stim_label 3 roll -stim_file 4 motion_demean.1D'[1]' -stim_base 4 -stim_label 4 pitch -stim_file 5 motion_demean.1D'[2]' -stim_base 5 -stim_label 5 yaw -stim_file 6 motion_demean.1D'[3]' -stim_base 6 -stim_label 6 dS -stim_file 7 motion_demean.1D'[4]' -stim_base 7 -stim_label 7 dL -stim_file 8 motion_demean.1D'[5]' -stim_base 8 -stim_label 8 dP -fout -tout -x1D X.xmat.1D -xjpeg X.jpg -x1D_uncensored X.nocensor.xmat.1D -fitts fitts.$subj -errts errts.${subj} -bucket stats.$subj",
         "Parameters": {},
         "Used": [
@@ -395,7 +395,7 @@
       {
         "@id": "urn:1dtoolpy-7JKuHRGb",
         "Label": "1d_tool.py",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "1d_tool.py -show_cormat_warnings -infile X.xmat.1D |& tee out.cormat_warn.txt",
         "Parameters": {},
         "Used": [
@@ -405,7 +405,7 @@
       {
         "@id": "urn:3dtcat-VE6isJJF",
         "Label": "3dTcat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTcat -prefix all_runs.$subj pb04.$subj.r*.scale+tlrc.HEAD",
         "Parameters": {},
         "Used": [
@@ -415,7 +415,7 @@
       {
         "@id": "urn:3dtstat-j6wPnIPn",
         "Label": "3dTstat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTstat -mean -prefix rm.signal.all all_runs.$subj+tlrc\"[$ktrs]\"",
         "Parameters": {},
         "Used": [
@@ -425,7 +425,7 @@
       {
         "@id": "urn:3dtstat-sL2ktdxz",
         "Label": "3dTstat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTstat -stdev -prefix rm.noise.all errts.${subj}+tlrc\"[$ktrs]\"",
         "Parameters": {},
         "Used": [
@@ -435,7 +435,7 @@
       {
         "@id": "urn:3dcalc-Mt6kd9m5",
         "Label": "3dcalc",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dcalc -a rm.signal.all+tlrc -b rm.noise.all+tlrc -c full_mask.$subj+tlrc -expr 'c*a/b' -prefix TSNR.$subj",
         "Parameters": {},
         "Used": [
@@ -447,7 +447,7 @@
       {
         "@id": "urn:3dtnorm-5j01dczD",
         "Label": "3dTnorm",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTnorm -norm2 -prefix rm.errts.unit errts.${subj}+tlrc",
         "Parameters": {},
         "Used": [
@@ -457,7 +457,7 @@
       {
         "@id": "urn:3dmaskav-oAcYVWNX",
         "Label": "3dmaskave",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dmaskave -quiet -mask full_mask.$subj+tlrc rm.errts.unit+tlrc > gmean.errts.unit.1D",
         "Parameters": {},
         "Used": [
@@ -467,7 +467,7 @@
       {
         "@id": "urn:3dtstat-aobd0oPt",
         "Label": "3dTstat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTstat -sos -prefix - gmean.errts.unit.1D\\' > out.gcor.1D",
         "Parameters": {},
         "Used": [
@@ -477,7 +477,7 @@
       {
         "@id": "urn:3dcalc-RnanHX9O",
         "Label": "3dcalc",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dcalc -a rm.errts.unit+tlrc -b gmean.errts.unit.1D -expr 'a*b' -prefix rm.DP",
         "Parameters": {},
         "Used": [
@@ -488,7 +488,7 @@
       {
         "@id": "urn:3dtstat-qIVnovdP",
         "Label": "3dTstat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTstat -sum -prefix corr_brain rm.DP+tlrc",
         "Parameters": {},
         "Used": [
@@ -498,7 +498,7 @@
       {
         "@id": "urn:1dcat-YMqDTdmD",
         "Label": "1dcat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "1dcat X.nocensor.xmat.1D'[3]' > ideal_tone_counting.1D",
         "Parameters": {},
         "Used": [
@@ -508,7 +508,7 @@
       {
         "@id": "urn:1dcat-wxWuGyPa",
         "Label": "1dcat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "1dcat X.nocensor.xmat.1D'[4]' > ideal_probe.1D",
         "Parameters": {},
         "Used": [
@@ -518,7 +518,7 @@
       {
         "@id": "urn:3dtstat-g09qekV2",
         "Label": "3dTstat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dTstat -sum -prefix sum_ideal.1D X.nocensor.xmat.1D\"[$reg_cols]\"",
         "Parameters": {},
         "Used": [
@@ -528,7 +528,7 @@
       {
         "@id": "urn:1dcat-rVexAwDh",
         "Label": "1dcat",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "1dcat X.nocensor.xmat.1D\"[$reg_cols]\" > X.stim.xmat.1D",
         "Parameters": {},
         "Used": [
@@ -538,7 +538,7 @@
       {
         "@id": "urn:3dfwhmx-HbowdNMj",
         "Label": "3dFWHMx",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dFWHMx -detrend -mask full_mask.$subj+tlrc all_runs.$subj+tlrc\"[$trs]\" >> blur.epits.1D",
         "Parameters": {},
         "Used": [
@@ -548,7 +548,7 @@
       {
         "@id": "urn:3dfwhmx-AgcWE97u",
         "Label": "3dFWHMx",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dFWHMx -detrend -mask full_mask.$subj+tlrc errts.${subj}+tlrc\"[$trs]\" >> blur.errts.1D",
         "Parameters": {},
         "Used": [
@@ -558,7 +558,7 @@
       {
         "@id": "urn:3dclusts-xWsyKiqb",
         "Label": "3dClustSim",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "3dClustSim -both -mask full_mask.$subj+tlrc -fwhmxyz $fxyz[1-3] -prefix ClustSim",
         "Parameters": {},
         "Used": [
@@ -568,7 +568,7 @@
       {
         "@id": "urn:genepire-JDKTjSo7",
         "Label": "gen_epi_review.py",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "gen_epi_review.py -script @epi_review.$subj -dsets pb00.$subj.r*.tcat+orig.HEAD",
         "Parameters": {},
         "Used": [
@@ -578,7 +578,7 @@
       {
         "@id": "urn:genssrev-bLXWWzXw",
         "Label": "gen_ss_review_scripts.py",
-        "AssociatedWith": "urn:urn:afni-LuUPJG0l",
+        "AssociatedWith": "urn:afni-LuUPJG0l",
         "Command": "gen_ss_review_scripts.py -mot_limit 0.3 -exit0",
         "Parameters": {
           "-mot_limit": "0.3",
