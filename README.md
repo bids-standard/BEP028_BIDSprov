@@ -87,28 +87,33 @@ Mature building blocks of NIDM:
 ### Visualize your BIDSprov data
 
 To visualize your BIDSprov data, perform the following steps :
-1. [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the code inside a `BEP028_BIDSprov` directory ;
-2. in a terminal, change the current directory
+1. [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the code inside a `BEP028_BIDSprov` directory, and cd into this directory :
 
-`cd BEP028_BIDSprov`
+```shell
+git clone git@github.com:bids-standard/BEP028_BIDSprov.git
+cd BEP028_BIDSprov
+```
 
 3. install the `bids_prov` python package :
 
-`pip install .`
+```shell
+pip install .
+```
 
 4. you should be able to launch the visualizer on your .jsonld files with the command `bids_prov_visualizer`
 
-`bids_prov_visualizer --input_file graph.jsonld --output_file graph`
+```shell
+bids_prov_visualizer --input_file graph.jsonld --output_file graph.png
 
-```
-usage: bids_prov_visualizer [-h] --input_file INPUT_FILE [--output_file OUTPUT_FILE]
+bids_prov -h
+  usage: bids_prov_visualizer [-h] --input_file INPUT_FILE [--output_file OUTPUT_FILE]
 
-options:
-  -h, --help            show this help message and exit
-  --input_file INPUT_FILE
-                        input BIDSprov data as a .jsonld file
-  --output_file OUTPUT_FILE
-                        output .png file showing BIDSprov graph
+  options:
+    -h, --help            show this help message and exit
+    --input_file INPUT_FILE
+                          input BIDSprov data as a .jsonld file
+    --output_file OUTPUT_FILE
+                          output .png file showing BIDSprov graph
 ```
 
 ### Run parsers on the SPM, FSL and AFNI data
