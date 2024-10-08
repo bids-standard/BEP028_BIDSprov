@@ -8,8 +8,11 @@ from typing import List, Mapping
 
 from bs4 import BeautifulSoup
 
-from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping, compute_sha_256_entity, \
+from bids_prov.utils import (
+    get_default_graph, CONTEXT_URL, label_mapping, compute_sha_256_entity,
+    get_activity_urn, get_agent_urn, get_entity_urn, make_alnum, get_uuid,
     writing_jsonld
+    )
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
@@ -250,7 +253,7 @@ def _get_entities_from_kwarg(entities, opts, parse_kwarg):
         value = []
         for (arg, val) in opts._get_kwargs():
             # print("\n--arg, val", type(arg), type(val), arg, val)
-            if param.split("-")[1] == arg:
+            if param.strip('-') == arg:
                 # print("\n----arg select", type(arg), arg)
                 if val != None:
                     # print("\n------val != None", type(val), val)
@@ -388,14 +391,14 @@ def get_entities(cmd_s, parameters):
     if "GeneratedBy" in parameters:
         outputs.extend(_get_arg(parameters["GeneratedBy"], arg_rest))
 
-     # print("\n\n inputs", inputs)
+    # print("\n\n inputs", inputs)
     # print("\n\n outputs", outputs)
     # print("\n\n params", params)
 
     return inputs, outputs, params
 
 
-def build_records(groups: Mapping[str, List[str]], agent_id: str):
+def build_records(groups: Mapping[str, List[str]], agent_id: str, verbose: bool = False):
     """
     Build the `records` field for the final .jsonld file,
     from commands lines grouped by stage (e.g. `Registration`, `Post-stats`)
@@ -420,8 +423,11 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
         for cmd in v:
             # process to remove + and - in pngappend command
             cmd = cmd.replace(" + ", " ").replace(" - ", " ")
+            # remove multiple spaces
+            cmd = ' '.join(cmd.split())
+            # split according to the following chars " ", "|", and "="
             cmd_s = re.split(" |=", cmd)
-            a_name = cmd_s[0]
+            activity_name = cmd_s[0]
 
             inputs = []
             outputs = []
@@ -430,7 +436,7 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             function_in_description_functions = False
 
-            command_name_end = os.path.split(a_name)[1]
+            command_name_end = os.path.split(activity_name)[1]
             for df in description_functions:
                 if df["Name"] == command_name_end:
                     description_of_command = df
@@ -439,7 +445,15 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                         cmd_s[1:], description_of_command)
                     break
 
+            if verbose:
+                print("CMD", cmd)
+                print('-> inputs: ', inputs)
+                print('<- outputs: ', outputs)
+                print("  others args :", *parameters)
+
             if function_in_description_functions is False:
+                print(f"-> {command_name_end} : Not present in description_functions")
+
                 # if the function is not in our description file, the process is based on regex
                 attributes = defaultdict(list)
 
@@ -457,9 +471,9 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                 outputs = list(chain(*(attributes.pop(k)
                                for k in attributes.keys() & OUTPUT_TAGS)))
                 entity_names = [_ for _ in re.findall(
-                    INPUT_RE, cmd_without_attributes[len(a_name):])]
+                    INPUT_RE, cmd_without_attributes[len(activity_name):])]
 
-            # # cmd_conf = get_closest_config(a_name)  # with the module boutiques
+            # # cmd_conf = get_closest_config(activity_name)  # with the module boutiques
             # cmd_conf = None  # None because boutiques is not used at this time
             # # if cmd_conf:
             # #     pos_args = filter(lambda e: not e.startswith("-"), cmd_s)  # TODO use "-key value" mappings
@@ -471,13 +485,14 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
                     if len(entity_names) > 1:
                         inputs.append(entity_names[0])
 
-            # the file name and possible extension
-            label = f"{os.path.split(a_name)[1]}"
-
-            a = {
-                "@id": f"urn:{get_id()}",
-                "Label": label_mapping(label, "fsl/fsl_labels.json"),
-                "AssociatedWith": "urn:" + agent_id,
+            # Create activity label & record
+            activity_label = label_mapping(
+                f'{os.path.split(activity_name)[1]}',
+                'fsl/fsl_labels.json')
+            activity = {
+                "@id": get_activity_urn(activity_label),
+                "Label": activity_label,
+                "AssociatedWith": agent_id,
                 "Command": cmd,
                 # "attributes": [
                 #     {k: v if len(v) > 1 else v[0]} for k, v in attributes.items()
@@ -487,37 +502,47 @@ def build_records(groups: Mapping[str, List[str]], agent_id: str):
 
             for input_path in inputs:
                 # input_name = input_path.replace("/", "_") # TODO
-                input_id = f"urn:{get_id()}"  # def format_id
+                if not make_alnum(input_path):
+                    input_id = 'urn:uuid:' + get_uuid()
+                else:
+                    input_id = get_entity_urn(input_path)
 
                 existing_input = next(
-                    (entity for entity in records["Entities"] if entity["AtLocation"] == input_path), None)
+                    (e for e in records["Entities"] if e["AtLocation"] == input_path), None)
                 if existing_input is None:
-                    e = {
+                    entity = {
                         "@id": input_id,
                         "Label": os.path.split(input_path)[1],
                         "AtLocation": input_path,
                     }
-                    records["Entities"].append(e)
-                    a["Used"].append(input_id)
+                    records["Entities"].append(entity)
+                    activity["Used"].append(input_id)
                 else:
-                    a["Used"].append(existing_input["@id"])
+                    activity["Used"].append(existing_input["@id"])
 
             # Order does not matter and then makes sense to include only unique values
-            a["Used"] = sorted(set(a["Used"]))
+            activity["Used"] = sorted(set(activity["Used"]))
 
             for output_path in outputs:
                 # output_name = output_path.replace("/", "_") # TODO
+                if not make_alnum(output_path):
+                    output_id = 'urn:uuid:' + get_uuid()
+                else:
+                    output_id = get_entity_urn(output_path)
+
                 records["Entities"].append(
                     {
-                        "@id": f"urn:{get_id()}",
+                        "@id": output_id,
                         "Label": os.path.split(output_path)[1],
                         "AtLocation": output_path,
-                        "GeneratedBy": a["@id"],
+                        "GeneratedBy": activity["@id"],
                         # "derivedFrom": input_id,
                     }
                 )
 
-            records["Activities"].append(a)
+            records["Activities"].append(activity)
+            if verbose:
+                print('-------------------------')
     return dict(records)
 
 
@@ -525,10 +550,10 @@ def fsl_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
                      soft_ver="xxx", indent=2, verbose=False) -> bool:  # TODO : add fsl version
 
     graph, agent_id = get_default_graph(
-        label="FSL", context_url=context_url, soft_ver=soft_ver)
+        soft_label="FSL", context_url=context_url, soft_version=soft_ver)
 
     lines = readlines(filename)
-    records = build_records(lines, agent_id)
+    records = build_records(lines, agent_id, verbose)
     graph["Records"].update(records)
 
     compute_sha_256_entity(graph["Records"]["Entities"])
