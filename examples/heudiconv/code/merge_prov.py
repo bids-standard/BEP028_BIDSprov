@@ -20,8 +20,8 @@ prov_ent_files = [
 	'prov/prov-heudiconv_ent.prov.json'
 ]
 sidecar_files = [
-	'sub-None/func/sub-None_task-oneback_run-01_bold.json',
-	'sub-None/anat/sub-None_run-1_T1w.json'
+	'sub-001/func/sub-001_task-oneback_run-01_bold.json',
+	'sub-001/anat/sub-001_run-1_T1w.json'
 ]
 
 # Base jsonld
