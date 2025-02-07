@@ -137,7 +137,7 @@ pip install bids-prov==0.1.0
 bids_prov_visualizer --input_file prov/merged/prov-heudiconv.prov.jsonld --output_file prov/merged/prov-heudiconv.prov.png
 ```
 
-![](/examples/dcm2niix/prov/merged/prov-heudiconv.prov.png)
+![](/examples/heudiconv/prov/merged/prov-heudiconv.prov.png)
 
 ### Notes
 
@@ -151,7 +151,7 @@ The `code/merge_prov.py` code is responsible for:
 
 1. The `Environments` term is not defined in the current BIDS Prov context, hence we define environments as `Entities`.
 
-2. Listing all the DICOM files used by the dcm2niix conversion steps would lower readability of the JSON-LD provenance files. Therefore we only listed the following directories as `Entities`:
+2. Listing all the DICOM files used by the heudiconv conversion steps would lower readability of the JSON-LD provenance files. Therefore we only listed the following directories as `Entities`:
 * `bids::sourcedata/hirni-demo/acq1/dicoms/example-dicom-structural-master/dicoms`
 * `bids::sourcedata/hirni-demo/acq2/dicoms/example-dicom-functional-master/dicoms`
 
