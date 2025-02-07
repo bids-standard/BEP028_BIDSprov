@@ -14,11 +14,13 @@ prov_env_files = [
 	'prov/prov-fmriprep_env.prov.json'
 ]
 prov_act_files = [
-	'sub-001/anat/sub-001_prov-fmriprep_act.prov.json'
+	'sub-001/anat/sub-001_T1w_prov-fmriprep_act.prov.json',
+	'sub-001/func/sub-001_task-MGT_bold_prov-fmriprep_act.prov.json'
 ]
 prov_ent_files = [
 	'prov/prov-fmriprep_ent.prov.json',
-	'sub-001/anat/sub-001_prov-fmriprep_ent.prov.json'
+	'sub-001/anat/sub-001_T1w_prov-fmriprep_ent.prov.json',
+	'sub-001/func/sub-001_task-MGT_bold_prov-fmriprep_ent.prov.json'
 ]
 sidecar_files = [
 ]
