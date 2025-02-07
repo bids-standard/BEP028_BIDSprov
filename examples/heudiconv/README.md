@@ -160,3 +160,11 @@ although it is not allowed by the current version of the BIDS Prov specification
 3. In this example, the provenance for JSON sidecars files is not described.
 
 4. For now, what happens indide `heudiconv` is described as one only activity. We might want to describe the fact that it uses `dcm2niix` as conversion software.
+
+5. Some files (participants.json, dataset_description.json, etc.) may have been created by the first activity (heudiconv for the anat files) and later overwritten / amended by a second activity (heudiconv for the func files). As we don't know yet how to handle this, the `GeneratedBy` attribute of these Entities were set with a list:
+```JSON
+    "GeneratedBy": [
+      "bids::prov/conversion-00f3a18f",
+      "bids::prov/conversion-5a66f5be"
+    ]
+```
