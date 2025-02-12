@@ -1,12 +1,12 @@
 # BIDS Prov example for `dcm2niix`
 
-This example aim at showing provenance traces from a DICOM to Nifti conversion, performed by `dcm2niix` on a Linux-based (Fedora) operating system.
+This example aims at showing provenance traces from a DICOM to Nifti conversion, performed by `dcm2niix` on a Linux-based (Fedora) operating system.
 
 ## Overview
 
-> [!NOTE] We use the single file `prov/dcm2niix.prov.jsonld` to store all provenance traces relative to the conversion steps.
+We use the single file `prov/dcm2niix.prov.jsonld` to store all provenance traces relative to the conversion steps.
 
-After conversion, and adding the provenance traces, the resulting directory tree looks like this:
+After conversion, and adding provenance traces, the resulting directory tree looks like this:
 
 ```
 prov/
@@ -29,7 +29,7 @@ pip install -r ../../requirements.txt
 python ../../bids_prov/visualize.py --input_file prov/dcm2niix.prov.jsonld --output_file prov/dcm2niix.prov.png
 ```
 
-![](/examples/dcm2niix/prov/dcm2niix.prov.png)
+![](/examples/dcm2niix_1/prov/dcm2niix.prov.png)
 
 ## Source dataset
 
