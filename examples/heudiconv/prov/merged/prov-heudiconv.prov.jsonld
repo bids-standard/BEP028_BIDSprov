@@ -4,33 +4,37 @@
       {
         "Label": "heudiconv",
         "Version": "v1.3.2",
-        "Id": "bids::prov/heudiconv-a9x5yd3j"
+        "Id": "bids::prov/#heudiconv-a9x5yd3j"
+      },
+      {
+        "Label": "dcm2niix",
+        "Version": "v1.3.2",
+        "prov:actedOnBehalfOf": "bids::prov/#heudiconv-a9x5yd3j",
+        "Id": "bids::prov/#dcm2niix-r4a7zxc0"
       }
     ],
     "Activities": [
       {
-        "Label": "Conversion",
+        "Label": "Preparation to conversion",
         "Command": "heudiconv --files sourcedata/hirni-demo/acq1/dicoms/example-dicom-structural-master/dicoms/*.dcm -o . -f sourcedata/hirni-demo/code/hirni-toolbox/converters/heudiconv/hirni_heuristic.py -s 02 -ss acq1 -c dcm2niix -b --minmeta --overwrite",
-        "AssociatedWith": "bids::prov/heudiconv-a9x5yd3j",
+        "AssociatedWith": "bids::prov/#heudiconv-a9x5yd3j",
         "Used": [
-          "bids::prov/fedora-1cu6r6ou",
+          "bids::prov/#fedora-1cu6r6ou",
           "bids::sourcedata/hirni-demo/acq1/studyspec.json",
           "bids::sourcedata/hirni-demo/acq1/dicoms/example-dicom-structural-master/dicoms",
           "bids::sourcedata/hirni-demo/code/hirni-toolbox/converters/heudiconv/hirni_heuristic.py"
         ],
-        "Id": "bids::prov/conversion-00f3a18f"
+        "Id": "bids::prov/#preparation-conversion-1xkhm1ft"
       },
       {
         "Label": "Conversion",
-        "Command": "heudiconv --files sourcedata/hirni-demo/acq2/dicoms/example-dicom-functional-master/dicoms/* -o . -f sourcedata/hirni-demo/code/hirni-toolbox/converters/heudiconv/hirni_heuristic.py -s 02 -ss acq2 -c dcm2niix -b --minmeta --overwrite",
-        "AssociatedWith": "bids::prov/heudiconv-a9x5yd3j",
+        "Command": "dcm2niix",
+        "AssociatedWith": "bids::prov/#dcm2niix-r4a7zxc0",
         "Used": [
-          "bids::prov/fedora-pgrzf567",
-          "bids::sourcedata/hirni-demo/acq2/studyspec.json",
-          "bids::sourcedata/hirni-demo/acq2/dicoms/example-dicom-functional-master/dicoms",
-          "bids::sourcedata/hirni-demo/code/hirni-toolbox/converters/heudiconv/hirni_heuristic.py"
+          "bids::prov/#fedora-1cu6r6ou",
+          "bids::sourcedata/hirni-demo/acq1/dicoms/example-dicom-structural-master/dicoms"
         ],
-        "Id": "bids::prov/conversion-5a66f5be"
+        "Id": "bids::prov/#conversion-00f3a18f"
       }
     ],
     "Entities": [
@@ -38,17 +42,10 @@
         "Label": "Fedora release 36 (Thirty Six)",
         "OperatingSystem": "GNU/Linux 6.2.15-100.fc36.x86_64",
         "EnvVars": {
-          "HIRNI_STUDY_SPEC": "sourcedata/hirni-demo/acq1/studyspec.json"
+          "HIRNI_STUDY_SPEC": "sourcedata/hirni-demo/acq1/studyspec.json",
+          "HIRNI_SPEC2BIDS_SUBJECT": "001"
         },
-        "Id": "bids::prov/fedora-1cu6r6ou"
-      },
-      {
-        "Label": "Fedora release 36 (Thirty Six)",
-        "OperatingSystem": "GNU/Linux 6.2.15-100.fc36.x86_64",
-        "EnvVars": {
-          "HIRNI_STUDY_SPEC": "sourcedata/hirni-demo/acq2/studyspec.json"
-        },
-        "Id": "bids::prov/fedora-pgrzf567"
+        "Id": "bids::prov/#fedora-1cu6r6ou"
       },
       {
         "Label": "heuristic",
@@ -59,79 +56,56 @@
         "Id": "bids::sourcedata/hirni-demo/acq1/studyspec.json"
       },
       {
-        "Label": "studyspec",
-        "Id": "bids::sourcedata/hirni-demo/acq2/studyspec.json"
-      },
-      {
         "Label": "dicoms",
         "Id": "bids::sourcedata/hirni-demo/acq1/dicoms/example-dicom-structural-master/dicoms"
       },
       {
-        "Label": "dicoms",
-        "Id": "bids::sourcedata/hirni-demo/acq2/dicoms/example-dicom-functional-master/dicoms"
+        "Label": ".bidsignore",
+        "GeneratedBy": "bids::prov/#preparation-conversion-1xkhm1ft",
+        "Id": "bids::.bidsignore"
+      },
+      {
+        "Label": ".heudiconv/",
+        "GeneratedBy": "bids::prov/#preparation-conversion-1xkhm1ft",
+        "Id": "bids::.heudiconv/"
       },
       {
         "Label": "CHANGES",
-        "GeneratedBy": [
-          "bids::prov/conversion-00f3a18f",
-          "bids::prov/conversion-5a66f5be"
-        ],
+        "GeneratedBy": "bids::prov/#preparation-conversion-1xkhm1ft",
         "Id": "bids::CHANGES"
       },
       {
-        "Label": "README",
-        "GeneratedBy": [
-          "bids::prov/conversion-00f3a18f",
-          "bids::prov/conversion-5a66f5be"
-        ],
-        "Id": "bids::README"
-      },
-      {
         "Label": "dataset_description.json",
-        "GeneratedBy": [
-          "bids::prov/conversion-00f3a18f",
-          "bids::prov/conversion-5a66f5be"
-        ],
+        "GeneratedBy": "bids::prov/#preparation-conversion-1xkhm1ft",
         "Id": "bids::dataset_description.json"
       },
       {
         "Label": "participants.json",
-        "GeneratedBy": [
-          "bids::prov/conversion-00f3a18f",
-          "bids::prov/conversion-5a66f5be"
-        ],
+        "GeneratedBy": "bids::prov/#preparation-conversion-1xkhm1ft",
         "Id": "bids::participants.json"
       },
       {
         "Label": "participants.tsv",
-        "GeneratedBy": [
-          "bids::prov/conversion-00f3a18f",
-          "bids::prov/conversion-5a66f5be"
-        ],
+        "GeneratedBy": "bids::prov/#preparation-conversion-1xkhm1ft",
         "Id": "bids::participants.tsv"
       },
       {
+        "Label": "README",
+        "GeneratedBy": "bids::prov/#preparation-conversion-1xkhm1ft",
+        "Id": "bids::README"
+      },
+      {
         "Label": "scans.json",
-        "GeneratedBy": [
-          "bids::prov/conversion-00f3a18f",
-          "bids::prov/conversion-5a66f5be"
-        ],
+        "GeneratedBy": "bids::prov/#preparation-conversion-1xkhm1ft",
         "Id": "bids::scans.json"
       },
       {
-        "Label": "task-oneback_bold.json",
-        "GeneratedBy": [
-          "bids::prov/conversion-5a66f5be"
-        ],
-        "Id": "bids::task-oneback_bold.json"
-      },
-      {
-        "Id": "bids::sub-001/func/sub-001_task-oneback_run-01_bold.nii.gz",
-        "GeneratedBy": "bids::prov/conversion-5a66f5be"
+        "Id": "bids::sub-001/sub-001_scans.tsv",
+        "GeneratedBy": "bids::prov/#preparation-conversion-1xkhm1ft"
       },
       {
         "Id": "bids::sub-001/anat/sub-001_run-1_T1w.nii.gz",
-        "GeneratedBy": "bids::prov/conversion-00f3a18f"
+        "GeneratedBy": "bids::prov/#conversion-00f3a18f"
       }
     ]
   },

@@ -1,12 +1,68 @@
-# A `heudiconv` example for BIDS-Prov
+# BIDS-Prov example for `heudiconv`
 
 This example aims at showing provenance traces from a DICOM to Nifti conversion, performed by [`heudiconv`](https://heudiconv.readthedocs.io/en/latest/) on a Linux-based (Fedora) operating system.
 
-## `heudiconv` installation
+## Overview
+
+In order to describe provenance records using BIDS Prov, we use:
+
+* the `GeneratedBy` field of JSON sidecars, already existing in the BIDS specification;
+* modality agnostic files inside the `prov/` directory
+
+After conversion, and adding provenance traces, the resulting directory tree looks like this:
+
+```
+.
+├── .bidsignore
+├── CHANGES
+├── dataset_description.json
+├── .heudiconv/
+├── participants.json
+├── participants.tsv
+├── prov/
+│   ├── prov-heudiconv_act.prov.json
+│   ├── prov-heudiconv_base.prov.json
+│   ├── prov-heudiconv_ent.prov.json
+│   ├── prov-heudiconv_env.prov.json
+│   └── prov-heudiconv_soft.prov.json
+├── README
+├── README.md
+├── scans.json
+├── sourcedata/
+└── sub-001/
+    ├── anat
+    │   ├── sub-001_run-1_T1w.json
+    │   └── sub-001_run-1_T1w.nii.gz
+    ├── sub-001_scans.json
+    └── sub-001_scans.tsv
+```
+
+Note that the `sourcedata/` directory contains the source dataset described in the [section hereafter](#source-dataset).
+
+## Provenance merge
+
+The python script `code/merge_prov.py` aims at merging all provenance records into one JSON-LD graph.
 
 ```shell
-pip install heudiconv==1.3.2
+pip install bids-prov==0.1.0
+mkdir prov/merged/
+python code/merge_prov.py
 ```
+
+The `code/merge_prov.py` code is responsible for:
+* merging the JSON provenance traces into the base JSON-LD graph;
+* create an `Entity` and linking it to the `Activity` described by the `GeneratedBy` field in the case of JSON sidecars.
+
+## Provenance visualization
+
+We are then able to visualize these provenance files using the following commands (current directory is `examples/heudiconv/`):
+
+```shell
+pip install bids-prov==0.1.0
+bids_prov_visualizer --input_file prov/merged/prov-heudiconv.prov.jsonld --output_file prov/merged/prov-heudiconv.prov.png
+```
+
+![](/examples/heudiconv/prov/merged/prov-heudiconv.prov.png)
 
 ## Source dataset
 
@@ -16,16 +72,10 @@ We get raw data from https://github.com/psychoinformatics-de/hirni-demo.git, a d
 # Get example dicom(s) in a sourcedata/ directory
 mkdir sourcedata
 cd sourcedata
-
 datalad install --recursive https://github.com/psychoinformatics-de/hirni-demo.git
-
-git submodule add https://github.com/psychoinformatics-de/hirni-demo.git  examples/heudiconv/sourcedata/hirni-demo
-
 cd acq1
 datalad get ./*
-cd ../acq2
-datalad get ./*
-
+cd ..
 ls -1
     acq1
     acq2
@@ -36,22 +86,23 @@ ls -1
 cd ..
 ```
 
-## Conversions
+Note that we will only convert the anatomical data available in this dataset (`acq1/` directory).
 
+## Perform the conversions
+
+Install `heudiconv`.
+
+```shell
+pip install heudiconv==1.3.2
+```
 With this setup we are ready to convert dicoms to nifti files using `heudiconv`.
 
-> [!NOTE] Note that we use an already existing heuritic files (`sourcedata/hirni-demo/code/hirni-toolbox/converters/heudiconv/hirni_heuristic.py`). This file needs the `HIRNI_STUDY_SPEC` environment variable to be set (see the following command lines).
+Note that we use an already existing heuritic files (`sourcedata/hirni-demo/code/hirni-toolbox/converters/heudiconv/hirni_heuristic.py`). This file needs the `HIRNI_STUDY_SPEC` and `HIRNI_SPEC2BIDS_SUBJECT` environment variables to be set (see the following command lines).
 
 ```shell
 export HIRNI_STUDY_SPEC=sourcedata/hirni-demo/acq1/studyspec.json
-
+export HIRNI_SPEC2BIDS_SUBJECT=001
 heudiconv --files sourcedata/hirni-demo/acq1/dicoms/example-dicom-structural-master/dicoms/*.dcm -o . -f sourcedata/hirni-demo/code/hirni-toolbox/converters/heudiconv/hirni_heuristic.py -s 02 -ss acq1 -c dcm2niix -b --minmeta --overwrite
-
-export HIRNI_STUDY_SPEC=sourcedata/hirni-demo/acq2/studyspec.json
-
-heudiconv --files sourcedata/hirni-demo/acq2/dicoms/example-dicom-functional-master/dicoms/* -o . -f sourcedata/hirni-demo/code/hirni-toolbox/converters/heudiconv/hirni_heuristic.py -s 02 -ss acq2 -c dcm2niix -b --minmeta --overwrite
-
-
 ```
 
 We control that the BIDS dataset has been created and that it contains the nifti files.
@@ -73,36 +124,10 @@ tree sub-001/
     ├── anat
     │   ├── sub-001_run-1_T1w.json
     │   └── sub-001_run-1_T1w.nii.gz
-    ├── func
-    │   ├── sub-001_task-oneback_run-01_bold.json
-    │   ├── sub-001_task-oneback_run-01_bold.nii.gz
-    │   └── sub-001_task-oneback_run-01_events.tsv
     └── sub-001_scans.tsv
 ```
 
-## Associated provenance
-
-In order to describe provenance records using BIDS Prov, we use:
-
-* the `GeneratedBy` field of JSON sidecars, already existing in the BIDS specification;
-* modality agnostic files inside the `prov/` directory as follows:
-
-```
-.
-├── prov
-│   ├── prov-dcm2niix_act.prov.json
-│   ├── prov-dcm2niix_base.prov.json
-│   ├── prov-dcm2niix_ent.prov.json
-│   ├── prov-dcm2niix_env.prov.json
-│   └── prov-dcm2niix_soft.prov.json
-└── sub-001
-    ├── anat
-    │   └── sub-001_run-1_T1w.json
-    └── func
-        └── sub-001_task-oneback_run-01_bold.json
-````
-
-## New features for BIDS / BIDS Prov
+## Notes
 
 We introduce the following BIDS entity that is currently not existing:
 
@@ -121,50 +146,17 @@ We introduce the following BIDS suffixes that are currently not existing:
 
 We use the `GeneratedBy` field of JSON sidecars to link to Activities that created the file the sidecars refers to.
 
-## Merging JSON in a JSON-LD file and plotting graph
-
-The python script `code/merge_prov.py` aims at merging all these provenance records into one JSON-LD graph.
-
-```shell
-mkdir prov/merged/
-python code/merge_prov.py
-```
-
-From that, we generate the JSON-LD graph `prov/merge/prov-heudiconv.prov.jsonld`. Then we were able to plot the graph as a png file. We used this command:
-
-```shell
-pip install bids-prov==0.1.0
-bids_prov_visualizer --input_file prov/merged/prov-heudiconv.prov.jsonld --output_file prov/merged/prov-heudiconv.prov.png
-```
-
-![](/examples/heudiconv/prov/merged/prov-heudiconv.prov.png)
-
-### Notes
-
 In this example, we rely on the fact that nodes defined in the `prov/*.prov.jsonld` files have `bids::prov/` as base IRIs.
 
-The `code/merge_prov.py` code is responsible for:
-* merging the JSON provenance traces into the base JSON-LD graph;
-* create an `Entity` and linking it to the `Activity` described by the `GeneratedBy` field in the case of JSON sidecars.
-
-### Limitations
+## Limitations
 
 1. The `Environments` term is not defined in the current BIDS Prov context, hence we define environments as `Entities`.
 
 2. Listing all the DICOM files used by the heudiconv conversion steps would lower readability of the JSON-LD provenance files. Therefore we only listed the following directories as `Entities`:
 * `bids::sourcedata/hirni-demo/acq1/dicoms/example-dicom-structural-master/dicoms`
-* `bids::sourcedata/hirni-demo/acq2/dicoms/example-dicom-functional-master/dicoms`
 
 although it is not allowed by the current version of the BIDS Prov specification to have directories as `Entities`.
 
 3. In this example, the provenance for JSON sidecars files is not described.
 
-4. For now, what happens indide `heudiconv` is described as one only activity. We might want to describe the fact that it uses `dcm2niix` as conversion software.
-
-5. Some files (participants.json, dataset_description.json, etc.) may have been created by the first activity (heudiconv for the anat files) and later overwritten / amended by a second activity (heudiconv for the func files). As we don't know yet how to handle this, the `GeneratedBy` attribute of these Entities were set with a list:
-```JSON
-    "GeneratedBy": [
-      "bids::prov/conversion-00f3a18f",
-      "bids::prov/conversion-5a66f5be"
-    ]
-```
+4. We used `prov:actedOnBehalfOf` relation between two `Software` objects to describe that `heudiconv` works with internal calls to `dcm2niix`. Although we don't know exactly which parts of the conversion process are done by these two pieces of software.
