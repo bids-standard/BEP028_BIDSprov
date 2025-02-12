@@ -6,10 +6,10 @@ This example aims at showing provenance traces from a DICOM to Nifti conversion,
 
 In order to describe provenance records using BIDS Prov, we use:
 
-* the `GeneratedBy` field of JSON sidecars, already existing in the BIDS specification;
+* the `GeneratedBy` field of JSON sidecar files, already existing in the BIDS specification;
 * modality agnostic files inside the `prov/` directory
 
-After conversion, and adding provenance traces, the resulting directory tree looks like this:
+After conversion and adding provenance traces, the resulting directory tree looks like this:
 
 ```
 .
@@ -26,7 +26,6 @@ After conversion, and adding provenance traces, the resulting directory tree loo
 │   ├── prov-heudiconv_env.prov.json
 │   └── prov-heudiconv_soft.prov.json
 ├── README
-├── README.md
 ├── scans.json
 ├── sourcedata/
 └── sub-001/
