@@ -42,7 +42,7 @@ We are then able to visualize these provenance files using the following command
 
 ```shell
 pip install bids-prov==0.1.0
-    bids_prov_visualizer --input_file prov/merged/dcm2niix.prov.jsonld --output_file prov/merged/dcm2niix.prov.png
+bids_prov_visualizer --input_file prov/merged/dcm2niix.prov.jsonld --output_file prov/merged/dcm2niix.prov.png
 ```
 
 ![](/examples/dcm2niix_2/prov/merged/dcm2niix.prov.png)
@@ -51,13 +51,13 @@ pip install bids-prov==0.1.0
 
 Dataset is the same as the one for [example dcm2niix_1](/BEP028_BIDSprov/examples/dcm2niix_1/README.md#source-dataset).
 
-### Notes
+## Notes
 
 In this example, we rely on the fact that nodes defined in the `prov/*.prov.jsonld` files have `bids::prov/` as base IRIs. Here are the involved nodes:
 * `bids::prov/#dcm2niix-xce5m9z3`
 * `bids::prov/#fedora-b7hmkmqd`
 
-### Limitations
+## Limitations
 
 The `bids::prov/#fedora-b7hmkmqd` node defined in `prov/environments.prov.jsonld` is defined as an `Entity` as the current context (commit [ce0eb77](https://github.com/bids-standard/BEP028_BIDSprov/commit/ce0eb774abd9527e594bd69212a87d5047864678)) does not define the `Environments` term.
 
