@@ -92,13 +92,3 @@ bids::sourcedata/hirni-demo/acq1/dicoms/example-dicom-structural-master/dicoms
 ```
 
 although it is not allowed by the current version of the BIDS Prov specification to have directories as `Entities`.
-
-### `TaskName` not generated
-
-As specified in [this issue](https://github.com/rordenlab/dcm2niix/issues/148), `dcm2niix` is not able to propagate the value of `TaskName` (name of the task in the case of task-fMRI) automatically because this information is not in the dicom metadata.
-
-In our case, the following line must be added manually in the `sub-02_ses-20140425155335_task-oneback_run-1_bold.json` file:
-
-```json
-    "TaskName": "oneback",
-```
