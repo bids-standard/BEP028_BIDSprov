@@ -86,4 +86,12 @@ docker pull nipype/nipype:py38
 docker run -u root -it --rm -v .:/work nipype/nipype:py38 python code/normalize.py
 ```
 
-## Limitations
+## Limitations / open questions
+
+1. We are not able yet to describe a file (Entity) that is not inside the bids dataset, and belongs to the software environment. Here the `MNI152_T1_1mm_brain.nii.gz` (MNI152 template) can be considered as a part of FSL ; we use the following IRI for it `"/usr/share/fsl/5.0/data/standard/MNI152_T1_1mm_brain.nii.gz"`. Ideally we would like to create a relation between this Entity and the Environment.
+
+2. We use Nipype's `ExportFile` nodes to export the computed files to the location they belong to in the BIDS tree (if nothing is done, the computed files stay in the workflow working directory). These are Nipype nodes coded in python, and we are therefore not able to write a precise command line as attribute of the corresponding Activities.
+
+3. We refer the software environment as `"bids::prov/#docker.io/nipype/nipype:py38-vavfao8v"` but this could be `docker.io/nipype/nipype:py38` ?
+
+4. We may want to avoid describing temporary files from nipype's working directory (here `bids_prov_workflow/`). For example, we could use blank nodes instead of `"bids::derivatives/bids_prov_workflow/brain_extraction/sub-001_T1w_brain.nii.gz"`.
