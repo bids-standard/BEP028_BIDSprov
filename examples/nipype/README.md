@@ -17,7 +17,7 @@ In order to describe provenance records using BIDS Prov, we use:
 
 * the `GeneratedBy` field of JSON sidecar files, already existing in the BIDS specification;
 * modality agnostic files inside the `prov/` directory
-* a modality agnostic file inside the `derivatives/normalize/sub-001/anat/` directory
+* a modality agnostic file inside the `derivatives/flirt/sub-001/anat/` directory
 
 After running the workflow and adding provenance traces, the resulting directory tree looks like this:
 
@@ -27,19 +27,19 @@ After running the workflow and adding provenance traces, the resulting directory
 │   └── normalize.py
 ├── derivatives
 │   ├── bids_prov_workflow
-│   └── normalize
+│   └── flirt
+│       ├── prov
+│       │   ├── prov-flirt_base.prov.json
+│       │   ├── prov-flirt_ent.prov.json
+│       │   ├── prov-flirt_env.prov.json
+│       │   └── prov-flirt_soft.prov.json
 │       └── sub-001
 │           └── anat
-│               ├── sub-001_prov-normalize_act.prov.json
+│               ├── sub-001_prov-flirt_act.prov.json
 │               ├── sub-001_space-mni152nlin2009casym_T1w_brain.json
 │               ├── sub-001_space-mni152nlin2009casym_T1w_brain.nii.gz
 │               ├── sub-001_T1w_brain.json
 │               └── sub-001_T1w_brain.nii.gz
-├── prov
-│   ├── prov-normalize_base.prov.json
-│   ├── prov-normalize_ent.prov.json
-│   ├── prov-normalize_env.prov.json
-│   └── prov-normalize_soft.prov.json
 ├── README.md
 └── sub-001
     └── anat
@@ -69,10 +69,10 @@ We are then able to visualize these provenance files using the following command
 
 ```shell
 pip install bids-prov==0.1.0
-bids_prov_visualizer --input_file prov/merged/prov-normalize.prov.jsonld --output_file prov/merged/prov-normalize.prov.png
+bids_prov_visualizer --input_file prov/merged/prov-flirt.prov.jsonld --output_file prov/merged/prov-flirt.prov.png
 ```
 
-![](/examples/nipype/prov/merged/prov-normalize.prov.png)
+![](/examples/nipype/prov/merged/prov-flirt.prov.png)
 
 ## Running the workflow
 
