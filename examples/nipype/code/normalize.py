@@ -26,14 +26,14 @@ workflow.connect(brain_extraction, 'out_file', flirt, 'in_file')
 export_brain = Node(ExportFile(), name = 'export_brain')
 export_brain.inputs.clobber = True
 export_brain.inputs.out_file = abspath(
-	'derivatives/normalize/sub-001/anat/sub-001_T1w_brain.nii.gz')
+	'derivatives/flirt/sub-001/anat/sub-001_T1w_brain.nii.gz')
 workflow.connect(brain_extraction, 'out_file', export_brain, 'in_file')
 
-export_normalized_brain = Node(ExportFile(), name = 'export_normalized_brain')
-export_normalized_brain.inputs.clobber = True
-export_normalized_brain.inputs.out_file = abspath(
-	'derivatives/normalize/sub-001/anat/sub-001_space-mni152nlin2009casym_T1w_brain.nii.gz')
-workflow.connect(brain_extraction, 'out_file', export_normalized_brain, 'in_file')
+export_brain_MNI_space = Node(ExportFile(), name = 'export_brain_MNI_space')
+export_brain_MNI_space.inputs.clobber = True
+export_brain_MNI_space.inputs.out_file = abspath(
+	'derivatives/flirt/sub-001/anat/sub-001_space-mni152nlin2009casym_T1w_brain.nii.gz')
+workflow.connect(brain_extraction, 'out_file', export_brain_MNI_space, 'in_file')
 
 # Run workflow
 workflow.run()

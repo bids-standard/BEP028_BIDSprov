@@ -16,7 +16,7 @@ See [hereafter](#running-the-workflow) for more details on how to run the workfl
 In order to describe provenance records using BIDS Prov, we use:
 
 * the `GeneratedBy` field of JSON sidecar files, already existing in the BIDS specification;
-* modality agnostic files inside the `prov/` directory
+* modality agnostic files inside the `derivatives/flirt/prov/` directory
 * a modality agnostic file inside the `derivatives/flirt/sub-001/anat/` directory
 
 After running the workflow and adding provenance traces, the resulting directory tree looks like this:
@@ -55,7 +55,7 @@ The python script `code/merge_prov.py` aims at merging all provenance records in
 
 ```shell
 pip install bids-prov==0.1.0
-mkdir prov/merged/
+mkdir derivatives/flirt/prov/merged/
 python code/merge_prov.py
 ```
 
@@ -69,7 +69,7 @@ We are then able to visualize these provenance files using the following command
 
 ```shell
 pip install bids-prov==0.1.0
-bids_prov_visualizer --input_file prov/merged/prov-flirt.prov.jsonld --output_file prov/merged/prov-flirt.prov.png
+bids_prov_visualizer --input_file derivatives/flirt/prov/merged/prov-flirt.prov.jsonld --output_file derivatives/flirt/prov/merged/prov-flirt.prov.png
 ```
 
 ![](/examples/nipype/prov/merged/prov-flirt.prov.png)

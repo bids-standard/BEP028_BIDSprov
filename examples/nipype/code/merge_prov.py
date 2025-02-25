@@ -8,16 +8,16 @@ from pathlib import Path
 
 # List of available prov files
 prov_soft_files = [
-	'prov/prov-flirt_soft.prov.json'
+	'derivatives/flirt/prov/prov-flirt_soft.prov.json'
 ]
 prov_env_files = [
-	'prov/prov-flirt_env.prov.json'
+	'derivatives/flirt/prov/prov-flirt_env.prov.json'
 ]
 prov_act_files = [
 	'derivatives/flirt/sub-001/anat/sub-001_prov-flirt_act.prov.json'
 ]
 prov_ent_files = [
-	'prov/prov-flirt_ent.prov.json'
+	'derivatives/flirt/prov/prov-flirt_ent.prov.json'
 ]
 sidecar_files = [
 	'derivatives/flirt/sub-001/anat/sub-001_T1w_brain.json',
@@ -34,7 +34,7 @@ base_provenance = {
 }
 
 # Add context and version
-with open('prov/prov-flirt_base.prov.json', encoding = 'utf-8') as file:
+with open('derivatives/flirt/prov/prov-flirt_base.prov.json', encoding = 'utf-8') as file:
 	base_provenance.update(json.load(file))
 
 # Parse Software
@@ -90,5 +90,5 @@ for sidecar_file in sidecar_files:
 					})
 
 # Write jsonld
-with open('prov/merged/prov-flirt.prov.jsonld', 'w', encoding = 'utf-8') as file:
+with open('derivatives/flirt/prov/merged/prov-flirt.prov.jsonld', 'w', encoding = 'utf-8') as file:
 	file.write(json.dumps(base_provenance, indent = 2))
