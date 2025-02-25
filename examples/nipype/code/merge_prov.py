@@ -8,20 +8,20 @@ from pathlib import Path
 
 # List of available prov files
 prov_soft_files = [
-	'prov/prov-normalize_soft.prov.json'
+	'prov/prov-flirt_soft.prov.json'
 ]
 prov_env_files = [
-	'prov/prov-normalize_env.prov.json'
+	'prov/prov-flirt_env.prov.json'
 ]
 prov_act_files = [
-	'derivatives/normalize/sub-001/anat/sub-001_prov-normalize_act.prov.json'
+	'derivatives/flirt/sub-001/anat/sub-001_prov-flirt_act.prov.json'
 ]
 prov_ent_files = [
-	'prov/prov-normalize_ent.prov.json'
+	'prov/prov-flirt_ent.prov.json'
 ]
 sidecar_files = [
-	'derivatives/normalize/sub-001/anat/sub-001_T1w_brain.json',
-	'derivatives/normalize/sub-001/anat/sub-001_space-mni152nlin2009casym_T1w_brain.json'
+	'derivatives/flirt/sub-001/anat/sub-001_T1w_brain.json',
+	'derivatives/flirt/sub-001/anat/sub-001_space-mni152nlin2009casym_T1w_brain.json'
 ]
 
 # Base jsonld
@@ -34,7 +34,7 @@ base_provenance = {
 }
 
 # Add context and version
-with open('prov/prov-normalize_base.prov.json', encoding = 'utf-8') as file:
+with open('prov/prov-flirt_base.prov.json', encoding = 'utf-8') as file:
 	base_provenance.update(json.load(file))
 
 # Parse Software
@@ -90,5 +90,5 @@ for sidecar_file in sidecar_files:
 					})
 
 # Write jsonld
-with open('prov/merged/prov-normalize.prov.jsonld', 'w', encoding = 'utf-8') as file:
+with open('prov/merged/prov-flirt.prov.jsonld', 'w', encoding = 'utf-8') as file:
 	file.write(json.dumps(base_provenance, indent = 2))

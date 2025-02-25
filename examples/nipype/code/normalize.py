@@ -19,9 +19,9 @@ workflow.base_dir = abspath('derivatives/')
 brain_extraction = Node(BET(), name = 'brain_extraction')
 brain_extraction.inputs.in_file = abspath('sub-001/anat/sub-001_T1w.nii.gz')
 
-normalization = Node(FLIRT(), name = 'normalization')
-normalization.inputs.reference = Info.standard_image('MNI152_T1_1mm_brain.nii.gz')
-workflow.connect(brain_extraction, 'out_file', normalization, 'in_file')
+flirt = Node(FLIRT(), name = 'flirt')
+flirt.inputs.reference = Info.standard_image('MNI152_T1_1mm_brain.nii.gz')
+workflow.connect(brain_extraction, 'out_file', flirt, 'in_file')
 
 export_brain = Node(ExportFile(), name = 'export_brain')
 export_brain.inputs.clobber = True
