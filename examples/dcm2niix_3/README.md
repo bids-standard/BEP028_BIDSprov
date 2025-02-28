@@ -6,14 +6,13 @@ This example aims at showing provenance traces from a DICOM to Nifti conversion,
 
 This time, we describe the provenance records using BIDS Prov, but inside several *JSON* files.
 
+The example illustrates a case where only one file is generated, hence all provenance records are stored in the *JSON* sidecar file `sub-02_T1w.json`.s
+
 After conversion, and adding provenance traces, the resulting directory tree looks like this:
 
 ```
 prov/
-├── prov-dcm2niix_act.prov.json
-├── prov-dcm2niix_base.prov.json
-├── prov-dcm2niix_env.prov.json
-└── prov-dcm2niix_soft.prov.json
+└── prov-dcm2niix_base.prov.json
 sourcedata/
 sub-02/
 └── anat
@@ -61,15 +60,7 @@ We introduce the following BIDS entity that is currently not existing:
     * Format: `prov-<label>`
     * Definition: A grouping of provenance traces. Defining multiple provenance traces groups is appropriate when several processings have been performed on data.
 
-We introduce the following BIDS suffixes that are currently not existing:
-* `act`: the file describes BIDS Prov `Activities` for the group of provenance traces
-* `soft`: the file describes BIDS Prov `Software` for the group of provenance traces
-* `env`: the file describes BIDS Prov `Environments` for the group of provenance traces
-* `base`: the file describes common BIDS Prov parameters for the group of provenance traces (version and context for BIDS Prov)
-
 We use the `GeneratedBy` field of JSON sidecars to link to `Activities` that created the file the sidecars refers to.
-
-In this example, we rely on the fact that nodes defined in the `prov/*.prov.jsonld` files have `bids::prov/` as base IRIs.
 
 The `code/merge_prov.py` code is responsible for:
 * merging the JSON provenance traces into the base JSON-LD graph;

@@ -8,13 +8,10 @@ from pathlib import Path
 
 # List of available prov files
 prov_soft_files = [
-  'prov/prov-dcm2niix_soft.prov.json'
 ]
 prov_env_files = [
-  'prov/prov-dcm2niix_env.prov.json'
 ]
 prov_act_files = [
-  'prov/prov-dcm2niix_act.prov.json'
 ]
 sidecar_files = [
   'sub-02/anat/sub-02_T1w.json'
