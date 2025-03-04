@@ -67,12 +67,29 @@ for sidecar_file in sidecar_files:
   with open(sidecar_file, encoding = 'utf-8') as file:
     data = json.load(file)
     if 'GeneratedBy' in data:
-      activity_id = data['GeneratedBy']
+
+      # Get activity data and id
+      activity_data = data['GeneratedBy']
+      activity_id = ""
+      if "Id" in activity_data:
+        activity_id = activity_data['Id']
+      else:
+        activity_id = activity_data
+
+      # Provenance for the data file
       for data_file in data_files:
         base_provenance['Records']['Entities'].append({
           "Id": f"bids::{data_file}",
-          "GeneratedBy": activity_id
+          "GeneratedBy": activity_data
           })
+
+      # Provenance for the sidecar
+      base_provenance['Records']['Entities'].append(
+        {
+          "Id": f"bids::{sidecar_filename}",
+          "GeneratedBy": activity_id
+        }
+        )
 
 # Write jsonld
 with open('prov/merged/prov-dcm2niix.prov.jsonld', 'w', encoding = 'utf-8') as file:
