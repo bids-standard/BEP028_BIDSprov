@@ -144,6 +144,7 @@ We introduce the following BIDS suffixes that are currently not existing:
 * `base`: the file describes common BIDS Prov parameters for the group of provenance traces (version and context for BIDS Prov)
 
 We use the `GeneratedBy` field of JSON sidecars to link to Activities that created the file the sidecars refers to.
+We use the `SidecarGeneratedBy` field of JSON sidecars to link to Activities that created or modified the sidecars itself.
 
 In this example, we rely on the fact that nodes defined in the `prov/*.prov.jsonld` files have `bids::prov/` as base IRIs.
 

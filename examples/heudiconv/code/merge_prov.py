@@ -20,7 +20,6 @@ prov_ent_files = [
 	'prov/prov-heudiconv_ent.prov.json'
 ]
 sidecar_files = [
-	'sub-001/sub-001_scans.json',
 	'sub-001/anat/sub-001_run-1_T1w.json'
 ]
 
@@ -88,6 +87,12 @@ for sidecar_file in sidecar_files:
 					"Id": f"bids::{data_file}",
 					"GeneratedBy": activity_id
 					})
+		if 'SidecarGeneratedBy' in data:
+			activity_id = data['SidecarGeneratedBy']
+			base_provenance['Records']['Entities'].append({
+				"Id": f"bids::{sidecar_filename}",
+				"GeneratedBy": activity_id
+				})
 
 # Write jsonld
 with open('prov/merged/prov-heudiconv.prov.jsonld', 'w', encoding = 'utf-8') as file:
