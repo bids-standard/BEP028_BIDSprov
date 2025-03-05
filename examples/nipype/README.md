@@ -17,7 +17,7 @@ In order to describe provenance records using BIDS Prov, we use:
 
 * the `GeneratedBy` field of JSON sidecar files, already existing in the BIDS specification;
 * modality agnostic files inside the `derivatives/flirt/prov/` directory
-* a modality agnostic file inside the `derivatives/flirt/sub-001/anat/` directory
+* a modality agnostic file inside the `derivatives/flirt/sub-001/anat/prov/` directory
 
 After running the workflow and adding provenance traces, the resulting directory tree looks like this:
 
@@ -35,7 +35,8 @@ After running the workflow and adding provenance traces, the resulting directory
 │       │   └── prov-flirt_soft.prov.json
 │       └── sub-001
 │           └── anat
-│               ├── sub-001_prov-flirt_act.prov.json
+│               ├── prov
+│               │   └── sub-001_prov-flirt_act.prov.json
 │               ├── sub-001_space-mni152nlin2009casym_T1w_brain.json
 │               ├── sub-001_space-mni152nlin2009casym_T1w_brain.nii.gz
 │               ├── sub-001_T1w_brain.json
