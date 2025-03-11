@@ -73,7 +73,7 @@ pip install bids-prov==0.1.0
 bids_prov_visualizer --input_file derivatives/flirt/prov/merged/prov-flirt.prov.jsonld --output_file derivatives/flirt/prov/merged/prov-flirt.prov.png
 ```
 
-![](/examples/nipype/prov/merged/prov-flirt.prov.png)
+![](/examples/nipype/derivatives/flirt/prov/merged/prov-flirt.prov.png)
 
 ## Running the workflow
 
