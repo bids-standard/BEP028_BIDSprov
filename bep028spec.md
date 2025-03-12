@@ -1,10 +1,10 @@
-## BIDS Extension Proposal 28 (BEP028): Provenance
+# BIDS Extension Proposal 28 (BEP028) - Provenance: BIDS-Prov
 
 *version 0.0.1 (draft) - Available under the CC-BY 4.0 International license.*
 
-*Extension moderators/leads: Satra Ghosh &lt;[satra@mit.edu](mailto:satra@mit.edu)> and Camille Maumet &lt;[camille.maumet@inria.fr](mailto:camille.maumet@inria.fr)>*
+**Extension moderators/leads:** Satra Ghosh &lt;[satra@mit.edu](mailto:satra@mit.edu)> and Camille Maumet &lt;[camille.maumet@inria.fr](mailto:camille.maumet@inria.fr)>
 
-*Contributors: Stefan Appelhoff, Chris Markiewicz, Yaroslav Halchenko, Jean-Baptiste Poline, 	Rémi Adon, Michael Dayan, Sarah Saneei, Eric Earl, Tibor Auer.*
+**Contributors:** Stefan Appelhoff, Chris Markiewicz, Yaroslav O. Halchenko, Cyril R. Pernet, Jean-Baptiste Poline, Rémi Adon, Michael Dayan, Sarah Saneei, Eric Earl, Tibor Auer, Ghislain Vaillant, Matthieu Joulot, Omar El Rifai, Ryan J. Cali, Thomas Betton, Cyril Regan, Hermann Courteille, Arnaud Delorme, Boris Clénet.*
 
 We meet every two weeks by videoconference on Mondays at 7-8am PDT / 10am-11am EDT / 3-4pm BST. The group is always open to new contributors interested in neuroimaging data sharing. To join the call or to ask any question, please email us at [incf-nidash-nidm@googlegroups.com](mailto:incf-nidash-nidm@googlegroups.com).
 
@@ -14,7 +14,7 @@ This document contains a draft of the Brain Imaging Data Structure standard exte
 
 This specification is an extension of BIDS, and general principles are shared. The specification should work for many different settings and facilitate the integration with other imaging methods.
 
-To see the original BIDS specification, see [this link](https://bids-specification.readthedocs.io/en/stable/). This document inherits all components of the original specification (e.g. how to store imaging data, events, stimuli and behavioral data), and should be seen as an extension of it, not a replacement.
+To see the original BIDS specification, see [this link](https://bids-specification.readthedocs.io/). This document inherits all components of the original specification (e.g. how to store imaging data, events, stimuli and behavioral data), and should be seen as an extension of it, not a replacement.
 
 ---
 
@@ -47,37 +47,39 @@ But provenance comes up in other contexts as well, which might be addressed at a
 
 Provenance can be captured using different mechanisms, but independent of encoding, always reflects transformations by either humans or software. The interpretability of provenance records requires a consistent vocabulary for provenance as well as an expectation for a consistent terminology for the objects being encoded. 
 
-Note that some level of provenance is already encoded in BIDS (cf. ), this BEP avoids duplicating information already available in sidecar JSONs.
+Note that some level of provenance is already encoded in BIDS (cf. [`GeneratedBy` metadata of a dataset](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata)), this BEP avoids duplicating information already available in sidecar JSONs.
 
 ### 1.3 File naming {#1-3-file-naming}
 
 This document describes the contents of a BIDS Prov file; for naming and organization conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following:
 
-BIDS-Prov files are JSON-LD files --, i.e. a specific type of JSON files that allows encoding graph-like structures with the Resource Description Framework[^1] --  
+BIDS-Prov files are JSON-LD files -i.e. a specific type of JSON files that allows encoding graph-like structures with the Resource Description Framework[^1]-  
 
 They can be stored in two different locations:
 
 **File level provenance.** BIDS-Prov files can be stored immediately alongside the BIDS file (or BIDS-Derivatives file) they apply to. Each BIDS-Prov file must meet the following naming convention:
 
 ```
+
 sub-<label>/[ses-<label>/]sub-<label>[_ses-<label>]_<suffix>_prov.jsonld
 prov/<sub_file_path>.prov.jsonld
 ```
 
 At the file level, provenance follows some of the same concepts at the dataset level, but is specifically about the current file under consideration.
 
-**Participant level provenance. **BIDS-Prov files can be stored in a `prov/` folder inside a subfolder. Each BIDS-Prov file must meet the following naming convention:
+**Participant level provenance.**
+BIDS-Prov files can be stored in a `prov/` folder inside a subfolder. Each BIDS-Prov file must meet the following naming convention:
 
 
 ```
 prov/sub-<label>/[ses-<label>/]sub-<label>[_ses-<label>]_<suffix>_prov.jsonld
 prov/sub-<label>/[ses-<label>/]<modality>/sub-<label>[_ses-<label>]_<suffix>_prov.jsonld
 prov/<label>_prov.jsonld
+```
 
 Participant-level provenance -- Not related to a given file but all related to a given subject!
 
 We need to think about provenance of BIDS-derivatives !!
-```
 
 **Dataset level provenance.** BIDS-Prov files can be stored in a `prov/` directory immediately below the BIDS dataset (or BIDS-Derivatives dataset) root. Each BIDS-Prov file must meet the following naming convention:
 
@@ -91,7 +93,7 @@ It is RECOMMENDED to place entity (file) related provenance alongside the files 
 
 Note: since these jsonld documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
 
-### 1.2 Top-level structure {#1-2-top-level-structure}
+### 1.4 Top-level structure {#1-4-top-level-structure}
 
 #### File-level provenance
 
@@ -240,7 +242,6 @@ A complete schema for the model file to facilitate specification and validation 
 Each provenance record is composed of a set of Activities that represent the transformations that have been applied to the data. Each Activity can use Entities as inputs and outputs. The Agent specifies the software package.
 
 ### 2.1 Activity {#2-1-activity}
-
 Each Activity record has the following fields:
 
 <table>
@@ -251,51 +252,51 @@ Each Activity record has the following fields:
    </td>
   </tr>
   <tr>
-   <td><code>@id</code>
+   <td><code>Id</code>
    </td>
-   <td>REQUIRED. A UUID/URN. An (randomly-assigned) identifier for the activity.
-   </td>
-  </tr>
-  <tr>
-   <td><code>label</code>
-   </td>
-   <td>REQUIRED. String. Name of the tool used (e.g. “bet”).
+   <td>REQUIRED. Unique URIs (for example a UUID). Identifier for the  activity.
    </td>
   </tr>
   <tr>
-   <td><code>command</code>
+   <td><code>Label</code>
    </td>
-   <td>REQUIRED. String. Command used to run the tool.
-   </td>
-  </tr>
-  <tr>
-   <td><code>parameters</code>
-   </td>
-   <td>OPTIONAL. Dict. A dictionary defining the parameters as key-value pairs.
+   <td>REQUIRED. String. Name of the tool, script, or function used (e.g. “bet”, "recon-all", "myFunc", "docker").
    </td>
   </tr>
   <tr>
-   <td><code>wasAssociatedWith</code>
+   <td><code>Command</code>
+   </td>
+   <td>REQUIRED. String. Command used to run the tool, including all parameters.
+   </td>
+  </tr>
+  <tr>
+   <td><code>AssociatedWith</code>
    </td>
    <td>OPTIONAL. UUID. Identifier of the software package used to compute this activity (the corresponding Agent must be defined with its own Agent record).
    </td>
   </tr>
   <tr>
-   <td><code>used</code>
+   <td><code>Used</code>
    </td>
-   <td>OPTIONAL. UUID. Identifier of an entity used by this activity (the corresponding Entity must be defined with its own Entity record).
+   <td>OPTIONAL. List. Identifiers (UUIDs) of entities or environments used by this activity. The corresponding Entities (resp. Environments) must be defined with their own Entity (resp. Environment) record).
    </td>
   </tr>
   <tr>
-   <td><code>type</code>
+   <td><code>Type</code>
    </td>
    <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the activity.
    </td>
   </tr>
   <tr>
-   <td><code>startedAtTime</code>
+   <td><code>StartedAtTime</code>
    </td>
    <td>OPTIONAL. xsd:<em>dateTime. </em>A timestamp tracking the start when this activity started
+   </td>
+  </tr>
+  <tr>
+   <td><code>EndedAtTime</code>
+   </td>
+   <td>OPTIONAL. xsd:<em>dateTime. </em>A timestamp tracking when this activity ended
    </td>
   </tr>
 </table>
@@ -312,33 +313,39 @@ Each Entity (as a record or a top-level entity) has the following fields:
    </td>
   </tr>
   <tr>
-   <td><code>@id</code>
+   <td><code>Id</code>
    </td>
-   <td>OPTIONAL. UUID. An (randomly-assigned) identifier for the entity.
+   <td>REQUIRED. Unique URIs (for example a UUID). Identifier for the entity.
    </td>
   </tr>
   <tr>
-   <td><code>label</code>
+   <td><code>Label</code>
    </td>
    <td>REQUIRED. String. A name for the entity.
    </td>
   </tr>
   <tr>
-   <td><code>atLocation</code>
+   <td><code>AtLocation</code>
    </td>
    <td>OPTIONAL. String. For input files, this is the relative path to the file on disk.
    </td>
   </tr>
   <tr>
-   <td><code>wasGeneratedBy</code>
+   <td><code>GeneratedBy</code>
    </td>
    <td>OPTIONAL. UUID. Identifier of the activity which generated this entity (the corresponding Activity must be defined with its own Activity record).
    </td>
   </tr>
   <tr>
-   <td><code>type</code>
+   <td><code>Type</code>
    </td>
    <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the activity.
+   </td>
+  </tr>
+  <tr>
+   <td><code>Digest</code>
+   </td>
+   <td>RECOMMENDED. Dict. For files, this would include checksums of files. It would take the form {"<checksum-name>": "value"}.
    </td>
   </tr>
 </table>
@@ -355,25 +362,25 @@ Including an Agent record is OPTIONAL. If included, each Agent record has the fo
    </td>
   </tr>
   <tr>
-   <td><code>@id</code>
+   <td><code>Id</code>
    </td>
-   <td>REQUIRED. UUID. An (randomly-assigned) identifier for the software (this identifier will be used to associated activities with this software).
+   <td>REQUIRED. A unique identifier like a UUID that will be used to associate activities with this software (e.g., urn:1264-1233-11231-12312, "urn:bet-o1ef4rt"
    </td>
   </tr>
   <tr>
-   <td><code>rrid</code>
+   <td><code>AltIdentifier</code>
    </td>
    <td>OPTIONAL. URI. URI of the RRID for this software package (cf. <a href="https://scicrunch.org/resources/about/Getting%20Started">scicrunch</a>).
    </td>
   </tr>
   <tr>
-   <td><code>label</code>
+   <td><code>Label</code>
    </td>
    <td>REQUIRED. String. Name of the software.
    </td>
   </tr>
   <tr>
-   <td><code>version</code>
+   <td><code>Version</code>
    </td>
    <td>REQUIRED. String. Version of the software.
    </td>
@@ -382,7 +389,7 @@ Including an Agent record is OPTIONAL. If included, each Agent record has the fo
 
 ### 2.4 Environments (Optional) {#2-4-environments-optional}
 
-Information about the environment in which the provenance record was obtained is modeled with an environment record. 
+Information about the environment in which the provenance record was obtained is modeled with an environment record.
 
 Environment records are OPTIONAL. If included, each environment record MUST have the following fields:
 
@@ -394,30 +401,53 @@ Environment records are OPTIONAL. If included, each environment record MUST have
    </td>
   </tr>
   <tr>
-   <td><code>@id</code>
+   <td><code>Id</code>
    </td>
-   <td>REQUIRED. UUID. A (randomly-assigned) identifier for the environment (this identifier will be used to associated activities with this environment).
+   <td>REQUIRED. Unique URIs (for example a UUID). Identifier for the environment (this identifier will be used to associated activities with this environment).
    </td>
   </tr>
   <tr>
-   <td><code>label</code>
+   <td><code>Label</code>
    </td>
    <td>REQUIRED. String. Name of the software.
    </td>
   </tr>
   <tr>
-   <td><code>env_vars</code>
+   <td><code>EnvVars</code>
    </td>
    <td>OPTIONAL. Dict. A dictionary defining the environment variables as key-value pairs. 
    </td>
   </tr>
   <tr>
-   <td><code>...</code>
+   <td><code>OperatingSystem</code>
    </td>
-   <td>
+   <td>OPTIONAL. String. Name of the operating system.
+   </td>
+  </tr>
+  <tr>
+   <td><code>Dependencies</code>
+   </td>
+   <td>OPTIONAL. Dict. A dictionary defining the software used and their versions as key-value pairs.
    </td>
   </tr>
 </table>
+
+## 3 Graph model {#3-graph-model}
+
+Note: since these jsonld documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
+
+## 4 Examples
+A list of fMRI examples for BIDS-Prov are available for SPM, FSL and AFNI in: https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples 
+
+## 5 Future perspectives
+
+Beyond what is covered in the current specification, provenance comes up in other contexts as well, which might be addressed at a later stage:
+1. For datasets and derivatives, provenance can also include details of why the data were collected in the first place covering hypotheses, claims, and prior publications. Provenance can encode support for which claims were supported by future analyses.
+2. Provenance can involve information about people and institutions involved in a study.
+3. Provenance records can highlight reuse of datasets while providing appropriate attribution to the original dataset generators as well as future transformers.  
+4. Details of stimulus presentation and cognitive paradigms, and clinical and neuropsychiatric assessments, each come with their own details of provenance.
+5. Transformations made by humans (e.g., editing freesurfer, adding quality evaluations).
+6. The interpretability of provenance records requires a consistent vocabulary for provenance as well as an expectation for a consistent terminology for the objects being encoded. While the current specification focuses on the former, the latter (i.e. consistent terminology for the objects being encoded) will require additional efforts.
 
 ## 4 Positioning with respect to other BIDS models {#4-positioning-with-respect-to-other-bids-models}
 
@@ -431,8 +461,6 @@ Comments/things to discuss/incorporate:
 ### 4.2 Justification for Separating Provenance from file JSON {#4-2-justification-for-separating-provenance-from-file-json}
 
 Provenance is information about a file, including any metadata that is relevant to the file itself. Thus any BIDS data file and its associated JSON sidecar metadata together constitute a unique entity. As such, one may want to record the provenance of the JSON file as much as the provenance of the BIDS file. In addition, separating the provenance as a separate file for now, allows this to be an OPTIONAL component, and by encoding provenance as a JSON-LD document allows capturing the provenance as an individual record or multiple records distributed throughout the dataset.
-
-## 5 Graph model {#5-graph-model}
 
 ## 6 How to encode your workflow with BIDS-prov
 
