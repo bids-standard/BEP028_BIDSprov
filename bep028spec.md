@@ -138,12 +138,10 @@ Here is an example:
    ├─ sub-001/
    │  ├─ prov/
    │  │  └─ sub-001_prov-dcm2niix_act.json
-   │  ├─ ses-01/
-   │  │  ├─ prov/
-   │  │  │  └─ sub-001_ses-01_prov-dcm2niix_act.json
-   │  │  └─ ...
-   │  ├─ ses-02/
-   │  └─ ...
+   │  └─ ses-01/
+   │     ├─ prov/
+   │     │  └─ sub-001_ses-01_prov-dcm2niix_act.json
+   │     └─ ...
    ├─ sub-002/
    │  ├─ prov/
    │  │  └─ sub-002_prov-dcm2niix_act.json
@@ -152,7 +150,7 @@ Here is an example:
    └─ dataset_description.json
 ```
 
-#### Dataset level provenance
+#### Dataset level provenance - `prov/` directory
 
 BIDS-Prov files can be stored in a `prov/` directory immediately below the BIDS dataset (or BIDS-Derivatives dataset) root. At the dataset level, provenance can be about any BIDS file in the dataset.
 
@@ -179,6 +177,43 @@ Here is an example:
    ├─ sub-003/
    ├─ ...
    └─ dataset_description.json
+```
+
+#### Dataset level provenance - `dataset_description.json` file
+
+In the current version of the BIDS specification (1.10.0), the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) field of the `dataset_description.json` files allows to specify provenance of the dataset.
+
+> [!NOTE] BEP028 proposes that the following description replaces the `GeneratedBy` field as part of a major revision of the BIDS specification. Until this happens, BIDS Prov provenance records can be stored in a `GeneratedByProv` field.
+
+Here is an example of a `GeneratedByProv` field containing a complete description of an `Entity`:
+
+```JSON
+{
+    "GeneratedByProv": {
+        "Id": "urn:conversion-00f3a18f",
+        "Label": "Conversion",
+        "Command": "dcm2niix -i -o ",
+        "AssociatedWith": {
+            "Id": "urn:dcm2niix-70ug8pl5",
+            "Type": "Agent",
+            "Label": "dcm2niix",
+            "Version": "v1.1.3",
+            "Used": {
+                "Id": "urn:environment-gjqhxnbc",
+                "Type": "Environment",
+                "Label": "Docker container"
+            }
+        }
+    }
+}
+```
+
+Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity` described in another BIDS-Prov file:
+
+```JSON
+{
+    "GeneratedByProv": "urn:conversion-00f3a18f"
+}
 ```
 
 ### 1.4 Top-level structure {#1-4-top-level-structure}
