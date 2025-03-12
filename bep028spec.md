@@ -51,9 +51,59 @@ Note that some level of provenance is already encoded in BIDS (cf. [`GeneratedBy
 
 ### 1.3 File naming {#1-3-file-naming}
 
-This section describes the places where BIDS-Prov contents can be stored; for naming and organization conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following.
+This section describes additions to the naming conventions in the BIDS specification for BIDS-Prov files.
 
-BIDS-Prov files contain JSON or JSON-LD data. JSON-LD is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework[^1].
+For further information about naming conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following.
+
+#### File formats
+
+BIDS-Prov files contain JSON or JSON-LD data.
+
+[JSON-LD](https://www.w3.org/TR/json-ld11/) is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework[^1].
+
+When using a `.jsonld` extension, the content of the file must be JSON-LD.
+
+#### The `prov` entity
+
+We introduce the following BIDS entity:
+
+* `prov`
+    * Full name: Provenance records
+    * Format: `prov-<label>`
+    * Definition: A grouping of provenance records. Defining multiple provenance records groups is appropriate when several processings have been performed on data.
+
+In the following example, two separated processes (`conversion` and `smoothing`) were performed on the data, resulting in two groups of provenance records.
+
+```
+└─ dataset
+   ├─ sub-001/
+   │  └─ prov/
+   │     └─ sub-001_prov-conversion_act.json
+   └─ prov/
+      ├─ prov-conversion_base.json
+      ├─ prov-conversion_software.json
+      ├─ prov-smoothing_base.json
+      ├─ prov-smoothing_activities.json
+      ├─ prov-smoothing_software.json
+      ├─ prov-smoothing_entities.json
+      └─ ... 
+```
+
+#### Suffixes
+
+The following BIDS suffixes specify the contents of a provenance file:
+
+* `act`: the file describes BIDS Prov Activities for the group of provenance records
+* `soft`: the file describes BIDS Prov Software for the group of provenance records
+* `ent`: the file describes BIDS Prov Entities for the group of provenance records
+* `env`: the file describes BIDS Prov Environments for the group of provenance records
+* `base`: the file describes common BIDS Prov parameters for the group of provenance records (version and context for BIDS Prov)
+
+### 1.4 Provenance description levels {#1-4-provenance-description-levels}
+
+This section describes the places where BIDS-Prov contents can be stored.
+
+For further information about organization conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following.
 
 They can be stored in different locations:
 * at dataset level ;
