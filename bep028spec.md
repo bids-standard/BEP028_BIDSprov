@@ -51,47 +51,135 @@ Note that some level of provenance is already encoded in BIDS (cf. [`GeneratedBy
 
 ### 1.3 File naming {#1-3-file-naming}
 
-This document describes the contents of a BIDS Prov file; for naming and organization conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following:
+This section describes the places where BIDS-Prov contents can be stored; for naming and organization conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following.
 
-BIDS-Prov files are JSON-LD files -i.e. a specific type of JSON files that allows encoding graph-like structures with the Resource Description Framework[^1]-  
+BIDS-Prov files contain JSON or JSON-LD data. JSON-LD is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework[^1].
 
-They can be stored in two different locations:
+They can be stored in different locations:
+* at dataset level ;
+* inside dataset subdirectories ;
+* at file level.
 
-**File level provenance.** BIDS-Prov files can be stored immediately alongside the BIDS file (or BIDS-Derivatives file) they apply to. Each BIDS-Prov file must meet the following naming convention:
+It is recommanded that the records are stored at the level they describe. E.g.:
+* an Activity that generated as set of files for several subjects of the dataset must be described at the dataset level ;
+* an Activity that generated as set of files for one subject only must be described at the subject's subdirectory level ;
+* an Activity that generated one file only can be described at this file's level.
 
-```
+#### File level provenance
 
-sub-<label>/[ses-<label>/]sub-<label>[_ses-<label>]_<suffix>_prov.jsonld
-prov/<sub_file_path>.prov.jsonld
-```
-
-At the file level, provenance follows some of the same concepts at the dataset level, but is specifically about the current file under consideration.
-
-**Participant level provenance.**
-BIDS-Prov files can be stored in a `prov/` folder inside a subfolder. Each BIDS-Prov file must meet the following naming convention:
-
-
-```
-prov/sub-<label>/[ses-<label>/]sub-<label>[_ses-<label>]_<suffix>_prov.jsonld
-prov/sub-<label>/[ses-<label>/]<modality>/sub-<label>[_ses-<label>]_<suffix>_prov.jsonld
-prov/<label>_prov.jsonld
-```
-
-Participant-level provenance -- Not related to a given file but all related to a given subject!
-
-We need to think about provenance of BIDS-derivatives !!
-
-**Dataset level provenance.** BIDS-Prov files can be stored in a `prov/` directory immediately below the BIDS dataset (or BIDS-Derivatives dataset) root. Each BIDS-Prov file must meet the following naming convention:
+BIDS-Prov provenance metadata can be stored inside the [JSON sidecar of any BIDS file]() (or BIDS-Derivatives file) it applies to.
+In this case, the BIDS-Prov content only refers to the associated data file.
+The JSON sidecar file must have the following naming convention:
 
 ```
-<label>_prov.jsonld
+sub-<label>/
+    [ses-<label>/]
+        sub-<label>[_ses-<label>]_<suffix>.json
 ```
 
-At the dataset level, provenance could be about the dataset itself, or about any BIDS file in the dataset. 
+The `GenearatedBy` field must describe the `Activity` that generated the data file, either with a reference to an existing `Id`:
 
-It is RECOMMENDED to place entity (file) related provenance alongside the files where it is possible (i.e. file level provenance). Dataset level provenance may evolve as new data are added, which may include sourcedata, BIDS data, and BIDS derived data. One option is to make use of <code>[https://w3c.github.io/json-ld-syntax/#named-graphs](https://w3c.github.io/json-ld-syntax/#named-graphs)</code>.
+```JSON
+{
+  "GeneratedBy": "urn:conversion-00f3a18f",
+}
+```
 
-Note: since these jsonld documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
+or with a complete definition of the `Activity` if it was not defined elsewhere.
+
+```JSON
+{
+  "GeneratedBy": {
+    "Id": "urn:conversion-00f3a18f",
+    "Label": "Conversion",
+    "Command": "convert -i raw_file.ext -o sub-001_ses-01_T1w.nii.gz"
+  }
+}
+```
+
+No other field is allowed to describe provenance.
+
+Here is an example:
+```
+└─ example_dataset
+   ├─ sub-001/
+   │  └─ ses-01/
+   │     └─ anat/
+   │        ├─ sub-001_ses-01_T1w.nii.gz
+   │        └─ sub-001_ses-01_T1w.json
+   ├─ sub-002/
+   │  └─ ses-01/
+   │     └─ anat/
+   │        ├─ sub-002_ses-01_T1w.nii.gz
+   │        └─ sub-002_ses-01_T1w.json
+   ├─ ...
+   └─ dataset_description.json
+```
+
+#### Subdirectories level provenance
+
+BIDS-Prov files can be stored in a `prov/` directory in any subdirectory of the dataset (or BIDS-Derivatives directories).
+
+In this case, the provenance metadata applies to the data files inside or below in the directory tree ; as stated by [BIDS common principles](https://bids-specification.readthedocs.io/en/stable/common-principles.html#filesystem-structure).
+
+Each BIDS-Prov file must meet the following naming convention. The `label` of the `prov` entity is arbitrary, and `suffix` is one of listed in [§ Suffixes](#suffixes).
+
+```
+sub-<label>/
+  [ses-<label>/]
+    prov/
+      sub-<label>[_ses-<label>]_prov-<label>_<suffix>.json
+```
+
+Here is an example:
+
+```
+└─ dataset
+   ├─ sub-001/
+   │  ├─ prov/
+   │  │  └─ sub-001_prov-dcm2niix_act.json
+   │  ├─ ses-01/
+   │  │  ├─ prov/
+   │  │  │  └─ sub-001_ses-01_prov-dcm2niix_act.json
+   │  │  └─ ...
+   │  ├─ ses-02/
+   │  └─ ...
+   ├─ sub-002/
+   │  ├─ prov/
+   │  │  └─ sub-002_prov-dcm2niix_act.json
+   │  └─ ...
+   ├─ ...
+   └─ dataset_description.json
+```
+
+#### Dataset level provenance
+
+BIDS-Prov files can be stored in a `prov/` directory immediately below the BIDS dataset (or BIDS-Derivatives dataset) root. At the dataset level, provenance can be about any BIDS file in the dataset.
+
+Each BIDS-Prov file must meet the following naming convention, where `label` can be arbitrary, `suffix` is one of listed in [§ Suffixes](#suffixes), and `suffix` is either `json` or `jsonld`
+
+```
+prov/
+  [<subdirectories>/]
+    prov-<label>_<suffix>.<extension>
+```
+
+Here is an example:
+
+```
+└─ dataset
+   ├─ prov/
+   │  ├─ dcm2niix/
+   │  │  └─ prov-dcm2niix_base.jsonld
+   │  ├─ prov-preprocessing_base.json
+   │  ├─ prov-preprocessing_soft.json
+   │  └─ ... 
+   ├─ sub-001/
+   ├─ sub-002/
+   ├─ sub-003/
+   ├─ ...
+   └─ dataset_description.json
+```
 
 ### 1.4 Top-level structure {#1-4-top-level-structure}
 
@@ -239,7 +327,7 @@ A complete schema for the model file to facilitate specification and validation 
 
 ## 2. Provenance records {#2-provenance-records}
 
-Each provenance record is composed of a set of Activities that represent the transformations that have been applied to the data. Each Activity can use Entities as inputs and outputs. The Agent specifies the software package.
+Each provenance record is composed of a set of Activities that represent the transformations that have been applied to the data. Each Activity can use Entities as inputs and outputs. The Agent specifies the software package. Environments specify the software environment in which the provenance record was obtained.
 
 ![](img/records.svg)
 
@@ -389,7 +477,7 @@ Including an Agent record is OPTIONAL. If included, each Agent record has the fo
   </tr>
 </table>
 
-### 2.4 Environments (Optional) {#2-4-environments-optional}
+### 2.4 Environment (Optional) {#2-4-environments-optional}
 
 Information about the environment in which the provenance record was obtained is modeled with an environment record.
 
