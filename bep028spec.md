@@ -241,6 +241,8 @@ A complete schema for the model file to facilitate specification and validation 
 
 Each provenance record is composed of a set of Activities that represent the transformations that have been applied to the data. Each Activity can use Entities as inputs and outputs. The Agent specifies the software package.
 
+![](img/records.svg)
+
 ### 2.1 Activity {#2-1-activity}
 Each Activity record has the following fields:
 
