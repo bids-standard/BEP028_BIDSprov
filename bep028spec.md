@@ -47,32 +47,290 @@ But provenance comes up in other contexts as well, which might be addressed at a
 
 Provenance can be captured using different mechanisms, but independent of encoding, always reflects transformations by either humans or software. The interpretability of provenance records requires a consistent vocabulary for provenance as well as an expectation for a consistent terminology for the objects being encoded. 
 
-Note that some level of provenance is already encoded in BIDS (cf. [`GeneratedBy` metadata of a dataset](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata)), this BEP avoids duplicating information already available in sidecar JSONs.
+Note that some level of provenance is already encoded in BIDS (cf. the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) of the `dataset_description.json` file that contains the metadata of a dataset), this BEP avoids duplicating information already available in sidecar JSONs.
 
-### 1.3 File naming {#1-3-file-naming}
+### 1.3 Provenance format {#1-3-provenance-format}
 
-This section describes additions to the naming conventions in the BIDS specification for BIDS-Prov files.
+BIDS-Prov metadata is written in JSON or JSON-LD.
+
+[JSON-LD](https://www.w3.org/TR/json-ld11/) is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework[^1].
+
+TODO: written in a single file (JSON-LD) or several JSON files that can be aggregated into one JSON-LD
+TODO: BIDS-Prov tools
+
+## 2. Provenance records {#2-provenance-records}
+
+Each provenance record is composed of a set of Activities that represent the transformations that have been applied to the data. Each Activity can use Entities as inputs and outputs. The Agent specifies the software package. Environments specify the software environment in which the provenance record was obtained.
+
+![](img/records.svg)
+
+### 2.1 Activity {#2-1-activity}
+Each Activity record is a JSON Object with the following fields:
+
+<table>
+  <tr>
+   <td><strong>Key name</strong>
+   </td>
+   <td><strong>Description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td><code>Id</code>
+   </td>
+   <td>REQUIRED. Unique URIs (for example a UUID). Identifier for the  activity.
+   </td>
+  </tr>
+  <tr>
+   <td><code>Label</code>
+   </td>
+   <td>REQUIRED. String. Name of the tool, script, or function used (e.g. “bet”, "recon-all", "myFunc", "docker").
+   </td>
+  </tr>
+  <tr>
+   <td><code>Command</code>
+   </td>
+   <td>REQUIRED. String. Command used to run the tool, including all parameters.
+   </td>
+  </tr>
+  <tr>
+   <td><code>AssociatedWith</code>
+   </td>
+   <td>OPTIONAL. UUID. Identifier of the software package used to compute this activity (the corresponding Agent must be defined with its own Agent record).
+   </td>
+  </tr>
+  <tr>
+   <td><code>Used</code>
+   </td>
+   <td>OPTIONAL. List. Identifiers (UUIDs) of entities or environments used by this activity. The corresponding Entities (resp. Environments) must be defined with their own Entity (resp. Environment) record).
+   </td>
+  </tr>
+  <tr>
+   <td><code>Type</code>
+   </td>
+   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the activity.
+   </td>
+  </tr>
+  <tr>
+   <td><code>StartedAtTime</code>
+   </td>
+   <td>OPTIONAL. xsd:<em>dateTime. </em>A timestamp tracking when this activity started
+   </td>
+  </tr>
+  <tr>
+   <td><code>EndedAtTime</code>
+   </td>
+   <td>OPTIONAL. xsd:<em>dateTime. </em>A timestamp tracking when this activity ended
+   </td>
+  </tr>
+</table>
+
+Example of an Activity record:
+```JSON
+{
+    "Id": "bids::prov/#conversion-00f3a18f",
+    "Label": "Dicom to Nifti conversion",
+    "Command": "dcm2niix -o . -f sub-%i/anat/sub-%i_T1w sourcedata/dicoms",
+    "AssociatedWith": "bids::prov/#dcm2niix-khhkm7u1",
+    "Used": [
+      "bids::prov/#fedora-uldfv058",
+      "bids::sourcedata/dicoms"
+    ],
+    "Type": "Activity",
+    "StartedAtTime": "2025-03-13T10:26:00",
+    "EndedAtTime": "2025-03-13T10:26:05"
+}
+```
+
+### 2.2 Entity {#2-2-entity}
+Each Entity record is a JSON Object with the following fields:
+
+<table>
+  <tr>
+   <td><strong>Key name</strong>
+   </td>
+   <td><strong>Description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td><code>Id</code>
+   </td>
+   <td>REQUIRED. Unique URIs (for example a UUID). Identifier for the entity.
+   </td>
+  </tr>
+  <tr>
+   <td><code>Label</code>
+   </td>
+   <td>REQUIRED. String. A name for the entity.
+   </td>
+  </tr>
+  <tr>
+   <td><code>AtLocation</code>
+   </td>
+   <td>OPTIONAL. String. For input files, this is the relative path to the file on disk.
+   </td>
+  </tr>
+  <tr>
+   <td><code>GeneratedBy</code>
+   </td>
+   <td>OPTIONAL. UUID. Identifier of the activity which generated this entity (the corresponding Activity must be defined with its own Activity record).
+   </td>
+  </tr>
+  <tr>
+   <td><code>Type</code>
+   </td>
+   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the activity.
+   </td>
+  </tr>
+  <tr>
+   <td><code>Digest</code>
+   </td>
+   <td>RECOMMENDED. Dict. For files, this would include checksums of files. It would take the form {"<checksum-name>": "value"}.
+   </td>
+  </tr>
+</table>
+
+Here is an example of an Entity record:
+```JSON
+{
+    "Id": "bids::sub-02/anat/sub-02_T1w.nii",
+    "Label": "sub-02_T1w.nii",
+    "AtLocation": "sub-02/anat/sub-02_T1w.nii",
+    "GeneratedBy": "bids::prov/#conversion-00f3a18f",
+    "Type": "Activity",
+    "Digest": {
+        "SHA-256": "42d8faeaa6d4988a9233a95860ef3f481fb0daccce4c81bc2c1634ea8cf89e52"
+    }
+}
+```
+
+### 2.3 Agent (Optional) {#2-3-agent-optional}
+Agent records are OPTIONAL. If included, each Agent record is a JSON Object with the following fields:
+
+<table>
+  <tr>
+   <td><strong>Key name</strong>
+   </td>
+   <td><strong>Description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td><code>Id</code>
+   </td>
+   <td>REQUIRED. A unique identifier like a UUID that will be used to associate activities with this software (e.g., urn:1264-1233-11231-12312, "urn:bet-o1ef4rt"
+   </td>
+  </tr>
+  <tr>
+   <td><code>AltIdentifier</code>
+   </td>
+   <td>OPTIONAL. URI. URI of the RRID for this software package (cf. <a href="https://scicrunch.org/resources/about/Getting%20Started">scicrunch</a>).
+   </td>
+  </tr>
+  <tr>
+   <td><code>Label</code>
+   </td>
+   <td>REQUIRED. String. Name of the software.
+   </td>
+  </tr>
+  <tr>
+   <td><code>Version</code>
+   </td>
+   <td>REQUIRED. String. Version of the software.
+   </td>
+  </tr>
+</table>
+
+Here is an example of an Agent record:
+```JSON
+{
+    "Id": "bids::prov/#dcm2niix-khhkm7u1",
+    "AltIdentifier": "RRID:SCR_023517",
+    "Label": "dcm2niix",
+    "Version": "v1.0.20220720"
+}
+```
+
+### 2.4 Environment (Optional) {#2-4-environments-optional}
+Environment records are OPTIONAL. If included, each Environment record is a JSON Object with the following fields:
+
+<table>
+  <tr>
+   <td><strong>Key name</strong>
+   </td>
+   <td><strong>Description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td><code>Id</code>
+   </td>
+   <td>REQUIRED. Unique URIs (for example a UUID). Identifier for the environment (this identifier will be used to associated activities with this environment).
+   </td>
+  </tr>
+  <tr>
+   <td><code>Label</code>
+   </td>
+   <td>REQUIRED. String. Name of the software.
+   </td>
+  </tr>
+  <tr>
+   <td><code>EnvVars</code>
+   </td>
+   <td>OPTIONAL. Dict. A dictionary defining the environment variables as key-value pairs. 
+   </td>
+  </tr>
+  <tr>
+   <td><code>OperatingSystem</code>
+   </td>
+   <td>OPTIONAL. String. Name of the operating system.
+   </td>
+  </tr>
+  <tr>
+   <td><code>Dependencies</code>
+   </td>
+   <td>OPTIONAL. Dict. A dictionary defining the software used and their versions as key-value pairs.
+   </td>
+  </tr>
+</table>
+
+Here is an example of an Environment record:
+```JSON
+{
+    "Id": "bids::prov/#fedora-uldfv058",
+    "Label": "Fedora release 36 (Thirty Six)",
+    "OperatingSystem": "GNU/Linux 6.2.15-100.fc36.x86_64"
+}
+```
+
+## 3. Additions to BIDS {#3-additions-to-bids}
+
+### 3.1 File naming {#3-1-file-naming}
+
+hence having either a `.json` or a `.jsonld` extension.
+When using a `.jsonld` extension, the contents of the file must be JSON-LD.
+As JSON-LD is JSON, `*.jsonld` files can contain JSON.
+
+This section describes additions to the BIDS naming conventions for BIDS-Prov files.
 
 For further information about naming conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following.
 
 #### File formats
 
-BIDS-Prov files contain JSON or JSON-LD data.
+BIDS-Prov files contain JSON or JSON-LD data, hence having either a `.json` or a `.jsonld` extension.
 
 [JSON-LD](https://www.w3.org/TR/json-ld11/) is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework[^1].
 
-When using a `.jsonld` extension, the content of the file must be JSON-LD.
+When using a `.jsonld` extension, the contents of the file must be JSON-LD.
+As JSON-LD is JSON, `*.jsonld` files can contain JSON.
 
 #### The `prov` entity
 
-We introduce the following BIDS entity:
+BIDS-Prov introduces the following entity:
 
 * `prov`
     * Full name: Provenance records
     * Format: `prov-<label>`
     * Definition: A grouping of provenance records. Defining multiple provenance records groups is appropriate when several processings have been performed on data.
 
-In the following example, two separated processes (`conversion` and `smoothing`) were performed on the data, resulting in two groups of provenance records.
+In the following example, two separated processings (`conversion` and `smoothing`) were performed on the data, resulting in two groups of provenance records.
 
 ```
 └─ dataset
@@ -81,17 +339,17 @@ In the following example, two separated processes (`conversion` and `smoothing`)
    │     └─ sub-001_prov-conversion_act.json
    └─ prov/
       ├─ prov-conversion_base.json
-      ├─ prov-conversion_software.json
+      ├─ prov-conversion_soft.json
       ├─ prov-smoothing_base.json
-      ├─ prov-smoothing_activities.json
-      ├─ prov-smoothing_software.json
-      ├─ prov-smoothing_entities.json
+      ├─ prov-smoothing_act.json
+      ├─ prov-smoothing_soft.json
+      ├─ prov-smoothing_ent.json
       └─ ... 
 ```
 
 #### Suffixes
 
-The following BIDS suffixes specify the contents of a provenance file:
+The following BIDS suffixes (cf. [Definitions](https://bids-specification.readthedocs.io/en/stable/common-principles.html#definitions)) specify the contents of a provenance file:
 
 * `act`: the file describes BIDS Prov Activities for the group of provenance records
 * `soft`: the file describes BIDS Prov Software for the group of provenance records
@@ -99,13 +357,13 @@ The following BIDS suffixes specify the contents of a provenance file:
 * `env`: the file describes BIDS Prov Environments for the group of provenance records
 * `base`: the file describes common BIDS Prov parameters for the group of provenance records (version and context for BIDS Prov)
 
-### 1.4 Provenance description levels {#1-4-provenance-description-levels}
+### 3.2 Provenance description levels {#3-2-provenance-description-levels}
 
 This section describes the places where BIDS-Prov contents can be stored.
 
 For further information about organization conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following.
 
-They can be stored in different locations:
+BIDS-Prov contents can be stored in different locations:
 * at dataset level ;
 * inside dataset subdirectories ;
 * at file level.
@@ -266,7 +524,7 @@ Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity
 }
 ```
 
-### 1.4 Top-level structure {#1-4-top-level-structure}
+### 3.3 Top-level structure {#3-3-top-level-structure}
 
 #### File-level provenance
 
@@ -410,204 +668,9 @@ A skeleton for a dataset level BIDS-Prov JSON-LD file looks like this:
 
 A complete schema for the model file to facilitate specification and validation is available from [https://github.com/bids-standard/BEP028_BIDSprov](https://github.com/bids-standard/BEP028_BIDSprov). In the event of disagreements between the schema and the specification, the specification is authoritative.
 
-## 2. Provenance records {#2-provenance-records}
 
-Each provenance record is composed of a set of Activities that represent the transformations that have been applied to the data. Each Activity can use Entities as inputs and outputs. The Agent specifies the software package. Environments specify the software environment in which the provenance record was obtained.
 
-![](img/records.svg)
-
-### 2.1 Activity {#2-1-activity}
-Each Activity record has the following fields:
-
-<table>
-  <tr>
-   <td><strong>Key name</strong>
-   </td>
-   <td><strong>Description</strong>
-   </td>
-  </tr>
-  <tr>
-   <td><code>Id</code>
-   </td>
-   <td>REQUIRED. Unique URIs (for example a UUID). Identifier for the  activity.
-   </td>
-  </tr>
-  <tr>
-   <td><code>Label</code>
-   </td>
-   <td>REQUIRED. String. Name of the tool, script, or function used (e.g. “bet”, "recon-all", "myFunc", "docker").
-   </td>
-  </tr>
-  <tr>
-   <td><code>Command</code>
-   </td>
-   <td>REQUIRED. String. Command used to run the tool, including all parameters.
-   </td>
-  </tr>
-  <tr>
-   <td><code>AssociatedWith</code>
-   </td>
-   <td>OPTIONAL. UUID. Identifier of the software package used to compute this activity (the corresponding Agent must be defined with its own Agent record).
-   </td>
-  </tr>
-  <tr>
-   <td><code>Used</code>
-   </td>
-   <td>OPTIONAL. List. Identifiers (UUIDs) of entities or environments used by this activity. The corresponding Entities (resp. Environments) must be defined with their own Entity (resp. Environment) record).
-   </td>
-  </tr>
-  <tr>
-   <td><code>Type</code>
-   </td>
-   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the activity.
-   </td>
-  </tr>
-  <tr>
-   <td><code>StartedAtTime</code>
-   </td>
-   <td>OPTIONAL. xsd:<em>dateTime. </em>A timestamp tracking the start when this activity started
-   </td>
-  </tr>
-  <tr>
-   <td><code>EndedAtTime</code>
-   </td>
-   <td>OPTIONAL. xsd:<em>dateTime. </em>A timestamp tracking when this activity ended
-   </td>
-  </tr>
-</table>
-
-### 2.2 Entity {#2-2-entity}
-
-Each Entity (as a record or a top-level entity) has the following fields:
-
-<table>
-  <tr>
-   <td><strong>Key name</strong>
-   </td>
-   <td><strong>Description</strong>
-   </td>
-  </tr>
-  <tr>
-   <td><code>Id</code>
-   </td>
-   <td>REQUIRED. Unique URIs (for example a UUID). Identifier for the entity.
-   </td>
-  </tr>
-  <tr>
-   <td><code>Label</code>
-   </td>
-   <td>REQUIRED. String. A name for the entity.
-   </td>
-  </tr>
-  <tr>
-   <td><code>AtLocation</code>
-   </td>
-   <td>OPTIONAL. String. For input files, this is the relative path to the file on disk.
-   </td>
-  </tr>
-  <tr>
-   <td><code>GeneratedBy</code>
-   </td>
-   <td>OPTIONAL. UUID. Identifier of the activity which generated this entity (the corresponding Activity must be defined with its own Activity record).
-   </td>
-  </tr>
-  <tr>
-   <td><code>Type</code>
-   </td>
-   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the activity.
-   </td>
-  </tr>
-  <tr>
-   <td><code>Digest</code>
-   </td>
-   <td>RECOMMENDED. Dict. For files, this would include checksums of files. It would take the form {"<checksum-name>": "value"}.
-   </td>
-  </tr>
-</table>
-
-### 2.3 Agent (Optional) {#2-3-agent-optional}
-
-Including an Agent record is OPTIONAL. If included, each Agent record has the following fields:
-
-<table>
-  <tr>
-   <td><strong>Key name</strong>
-   </td>
-   <td><strong>Description</strong>
-   </td>
-  </tr>
-  <tr>
-   <td><code>Id</code>
-   </td>
-   <td>REQUIRED. A unique identifier like a UUID that will be used to associate activities with this software (e.g., urn:1264-1233-11231-12312, "urn:bet-o1ef4rt"
-   </td>
-  </tr>
-  <tr>
-   <td><code>AltIdentifier</code>
-   </td>
-   <td>OPTIONAL. URI. URI of the RRID for this software package (cf. <a href="https://scicrunch.org/resources/about/Getting%20Started">scicrunch</a>).
-   </td>
-  </tr>
-  <tr>
-   <td><code>Label</code>
-   </td>
-   <td>REQUIRED. String. Name of the software.
-   </td>
-  </tr>
-  <tr>
-   <td><code>Version</code>
-   </td>
-   <td>REQUIRED. String. Version of the software.
-   </td>
-  </tr>
-</table>
-
-### 2.4 Environment (Optional) {#2-4-environments-optional}
-
-Information about the environment in which the provenance record was obtained is modeled with an environment record.
-
-Environment records are OPTIONAL. If included, each environment record MUST have the following fields:
-
-<table>
-  <tr>
-   <td><strong>Key name</strong>
-   </td>
-   <td><strong>Description</strong>
-   </td>
-  </tr>
-  <tr>
-   <td><code>Id</code>
-   </td>
-   <td>REQUIRED. Unique URIs (for example a UUID). Identifier for the environment (this identifier will be used to associated activities with this environment).
-   </td>
-  </tr>
-  <tr>
-   <td><code>Label</code>
-   </td>
-   <td>REQUIRED. String. Name of the software.
-   </td>
-  </tr>
-  <tr>
-   <td><code>EnvVars</code>
-   </td>
-   <td>OPTIONAL. Dict. A dictionary defining the environment variables as key-value pairs. 
-   </td>
-  </tr>
-  <tr>
-   <td><code>OperatingSystem</code>
-   </td>
-   <td>OPTIONAL. String. Name of the operating system.
-   </td>
-  </tr>
-  <tr>
-   <td><code>Dependencies</code>
-   </td>
-   <td>OPTIONAL. Dict. A dictionary defining the software used and their versions as key-value pairs.
-   </td>
-  </tr>
-</table>
-
-## 3 Graph model {#3-graph-model}
+## 4 Graph model {#4-graph-model}
 
 Note: since these jsonld documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
 
