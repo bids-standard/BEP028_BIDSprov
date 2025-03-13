@@ -49,11 +49,18 @@ Provenance can be captured using different mechanisms, but independent of encodi
 
 Note that some level of provenance is already encoded in BIDS (cf. the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) of the `dataset_description.json` file that contains the provenance metadata for the dataset). This BEP avoids duplicating information already available in sidecar JSONs.
 
-### 1.3 Provenance format {#1-3-provenance-format}
+## 1.3 Principles for encoding provenance In BIDS {#1-3-principles-for-encoding-provenance-in-bids}
 
-BIDS-Prov metadata is written in JSON or JSON-LD.
+1. Provenance information SHOULD be included in a BIDS dataset when possible.
+2. If provenance records are included, these MUST be described using the conventions detailed by the BIDS-Prov specification.
+3. BIDS-Prov MAY be used to reflect the provenance of a dataset, a collection of files or a specific file at any level of the bids hierarchy. 
+4. Provenance information SHOULD be anonymized/de-identified as necessary. 
 
-[JSON-LD](https://www.w3.org/TR/json-ld11/) is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework[^1].
+### 1.4 Provenance format {#1-4-provenance-format}
+
+BIDS-Prov metadata is written in JSON or JSON-LD. JSON-LD is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework.[^1]
+
+BIDS-Prov records use the PROV model ontology [^2], augmented by terms curated in this specification, and defined in the [BIDS-Prov context](https://purl.org/nidash/bidsprov/context.json).
 
 A skeleton for a BIDS-Prov JSON-LD file looks like this:
 ```
@@ -128,7 +135,8 @@ BIDS-Prov allows this skeleton to be splitted into several *JSON* files. This is
 and [3.2 Provenance description levels](#3-2-provenance-description-levels).
 Using tools provided by BIDS-Prov ([5 Tools](#5-tools)), these JSON contents can be merged back to a JSON-LD graph as described above.
 
-Note: since the JSON-LD documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
+> [!NOTE]
+> Since the JSON-LD documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
 
 A complete schema for the model file to facilitate specification and validation is available from [https://github.com/bids-standard/BEP028_BIDSprov](https://github.com/bids-standard/BEP028_BIDSprov). In the event of disagreements between the schema and the specification, the specification is authoritative.
 
@@ -638,56 +646,11 @@ Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity
 
 TODO: where are the @context and BIDSProvVersion ?
 
-### 3.3 Contents of a BIDS-Prov file {#3-3-contents-of-a-bids-prov-file}
-
-#### Dataset-level provenance
-
-A skeleton for a dataset level BIDS-Prov JSON-LD file looks like this:
-
-```
-{
-"@context": "https://purl.org/nidash/bidsprov/context.json",  
-"BIDSProvVersion": "0.0.1",
-"records": {
-	"Agent": [
-  	{
-    		<...Agent 1...>
-  	},
-  	{
-    		<...Agent 2...>
-  	}
-	],
-	"Activity": [
-	{
-    		<...Activity 1...>
-    		<used>
-    		<generated>
-    		<wasAssociatedWith>
-	}
-	{
-    		<...Activity 2...>
-	}
-	],
-	"Entity": [
-	{
-    		<...Entity 1...>
-    		<wasDerivedFrom>
-    		<wasAttributedTo>
-	},
-	{
-    		<...Entity 2...>
-	}
-	]
-  }
-}
-}
-```
-
 ## 4. Examples
 
 A list of examples for BIDS-Prov are available in https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples
 
-> [!ERROR]
+> [!CAUTION]
 > TODO: some examples are not merged yet.
 
 <table>
@@ -749,10 +712,9 @@ A list of examples for BIDS-Prov are available in https://github.com/bids-standa
 
 </table>
 
+## 5. Tools {#5.-tools}
 
-## 5. Tools
-
-## 5 Future perspectives
+## 6. Future perspectives
 
 Beyond what is covered in the current specification, provenance comes up in other contexts as well, which might be addressed at a later stage:
 1. For datasets and derivatives, provenance can also include details of why the data were collected in the first place covering hypotheses, claims, and prior publications. Provenance can encode support for which claims were supported by future analyses.
@@ -762,24 +724,24 @@ Beyond what is covered in the current specification, provenance comes up in othe
 5. Transformations made by humans (e.g., editing freesurfer, adding quality evaluations).
 6. The interpretability of provenance records requires a consistent vocabulary for provenance as well as an expectation for a consistent terminology for the objects being encoded. While the current specification focuses on the former, the latter (i.e. consistent terminology for the objects being encoded) will require additional efforts.
 
-## 4 Positioning with respect to other BIDS models {#4-positioning-with-respect-to-other-bids-models}
+## 7. Positioning with respect to other BIDS models {#7-positioning-with-respect-to-other-bids-models}
 
-### 4.1 Provenance in BIDS derivatives {#4-1-provenance-in-bids-derivatives}
+### 7.1 Provenance in BIDS derivatives {#7-1-provenance-in-bids-derivatives}
 
 Comments/things to discuss/incorporate: 
 
 * Yarik: we should position BIDS-Prov w.r.t. Other provenance info available in BIDS derivatives
 * JB: Question on how to organize info in BIDS-Prov versus what will be available in bids-derivative sidecars
 
-### 4.2 Justification for Separating Provenance from file JSON {#4-2-justification-for-separating-provenance-from-file-json}
+### 7.2 Justification for Separating Provenance from JSON files {#7-2-justification-for-separating-provenance-from-json-files}
 
 Provenance is information about a file, including any metadata that is relevant to the file itself. Thus any BIDS data file and its associated JSON sidecar metadata together constitute a unique entity. As such, one may want to record the provenance of the JSON file as much as the provenance of the BIDS file. In addition, separating the provenance as a separate file for now, allows this to be an OPTIONAL component, and by encoding provenance as a JSON-LD document allows capturing the provenance as an individual record or multiple records distributed throughout the dataset.
 
-## 6 How to encode your workflow with BIDS-prov
+## 8. How to encode your workflow with BIDS-prov
 
-**Either you are a software developer, a researcher striving for reproducible science, or anyone working in the neuroimaging field and willing to use BIDS-prov, at some point you might be asking yourself the following question : What is the right way to represent my workflow in the philosophy of BIDS-prov ?**
+Either you are a software developer, a researcher striving for reproducible science, or anyone working in the neuroimaging field and willing to use BIDS-prov, at some point you might be asking yourself the following question : What is the right way to represent my workflow in the philosophy of BIDS-prov ?
 
-## This set of examples will give you an overview of the typical cases and how to apply BIDS-prov concepts !
+### This set of examples will give you an overview of the typical cases and how to apply BIDS-prov concepts !
 
 #### I have many activities/entities to track, should I put everything in a single file ?
 
@@ -787,28 +749,34 @@ Simple answer : NO. BIDS-prov has been designed for provenance records to be sha
 
 If you have Activity 1 and Entity 1 defined in a provenance file called init.json, this file can look like the following
 
-```
+```JSON
 "prov:Activity": [
-  	{
-        	"@id": "niiri:init",
-        	"label": "Do some init",
-        	"command": "python -m my_module.init --weights '[0, 1]'",
-        	"parameters": { "weights" : [0, 1]},
-        	"startedAtTime": "2020-10-10T10:00:00",
-        	"used": "niiri:bids_data1"
-  	},
+    {
+        "@id": "niiri:init",
+        "label": "Do some init",
+        "command": "python -m my_module.init --weights '[0, 1]'",
+        "parameters": {
+            "weights" : [0, 1]
+        },
+        "startedAtTime": "2020-10-10T10:00:00",
+        "used": "niiri:bids_data1"
+    },
 ],
 
 "prov:Entity": [
-  	{"@id": "niiri:bids_data1", "label": "Bids dataset 1", "prov:atLocation": "data/bids_root"}
+    {"@id": "niiri:bids_data1", "label": "Bids dataset 1", "prov:atLocation": "data/bids_root"}
 ]
 ```
 
 Now if we want `Entity 2` defined in `preproc.json` to also have a "wasGeneratedBy" field referencing "Activity 1" from `init.json`, we can simply write the following
 
-```
+```JSON
 "prov:Entity": [
-     {"@id": "niiri:bids_data1", "label": "Bids dataset 1", "wasGeneratedBy": "niiri:init"}
+     {
+        "@id": "niiri:bids_data1",
+        "label": "Bids dataset 1",
+        "wasGeneratedBy": "niiri:init"
+    }
 ]
 ```
 
@@ -820,10 +788,18 @@ You can create a single prov file for every subject. Yet another option is to us
 
 Files for different subjects usually share common prefixes and extensions.
 
-```
+```JSON
 "prov:Entity": [
-   {"@id": "niiri:hfdhbfd", "label": "anat raw files", "prov:atLocation": "sub-*/anat/sub-*_T1w.nii.gz"},
-   {"@id": "niiri:fdhbfd", "label": "func raw files", "prov:atLocation": "sub-*/func/sub-*_task-tonecounting_bold.nii.gz"}
+    {
+        "@id": "niiri:hfdhbfd",
+        "label": "anat raw files",
+        "prov:atLocation": "sub-*/anat/sub-*_T1w.nii.gz"
+    },
+    {
+        "@id": "niiri:fdhbfd",
+        "label": "func raw files",
+        "prov:atLocation": "sub-*/func/sub-*_task-tonecounting_bold.nii.gz"
+    }
 ]
 ```
 
@@ -833,151 +809,74 @@ An example of this can be [fMRIPrep](https://fmriprep.org/en/stable/index.html),
 
 The most simplistic way you can think of is to have this container "black-boxed" in your workflow. You basically record the calling of this container (`command` section) and the output (see the outputs section from fMRIPrep)
 
-```
+```JSON
 "prov:Activity": [
-  	{
-        	"@id": "niiri:fMRIPrep1",
-        	"label": "fMRIPrep step",
-        	"command": "fmriprep data/bids_root/ out/ participant -w work/",
-        	"parameters": {
-                	"bids_dir" : "data/bids_root",
-                	"output_dir" : "out/",
-                	"anaysis_level" : "participant"
-    		},
-        	"used": "niiri:bids_data1"
-  	},
-	],
-
-	"prov:Entity": [
-      	{"@id": "niiri:bids_data1", "label": "Bids dataset 1", "prov:atLocation": "data/bids_root"},
-    	{
-            	"@id": "niiri:fmri_prep_output1",
-            	"label": "FMRI prep output 1",
-            	"prov:atLocation": "out/",
-            	"generatedAt": "2019-10-10T10:00:00",
-            	"wasGeneratedBy": "niiri:fMRIPrep1"
-    	},
-	]
+    {
+        "@id": "niiri:fMRIPrep1",
+        "label": "fMRIPrep step",
+        "command": "fmriprep data/bids_root/ out/ participant -w work/",
+        "parameters": {
+                "bids_dir" : "data/bids_root",
+                "output_dir" : "out/",
+                "anaysis_level" : "participant"
+        },
+        "used": "niiri:bids_data1"
+    }
+],
+"prov:Entity": [
+    {
+        "@id": "niiri:bids_data1",
+        "label": "Bids dataset 1",
+        "prov:atLocation": "data/bids_root"
+    },
+    {
+        "@id": "niiri:fmri_prep_output1",
+        "label": "FMRI prep output 1",
+        "prov:atLocation": "out/",
+        "generatedAt": "2019-10-10T10:00:00",
+        "wasGeneratedBy": "niiri:fMRIPrep1"
+    }
+]
 ```
 
 #### What if I have a group of tasks, belonging to a subgroup of tasks ?
 
 You can the `prov-O` isPartOf relationship to add an extra link to you activity
 
-```
+```JSON
 "prov:Activity": [
-  	{"@id": "niiri:activity_group1", "label": "Activity Group 1", "command": "launch.sh"},
-  	{
-        	"@id": "niiri:activity_1",
-        	"label": "Activity 1",
-        	"command": "task_specific_executable.sh --arg 1",
-        	"parameters": {"arg1" : 1},
-        	"wasAssociatedWith": "RRID:SCR_007037",
-        	"startedAtTime": "2019-10-10T10:00:00",
-        	"endedAtTime": "2019-10-10T10:00:00",
-        	"used": "niiri:entity_1"
-      	}
-	],
+    {
+        "@id": "niiri:activity_group1",
+        "label": "Activity Group 1",
+        "command": "launch.sh"
+    },
+    {
+        "@id": "niiri:activity_1",
+        "label": "Activity 1",
+        "command": "task_specific_executable.sh --arg 1",
+        "parameters": {
+            "arg1" : 1
+        },
+        "wasAssociatedWith": "RRID:SCR_007037",
+        "startedAtTime": "2019-10-10T10:00:00",
+        "endedAtTime": "2019-10-10T10:00:00",
+        "used": "niiri:entity_1"
+    }
+],
 
-	"prov:Entity": [
-  		{"@id": "niiri:entity_1", "label": "Entity 1", "prov:atLocation": "/root/file.xyz"},
-	]
+"prov:Entity": [
+    {
+        "@id": "niiri:entity_1",
+        "label": "Entity 1",
+        "prov:atLocation": "/root/file.xyz"
+    }
+]
 ```
 
 ---
 
 ## WIP -- What is under this line is being transferred above... {#wip-what-is-under-this-line-is-being-transferred-above}
 
-## Encoding Provenance In BIDS {#encoding-provenance-in-bids}
-
-i. Provenance information SHOULD be included in a BIDS dataset when possible.
-
-ii. Provenance records MUST use the [PROV model](https://www.w3.org/TR/prov-o/) ontology and SHOULD be augmented by terms curated in the BIDS specification, the [NIDM](http://nidm.nidash.org/) model, and future enhancements to these models.
-
-iii. If provenance records are included, these records of provenance of a dataset or a file MUST be described using a `[&lt;prefix>_]prov.jsonld` file. Since these [jsonld](https://json-ld.org/) documents are graph objects, they can be aggregated without the need to apply any inheritance principle. 
-
-iv. The provenance file MAY be used to reflect the _provenance of a dataset, a collection of files or a specific file at any level_ of the bids hierarchy. 
-
-v. Provenance information SHOULD be anonymized/de-identified as necessary. 
-
-
-## Possible places to encode provenance {#possible-places-to-encode-provenance}
-
-An even simpler examples for point (i) above?
-
-```
-xxx*dcm → T1.nii.gz
-Xxx.log  → events.tsv  
-```
-
-This is derived mgz (not raw bids) -- points (iv) above
-In this example, with this `prov.jsonld` file we encode that the T1.mgz file was generated by version 6 of the FreeSurfer software.
-
-```
-{
-"@context": "https://raw.githubusercontent.com/cmaumet/BIDS-prov/context-type-indexing/context.json",
-  "@id": "http://example.org/ds00000X",
-  "generatedAt": "2020-01-10T10:00:00",
-  "wasGeneratedBy": {
-      "@id": "https://banda.mit.edu/",
-      "@type": "Project",
-      "startedAt": "2016-09-01T10:00:00",
-      "wasAssociatedWith": { "@id": "NIH",
-                             "@type": "Organization",
-                             "hadRole": "Funding"
-                           }
-    },
-  "records": {
-    "prov:Entity" : [    {
-      "@id": "niiri:im2020",
-            "sha512": "121231221ab4534...",
-      "derivedFrom": "../sub-01/anat/..._T1.nii.gz",
-      "attributedTo": "RRID:SCR_001847",
-      "generatedAt": "2019-01-10T10:00:00"
-    }, 
-    ],
-    "prov:Agent" : [ 
-    {
-      "label": "MyFreeSurfer",
-            "version": "6.0.0",
-      "@id": "RRID:SCR_001847"
-    }
-  ]
-  "prov:Activity" : [
-  {
-    "@id" : "niiri:sdfjknfskjn",
-    "label": "produce T1.mgz",
-    "wasAssociatedWith" : "RRID:SCR_001847",
-    "startedAtTime": "2021-02-02T10:10:10",
-    "endAtTime" : "2021-02-02T10:10:12",
-    "used" : "../sub-01/anat/..._T1.nii.gz"
-  ]
-}
-```
-
-**File level provenance.** This follows some of the same concepts at the dataset level, but is specifically about the current file under consideration.
-
-```
-sub-01/ 
-    func/
-        sub-01_task-xyz_acq-test1_run-1_bold.nii.gz
-        sub-01_task-xyz_acq-test1_run-1_prov.jsonld
-...
-{
-  "@context": "https://some/url/to/bids_context.jsonld",
-  "generatedAt": "2020-01-10T10:00:00",
-  "sha512": "1001231221ab4534...",
-  "derivedFrom": "../../../sourcedata/sub-01/...dcm",
-  "attributedTo": {"@type": "SoftwareAgent",
-               "version": "1.3.0",
-               "RRID": "RRID:SCR_017427"
-        	 "label": "SPM",
-        "description": "If this is a custom script, treat this as a methods section",
-              }
-  }
-```
-
-The NIDM extensions (nidash.org)  to the PROV model would allow one to incorporate many aspects of the neuroimaging research workflow from data to results. This includes capturing who performed data collection, what software were used, what analyses were run, and what hardware and software resources (e.g., operating system and dependencies) were used.
 
 ## BIDS JSON-LD context {#bids-json-ld-context}
 
@@ -985,9 +884,7 @@ For most developers and users, the context will appear in the jsonld file as:
 
 ```
 {
-
-    "`@context": "https://some/url/to/bids_context.jsonld",`
-  ...
+    "@context": "https://some/url/to/bids_context.jsonld",
 }
 ```
 
@@ -995,11 +892,11 @@ Details of the context, will encode terminology that is consistent across BIDS a
 
 ```
 {
-    "`@context": ["https://some/url/to/bids_common_context.jsonld",`
-               "https://some/url/to/bids_derivates_context.jsonld",
-               "https://some/url/to/bids_provenance_context.jsonld",
-               ...
-              ]
+    "@context": [
+        "https://some/url/to/bids_common_context.jsonld",
+        "https://some/url/to/bids_derivates_context.jsonld",
+        "https://some/url/to/bids_provenance_context.jsonld"
+    ]
 }
 ```
 
@@ -1009,3 +906,4 @@ Contexts are created at the BIDS organization level, and only if necessary exten
 ## Notes
 
 [^1]: https://www.w3.org/TR/json-ld11/#basic-concepts
+[^2]: http://www.w3.org/TR/prov-o/
