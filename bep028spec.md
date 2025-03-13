@@ -47,7 +47,7 @@ But provenance comes up in other contexts as well, which might be addressed at a
 
 Provenance can be captured using different mechanisms, but independent of encoding, always reflects transformations by either humans or software. The interpretability of provenance records requires a consistent vocabulary for provenance as well as an expectation for a consistent terminology for the objects being encoded. 
 
-Note that some level of provenance is already encoded in BIDS (cf. the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) of the `dataset_description.json` file that contains the metadata of a dataset), this BEP avoids duplicating information already available in sidecar JSONs.
+Note that some level of provenance is already encoded in BIDS (cf. the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) of the `dataset_description.json` file that contains the provenance metadata for the dataset). This BEP avoids duplicating information already available in sidecar JSONs.
 
 ### 1.3 Provenance format {#1-3-provenance-format}
 
@@ -56,11 +56,14 @@ BIDS-Prov metadata is written in JSON or JSON-LD.
 [JSON-LD](https://www.w3.org/TR/json-ld11/) is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework[^1].
 
 TODO: written in a single file (JSON-LD) or several JSON files that can be aggregated into one JSON-LD
+
 TODO: BIDS-Prov tools
 
 ## 2. Provenance records {#2-provenance-records}
 
-Each provenance record is composed of a set of Activities that represent the transformations that have been applied to the data. Each Activity can use Entities as inputs and outputs. The Agent specifies the software package. Environments specify the software environment in which the provenance record was obtained.
+BIDS-Prov metadata consists in a set or records. There are 4 types of records: `Activity`, `Entity`, `Agent`, and `Environment`.
+
+Activities represent the transformations that have been applied to the data. Each Activity can use Entities as inputs and outputs. The Agent specifies the software package. Environments specify the software environment in which the provenance record was obtained.
 
 ![](img/records.svg)
 
@@ -124,7 +127,7 @@ Each Activity record is a JSON Object with the following fields:
   </tr>
 </table>
 
-Example of an Activity record:
+Here is an example of an Activity record:
 ```JSON
 {
     "Id": "bids::prov/#conversion-00f3a18f",
@@ -132,8 +135,8 @@ Example of an Activity record:
     "Command": "dcm2niix -o . -f sub-%i/anat/sub-%i_T1w sourcedata/dicoms",
     "AssociatedWith": "bids::prov/#dcm2niix-khhkm7u1",
     "Used": [
-      "bids::prov/#fedora-uldfv058",
-      "bids::sourcedata/dicoms"
+        "bids::prov/#fedora-uldfv058",
+        "bids::sourcedata/dicoms"
     ],
     "Type": "Activity",
     "StartedAtTime": "2025-03-13T10:26:00",
@@ -178,7 +181,7 @@ Each Entity record is a JSON Object with the following fields:
   <tr>
    <td><code>Type</code>
    </td>
-   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the activity.
+   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the entity.
    </td>
   </tr>
   <tr>
@@ -304,24 +307,16 @@ Here is an example of an Environment record:
 
 ### 3.1 File naming {#3-1-file-naming}
 
-hence having either a `.json` or a `.jsonld` extension.
-When using a `.jsonld` extension, the contents of the file must be JSON-LD.
-As JSON-LD is JSON, `*.jsonld` files can contain JSON.
-
 This section describes additions to the BIDS naming conventions for BIDS-Prov files.
 
 For further information about naming conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following.
 
-#### File formats
+#### 3.1.1 File extensions {#3-1-1-file-extensions}
 
 BIDS-Prov files contain JSON or JSON-LD data, hence having either a `.json` or a `.jsonld` extension.
+When using a `.jsonld` extension, the contents of the file must be JSON-LD. As JSON-LD is JSON, `*.jsonld` files can contain JSON.
 
-[JSON-LD](https://www.w3.org/TR/json-ld11/) is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework[^1].
-
-When using a `.jsonld` extension, the contents of the file must be JSON-LD.
-As JSON-LD is JSON, `*.jsonld` files can contain JSON.
-
-#### The `prov` entity
+#### 3.1.2 The `prov` entity {#3-1-2-the-prov-entity}
 
 BIDS-Prov introduces the following entity:
 
@@ -347,23 +342,68 @@ In the following example, two separated processings (`conversion` and `smoothing
       └─ ... 
 ```
 
-#### Suffixes
+#### 3.1.3 Suffixes {#3-1-3-Suffixes}
 
-The following BIDS suffixes (cf. [Definitions](https://bids-specification.readthedocs.io/en/stable/common-principles.html#definitions)) specify the contents of a provenance file:
+The following BIDS suffixes (cf. [Definitions](https://bids-specification.readthedocs.io/en/stable/common-principles.html#definitions)) specify the contents of a provenance file.
 
-* `act`: the file describes BIDS Prov Activities for the group of provenance records
-* `soft`: the file describes BIDS Prov Software for the group of provenance records
-* `ent`: the file describes BIDS Prov Entities for the group of provenance records
-* `env`: the file describes BIDS Prov Environments for the group of provenance records
-* `base`: the file describes common BIDS Prov parameters for the group of provenance records (version and context for BIDS Prov)
+<table>
+  <tr>
+   <td><strong>Suffix</strong>
+   </td>
+   <td><strong>Description</strong>
+   </td>
+   <td><strong>File extension</strong>
+   </td>
+  </tr>
+  <tr>
+   <td><code>act</code>
+   </td>
+   <td>Activities for the group of provenance records.
+   </td>
+   <td><code>.json</code>
+   </td>
+  </tr>
+  <tr>
+   <td><code>ent</code>
+   </td>
+   <td>Agents for the group of provenance records.
+   </td>
+   <td><code>.json</code>
+   </td>
+  </tr>
+  <tr>
+   <td><code>env</code>
+   </td>
+   <td>Entities for the group of provenance records.
+   </td>
+   <td><code>.json</code>
+   </td>
+  </tr>
+  <tr>
+   <td><code>base</code>
+   </td>
+   <td>Common parameters for the group of provenance records (version and context for BIDS-Prov).
+   <td><code>.json</code>
+   </td>
+   </td>
+  </tr>
+  <tr>
+   <td><code>all</code>
+   </td>
+   <td>All records for the group of provenance records.
+   </td>
+   <td><code>.jsonld</code>
+   </td>
+  </tr>
+</table>
 
 ### 3.2 Provenance description levels {#3-2-provenance-description-levels}
 
-This section describes the places where BIDS-Prov contents can be stored.
+This section describes the places where BIDS-Prov metadata can be stored.
 
 For further information about organization conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following.
 
-BIDS-Prov contents can be stored in different locations:
+BIDS-Prov metadata can be stored at different levels:
 * at dataset level ;
 * inside dataset subdirectories ;
 * at file level.
@@ -373,41 +413,13 @@ It is recommanded that the records are stored at the level they describe. E.g.:
 * an Activity that generated as set of files for one subject only must be described at the subject's subdirectory level ;
 * an Activity that generated one file only can be described at this file's level.
 
-#### File level provenance
+#### 3.2.1 File level provenance {#3-2-1-file-level-provenance}
 
-BIDS-Prov provenance metadata can be stored inside the [JSON sidecar of any BIDS file]() (or BIDS-Derivatives file) it applies to.
+BIDS-Prov provenance metadata can be stored inside the sidecar JSON of any BIDS file (or BIDS-Derivatives file) it applies to.
 In this case, the BIDS-Prov content only refers to the associated data file.
-The JSON sidecar file must have the following naming convention:
 
-```
-sub-<label>/
-    [ses-<label>/]
-        sub-<label>[_ses-<label>]_<suffix>.json
-```
+The sidecar JSON naming convention is already defined by BIDS. Here is an example dataset tree:
 
-The `GenearatedBy` field must describe the `Activity` that generated the data file, either with a reference to an existing `Id`:
-
-```JSON
-{
-  "GeneratedBy": "urn:conversion-00f3a18f",
-}
-```
-
-or with a complete definition of the `Activity` if it was not defined elsewhere.
-
-```JSON
-{
-  "GeneratedBy": {
-    "Id": "urn:conversion-00f3a18f",
-    "Label": "Conversion",
-    "Command": "convert -i raw_file.ext -o sub-001_ses-01_T1w.nii.gz"
-  }
-}
-```
-
-No other field is allowed to describe provenance.
-
-Here is an example:
 ```
 └─ example_dataset
    ├─ sub-001/
@@ -424,22 +436,47 @@ Here is an example:
    └─ dataset_description.json
 ```
 
-#### Subdirectories level provenance
+Inside the sidecar JSON, the `GenearatedBy` field must describe the `Activity` that generated the data file, either with a reference to an existing `Id`:
+
+```JSON
+{
+    "GeneratedBy": "urn:conversion-00f3a18f",
+}
+```
+
+or with a complete description of the `Activity` if it was not described elsewhere.
+
+```JSON
+{
+    "GeneratedBy": {
+        "Id": "urn:conversion-00f3a18f",
+        "Label": "Conversion",
+        "Command": "convert -i raw_file.ext -o sub-001_ses-01_T1w.nii.gz"
+    }
+}
+```
+
+Based on the same principle, the `SidecarGenearatedBy` field can be defined to describe the `Activity` that generated the sidecar JSON file.
+If the `SidecarGenearatedBy` field is not defined, BIDS-Prov assumes that the sidecar JSON was generated by the `Activity` described in the `GenearatedBy` field.
+
+No other field is allowed to describe provenance inside sidecar JSONs.
+
+#### 3.2.2 Subdirectories level provenance {#3-2-2-subdirectories-level-provenance}
 
 BIDS-Prov files can be stored in a `prov/` directory in any subdirectory of the dataset (or BIDS-Derivatives directories).
 
 In this case, the provenance metadata applies to the data files inside or below in the directory tree ; as stated by [BIDS common principles](https://bids-specification.readthedocs.io/en/stable/common-principles.html#filesystem-structure).
 
-Each BIDS-Prov file must meet the following naming convention. The `label` of the `prov` entity is arbitrary, and `suffix` is one of listed in [§ Suffixes](#suffixes).
+Each BIDS-Prov file must meet the following naming convention. The `label` of the `prov` entity is arbitrary, `suffix` is one of listed in [3.3.1 Suffixes](#3-1-3-suffixes), and `extension` is either `json` or `jsonld`.
 
 ```
 sub-<label>/
   [ses-<label>/]
     prov/
-      sub-<label>[_ses-<label>]_prov-<label>_<suffix>.json
+      sub-<label>[_ses-<label>]_prov-<label>_<suffix>.<extension>
 ```
 
-Here is an example:
+Here is an example dataset tree:
 
 ```
 └─ dataset
@@ -458,11 +495,11 @@ Here is an example:
    └─ dataset_description.json
 ```
 
-#### Dataset level provenance - `prov/` directory
+#### 3.2.3 Dataset level provenance - `prov/` directory {#3-2-3-dataset-level-provenance-prov-directory}
 
 BIDS-Prov files can be stored in a `prov/` directory immediately below the BIDS dataset (or BIDS-Derivatives dataset) root. At the dataset level, provenance can be about any BIDS file in the dataset.
 
-Each BIDS-Prov file must meet the following naming convention, where `label` can be arbitrary, `suffix` is one of listed in [§ Suffixes](#suffixes), and `suffix` is either `json` or `jsonld`
+Each BIDS-Prov file must meet the following naming convention. The `label` of the `prov` entity is arbitrary, `suffix` is one of listed in [3.1.3 Suffixes](#3-1-3-suffixes), and `extension` is either `json` or `jsonld`
 
 ```
 prov/
@@ -487,29 +524,29 @@ Here is an example:
    └─ dataset_description.json
 ```
 
-#### Dataset level provenance - `dataset_description.json` file
+#### 3.2.4 Dataset level provenance - `dataset_description.json` file {#3-2-4-dataset-level-provenance-dataset-description}
 
 In the current version of the BIDS specification (1.10.0), the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) field of the `dataset_description.json` files allows to specify provenance of the dataset.
 
-> [!NOTE] BEP028 proposes that the following description replaces the `GeneratedBy` field as part of a major revision of the BIDS specification. Until this happens, BIDS Prov provenance records can be stored in a `GeneratedByProv` field.
+BEP028 proposes that the following description replaces the `GeneratedBy` field as part of a major revision of the BIDS specification. Until this happens, BIDS-Prov provenance records can be stored in a `GeneratedByProv` field.
 
-Here is an example of a `GeneratedByProv` field containing a complete description of an `Entity`:
+Here is an example of a `GeneratedByProv` field containing a complete description of an `Activity`:
 
 ```JSON
 {
     "GeneratedByProv": {
-        "Id": "urn:conversion-00f3a18f",
-        "Label": "Conversion",
-        "Command": "dcm2niix -i -o ",
+        "Id": "bids::#conversion-00f3a18f",
+        "Label": "Dicom to Nifti conversion",
+        "Command": "dcm2niix -o . -f sub-%i/anat/sub-%i_T1w sourcedata/dicoms",
         "AssociatedWith": {
-            "Id": "urn:dcm2niix-70ug8pl5",
-            "Type": "Agent",
+            "Id": "bids::#dcm2niix-khhkm7u1",
+            "AltIdentifier": "RRID:SCR_023517",
             "Label": "dcm2niix",
-            "Version": "v1.1.3",
+            "Version": "v1.0.20220720",
             "Used": {
-                "Id": "urn:environment-gjqhxnbc",
-                "Type": "Environment",
-                "Label": "Docker container"
+                "Id": "bids::#fedora-uldfv058",
+                "Label": "Fedora release 36 (Thirty Six)",
+                "OperatingSystem": "GNU/Linux 6.2.15-100.fc36.x86_64"
             }
         }
     }
@@ -520,7 +557,7 @@ Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity
 
 ```JSON
 {
-    "GeneratedByProv": "urn:conversion-00f3a18f"
+    "GeneratedByProv": "bids::#conversion-00f3a18f"
 }
 ```
 
