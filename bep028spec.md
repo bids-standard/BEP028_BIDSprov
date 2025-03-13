@@ -47,7 +47,7 @@ But provenance comes up in other contexts as well, which might be addressed at a
 
 Provenance can be captured using different mechanisms, but independent of encoding, always reflects transformations by either humans or software. The interpretability of provenance records requires a consistent vocabulary for provenance as well as an expectation for a consistent terminology for the objects being encoded. 
 
-Note that some level of provenance is already encoded in BIDS (cf. the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) of the `dataset_description.json` file that contains the provenance metadata for the dataset). This BEP avoids duplicating information already available in sidecar JSONs.
+> [!NOTE] Some level of provenance is already encoded in BIDS : the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) field of the `dataset_description.json` file can contain the provenance metadata for a dataset. This BEP avoids duplicating information already available in JSON files.
 
 ## 1.3 Principles for encoding provenance In BIDS {#1-3-principles-for-encoding-provenance-in-bids}
 
@@ -60,7 +60,7 @@ Note that some level of provenance is already encoded in BIDS (cf. the [`Generat
 
 BIDS-Prov metadata is written in JSON or JSON-LD. JSON-LD is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework.[^1]
 
-BIDS-Prov records use the PROV model ontology [^2], augmented by terms curated in this specification, and defined in the [BIDS-Prov context](https://purl.org/nidash/bidsprov/context.json).
+BIDS-Prov records use the PROV model ontology [^2], augmented by terms curated in this specification, and defined in the [BIDS-Prov context](/context.json).
 
 A skeleton for a BIDS-Prov JSON-LD file looks like this:
 ```
@@ -133,10 +133,16 @@ A skeleton for a BIDS-Prov JSON-LD file looks like this:
 
 BIDS-Prov allows this skeleton to be splitted into several *JSON* files. This is described in sections [3.1.3 Suffixes](#3-1-3-suffixes)
 and [3.2 Provenance description levels](#3-2-provenance-description-levels).
-Using tools provided by BIDS-Prov ([5 Tools](#5-tools)), these JSON contents can be merged back to a JSON-LD graph as described above.
+
+Using tools provided by BIDS-Prov ([5 Tools](#5-tools)), these JSON contents can be merged back to a structured JSON-LD as described above.
 
 > [!NOTE]
 > Since the JSON-LD documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
+
+> [!WARNING]
+> A group of provenance records MUST be described:
+> * either in several `.json` files ;
+> * or in one `.jsonld` file.
 
 A complete schema for the model file to facilitate specification and validation is available from [https://github.com/bids-standard/BEP028_BIDSprov](https://github.com/bids-standard/BEP028_BIDSprov). In the event of disagreements between the schema and the specification, the specification is authoritative.
 
@@ -401,13 +407,12 @@ When using a `.jsonld` extension, the contents of the file must be JSON-LD. As J
 
 BIDS-Prov introduces the following entity:
 
-* `prov`
-    * Full name: Provenance records
-    * Format: `prov-<label>`
-    * Definition: A grouping of provenance records. Defining multiple provenance records groups is appropriate when several processings have been performed on data.
+`prov`
+* Full name: Provenance records
+* Format: `prov-<label>`
+* Definition: A grouping of provenance records. Defining multiple provenance records groups is appropriate when several processings have been performed on data.
 
 In the following example, two separated processings (`conversion` and `smoothing`) were performed on the data, resulting in two groups of provenance records.
-
 ```
 └─ dataset
    ├─ sub-001/
@@ -423,7 +428,7 @@ In the following example, two separated processings (`conversion` and `smoothing
 
 #### 3.1.3 Suffixes {#3-1-3-suffixes}
 
-The following BIDS suffixes (cf. [Definitions](https://bids-specification.readthedocs.io/en/stable/common-principles.html#definitions)) specify the contents of a provenance file.
+The following BIDS suffixes specify the contents of a provenance file.
 
 <table>
   <tr>
@@ -498,7 +503,6 @@ BIDS-Prov provenance metadata can be stored inside the sidecar JSON of any BIDS 
 In this case, the BIDS-Prov content only refers to the associated data file.
 
 The sidecar JSON naming convention is already defined by BIDS. Here is an example dataset tree:
-
 ```
 └─ example_dataset
    ├─ sub-001/
