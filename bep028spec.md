@@ -404,12 +404,10 @@ In the following example, two separated processings (`conversion` and `smoothing
 └─ dataset
    ├─ sub-001/
    │  └─ prov/
-   │     └─ sub-001_prov-conversion_act.json
+   │     └─ sub-001_prov-smoothing_act.json
    └─ prov/
-      ├─ prov-conversion_base.json
-      ├─ prov-conversion_soft.json
+      ├─ prov-conversion_all.jsonld
       ├─ prov-smoothing_base.json
-      ├─ prov-smoothing_act.json
       ├─ prov-smoothing_soft.json
       ├─ prov-smoothing_ent.json
       └─ ... 
@@ -685,11 +683,12 @@ A skeleton for a dataset level BIDS-Prov JSON-LD file looks like this:
 }
 ```
 
-## 4 Examples
+## 4. Examples
 
 A list of examples for BIDS-Prov are available in https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples
 
-TODO: some examples are not merged yet.
+> [!ERROR]
+> TODO: some examples are not merged yet.
 
 <table>
   <tr>
@@ -700,49 +699,49 @@ TODO: some examples are not merged yet.
   </tr>
 
   <tr>
-   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/simple_example/">examples/simple_example/</a>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/simple_example/">simple_example/</a>
    </td>
    <td>A simple example describing the downsampling of EEG data using EEGLAB.
    </td>
   </tr>
 
   <tr>
-   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/from_parsers/afni/">examples/from_parsers/afni/</a>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/from_parsers/afni/">from_parsers/afni/</a>
    </td>
    <td>A set of examples for fMRI processing using AFNI. These where generated generated from ...
    </td>
   </tr>
 
   <tr>
-   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/from_parsers/fsl/">examples/from_parsers/fsl/</a>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/from_parsers/fsl/">from_parsers/fsl/</a>
    </td>
    <td>A set of examples for fMRI processing using FSL. These where generated generated from ...
    </td>
   </tr>
 
   <tr>
-   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/from_parsers/spm/">examples/from_parsers/spm/</a>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/from_parsers/spm/">from_parsers/spm/</a>
    </td>
    <td>A set of examples for fMRI processing using SPM. These where generated generated from ...
    </td>
   </tr>
 
   <tr>
-   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/dcm2niix/">examples/dcm2niix/</a>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/dcm2niix/">dcm2niix/</a>
    </td>
    <td>A set of examples describing dicom to nifti conversion using dcm2niix. These aim at showing different ways to organise the exact same provenance records inside a dataset.
    </td>
   </tr>
 
   <tr>
-   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/heudiconv/">examples/heudiconv/</a>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/heudiconv/">heudiconv/</a>
    </td>
    <td>An example describing dicom to nifti conversion using heudiconv.
    </td>
   </tr>
 
   <tr>
-   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/nipype/">examples/nipype/</a>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/nipype/">nipype/</a>
    </td>
    <td>An example describing simple processings on anatomical MRI using FSL through Nipype.
    </td>
@@ -751,7 +750,7 @@ TODO: some examples are not merged yet.
 </table>
 
 
-## 5 Tools
+## 5. Tools
 
 ## 5 Future perspectives
 
