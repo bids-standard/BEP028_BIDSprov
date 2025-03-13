@@ -4,7 +4,7 @@
 
 **Extension moderators/leads:** Satra Ghosh &lt;[satra@mit.edu](mailto:satra@mit.edu)> and Camille Maumet &lt;[camille.maumet@inria.fr](mailto:camille.maumet@inria.fr)>
 
-**Contributors:** Stefan Appelhoff, Chris Markiewicz, Yaroslav O. Halchenko, Cyril R. Pernet, Jean-Baptiste Poline, Rémi Adon, Michael Dayan, Sarah Saneei, Eric Earl, Tibor Auer, Ghislain Vaillant, Matthieu Joulot, Omar El Rifai, Ryan J. Cali, Thomas Betton, Cyril Regan, Hermann Courteille, Arnaud Delorme, Boris Clénet.*
+**Contributors:** Stefan Appelhoff, Chris Markiewicz, Yaroslav O. Halchenko, Cyril R. Pernet, Jean-Baptiste Poline, Rémi Adon, Michael Dayan, Sarah Saneei, Eric Earl, Tibor Auer, Ghislain Vaillant, Matthieu Joulot, Omar El Rifai, Ryan J. Cali, Thomas Betton, Cyril Regan, Hermann Courteille, Arnaud Delorme, Boris Clénet.
 
 We meet every two weeks by videoconference on Mondays at 7-8am PDT / 10am-11am EDT / 3-4pm BST. The group is always open to new contributors interested in neuroimaging data sharing. To join the call or to ask any question, please email us at [incf-nidash-nidm@googlegroups.com](mailto:incf-nidash-nidm@googlegroups.com).
 
@@ -55,9 +55,82 @@ BIDS-Prov metadata is written in JSON or JSON-LD.
 
 [JSON-LD](https://www.w3.org/TR/json-ld11/) is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework[^1].
 
-TODO: written in a single file (JSON-LD) or several JSON files that can be aggregated into one JSON-LD
+A skeleton for a BIDS-Prov JSON-LD file looks like this:
+```
+{
+    "@context": "https://purl.org/nidash/bidsprov/context.json",  
+    "BIDSProvVersion": "0.0.1",
+    "records": {
+        "Agent": [
+            {
+                    <...Agent 1...>
+            },
+            {
+                    <...Agent 2...>
+            }
+        ],
+        "Activity": [
+            {
+                    <...Activity 1...>
+            },
+            {
+                    <...Activity 2...>
+            }
+        ],
+        "Entity": [
+            {
+                    <...Entity 1...>
+            },
+            {
+                    <...Entity 2...>
+            }
+        ],
+        "Environment": [
+            {
+                    <...Environment 1...>
+            },
+            {
+                    <...Environment 2...>
+            }
+        ]
+  }
+}
+```
 
-TODO: BIDS-Prov tools
+<table>
+  <tr>
+   <td><strong>Key name</strong>
+   </td>
+   <td><strong>Description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td><code>@context</code>
+   </td>
+   <td>REQUIRED. A URL to the BIDS-Prov json context. Value must be <code>"https://purl.org/nidash/bidsprov/context.json"</code>
+   </td>
+  </tr>
+  <tr>
+   <td><code>BIDSProvVersion</code>
+   </td>
+   <td>REQUIRED. A string identifying the version of the specification adhered to.
+   </td>
+  </tr>
+  <tr>
+   <td><code>records</code>
+   </td>
+   <td>REQUIRED. A list of provenance records (Activity, Entity, Agent, Environement), describing the provenance (see "Provenance records" sections below).
+   </td>
+  </tr>
+</table>
+
+BIDS-Prov allows this skeleton to be splitted into several *JSON* files. This is described in sections [3.1.3 Suffixes](#3-1-3-suffixes)
+and [3.2 Provenance description levels](#3-2-provenance-description-levels).
+Using tools provided by BIDS-Prov ([5 Tools](#5-tools)), these JSON contents can be merged back to a JSON-LD graph as described above.
+
+Note: since the JSON-LD documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
+
+A complete schema for the model file to facilitate specification and validation is available from [https://github.com/bids-standard/BEP028_BIDSprov](https://github.com/bids-standard/BEP028_BIDSprov). In the event of disagreements between the schema and the specification, the specification is authoritative.
 
 ## 2. Provenance records {#2-provenance-records}
 
@@ -342,7 +415,7 @@ In the following example, two separated processings (`conversion` and `smoothing
       └─ ... 
 ```
 
-#### 3.1.3 Suffixes {#3-1-3-Suffixes}
+#### 3.1.3 Suffixes {#3-1-3-suffixes}
 
 The following BIDS suffixes (cf. [Definitions](https://bids-specification.readthedocs.io/en/stable/common-principles.html#definitions)) specify the contents of a provenance file.
 
@@ -350,7 +423,7 @@ The following BIDS suffixes (cf. [Definitions](https://bids-specification.readth
   <tr>
    <td><strong>Suffix</strong>
    </td>
-   <td><strong>Description</strong>
+   <td><strong>File contents</strong>
    </td>
    <td><strong>File extension</strong>
    </td>
@@ -358,7 +431,7 @@ The following BIDS suffixes (cf. [Definitions](https://bids-specification.readth
   <tr>
    <td><code>act</code>
    </td>
-   <td>Activities for the group of provenance records.
+   <td>Activity records for the group of provenance
    </td>
    <td><code>.json</code>
    </td>
@@ -366,7 +439,7 @@ The following BIDS suffixes (cf. [Definitions](https://bids-specification.readth
   <tr>
    <td><code>ent</code>
    </td>
-   <td>Agents for the group of provenance records.
+   <td>Agent records for the group of provenance
    </td>
    <td><code>.json</code>
    </td>
@@ -374,7 +447,7 @@ The following BIDS suffixes (cf. [Definitions](https://bids-specification.readth
   <tr>
    <td><code>env</code>
    </td>
-   <td>Entities for the group of provenance records.
+   <td>Entity records for the group of provenance
    </td>
    <td><code>.json</code>
    </td>
@@ -382,7 +455,7 @@ The following BIDS suffixes (cf. [Definitions](https://bids-specification.readth
   <tr>
    <td><code>base</code>
    </td>
-   <td>Common parameters for the group of provenance records (version and context for BIDS-Prov).
+   <td>Common parameters for the group of provenance (<code>BIDSProvVersion</code> and <code>@context</code>).
    <td><code>.json</code>
    </td>
    </td>
@@ -461,6 +534,8 @@ If the `SidecarGenearatedBy` field is not defined, BIDS-Prov assumes that the si
 
 No other field is allowed to describe provenance inside sidecar JSONs.
 
+TODO: where are the @context and BIDSProvVersion ?
+
 #### 3.2.2 Subdirectories level provenance {#3-2-2-subdirectories-level-provenance}
 
 BIDS-Prov files can be stored in a `prov/` directory in any subdirectory of the dataset (or BIDS-Derivatives directories).
@@ -494,6 +569,8 @@ Here is an example dataset tree:
    ├─ ...
    └─ dataset_description.json
 ```
+
+TODO: where are the @context and BIDSProvVersion ?
 
 #### 3.2.3 Dataset level provenance - `prov/` directory {#3-2-3-dataset-level-provenance-prov-directory}
 
@@ -561,75 +638,9 @@ Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity
 }
 ```
 
-### 3.3 Top-level structure {#3-3-top-level-structure}
+TODO: where are the @context and BIDSProvVersion ?
 
-#### File-level provenance
-
-A skeleton for a file-level BIDS-Prov JSON-LD file looks like this:
-
-```
-{
-"@context": "https://purl.org/nidash/bidsprov/context.json", 
-"BIDSProvVersion": "1.0.0", 
-<...Entity 1...>
-"wasGeneratedBy": {
-<...Activity...>
-    "wasAssociatedWith": {
-        <...Agent...>
-        },
-    "used": {
-        <...Entity 2…>
-      }
-   	}
-}
-```
-
-<table>
-  <tr>
-   <td>
-
-<strong>Key name</strong>
-   </td>
-   <td><strong>Description</strong>
-   </td>
-  </tr>
-  <tr>
-   <td><code>@context</code>
-   </td>
-   <td>REQUIRED. A URL to the BIDS-Prov json context. Value must be “<code>https://purl.org/nidash/bidsprov/context.json"</code>
-   </td>
-  </tr>
-  <tr>
-   <td><code>BIDSProvVersion</code>
-   </td>
-   <td>REQUIRED. A string identifying the version of the specification adhered to.
-   </td>
-  </tr>
-  <tr>
-   <td><code>[no-key : root-level attributes]</code>
-   </td>
-   <td>REQUIRED. An Entity record describing the provenance (see “Entity” section below).
-   </td>
-  </tr>
-  <tr>
-   <td><code>wasGeneratedBy</code>
-   </td>
-   <td>REQUIRED. An Activity describing the provenance (see “Activity”, section below).
-   </td>
-  </tr>
-  <tr>
-   <td><code>wasAssociatedWith</code>
-   </td>
-   <td>OPTIONAL. An Agent describing the provenance (see “Activity”, section below).
-   </td>
-  </tr>
-  <tr>
-   <td><code>used</code>
-   </td>
-   <td>OPTIONAL. An Entity describing the provenance (see “Entity”, section below).
-   </td>
-  </tr>
-</table>
+### 3.3 Contents of a BIDS-Prov file {#3-3-contents-of-a-bids-prov-file}
 
 #### Dataset-level provenance
 
@@ -674,45 +685,73 @@ A skeleton for a dataset level BIDS-Prov JSON-LD file looks like this:
 }
 ```
 
+## 4 Examples
+
+A list of examples for BIDS-Prov are available in https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples
+
+TODO: some examples are not merged yet.
+
 <table>
   <tr>
-   <td>
-
-<strong>Key name</strong>
+   <td><strong>Location</strong>
    </td>
    <td><strong>Description</strong>
    </td>
   </tr>
+
   <tr>
-   <td><code>@context</code>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/simple_example/">examples/simple_example/</a>
    </td>
-   <td>REQUIRED. A URL to the BIDS-Prov json context. Value must be “<code>https://purl.org/nidash/bidsprov/context.json"</code>
+   <td>A simple example describing the downsampling of EEG data using EEGLAB.
    </td>
   </tr>
+
   <tr>
-   <td><code>BIDSProvVersion</code>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/from_parsers/afni/">examples/from_parsers/afni/</a>
    </td>
-   <td>REQUIRED. A string identifying the version of the specification adhered to.
+   <td>A set of examples for fMRI processing using AFNI. These where generated generated from ...
    </td>
   </tr>
+
   <tr>
-   <td><code>records</code>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/from_parsers/fsl/">examples/from_parsers/fsl/</a>
    </td>
-   <td>REQUIRED. A list of Activity, Entity and Agent records describing the provenance (see “Activity”, “Entity” and “Agent” sections below).
+   <td>A set of examples for fMRI processing using FSL. These where generated generated from ...
    </td>
   </tr>
+
+  <tr>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/from_parsers/spm/">examples/from_parsers/spm/</a>
+   </td>
+   <td>A set of examples for fMRI processing using SPM. These where generated generated from ...
+   </td>
+  </tr>
+
+  <tr>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/dcm2niix/">examples/dcm2niix/</a>
+   </td>
+   <td>A set of examples describing dicom to nifti conversion using dcm2niix. These aim at showing different ways to organise the exact same provenance records inside a dataset.
+   </td>
+  </tr>
+
+  <tr>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/heudiconv/">examples/heudiconv/</a>
+   </td>
+   <td>An example describing dicom to nifti conversion using heudiconv.
+   </td>
+  </tr>
+
+  <tr>
+   <td><a href="https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples/nipype/">examples/nipype/</a>
+   </td>
+   <td>An example describing simple processings on anatomical MRI using FSL through Nipype.
+   </td>
+  </tr>
+
 </table>
 
-A complete schema for the model file to facilitate specification and validation is available from [https://github.com/bids-standard/BEP028_BIDSprov](https://github.com/bids-standard/BEP028_BIDSprov). In the event of disagreements between the schema and the specification, the specification is authoritative.
 
-
-
-## 4 Graph model {#4-graph-model}
-
-Note: since these jsonld documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
-
-## 4 Examples
-A list of fMRI examples for BIDS-Prov are available for SPM, FSL and AFNI in: https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples 
+## 5 Tools
 
 ## 5 Future perspectives
 
