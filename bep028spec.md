@@ -676,7 +676,7 @@ Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity
 
 ### 3.3 Consistency of IRIs
 
-BIDS-Prov recommends the following conventions in order to have consistant, human readable, and explicit IRIs[^3] as `Id` for provenance records objects. These principles also allow to identify where a record is described.
+BIDS-Prov recommends the following conventions in order to have consistent, human readable, and explicit IRIs[^3] as `Id` for provenance records objects. These principles also allow to identify where a record is described.
 
 IRIs identifying `Activity`, `Agent`, and `Environment` provenance records inside files stored in a directory `<directory>` relatively to a BIDS dataset `<dataset>` SHOULD have the following form, where `<label>` is a human readable label for the record and `<uid>` is a unique group of chars:
 
