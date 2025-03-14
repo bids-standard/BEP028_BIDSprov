@@ -128,12 +128,12 @@ A skeleton for a BIDS-Prov JSON-LD file looks like this:
   <tr>
    <td><code>Records</code>
    </td>
-   <td>REQUIRED. A list of provenance records (Activity, Entity, Agent, Environement), describing the provenance (see the <a href="#2-provenance-records">2. Provenance records</a> section below).
+   <td>REQUIRED. A list of provenance records (Activity, Entity, Agent, Environment), describing the provenance (see the <a href="#2-provenance-records">2. Provenance records</a> section below).
    </td>
   </tr>
 </table>
 
-BIDS-Prov allows this skeleton to be splitted into several *JSON* files. This is described in sections [3.1.3 Suffixes](#3-1-3-suffixes)
+BIDS-Prov allows this skeleton to be split into several *JSON* files. This is described in sections [3.1.3 Suffixes](#3-1-3-suffixes)
 and [3.2 Provenance description levels](#3-2-provenance-description-levels).
 
 Using tools provided by BIDS-Prov ([5. Tools](#5-tools)), these JSON contents can be merged back to a structured JSON-LD as described above.
@@ -514,7 +514,7 @@ BIDS-Prov metadata can be stored at different levels:
 * inside dataset subdirectories ;
 * at file level.
 
-It is recommanded that the records are stored at the level they describe. E.g.:
+It is recommended that the records are stored at the level they describe. E.g.:
 * an Activity that generated as set of files for several subjects of the dataset must be described at the dataset level ;
 * an Activity that generated as set of files for one subject only must be described at the subject's subdirectory level ;
 * an Activity that generated one file only can be described at this file's level.
@@ -676,7 +676,7 @@ Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity
 
 ### 3.3 Consistency of IRIs
 
-BIDS-Prov recommands the following conventions in order to have consistant, human readable, and explicit IRIs[^3] as `Id` for provenance records objects. These principles also allow to identify where a record is described.
+BIDS-Prov recommends the following conventions in order to have consistant, human readable, and explicit IRIs[^3] as `Id` for provenance records objects. These principles also allow to identify where a record is described.
 
 IRIs identifying `Activity`, `Agent`, and `Environment` provenance records inside files stored in a directory `<directory>` relatively to a BIDS dataset `<dataset>` SHOULD have the following form, where `<label>` is a human readable label for the record and `<uid>` is a unique group of chars:
 
@@ -729,7 +729,7 @@ IRIs of provenance records defined in `prov/prov-dcm2niix_soft.json` should star
 }
 ```
 
-This `Agent` can be refered to in the `sub-001/prov/sub-001_prov-dcm2niix_act.json` file:
+This `Agent` can be referred to in the `sub-001/prov/sub-001_prov-dcm2niix_act.json` file:
 ```JSON
 {
     "bids:dataset:sub-001/prov#conversion-00f3a18f": {
@@ -998,7 +998,7 @@ Details of the context, will encode terminology that is consistent across BIDS a
 }
 ```
 
-Contexts are created at the BIDS organization level, and only if necessary extended by a dataset. Thus most dataset creators will be able to reuse existing contexts. For terms, many of these are already in BIDS, with additional ones being curated by the NIDM-terms grant. Additional, terms can and should be re-used from schema.org, bioschemas, and other ontologies and vocabularies whenever possible.
+Contexts are created at the BIDS organization level, and only if necessary extended by a dataset. Thus most dataset creators will be able to reuse existing contexts. For terms, many of these are already in BIDS, with additional ones being curated by the NIDM-terms grant. Additional, terms can and should be reused from schema.org, bioschemas, and other ontologies and vocabularies whenever possible.
 
 <!-- Footnotes themselves at the bottom. -->
 ## Notes
