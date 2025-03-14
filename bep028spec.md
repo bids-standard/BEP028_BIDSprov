@@ -22,15 +22,15 @@ To see the original BIDS specification, see [this link](https://bids-specificati
 
 [[TOC]]
 
-## 1. Overview {#1-overview}
+## 1. Overview
 
-### 1.1 Goals {#1-1-goals}
+### 1.1 Goals
 
 Interpreting and comparing scientific results and enabling reusable data and analysis output require understanding provenance, i.e. how the data were generated and processed. To be useful, the provenance must be comprehensive, understandable, easily communicated, and captured automatically in machine accessible form. Provenance records are thus used to encode transformations between digital objects.
 
 This specification is aimed at describing the provenance of a BIDS dataset. This description is retrospective, i.e. it describes a set of steps that were executed in order to obtain the dataset (this is different from prospective descriptions of workflows that could for instance list all sets of steps that can be run on this dataset).
 
-### 1.2 Which type of provenance is covered in this BEP? {#1-2-which-type-of-provenance-is-covered-in-this-bep}
+### 1.2 Which type of provenance is covered in this BEP?
 
 Provenance comes up in many different contexts in BIDS. This specification focuses on representing the processings that were applied to a dataset. These could be for instance:
 
@@ -47,16 +47,17 @@ But provenance comes up in other contexts as well, which might be addressed at a
 
 Provenance can be captured using different mechanisms, but independent of encoding, always reflects transformations by either humans or software. The interpretability of provenance records requires a consistent vocabulary for provenance as well as an expectation for a consistent terminology for the objects being encoded. 
 
-> [!NOTE] Some level of provenance is already encoded in BIDS : the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) field of the `dataset_description.json` file can contain the provenance metadata for a dataset. This BEP avoids duplicating information already available in JSON files.
+> [!NOTE]
+> Some level of provenance is already encoded in BIDS : the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) field of the `dataset_description.json` file can contain the provenance metadata for a dataset. This BEP avoids duplicating information already available in JSON files.
 
-## 1.3 Principles for encoding provenance In BIDS {#1-3-principles-for-encoding-provenance-in-bids}
+## 1.3 Principles for encoding provenance In BIDS
 
 1. Provenance information SHOULD be included in a BIDS dataset when possible.
 2. If provenance records are included, these MUST be described using the conventions detailed by the BIDS-Prov specification.
 3. BIDS-Prov MAY be used to reflect the provenance of a dataset, a collection of files or a specific file at any level of the bids hierarchy. 
 4. Provenance information SHOULD be anonymized/de-identified as necessary. 
 
-### 1.4 Provenance format {#1-4-provenance-format}
+### 1.4 Provenance format
 
 BIDS-Prov metadata is written in JSON or JSON-LD. JSON-LD is a specific type of JSON that allows encoding graph-like structures with the Resource Description Framework.[^1]
 
@@ -67,7 +68,7 @@ A skeleton for a BIDS-Prov JSON-LD file looks like this:
 {
     "@context": "https://purl.org/nidash/bidsprov/context.json",  
     "BIDSProvVersion": "0.0.1",
-    "records": {
+    "Records": {
         "Agent": [
             {
                     <...Agent 1...>
@@ -124,9 +125,9 @@ A skeleton for a BIDS-Prov JSON-LD file looks like this:
    </td>
   </tr>
   <tr>
-   <td><code>records</code>
+   <td><code>Records</code>
    </td>
-   <td>REQUIRED. A list of provenance records (Activity, Entity, Agent, Environement), describing the provenance (see "Provenance records" sections below).
+   <td>REQUIRED. A list of provenance records (Activity, Entity, Agent, Environement), describing the provenance (see the <a href="#2-provenance-records">Provenance records</a> section below).
    </td>
   </tr>
 </table>
@@ -146,7 +147,7 @@ Using tools provided by BIDS-Prov ([5 Tools](#5-tools)), these JSON contents can
 
 A complete schema for the model file to facilitate specification and validation is available from [https://github.com/bids-standard/BEP028_BIDSprov](https://github.com/bids-standard/BEP028_BIDSprov). In the event of disagreements between the schema and the specification, the specification is authoritative.
 
-## 2. Provenance records {#2-provenance-records}
+## 2. Provenance records
 
 BIDS-Prov metadata consists in a set or records. There are 4 types of records: `Activity`, `Entity`, `Agent`, and `Environment`.
 
@@ -154,7 +155,7 @@ Activities represent the transformations that have been applied to the data. Eac
 
 ![](img/records.svg)
 
-### 2.1 Activity {#2-1-activity}
+### 2.1 Activity
 Each Activity record is a JSON Object with the following fields:
 
 <table>
@@ -231,7 +232,7 @@ Here is an example of an Activity record:
 }
 ```
 
-### 2.2 Entity {#2-2-entity}
+### 2.2 Entity
 Each Entity record is a JSON Object with the following fields:
 
 <table>
@@ -293,7 +294,7 @@ Here is an example of an Entity record:
 }
 ```
 
-### 2.3 Agent (Optional) {#2-3-agent-optional}
+### 2.3 Agent (Optional)
 Agent records are OPTIONAL. If included, each Agent record is a JSON Object with the following fields:
 
 <table>
@@ -339,7 +340,7 @@ Here is an example of an Agent record:
 }
 ```
 
-### 2.4 Environment (Optional) {#2-4-environments-optional}
+### 2.4 Environment (Optional)
 Environment records are OPTIONAL. If included, each Environment record is a JSON Object with the following fields:
 
 <table>
@@ -390,20 +391,20 @@ Here is an example of an Environment record:
 }
 ```
 
-## 3. Additions to BIDS {#3-additions-to-bids}
+## 3. Additions to BIDS
 
-### 3.1 File naming {#3-1-file-naming}
+### 3.1 File naming
 
 This section describes additions to the BIDS naming conventions for BIDS-Prov files.
 
 For further information about naming conventions, please consult the BIDS specification ([https://bids-specification.readthedocs.io](https://bids-specification.readthedocs.io)). Until these conventions are established in BIDS, it is RECOMMENDED to use the following.
 
-#### 3.1.1 File extensions {#3-1-1-file-extensions}
+#### 3.1.1 File extensions
 
 BIDS-Prov files contain JSON or JSON-LD data, hence having either a `.json` or a `.jsonld` extension.
 When using a `.jsonld` extension, the contents of the file must be JSON-LD. As JSON-LD is JSON, `*.jsonld` files can contain JSON.
 
-#### 3.1.2 The `prov` entity {#3-1-2-the-prov-entity}
+#### 3.1.2 The `prov` entity
 
 BIDS-Prov introduces the following entity:
 
@@ -426,7 +427,7 @@ In the following example, two separated processings (`conversion` and `smoothing
       └─ ... 
 ```
 
-#### 3.1.3 Suffixes {#3-1-3-suffixes}
+#### 3.1.3 Suffixes
 
 The following BIDS suffixes specify the contents of a provenance file.
 
@@ -481,7 +482,7 @@ The following BIDS suffixes specify the contents of a provenance file.
   </tr>
 </table>
 
-### 3.2 Provenance description levels {#3-2-provenance-description-levels}
+### 3.2 Provenance description levels
 
 This section describes the places where BIDS-Prov metadata can be stored.
 
@@ -497,7 +498,7 @@ It is recommanded that the records are stored at the level they describe. E.g.:
 * an Activity that generated as set of files for one subject only must be described at the subject's subdirectory level ;
 * an Activity that generated one file only can be described at this file's level.
 
-#### 3.2.1 File level provenance {#3-2-1-file-level-provenance}
+#### 3.2.1 File level provenance
 
 BIDS-Prov provenance metadata can be stored inside the sidecar JSON of any BIDS file (or BIDS-Derivatives file) it applies to.
 In this case, the BIDS-Prov content only refers to the associated data file.
@@ -546,7 +547,7 @@ No other field is allowed to describe provenance inside sidecar JSONs.
 
 TODO: where are the @context and BIDSProvVersion ?
 
-#### 3.2.2 Subdirectories level provenance {#3-2-2-subdirectories-level-provenance}
+#### 3.2.2 Subdirectories level provenance
 
 BIDS-Prov files can be stored in a `prov/` directory in any subdirectory of the dataset (or BIDS-Derivatives directories).
 
@@ -582,7 +583,7 @@ Here is an example dataset tree:
 
 TODO: where are the @context and BIDSProvVersion ?
 
-#### 3.2.3 Dataset level provenance - `prov/` directory {#3-2-3-dataset-level-provenance-prov-directory}
+#### 3.2.3 Dataset level provenance - `prov/` directory
 
 BIDS-Prov files can be stored in a `prov/` directory immediately below the BIDS dataset (or BIDS-Derivatives dataset) root. At the dataset level, provenance can be about any BIDS file in the dataset.
 
@@ -611,7 +612,7 @@ Here is an example:
    └─ dataset_description.json
 ```
 
-#### 3.2.4 Dataset level provenance - `dataset_description.json` file {#3-2-4-dataset-level-provenance-dataset-description}
+#### 3.2.4 Dataset level provenance - `dataset_description.json` file
 
 In the current version of the BIDS specification (1.10.0), the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) field of the `dataset_description.json` files allows to specify provenance of the dataset.
 
@@ -716,7 +717,7 @@ A list of examples for BIDS-Prov are available in https://github.com/bids-standa
 
 </table>
 
-## 5. Tools {#5.-tools}
+## 5. Tools
 
 ## 6. Future perspectives
 
@@ -728,16 +729,16 @@ Beyond what is covered in the current specification, provenance comes up in othe
 5. Transformations made by humans (e.g., editing freesurfer, adding quality evaluations).
 6. The interpretability of provenance records requires a consistent vocabulary for provenance as well as an expectation for a consistent terminology for the objects being encoded. While the current specification focuses on the former, the latter (i.e. consistent terminology for the objects being encoded) will require additional efforts.
 
-## 7. Positioning with respect to other BIDS models {#7-positioning-with-respect-to-other-bids-models}
+## 7. Positioning with respect to other BIDS models
 
-### 7.1 Provenance in BIDS derivatives {#7-1-provenance-in-bids-derivatives}
+### 7.1 Provenance in BIDS derivatives
 
 Comments/things to discuss/incorporate: 
 
 * Yarik: we should position BIDS-Prov w.r.t. Other provenance info available in BIDS derivatives
 * JB: Question on how to organize info in BIDS-Prov versus what will be available in bids-derivative sidecars
 
-### 7.2 Justification for Separating Provenance from JSON files {#7-2-justification-for-separating-provenance-from-json-files}
+### 7.2 Justification for Separating Provenance from JSON files
 
 Provenance is information about a file, including any metadata that is relevant to the file itself. Thus any BIDS data file and its associated JSON sidecar metadata together constitute a unique entity. As such, one may want to record the provenance of the JSON file as much as the provenance of the BIDS file. In addition, separating the provenance as a separate file for now, allows this to be an OPTIONAL component, and by encoding provenance as a JSON-LD document allows capturing the provenance as an individual record or multiple records distributed throughout the dataset.
 
