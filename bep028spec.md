@@ -419,6 +419,9 @@ For further information about naming conventions, please consult the BIDS specif
 
 #### 3.1.1 File extensions
 
+> [!CAUTION]
+> TODO: do we keep a `.prov.json` or `.prov.jsonld` extension ?
+
 BIDS-Prov files contain JSON or JSON-LD data, hence having either a `.json` or a `.jsonld` extension.
 
 When using a `.jsonld` extension, the contents of the file must be JSON-LD.
@@ -426,6 +429,9 @@ When using a `.jsonld` extension, the contents of the file must be JSON-LD.
 As JSON-LD is JSON, `*.jsonld` files can contain JSON.
 
 #### 3.1.2 The `prov` entity
+
+> [!CAUTION]
+> TODO: is the use of this entity mandatory ?
 
 BIDS-Prov introduces the following entity:
 
@@ -521,12 +527,17 @@ It is recommended that the records are stored at the level they describe. E.g.:
 
 #### 3.2.1 File level provenance
 
+> [!CAUTION]
+> TODO: at this level, how do we know to which provenance group belongs the records in the sidecar JSONs? (As no `prov` entity is used)
+
 BIDS-Prov provenance metadata can be stored inside the sidecar JSON of any BIDS file (or BIDS-Derivatives file) it applies to.
 In this case, the BIDS-Prov content only refers to the associated data file.
 
 The sidecar JSON naming convention is already defined by BIDS. Here is an example dataset tree:
 ```
 └─ example_dataset
+   ├─ prov/
+   │  └─ prov-dcm2niix_base.json
    ├─ sub-001/
    │  └─ ses-01/
    │     └─ anat/
@@ -566,8 +577,13 @@ If the `SidecarGenearatedBy` field is not defined, BIDS-Prov assumes that the si
 
 No other field is allowed to describe provenance inside sidecar JSONs.
 
-> [!CAUTION]
-> TODO: where are the @context and BIDSProvVersion ?
+> [!WARNING]
+> When using sidecar JSON files to describe provenance, the `@context` and `BIDSProvVersion` fields MUST be defined inside a `*_base.json` file, e.g.:
+> ```JSON
+> {
+>     "@context": "https://purl.org/nidash/bidsprov/context.json",
+>     "BIDSProvVersion": "0.0.1"
+> }
 
 #### 3.2.2 Subdirectories level provenance
 
@@ -575,7 +591,7 @@ BIDS-Prov files can be stored in a `prov/` directory in any subdirectory of the 
 
 In this case, the provenance metadata applies to the data files inside or below in the directory tree ; as stated by [BIDS common principles](https://bids-specification.readthedocs.io/en/stable/common-principles.html#filesystem-structure).
 
-Each BIDS-Prov file must meet the following naming convention. The `label` of the `prov` entity is arbitrary, `suffix` is one of listed in [3.3.1 Suffixes](#3-1-3-suffixes), and `extension` is either `json` or `jsonld`.
+Each BIDS-Prov file MUST meet the following naming convention. The `label` of the `prov` entity is arbitrary, `suffix` is one of listed in [3.3.1 Suffixes](#3-1-3-suffixes), and `extension` is either `json` or `jsonld`.
 
 ```
 sub-<label>/
@@ -584,33 +600,39 @@ sub-<label>/
       sub-<label>[_ses-<label>]_prov-<label>_<suffix>.<extension>
 ```
 
-Here is an example dataset tree:
+> [!TIP] Here is an example dataset tree:
+> ```
+> └─ dataset
+>   ├─ prov/
+>   │  └─ prov-dcm2niix_base.json
+>   ├─ sub-001/
+>   │  ├─ prov/
+>   │  │  └─ sub-001_prov-dcm2niix_act.json
+>   │  └─ ses-01/
+>   │     ├─ prov/
+>   │     │  └─ sub-001_ses-01_prov-dcm2niix_act.json
+>   │     └─ ...
+>   ├─ sub-002/
+>   │  ├─ prov/
+>   │  │  └─ sub-002_prov-dcm2niix_act.json
+>   │  └─ ...
+>   ├─ ...
+>   └─ dataset_description.json
+>```
 
-```
-└─ dataset
-   ├─ sub-001/
-   │  ├─ prov/
-   │  │  └─ sub-001_prov-dcm2niix_act.json
-   │  └─ ses-01/
-   │     ├─ prov/
-   │     │  └─ sub-001_ses-01_prov-dcm2niix_act.json
-   │     └─ ...
-   ├─ sub-002/
-   │  ├─ prov/
-   │  │  └─ sub-002_prov-dcm2niix_act.json
-   │  └─ ...
-   ├─ ...
-   └─ dataset_description.json
-```
-
-> [!CAUTION]
-> TODO: where are the @context and BIDSProvVersion ?
+> [!WARNING]
+> When using `.json` files, the `@context` and `BIDSProvVersion` fields MUST be defined inside a `*_base.json` file, e.g.:
+> ```JSON
+> {
+>     "@context": "https://purl.org/nidash/bidsprov/context.json",
+>     "BIDSProvVersion": "0.0.1"
+> }
 
 #### 3.2.3 Dataset level provenance - `prov/` directory
 
 BIDS-Prov files can be stored in a `prov/` directory immediately below the BIDS dataset (or BIDS-Derivatives dataset) root. At the dataset level, provenance can be about any BIDS file in the dataset.
 
-Each BIDS-Prov file must meet the following naming convention. The `label` of the `prov` entity is arbitrary, `suffix` is one of listed in [3.1.3 Suffixes](#3-1-3-suffixes), and `extension` is either `json` or `jsonld`
+Each BIDS-Prov file MUST meet the following naming convention. The `label` of the `prov` entity is arbitrary, `suffix` is one of listed in [3.1.3 Suffixes](#3-1-3-suffixes), and `extension` is either `json` or `jsonld`
 
 ```
 prov/
@@ -619,7 +641,6 @@ prov/
 ```
 
 Here is an example:
-
 ```
 └─ dataset
    ├─ prov/
@@ -635,7 +656,18 @@ Here is an example:
    └─ dataset_description.json
 ```
 
+> [!WARNING]
+> When using `.json` files, the `@context` and `BIDSProvVersion` fields MUST be defined inside a `*_base.json` file, e.g.:
+> ```JSON
+> {
+>     "@context": "https://purl.org/nidash/bidsprov/context.json",
+>     "BIDSProvVersion": "0.0.1"
+> }
+
 #### 3.2.4 Dataset level provenance - `dataset_description.json` file
+
+> [!CAUTION]
+> TODO: how do we know to which provenance group belongs the records in the `dataset_description.json`? (As no `prov` entity is used)
 
 In the current version of the BIDS specification (1.10.0), the [`GeneratedBy`](https://bids-specification.readthedocs.io/en/stable/glossary.html#generatedby-metadata) field of the `dataset_description.json` files allows to specify provenance of the dataset.
 
@@ -671,8 +703,14 @@ Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity
     "GeneratedByProv": "bids::#conversion-00f3a18f"
 }
 ```
-> [!CAUTION]
-> TODO: where are the @context and BIDSProvVersion ?
+
+> [!WARNING]
+> When using provenance in `dataset_description.json` files, the `@context` and `BIDSProvVersion` fields MUST be defined inside a `*_base.json` file, e.g.:
+> ```JSON
+> {
+>     "@context": "https://purl.org/nidash/bidsprov/context.json",
+>     "BIDSProvVersion": "0.0.1"
+> }
 
 ### 3.3 Consistency of IRIs
 
