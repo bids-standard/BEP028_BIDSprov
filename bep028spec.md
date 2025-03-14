@@ -37,7 +37,8 @@ Provenance comes up in many different contexts in BIDS. This specification focus
 1. The raw conversion from DICOM images or other instrument native formats to BIDS layout, details of stimulus presentation and cognitive paradigms, and clinical and neuropsychiatric assessments, each come with their own details of provenance.
 2. In BIDS derivatives, the consideration of outputs requires knowledge of which inputs from the BIDS dataset were used together with what software was run in what environment and with what parameters.
 
-TODO: those above should be covered with their own example
+> [!CAUTION]
+> TODO: those above should be covered with their own example
 
 But provenance comes up in other contexts as well, which might be addressed at a later stage:
 
@@ -127,7 +128,7 @@ A skeleton for a BIDS-Prov JSON-LD file looks like this:
   <tr>
    <td><code>Records</code>
    </td>
-   <td>REQUIRED. A list of provenance records (Activity, Entity, Agent, Environement), describing the provenance (see the <a href="#2-provenance-records">Provenance records</a> section below).
+   <td>REQUIRED. A list of provenance records (Activity, Entity, Agent, Environement), describing the provenance (see the <a href="#2-provenance-records">2. Provenance records</a> section below).
    </td>
   </tr>
 </table>
@@ -135,7 +136,7 @@ A skeleton for a BIDS-Prov JSON-LD file looks like this:
 BIDS-Prov allows this skeleton to be splitted into several *JSON* files. This is described in sections [3.1.3 Suffixes](#3-1-3-suffixes)
 and [3.2 Provenance description levels](#3-2-provenance-description-levels).
 
-Using tools provided by BIDS-Prov ([5 Tools](#5-tools)), these JSON contents can be merged back to a structured JSON-LD as described above.
+Using tools provided by BIDS-Prov ([5. Tools](#5-tools)), these JSON contents can be merged back to a structured JSON-LD as described above.
 
 > [!NOTE]
 > Since the JSON-LD documents are graph objects, they can be aggregated using RDF tools without the need to apply the inheritance principle.
@@ -157,6 +158,11 @@ Activities represent the transformations that have been applied to the data. Eac
 
 ### 2.1 Activity
 Each Activity record is a JSON Object with the following fields:
+
+> [!CAUTION]
+> TODO: AssociatedWith and Used can also entirely describe the Agent (resp. Entity)
+> TODO: AssociatedWith and Used can be lists
+> TODO: Can an Activity represent a group of command lines ? If so, Command can be a list
 
 <table>
   <tr>
@@ -198,7 +204,7 @@ Each Activity record is a JSON Object with the following fields:
   <tr>
    <td><code>Type</code>
    </td>
-   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the activity.
+   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the Activity.
    </td>
   </tr>
   <tr>
@@ -235,6 +241,10 @@ Here is an example of an Activity record:
 ### 2.2 Entity
 Each Entity record is a JSON Object with the following fields:
 
+> [!CAUTION]
+> TODO: GeneratedBy can also entirely describe the Activity
+> TODO: GeneratedBy can be a list
+
 <table>
   <tr>
    <td><strong>Key name</strong>
@@ -269,7 +279,7 @@ Each Entity record is a JSON Object with the following fields:
   <tr>
    <td><code>Type</code>
    </td>
-   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the entity.
+   <td>OPTIONAL. URI. A term from a controlled vocabulary that more specifically describes the Entity.
    </td>
   </tr>
   <tr>
@@ -296,6 +306,10 @@ Here is an example of an Entity record:
 
 ### 2.3 Agent (Optional)
 Agent records are OPTIONAL. If included, each Agent record is a JSON Object with the following fields:
+
+> [!CAUTION]
+> TODO: do we need a Type field for Agent?
+> TODO: shall we use `Software`, `Agent`, `SoftwareAgent` ?
 
 <table>
   <tr>
@@ -342,6 +356,10 @@ Here is an example of an Agent record:
 
 ### 2.4 Environment (Optional)
 Environment records are OPTIONAL. If included, each Environment record is a JSON Object with the following fields:
+
+> [!CAUTION]
+> TODO: do we need a Type field for Environment?
+> TODO: Environment not currently defined in the BIDS-Prov context
 
 <table>
   <tr>
@@ -545,7 +563,8 @@ If the `SidecarGenearatedBy` field is not defined, BIDS-Prov assumes that the si
 
 No other field is allowed to describe provenance inside sidecar JSONs.
 
-TODO: where are the @context and BIDSProvVersion ?
+> [!CAUTION]
+> TODO: where are the @context and BIDSProvVersion ?
 
 #### 3.2.2 Subdirectories level provenance
 
@@ -581,7 +600,8 @@ Here is an example dataset tree:
    └─ dataset_description.json
 ```
 
-TODO: where are the @context and BIDSProvVersion ?
+> [!CAUTION]
+> TODO: where are the @context and BIDSProvVersion ?
 
 #### 3.2.3 Dataset level provenance - `prov/` directory
 
@@ -648,8 +668,8 @@ Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity
     "GeneratedByProv": "bids::#conversion-00f3a18f"
 }
 ```
-
-TODO: where are the @context and BIDSProvVersion ?
+> [!CAUTION]
+> TODO: where are the @context and BIDSProvVersion ?
 
 ## 4. Examples
 
@@ -755,37 +775,41 @@ Simple answer : NO. BIDS-prov has been designed for provenance records to be sha
 If you have Activity 1 and Entity 1 defined in a provenance file called init.json, this file can look like the following
 
 ```JSON
-"prov:Activity": [
+"Activity": [
     {
-        "@id": "niiri:init",
-        "label": "Do some init",
-        "command": "python -m my_module.init --weights '[0, 1]'",
-        "parameters": {
+        "Id": "niiri:init",
+        "Label": "Do some init",
+        "Command": "python -m my_module.init --weights '[0, 1]'",
+        "Parameters": {
             "weights" : [0, 1]
         },
-        "startedAtTime": "2020-10-10T10:00:00",
-        "used": "niiri:bids_data1"
-    },
+        "StartedAtTime": "2020-10-10T10:00:00",
+        "Used": "niiri:bids_data1"
+    }
 ],
 
-"prov:Entity": [
-    {"@id": "niiri:bids_data1", "label": "Bids dataset 1", "prov:atLocation": "data/bids_root"}
+"Entity": [
+    {
+        "Id": "niiri:bids_data1",
+        "Label": "Bids dataset 1",
+        "AtLocation": "data/bids_root"
+    }
 ]
 ```
 
 Now if we want `Entity 2` defined in `preproc.json` to also have a "wasGeneratedBy" field referencing "Activity 1" from `init.json`, we can simply write the following
 
 ```JSON
-"prov:Entity": [
+"Entity": [
      {
-        "@id": "niiri:bids_data1",
-        "label": "Bids dataset 1",
-        "wasGeneratedBy": "niiri:init"
+        "Id": "niiri:bids_data1",
+        "Label": "Bids dataset 1",
+        "GeneratedBy": "niiri:init"
     }
 ]
 ```
 
-Needless to say, both `init.json` and `preproc.json` must have the reference the same context file (in a "@context" field at the very top)
+Needless to say, both `init.json` and `preproc.json` must have the reference the same context file (in a `"@context"` field at the very top)
 
 #### I want to track provenance for subject-level analysis, should I declare a prov file per subject ?
 
@@ -794,16 +818,16 @@ You can create a single prov file for every subject. Yet another option is to us
 Files for different subjects usually share common prefixes and extensions.
 
 ```JSON
-"prov:Entity": [
+"Entity": [
     {
-        "@id": "niiri:hfdhbfd",
-        "label": "anat raw files",
-        "prov:atLocation": "sub-*/anat/sub-*_T1w.nii.gz"
+        "Id": "niiri:hfdhbfd",
+        "Label": "anat raw files",
+        "AtLocation": "sub-*/anat/sub-*_T1w.nii.gz"
     },
     {
-        "@id": "niiri:fdhbfd",
-        "label": "func raw files",
-        "prov:atLocation": "sub-*/func/sub-*_task-tonecounting_bold.nii.gz"
+        "Id": "niiri:fdhbfd",
+        "Label": "func raw files",
+        "AtLocation": "sub-*/func/sub-*_task-tonecounting_bold.nii.gz"
     }
 ]
 ```
@@ -812,41 +836,41 @@ Files for different subjects usually share common prefixes and extensions.
 
 An example of this can be [fMRIPrep](https://fmriprep.org/en/stable/index.html), which can be launched as a docker container.
 
-The most simplistic way you can think of is to have this container "black-boxed" in your workflow. You basically record the calling of this container (`command` section) and the output (see the outputs section from fMRIPrep)
+The most simplistic way you can think of is to have this container "black-boxed" in your workflow. You basically record the calling of this container (`Command` section) and the output (see the outputs section from fMRIPrep)
 
 ```JSON
-"prov:Activity": [
+"Activity": [
     {
-        "@id": "niiri:fMRIPrep1",
-        "label": "fMRIPrep step",
-        "command": "fmriprep data/bids_root/ out/ participant -w work/",
-        "parameters": {
+        "Id": "niiri:fMRIPrep1",
+        "Label": "fMRIPrep step",
+        "Command": "fmriprep data/bids_root/ out/ participant -w work/",
+        "Parameters": {
                 "bids_dir" : "data/bids_root",
                 "output_dir" : "out/",
                 "anaysis_level" : "participant"
         },
-        "used": "niiri:bids_data1"
+        "Used": "niiri:bids_data1"
     }
 ],
-"prov:Entity": [
+"Entity": [
     {
-        "@id": "niiri:bids_data1",
-        "label": "Bids dataset 1",
-        "prov:atLocation": "data/bids_root"
+        "Id": "niiri:bids_data1",
+        "Label": "Bids dataset 1",
+        "AtLocation": "data/bids_root"
     },
     {
-        "@id": "niiri:fmri_prep_output1",
-        "label": "FMRI prep output 1",
-        "prov:atLocation": "out/",
-        "generatedAt": "2019-10-10T10:00:00",
-        "wasGeneratedBy": "niiri:fMRIPrep1"
+        "Id": "niiri:fmri_prep_output1",
+        "Label": "FMRI prep output 1",
+        "AtLocation": "out/",
+        "GeneratedAt": "2019-10-10T10:00:00",
+        "GeneratedBy": "niiri:fMRIPrep1"
     }
 ]
 ```
 
 #### What if I have a group of tasks, belonging to a subgroup of tasks ?
 
-You can the `prov-O` isPartOf relationship to add an extra link to you activity
+You can use the PROV-O `isPartOf` relationship to add an extra link to you activity
 
 ```JSON
 "prov:Activity": [
