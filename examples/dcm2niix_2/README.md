@@ -14,15 +14,17 @@ prov/
 └── software.prov.jsonld
 sourcedata/
 sub-02/
-└── anat
+└── anat/
+    ├── prov/
+    │   └── sub-02_T1w.prov.jsonld
     ├── sub-02_T1w.json
-    ├── sub-02_T1w.nii
-    └── sub-02_T1w.prov.jsonld
+    └── sub-02_T1w.nii
+    
 ```
 
 Note that the `sourcedata/` directory contains the source dataset described in the [section hereafter](#source-dataset).
 
-* `sub-02_T1w.prov.jsonld` is a "sidecars" defining provenance for the corresponding `.nii` file.
+* `prov/sub-02_T1w.prov.jsonld` is a "sidecar" defining provenance for the corresponding `.nii` file.
 * `environments.prov.jsonld` mutualises the declaration of software environments objects for lower level prov files
 * `software.prov.jsonld` mutualises the declaration of software pieces objects for lower level prov files
 
