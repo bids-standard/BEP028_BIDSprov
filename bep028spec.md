@@ -144,7 +144,7 @@ Using tools provided by BIDS-Prov ([5. Tools](#5-tools)), these JSON contents ca
 > [!WARNING]
 > A group of provenance records MUST be described:
 > * either in several `.json` files ;
-> * or in one `.jsonld` file.
+> * or in several `.jsonld` files.
 
 A complete schema for the model file to facilitate specification and validation is available from [https://github.com/bids-standard/BEP028_BIDSprov](https://github.com/bids-standard/BEP028_BIDSprov). In the event of disagreements between the schema and the specification, the specification is authoritative.
 
@@ -600,24 +600,25 @@ sub-<label>/
       sub-<label>[_ses-<label>]_prov-<label>_<suffix>.<extension>
 ```
 
-> [!TIP] Here is an example dataset tree:
+> [!TIP]
+> Here is an example dataset tree:
 > ```
 > └─ dataset
->   ├─ prov/
->   │  └─ prov-dcm2niix_base.json
->   ├─ sub-001/
->   │  ├─ prov/
->   │  │  └─ sub-001_prov-dcm2niix_act.json
->   │  └─ ses-01/
->   │     ├─ prov/
->   │     │  └─ sub-001_ses-01_prov-dcm2niix_act.json
->   │     └─ ...
->   ├─ sub-002/
->   │  ├─ prov/
->   │  │  └─ sub-002_prov-dcm2niix_act.json
->   │  └─ ...
->   ├─ ...
->   └─ dataset_description.json
+>    ├─ prov/
+>    │  └─ prov-dcm2niix_base.json
+>    ├─ sub-001/
+>    │  ├─ prov/
+>    │  │  └─ sub-001_prov-dcm2niix_act.json
+>    │  └─ ses-01/
+>    │     ├─ prov/
+>    │     │  └─ sub-001_ses-01_prov-dcm2niix_act.json
+>    │     └─ ...
+>    ├─ sub-002/
+>    │  ├─ prov/
+>    │  │  └─ sub-002_prov-dcm2niix_act.json
+>    │  └─ ...
+>    ├─ ...
+>    └─ dataset_description.json
 >```
 
 > [!WARNING]
