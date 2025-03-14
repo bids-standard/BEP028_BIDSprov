@@ -420,7 +420,10 @@ For further information about naming conventions, please consult the BIDS specif
 #### 3.1.1 File extensions
 
 BIDS-Prov files contain JSON or JSON-LD data, hence having either a `.json` or a `.jsonld` extension.
-When using a `.jsonld` extension, the contents of the file must be JSON-LD. As JSON-LD is JSON, `*.jsonld` files can contain JSON.
+
+When using a `.jsonld` extension, the contents of the file must be JSON-LD.
+
+As JSON-LD is JSON, `*.jsonld` files can contain JSON.
 
 #### 3.1.2 The `prov` entity
 
@@ -702,7 +705,12 @@ Here is another example that considers the following dataset:
 
 ```
 └─ dataset/
+   ├─ sourcedata/
+   │  └─ dicoms/
+   │     └─ ...
    ├─ sub-001/
+   │  ├─ anat/
+   │  │  └─ sub-001_T1W.nii.gz
    │  └─ prov/
    │     └─ sub-001_prov-dcm2niix_act.json
    ├─ ...
@@ -726,7 +734,7 @@ This `Agent` can be refered to in the `sub-001/prov/sub-001_prov-dcm2niix_act.js
 {
     "bids:dataset:sub-001/prov#conversion-00f3a18f": {
         "Label": "Conversion",
-        "Command": "dcm2niix",
+        "Command": "dcm2niix -o . -f sub-%i/anat/sub-%i_T1w sourcedata/dicoms",
         "AssociatedWith": "bids:dataset:prov#dcm2niix-70ug8pl5"
     }
 }
