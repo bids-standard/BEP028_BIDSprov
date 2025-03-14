@@ -159,4 +159,4 @@ although it is not allowed by the current version of the BIDS Prov specification
 
 3. In this example, the provenance for JSON sidecars files is not described.
 
-4. We used `prov:actedOnBehalfOf` relation between two `Software` objects to describe that `heudiconv` works with internal calls to `dcm2niix`. Although we don't know exactly which parts of the conversion process are done by these two pieces of software. **As a result, we are not able to write the exact command line exectued by dcm2niix**.
+4. We used `prov:actedOnBehalfOf` relation between two `Software` objects to describe that `heudiconv` works with internal calls to `dcm2niix`. Although we don't know exactly which parts of the conversion process are done by these two pieces of software. **As a result, we are not able to write the exact command line executed by dcm2niix**.
