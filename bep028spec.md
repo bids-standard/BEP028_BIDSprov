@@ -671,6 +671,67 @@ Here is an example of a `GeneratedByProv` field containing the IRI of an `Entity
 > [!CAUTION]
 > TODO: where are the @context and BIDSProvVersion ?
 
+### 3.3 Consistency of IRIs
+
+BIDS-Prov recommands the following conventions in order to have consistant, human readable, and explicit IRIs[^3] as `Id` for provenance records objects. These principles also allow to identify where a record is described.
+
+IRIs identifying `Activity`, `Agent`, and `Environment` provenance records inside files stored in a directory `<directory>` relatively to a BIDS dataset `<dataset>` SHOULD have the following form, where `<label>` is a human readable label for the record and `<uid>` is a unique group of chars:
+
+```
+bids:<dataset>:<directory>#<name>-<uid>
+```
+
+Here are a few naming examples:
+* `bids:ds001734:prov#conversion-xfMMbHK1`: an `Activity` described at dataset level inside the `ds001734` dataset;
+* `bids::sub-001/prov#dcm2niix-70ug8pl5"`: an `Agent` described at subject level inside the current dataset ;
+* `bids::prov#fedora-uldfv058"`: an `Environment` described at dataset level inside the current dataset.
+
+IRI identifying `Entity` provenance records for a file `<file>` relatively to a BIDS dataset `<dataset>` SHOULD have the following form:
+
+```
+bids:<dataset>:<file>
+```
+
+derivatives/fmriprep/sub-001/func/sub-001_task-MGT_run-01_bold_space-MNI152NLin2009cAsym_preproc.nii.gz
+
+Here are a few naming examples:
+* `bids:ds001734:sub-002/anat/sub-02_T1w.nii`: an `Entity` describing a T1w file for subject `sub-002` in the `ds001734` dataset ;
+* `bids:derivatives:fmriprep/sub-001/func/sub-001_task-MGT_run-01_bold_space-MNI152NLin2009cAsym_preproc.nii.gz`: an `Entity` describing a bold file for subject `sub-001` in the `derivatives` dataset.
+
+Here is another example that considers the following dataset:
+
+```
+└─ dataset/
+   ├─ sub-001/
+   │  └─ prov/
+   │     └─ sub-001_prov-dcm2niix_act.json
+   ├─ ...
+   └─ prov/
+      ├─ prov-dcm2niix_base.json
+      └─ prov-dcm2niix_soft.json
+```
+
+IRIs of provenance records defined in `prov/prov-dcm2niix_soft.json` should start with `bids:dataset:prov#` or `bids::prov#`.
+```JSON
+{
+    "bids:dataset:prov#dcm2niix-70ug8pl5": {
+        "Label": "dcm2niix",
+        "Version": "v1.1.3"
+    }
+}
+```
+
+This `Agent` can be refered to in the `sub-001/prov/sub-001_prov-dcm2niix_act.json` file:
+```JSON
+{
+    "bids:dataset:sub-001/prov#conversion-00f3a18f": {
+        "Label": "Conversion",
+        "Command": "dcm2niix",
+        "AssociatedWith": "bids:dataset:prov#dcm2niix-70ug8pl5"
+    }
+}
+```
+
 ## 4. Examples
 
 A list of examples for BIDS-Prov are available in https://github.com/bids-standard/BEP028_BIDSprov/tree/master/examples
@@ -936,3 +997,4 @@ Contexts are created at the BIDS organization level, and only if necessary exten
 
 [^1]: https://www.w3.org/TR/json-ld11/#basic-concepts
 [^2]: http://www.w3.org/TR/prov-o/
+[^3]: https://www.w3.org/TR/json-ld11/#iris
