@@ -15,8 +15,21 @@ mkdir derivatives/
 Launching `fMRIPrep` on one subject.
 
 ```shell
-fmriprep-docker --participant-label=001 --fs-license-file=soft/freesurfer/license.txt -w=data/ds001734_fmriprep/work/ dev/BEP028_BIDSprov/examples/fmriprep/ds001734/ data/ds001734_fmriprep/ participant 
+fmriprep-docker --participant-label=001 --fs-license-file=soft/freesurfer/license.txt --config=nipype.cfg -w=data/ds001734_fmriprep/work/ dev/BEP028_BIDSprov/examples/fmriprep/ds001734/ data/ds001734_fmriprep/ participant 
 ```
+
+TODO : alternative nipype configuration to enable provenance
+
+nipype.cfg:
+```
+[execution]
+write_provenance = true
+hash_method = content
+```
+
+docker run --rm -it -v /home/$USER/soft/freesurfer/license.txt:/opt/freesurfer/license.txt:ro -v /home/$USER/dev/bidsprov/nipype.cfg:/root/.nipype/nipype.cfg:ro -v /home/$USER/nas-empenn/share/dbs/narps_open/data/original/ds001734/:/data:ro -v /data/$USER/ds001734_fmriprep:/out -v /data/$USER/ds001734_fmriprep/work:/scratch poldracklab/fmriprep:1.1.4 /data /out participant --participant-label=001 -w /scratch
+
+
 
 ## Source dataset
 
