@@ -458,6 +458,10 @@ In the following example, two separated processings (`conversion` and `smoothing
 
 The following BIDS suffixes specify the contents of a provenance file.
 
+> [!CAUTION]
+> TODO: these suffixes might not be explicit enough.
+> TODO: especially the `all`
+
 <table>
   <tr>
    <td><strong>Suffix</strong>
@@ -487,6 +491,14 @@ The following BIDS suffixes specify the contents of a provenance file.
    <td><code>env</code>
    </td>
    <td>Entity records for the group of provenance
+   </td>
+   <td><code>.json</code>
+   </td>
+  </tr>
+  <tr>
+   <td><code>soft</code>
+   </td>
+   <td>Software records for the group of provenance
    </td>
    <td><code>.json</code>
    </td>
