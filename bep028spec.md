@@ -799,7 +799,7 @@ Details of the context, will encode terminology that is consistent across BIDS a
 ```
 
 
-Contexts are created at the BIDS organization level, and only if necessary extended by a dataset. Thus most dataset creators will be able to reuse existing contexts. For terms, many of these are already in BIDS, with additional ones being curated by the NIDM-terms grant. Additional, terms can and should be re-used from schema.org, bioschemas, and other ontologies and vocabularies whenever possible.
+Contexts are created at the BIDS organization level, and only if necessary extended by a dataset. Thus most dataset creators will be able to reuse existing contexts. For terms, many of these are already in BIDS, with additional ones being curated by the NIDM-terms grant. Additional, terms can and should be reused from schema.org, bioschemas, and other ontologies and vocabularies whenever possible.
 
 
 <!-- Footnotes themselves at the bottom. -->
