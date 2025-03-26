@@ -113,6 +113,7 @@ From that, we generate the JSON-LD graph `prov/merge/prov-fmriprep.prov.jsonld`.
 
 ### Limitations
 
+* For now, we use a simplified description of the provenance, leaving aside software and environments as well as keys such as `Digest`, `Version`, `EnvVar`, `StartedAtTime`, `EndedAtTime`.
 * Some entities end up with several labels / atlocation. E.g.:
 ```JSON-LD
 {
@@ -129,8 +130,6 @@ From that, we generate the JSON-LD graph `prov/merge/prov-fmriprep.prov.jsonld`.
     "https://github.com/bids-standard/BEP028_BIDSprov/terms/Digest": "sha512:c585500ee6565b5e8277e3cf72dcdef81768439e7998c258d9e3cfc4042cf2d3fa80ecd359400deda90a4ed141e3180b78a942b32827bd41fb0ca367c8f91c9c"
 }
 ```
-
-* Nipype generated entities both for its interface and the execution of the commands. In the BIDS-Prov records, we only keep the entities describing commands.
 * Some terms are missing in the BIDS-Prov context although they are in the specification (such as `Digest`, `Version`, `EnvVar`)
 * For now, the conversion script is not able to transform RDF triplets into dictionaries, as requested for `Digest` or `EnvVar` objects.
-* IRIs are not human readable enough
+* IRIs are not human readable enough (e.g.: `http://iri.nidash.org/262c247816c9fc071309a1da8bad277d`)
