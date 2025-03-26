@@ -5,6 +5,9 @@ This example aims at showing provenance records for the [fMRIPrep](https://fmrip
 > [!NOTE]
 > The command lines described in this documentation are supposed to be run from the `examples/fmriprep/` directory.
 
+> [!WARNING]
+> This examples needs the bids prov visualizer to export .svg files instead of .png files (for which the resolution is way too low to display a whole fMRIprep graph), hence modifications in `bids_prov/visualize.py`
+
 ## Source dataset
 
 We use the dataset from https://openneuro.org/datasets/ds001734/versions/1.0.5, containing raw and preprocessed fMRI data of two versions of the mixed gambles task, from the Neuroimaging Analysis Replication and Prediction Study (NARPS).
@@ -46,7 +49,7 @@ fmriprep-docker --participant-label=001 --fs-license-file=freesurfer_license.txt
 
 ## Converting nipype provenance to BIDS-Prov
 
-Nipype generates RDF provenance records in Trig format, as contained in `derivatives/fmriprep/prov/workflow_provenance_20250314T155959.trig`.
+Nipype generates RDF provenance records in Trig format, as contained in `derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959.trig`.
 
 We use the `code/convert_prov.py` script to convert it to BIDS-Prov compliant provenance:
 
@@ -66,16 +69,16 @@ This script perform SPARQL queries to extract a simplified version of the RDF gr
 Note that the script can extract environments as well, but this was disabled to simplify the output graph.
 
 The script  generates:
-* `derivatives/fmriprep/prov/workflow_provenance_20250314T155959_compacted.jsonld`: a JSON-LD file, which is the serialization of the simplified RDF graph
-* `derivatives/fmriprep/prov/workflow_provenance_20250314T155959_bidsprov.jsonld`: a BIDS-Prov file created by adapting the previous JSON-LD file to a BIDS-Prov skeleton
+* `derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_compacted.jsonld`: a JSON-LD file, which is the serialization of the simplified RDF graph
+* `derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_bidsprov.jsonld`: a BIDS-Prov file created by adapting the previous JSON-LD file to a BIDS-Prov skeleton
 
 We are able to visualize the BIDS-Prov graph:
 ```shell
 pip install bids-prov==0.1.0
-bids_prov_visualizer --input_file derivatives/fmriprep/prov/workflow_provenance_20250314T155959_bidsprov.jsonld --output_file derivatives/fmriprep/prov/workflow_provenance_20250314T155959_bidsprov.svg
+bids_prov_visualizer --input_file derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_bidsprov.jsonld --output_file derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_bidsprov.svg
 ```
 
-![](/examples/fmriprep/derivatives/fmriprep/prov/workflow_provenance_20250314T155959_bidsprov.svg)
+![](/examples/fmriprep/derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_bidsprov.svg)
 
 ## Storing provenance in the dataset
 
