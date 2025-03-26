@@ -133,3 +133,13 @@ From that, we generate the JSON-LD graph `prov/merge/prov-fmriprep.prov.jsonld`.
 * Some terms are missing in the BIDS-Prov context although they are in the specification (such as `Digest`, `Version`, `EnvVar`)
 * For now, the conversion script is not able to transform RDF triplets into dictionaries, as requested for `Digest` or `EnvVar` objects.
 * IRIs are not human readable enough (e.g.: `http://iri.nidash.org/262c247816c9fc071309a1da8bad277d`)
+* Some "Function" and other activity nodes Use and Generate the same entity. Does this really mean that they read and write the same file ?
+
+### Next steps
+
+* how to represent entities with two labels and locations ?
+* then, use file names for Ids of entities
+* split provenance metadata into sidecar JSONs
+* make extractions based on consistent use of qualifiedUsage and qualifiedGeneration (vs. Used and GeneratedBy)
+* investiate activities Using an Generating the same file (e.g.: `http://iri.nidash.org/4650c7ac00df11f0992d72ca464e997e` with entity `http://iri.nidash.org/72737575a38dda35b8ab6530a55aa543` which is `file://b330d9dac87a/data/sub-001/anat/sub-001_T1w.nii.gz`)
+* copy actual (or dummy) derivatives files into `fmriprep/sub-001`
