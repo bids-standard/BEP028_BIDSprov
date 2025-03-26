@@ -1,35 +1,9 @@
 # A `fMRIPrep` example for BIDS-Prov
 
-This example aims at showing provenance traces for the [fMRIPrep](https://fmriprep.org/en/23.1.3/index.html) preprocessing software on a Linux-based (Fedora) operating system.
+This example aims at showing provenance records for the [fMRIPrep](https://fmriprep.org/en/23.1.3/index.html) preprocessing software, as a typical usecase on how to store provenance inside a BIDS derivatives dataset.
 
-## `fMRIPrep` installation
-
-```shell
-pip install fmriprep-docker==1.1.4
-
-docker pull poldracklab/fmriprep:1.1.4
-
-mkdir derivatives/
-```
-
-Launching `fMRIPrep` on one subject.
-
-```shell
-fmriprep-docker --participant-label=001 --fs-license-file=soft/freesurfer/license.txt --config=nipype.cfg -w=data/ds001734_fmriprep/work/ dev/BEP028_BIDSprov/examples/fmriprep/ds001734/ data/ds001734_fmriprep/ participant 
-```
-
-TODO : alternative nipype configuration to enable provenance
-
-nipype.cfg:
-```
-[execution]
-write_provenance = true
-hash_method = content
-```
-
-docker run --rm -it -v /home/$USER/soft/freesurfer/license.txt:/opt/freesurfer/license.txt:ro -v /home/$USER/dev/bidsprov/nipype.cfg:/root/.nipype/nipype.cfg:ro -v /home/$USER/nas-empenn/share/dbs/narps_open/data/original/ds001734/:/data:ro -v /data/$USER/ds001734_fmriprep:/out -v /data/$USER/ds001734_fmriprep/work:/scratch poldracklab/fmriprep:1.1.4 /data /out participant --participant-label=001 -w /scratch
-
-
+> [!NOTE]
+> The command lines described in this documentation are supposed to be run from the `examples/fmriprep/` directory.
 
 ## Source dataset
 
@@ -37,18 +11,72 @@ We use the dataset from https://openneuro.org/datasets/ds001734/versions/1.0.5, 
 
 ```shell
 datalad install https://github.com/OpenNeuroDatasets/ds001734.git
-
-git submodule add https://github.com/OpenNeuroDatasets/ds001734.git  examples/fmriprep/ds001734
-
+git submodule add https://github.com/OpenNeuroDatasets/ds001734.git ds001734
+cd ds001734
 datalad get sub-001/*
 ```
 
-## Associated provenance
+## `fMRIPrep` installation
 
-In order to describe provenance records using BIDS Prov, we use:
+```shell
+pip install fmriprep-docker==1.1.4
+docker pull poldracklab/fmriprep:1.1.4
+mkdir derivatives/
+```
 
-* modality agnostic files inside the `prov/` directory
-* subject / modality level provenance files
+## Getting provenance records from nipype
+
+Create a `nipype.cfg` file to setup provenance recording in nipype. The file contains the following lines:
+```
+[execution]
+write_provenance = true
+hash_method = content
+```
+
+Launch `fMRIPrep` on one subject (sub-001):
+```shell
+fmriprep-docker --participant-label=001 --fs-license-file=freesurfer_license.txt --config=nipype.cfg -w=derivatives/work/ ds001734/ derivatives/ participant
+```
+
+> [!NOTE]
+> This is responsible for launching the following command line:
+> ```shell
+> docker run --rm -it -v <absolute_path_to>/freesurfer_license.txt:/opt/freesurfer/license.txt:ro -v <absolute_path_to>/nipype.cfg:/root/.nipype/nipype.cfg:ro -v <absolute_path_to>ds001734/:/data:ro -v <absolute_path_to>derivatives/:/out -v <absolute_path_to>derivatives/work:/scratch poldracklab/fmriprep:1.1.4 /data /out participant --participant-label=001 -w /scratch
+> ```
+
+## Converting nipype provenance to BIDS-Prov
+
+Nipype generates RDF provenance records in Trig format, as contained in `derivatives/fmriprep/prov/workflow_provenance_20250314T155959.trig`.
+
+We use the `code/convert_prov.py` script to convert it to BIDS-Prov compliant provenance:
+
+```shell
+cd derivatives/fmriprep/
+python code/convert_prov.py
+```
+
+This script perform SPARQL queries to extract a simplified version of the RDF graph, containing activities, entities, agents, and environments with these relations:
+
+| Record | relations |
+| --- | --- |
+| Activities | Label<br>Type<br>Command<br>AssociatedWith<br>Used<br>StartedAtTime<br>EndedAtTime |
+| Entities | Label<br>AtLocation<br>GeneratedBy<br>Type<br>Digest |
+| Agents | Label<br>Type<br>Version |
+| Environments | Label<br>Type<br>EnvVar |
+
+The script  generates:
+* `derivatives/fmriprep/prov/workflow_provenance_20250314T155959_compacted.jsonld`: a JSON-LD file, which is the serialization of the simplified RDF graph
+* `derivatives/fmriprep/prov/workflow_provenance_20250314T155959_bidsprov.jsonld`: a BIDS-Prov file created by adapting the previous JSON-LD file to a BIDS-Prov skeleton
+
+We are able to visualize the BIDS-Prov graph:
+```shell
+pip install bids-prov==0.1.0
+bids_prov_visualizer --input_file derivatives/fmriprep/prov/workflow_provenance_20250314T155959_bidsprov.jsonld --output_file derivatives/fmriprep/prov/workflow_provenance_20250314T155959_bidsprov.svg
+```
+
+![](/examples/fmriprep/derivatives/fmriprep/prov/workflow_provenance_20250314T155959_bidsprov.svg)
+
+## Storing provenance in the dataset
 
 ```
 .
@@ -71,23 +99,6 @@ In order to describe provenance records using BIDS Prov, we use:
         └── sub-001_task-MGT_bold_prov-fmriprep_ent.prov.json
 ```
 
-## New features for BIDS / BIDS Prov
-
-We introduce the following BIDS entity that is currently not existing:
-
-* `prov`
-    * Full name: Provenance traces
-    * Format: `prov-<label>`
-    * Definition: A grouping of provenance traces. Defining multiple provenance traces groups is appropriate when several processings have been performed on data.
-
-We introduce the following BIDS suffixes that are currently not existing:
-
-* `act`: the file describes BIDS Prov Activities for the group of provenance traces
-* `soft`: the file describes BIDS Prov Software for the group of provenance traces
-* `env`: the file describes BIDS Prov Environments for the group of provenance traces
-* `ent`: the file describes BIDS Prov Entities for the group of provenance traces
-* `base`: the file describes common BIDS Prov parameters for the group of provenance traces (version and context for BIDS Prov)
-
 ## Merging JSON in a JSON-LD file and plotting graph
 
 The python script `code/merge_prov.py` aims at merging all these provenance records into one JSON-LD graph.
@@ -99,12 +110,7 @@ python code/merge_prov.py
 
 From that, we generate the JSON-LD graph `prov/merge/prov-fmriprep.prov.jsonld`. Then we were able to plot the graph as a png file. We used this command:
 
-```shell
-pip install bids-prov==0.1.0
-bids_prov_visualizer --input_file prov/merged/prov-fmriprep.prov.jsonld --output_file prov/merged/prov-fmriprep.prov.png
-```
 
-![](/examples/fmriprep/prov/merged/prov-fmriprep.prov.png)
 
 ### Notes
 
