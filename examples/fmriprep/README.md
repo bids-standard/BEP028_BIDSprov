@@ -79,11 +79,19 @@ bids_prov_visualizer --input_file derivatives/fmriprep/prov/workflow_provenance_
 
 ## Storing provenance in the dataset
 
+> [!CAUTION]
+> TODO: split provenance traces into the following directory tree
+
 ```
 .
 ├── code
 │   └── merge_prov.py
 ├── prov
+│   ├── nipype
+│   │   ├── workflow_provenance_20250314T155959.trig
+│   │   ├── workflow_provenance_20250314T155959_bidsprov.jsonld
+│   │   ├── workflow_provenance_20250314T155959_bidsprov.svg
+│   │   └── workflow_provenance_20250314T155959_compacted.jsonldprov-fmriprep.prov.jsonld
 │   ├── merged
 │   │   ├── prov-fmriprep.prov.jsonld
 │   │   └── prov-fmriprep.prov.png
@@ -93,23 +101,91 @@ bids_prov_visualizer --input_file derivatives/fmriprep/prov/workflow_provenance_
 │   └── prov-fmriprep_soft.prov.json
 └── sub-001
     ├── anat
-    │   ├── sub-001_T1w_prov-fmriprep_act.prov.json
-    │   └── sub-001_T1w_prov-fmriprep_ent.prov.json
+    │   ├── sub-001_T1w_brainmask.nii.gz
+    │   ├── sub-001_T1w_class-CSF_probtissue.nii.gz
+    │   ├── sub-001_T1w_class-GM_probtissue.nii.gz
+    │   ├── sub-001_T1w_class-WM_probtissue.nii.gz
+    │   ├── sub-001_T1w_dtissue.nii.gz
+    │   ├── sub-001_T1w_inflated.L.surf.gii
+    │   ├── sub-001_T1w_inflated.R.surf.gii
+    │   ├── sub-001_T1w_label-aparcaseg_roi.nii.gz
+    │   ├── sub-001_T1w_label-aseg_roi.nii.gz
+    │   ├── sub-001_T1w_midthickness.L.surf.gii
+    │   ├── sub-001_T1w_midthickness.R.surf.gii
+    │   ├── sub-001_T1w_pial.L.surf.gii
+    │   ├── sub-001_T1w_pial.R.surf.gii
+    │   ├── sub-001_T1w_preproc.nii.gz
+    │   ├── sub-001_T1w_smoothwm.L.surf.gii
+    │   ├── sub-001_T1w_smoothwm.R.surf.gii
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_brainmask.nii.gz
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_class-CSF_probtissue.nii.gz
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_class-GM_probtissue.nii.gz
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_class-WM_probtissue.nii.gz
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_dtissue.nii.gz
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_preproc.nii.gz
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_target-T1w_warp.h5
+    │   ├── sub-001_T1w_space-orig_target-T1w_affine.txt
+    │   ├── sub-001_T1w_target-fsnative_affine.txt
+    │   └── sub-001_T1w_target-MNI152NLin2009cAsym_warp.h5
+    ├── figures
+    │   ├── sub-001_phasediff_fmap_mask.svg
+    │   ├── sub-001_T1w_reconall.svg
+    │   ├── sub-001_T1w_seg_brainmask.svg
+    │   ├── sub-001_T1w_t1_2_mni.svg
+    │   ├── sub-001_task-MGT_run-01_bold_bbr.svg
+    │   ├── sub-001_task-MGT_run-01_bold_carpetplot.svg
+    │   ├── sub-001_task-MGT_run-01_bold_fmap_reg.svg
+    │   ├── sub-001_task-MGT_run-01_bold_fmap_reg_vsm.svg
+    │   ├── sub-001_task-MGT_run-01_bold_rois.svg
+    │   ├── sub-001_task-MGT_run-01_bold_sdc_phasediff.svg
+    │   ├── sub-001_task-MGT_run-02_bold_bbr.svg
+    │   ├── sub-001_task-MGT_run-02_bold_carpetplot.svg
+    │   ├── sub-001_task-MGT_run-02_bold_fmap_reg.svg
+    │   ├── sub-001_task-MGT_run-02_bold_fmap_reg_vsm.svg
+    │   ├── sub-001_task-MGT_run-02_bold_rois.svg
+    │   ├── sub-001_task-MGT_run-02_bold_sdc_phasediff.svg
+    │   ├── sub-001_task-MGT_run-03_bold_bbr.svg
+    │   ├── sub-001_task-MGT_run-03_bold_carpetplot.svg
+    │   ├── sub-001_task-MGT_run-03_bold_fmap_reg.svg
+    │   ├── sub-001_task-MGT_run-03_bold_fmap_reg_vsm.svg
+    │   ├── sub-001_task-MGT_run-03_bold_rois.svg
+    │   ├── sub-001_task-MGT_run-03_bold_sdc_phasediff.svg
+    │   ├── sub-001_task-MGT_run-04_bold_bbr.svg
+    │   ├── sub-001_task-MGT_run-04_bold_carpetplot.svg
+    │   ├── sub-001_task-MGT_run-04_bold_fmap_reg.svg
+    │   ├── sub-001_task-MGT_run-04_bold_fmap_reg_vsm.svg
+    │   ├── sub-001_task-MGT_run-04_bold_rois.svg
+    │   └── sub-001_task-MGT_run-04_bold_sdc_phasediff.svg
     └── func
-        ├── sub-001_task-MGT_bold_prov-fmriprep_act.prov.json
-        └── sub-001_task-MGT_bold_prov-fmriprep_ent.prov.json
+        ├── sub-001_task-MGT_run-01_bold_confounds.tsv
+        ├── sub-001_task-MGT_run-01_bold_space-fsaverage5.L.func.gii
+        ├── sub-001_task-MGT_run-01_bold_space-fsaverage5.R.func.gii
+        ├── sub-001_task-MGT_run-01_bold_space-MNI152NLin2009cAsym_brainmask.nii.gz
+        ├── sub-001_task-MGT_run-01_bold_space-MNI152NLin2009cAsym_preproc.nii.gz
+        ├── sub-001_task-MGT_run-01_bold_space-T1w_label-aparcaseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-01_bold_space-T1w_label-aseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-02_bold_confounds.tsv
+        ├── sub-001_task-MGT_run-02_bold_space-fsaverage5.L.func.gii
+        ├── sub-001_task-MGT_run-02_bold_space-fsaverage5.R.func.gii
+        ├── sub-001_task-MGT_run-02_bold_space-MNI152NLin2009cAsym_brainmask.nii.gz
+        ├── sub-001_task-MGT_run-02_bold_space-MNI152NLin2009cAsym_preproc.nii.gz
+        ├── sub-001_task-MGT_run-02_bold_space-T1w_label-aparcaseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-02_bold_space-T1w_label-aseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-03_bold_confounds.tsv
+        ├── sub-001_task-MGT_run-03_bold_space-fsaverage5.L.func.gii
+        ├── sub-001_task-MGT_run-03_bold_space-fsaverage5.R.func.gii
+        ├── sub-001_task-MGT_run-03_bold_space-MNI152NLin2009cAsym_brainmask.nii.gz
+        ├── sub-001_task-MGT_run-03_bold_space-MNI152NLin2009cAsym_preproc.nii.gz
+        ├── sub-001_task-MGT_run-03_bold_space-T1w_label-aparcaseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-03_bold_space-T1w_label-aseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-04_bold_confounds.tsv
+        ├── sub-001_task-MGT_run-04_bold_space-fsaverage5.L.func.gii
+        ├── sub-001_task-MGT_run-04_bold_space-fsaverage5.R.func.gii
+        ├── sub-001_task-MGT_run-04_bold_space-MNI152NLin2009cAsym_brainmask.nii.gz
+        ├── sub-001_task-MGT_run-04_bold_space-MNI152NLin2009cAsym_preproc.nii.gz
+        ├── sub-001_task-MGT_run-04_bold_space-T1w_label-aparcaseg_roi.nii.gz
+        └── sub-001_task-MGT_run-04_bold_space-T1w_label-aseg_roi.nii.gz
 ```
-
-## Merging JSON in a JSON-LD file and plotting graph
-
-The python script `code/merge_prov.py` aims at merging all these provenance records into one JSON-LD graph.
-
-```shell
-mkdir prov/merged/
-python code/merge_prov.py
-```
-
-From that, we generate the JSON-LD graph `prov/merge/prov-fmriprep.prov.jsonld`. Then we were able to plot the graph as a png file. We used this command:
 
 ### Limitations
 
