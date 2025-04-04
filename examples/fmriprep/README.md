@@ -58,19 +58,21 @@ cd derivatives/fmriprep/
 python code/convert_prov.py
 ```
 
-This script perform SPARQL queries to extract a simplified version of the RDF graph, containing activities, entities, and agents with these relations:
+This script perform SPARQL queries to extract a simplified version of the RDF graph, containing activities, entities, environments and agents with these relations:
 
 | Record | relations |
 | --- | --- |
 | Activities | `Label`<br>`Type`<br>`Command`<br>`AssociatedWith`<br>`Used`<br>`StartedAtTime`<br>`EndedAtTime` |
 | Entities | `Label`<br>`AtLocation`<br>`GeneratedBy`<br>`Type`<br>`Digest` |
 | Agents | `Label`<br>`Type`<br>`Version` |
+| Environments | `Label`<br>`Type`<br>`EnvVar` |
 
-Note that the script can extract environments as well, but this was disabled to simplify the output graph.
+> [!NOTE] The script works with the `code/queries.py` module containing a set of exhaustive queries, and a set of simplified ones. The example uses he simplified queries (that do not extract Environments or Agents) to simplify the output graph.
 
 The script  generates:
 * `derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_compacted.jsonld`: a JSON-LD file, which is the serialization of the simplified RDF graph
 * `derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_bidsprov.jsonld`: a BIDS-Prov file created by adapting the previous JSON-LD file to a BIDS-Prov skeleton
+* provenance records splitted into JSON files `derivatives/fmriprep/prov/prov-fmriprep_*.json`
 
 We are able to visualize the BIDS-Prov graph:
 ```shell
@@ -80,113 +82,122 @@ bids_prov_visualizer --input_file derivatives/fmriprep/prov/nipype/workflow_prov
 
 ![](/examples/fmriprep/derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_bidsprov.svg)
 
-## Storing provenance in the dataset
+## Storing provenance in sidecar JSONs
 
-> [!CAUTION]
-> TODO: split provenance traces into the following directory tree
+We use the `code/split_prov.py` script to create (or complement) sidecar JSON files form Entity records of `derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_bidsprov.jsonld`.
+
+```shell
+python code/split_prov.py -i prov/nipype/workflow_provenance_20250314T155959_bidsprov.jsonld -o .
+```
+
+This gives the following tree (`code/` and `prov/nipype/` directories are ignored):
 
 ```
 .
-├── code
-│   └── merge_prov.py
 ├── prov
-│   ├── nipype
-│   │   ├── workflow_provenance_20250314T155959.trig
-│   │   ├── workflow_provenance_20250314T155959_bidsprov.jsonld
-│   │   ├── workflow_provenance_20250314T155959_bidsprov.svg
-│   │   └── workflow_provenance_20250314T155959_compacted.jsonldprov-fmriprep.prov.jsonld
-│   ├── merged
-│   │   ├── prov-fmriprep.prov.jsonld
-│   │   └── prov-fmriprep.prov.png
-│   ├── prov-fmriprep_base.prov.json
-│   ├── prov-fmriprep_ent.prov.json
-│   ├── prov-fmriprep_env.prov.json
-│   └── prov-fmriprep_soft.prov.json
+│   ├── prov-fmriprep_act.json
+│   ├── prov-fmriprep_base.json
+│   ├── prov-fmriprep_ent.json
+│   ├── prov-fmriprep_env.json
+│   └── prov-fmriprep_soft.json
 └── sub-001
     ├── anat
+    │   ├── sub-001_T1w_brainmask.json
     │   ├── sub-001_T1w_brainmask.nii.gz
-    │   ├── sub-001_T1w_class-CSF_probtissue.nii.gz
-    │   ├── sub-001_T1w_class-GM_probtissue.nii.gz
-    │   ├── sub-001_T1w_class-WM_probtissue.nii.gz
+    │   ├── sub-001_T1w_dtissue.json
     │   ├── sub-001_T1w_dtissue.nii.gz
     │   ├── sub-001_T1w_inflated.L.surf.gii
+    │   ├── sub-001_T1w_inflated.L.surf.json
     │   ├── sub-001_T1w_inflated.R.surf.gii
+    │   ├── sub-001_T1w_inflated.R.surf.json
+    │   ├── sub-001_T1w_label-aparcaseg_roi.json
     │   ├── sub-001_T1w_label-aparcaseg_roi.nii.gz
+    │   ├── sub-001_T1w_label-aseg_roi.json
     │   ├── sub-001_T1w_label-aseg_roi.nii.gz
     │   ├── sub-001_T1w_midthickness.L.surf.gii
+    │   ├── sub-001_T1w_midthickness.L.surf.json
     │   ├── sub-001_T1w_midthickness.R.surf.gii
+    │   ├── sub-001_T1w_midthickness.R.surf.json
     │   ├── sub-001_T1w_pial.L.surf.gii
+    │   ├── sub-001_T1w_pial.L.surf.json
     │   ├── sub-001_T1w_pial.R.surf.gii
+    │   ├── sub-001_T1w_pial.R.surf.json
+    │   ├── sub-001_T1w_preproc.json
     │   ├── sub-001_T1w_preproc.nii.gz
     │   ├── sub-001_T1w_smoothwm.L.surf.gii
+    │   ├── sub-001_T1w_smoothwm.L.surf.json
     │   ├── sub-001_T1w_smoothwm.R.surf.gii
+    │   ├── sub-001_T1w_smoothwm.R.surf.json
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_brainmask.json
     │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_brainmask.nii.gz
-    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_class-CSF_probtissue.nii.gz
-    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_class-GM_probtissue.nii.gz
-    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_class-WM_probtissue.nii.gz
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_dtissue.json
     │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_dtissue.nii.gz
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_preproc.json
     │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_preproc.nii.gz
     │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_target-T1w_warp.h5
+    │   ├── sub-001_T1w_space-MNI152NLin2009cAsym_target-T1w_warp.json
+    │   ├── sub-001_T1w_space-orig_target-T1w_affine.json
     │   ├── sub-001_T1w_space-orig_target-T1w_affine.txt
+    │   ├── sub-001_T1w_target-fsnative_affine.json
     │   ├── sub-001_T1w_target-fsnative_affine.txt
-    │   └── sub-001_T1w_target-MNI152NLin2009cAsym_warp.h5
-    ├── figures
-    │   ├── sub-001_phasediff_fmap_mask.svg
-    │   ├── sub-001_T1w_reconall.svg
-    │   ├── sub-001_T1w_seg_brainmask.svg
-    │   ├── sub-001_T1w_t1_2_mni.svg
-    │   ├── sub-001_task-MGT_run-01_bold_bbr.svg
-    │   ├── sub-001_task-MGT_run-01_bold_carpetplot.svg
-    │   ├── sub-001_task-MGT_run-01_bold_fmap_reg.svg
-    │   ├── sub-001_task-MGT_run-01_bold_fmap_reg_vsm.svg
-    │   ├── sub-001_task-MGT_run-01_bold_rois.svg
-    │   ├── sub-001_task-MGT_run-01_bold_sdc_phasediff.svg
-    │   ├── sub-001_task-MGT_run-02_bold_bbr.svg
-    │   ├── sub-001_task-MGT_run-02_bold_carpetplot.svg
-    │   ├── sub-001_task-MGT_run-02_bold_fmap_reg.svg
-    │   ├── sub-001_task-MGT_run-02_bold_fmap_reg_vsm.svg
-    │   ├── sub-001_task-MGT_run-02_bold_rois.svg
-    │   ├── sub-001_task-MGT_run-02_bold_sdc_phasediff.svg
-    │   ├── sub-001_task-MGT_run-03_bold_bbr.svg
-    │   ├── sub-001_task-MGT_run-03_bold_carpetplot.svg
-    │   ├── sub-001_task-MGT_run-03_bold_fmap_reg.svg
-    │   ├── sub-001_task-MGT_run-03_bold_fmap_reg_vsm.svg
-    │   ├── sub-001_task-MGT_run-03_bold_rois.svg
-    │   ├── sub-001_task-MGT_run-03_bold_sdc_phasediff.svg
-    │   ├── sub-001_task-MGT_run-04_bold_bbr.svg
-    │   ├── sub-001_task-MGT_run-04_bold_carpetplot.svg
-    │   ├── sub-001_task-MGT_run-04_bold_fmap_reg.svg
-    │   ├── sub-001_task-MGT_run-04_bold_fmap_reg_vsm.svg
-    │   ├── sub-001_task-MGT_run-04_bold_rois.svg
-    │   └── sub-001_task-MGT_run-04_bold_sdc_phasediff.svg
+    │   ├── sub-001_T1w_target-MNI152NLin2009cAsym_warp.h5
+    │   └── sub-001_T1w_target-MNI152NLin2009cAsym_warp.json
     └── func
+        ├── sub-001_task-MGT_run-01_bold_confounds.json
         ├── sub-001_task-MGT_run-01_bold_confounds.tsv
         ├── sub-001_task-MGT_run-01_bold_space-fsaverage5.L.func.gii
+        ├── sub-001_task-MGT_run-01_bold_space-fsaverage5.L.func.json
         ├── sub-001_task-MGT_run-01_bold_space-fsaverage5.R.func.gii
+        ├── sub-001_task-MGT_run-01_bold_space-fsaverage5.R.func.json
+        ├── sub-001_task-MGT_run-01_bold_space-MNI152NLin2009cAsym_brainmask.json
         ├── sub-001_task-MGT_run-01_bold_space-MNI152NLin2009cAsym_brainmask.nii.gz
+        ├── sub-001_task-MGT_run-01_bold_space-MNI152NLin2009cAsym_preproc.json
         ├── sub-001_task-MGT_run-01_bold_space-MNI152NLin2009cAsym_preproc.nii.gz
+        ├── sub-001_task-MGT_run-01_bold_space-T1w_label-aparcaseg_roi.json
         ├── sub-001_task-MGT_run-01_bold_space-T1w_label-aparcaseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-01_bold_space-T1w_label-aseg_roi.json
         ├── sub-001_task-MGT_run-01_bold_space-T1w_label-aseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-02_bold_confounds.json
         ├── sub-001_task-MGT_run-02_bold_confounds.tsv
         ├── sub-001_task-MGT_run-02_bold_space-fsaverage5.L.func.gii
+        ├── sub-001_task-MGT_run-02_bold_space-fsaverage5.L.func.json
         ├── sub-001_task-MGT_run-02_bold_space-fsaverage5.R.func.gii
+        ├── sub-001_task-MGT_run-02_bold_space-fsaverage5.R.func.json
+        ├── sub-001_task-MGT_run-02_bold_space-MNI152NLin2009cAsym_brainmask.json
         ├── sub-001_task-MGT_run-02_bold_space-MNI152NLin2009cAsym_brainmask.nii.gz
+        ├── sub-001_task-MGT_run-02_bold_space-MNI152NLin2009cAsym_preproc.json
         ├── sub-001_task-MGT_run-02_bold_space-MNI152NLin2009cAsym_preproc.nii.gz
+        ├── sub-001_task-MGT_run-02_bold_space-T1w_label-aparcaseg_roi.json
         ├── sub-001_task-MGT_run-02_bold_space-T1w_label-aparcaseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-02_bold_space-T1w_label-aseg_roi.json
         ├── sub-001_task-MGT_run-02_bold_space-T1w_label-aseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-03_bold_confounds.json
         ├── sub-001_task-MGT_run-03_bold_confounds.tsv
         ├── sub-001_task-MGT_run-03_bold_space-fsaverage5.L.func.gii
+        ├── sub-001_task-MGT_run-03_bold_space-fsaverage5.L.func.json
         ├── sub-001_task-MGT_run-03_bold_space-fsaverage5.R.func.gii
+        ├── sub-001_task-MGT_run-03_bold_space-fsaverage5.R.func.json
+        ├── sub-001_task-MGT_run-03_bold_space-MNI152NLin2009cAsym_brainmask.json
         ├── sub-001_task-MGT_run-03_bold_space-MNI152NLin2009cAsym_brainmask.nii.gz
+        ├── sub-001_task-MGT_run-03_bold_space-MNI152NLin2009cAsym_preproc.json
         ├── sub-001_task-MGT_run-03_bold_space-MNI152NLin2009cAsym_preproc.nii.gz
+        ├── sub-001_task-MGT_run-03_bold_space-T1w_label-aparcaseg_roi.json
         ├── sub-001_task-MGT_run-03_bold_space-T1w_label-aparcaseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-03_bold_space-T1w_label-aseg_roi.json
         ├── sub-001_task-MGT_run-03_bold_space-T1w_label-aseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-04_bold_confounds.json
         ├── sub-001_task-MGT_run-04_bold_confounds.tsv
         ├── sub-001_task-MGT_run-04_bold_space-fsaverage5.L.func.gii
+        ├── sub-001_task-MGT_run-04_bold_space-fsaverage5.L.func.json
         ├── sub-001_task-MGT_run-04_bold_space-fsaverage5.R.func.gii
+        ├── sub-001_task-MGT_run-04_bold_space-fsaverage5.R.func.json
+        ├── sub-001_task-MGT_run-04_bold_space-MNI152NLin2009cAsym_brainmask.json
         ├── sub-001_task-MGT_run-04_bold_space-MNI152NLin2009cAsym_brainmask.nii.gz
+        ├── sub-001_task-MGT_run-04_bold_space-MNI152NLin2009cAsym_preproc.json
         ├── sub-001_task-MGT_run-04_bold_space-MNI152NLin2009cAsym_preproc.nii.gz
+        ├── sub-001_task-MGT_run-04_bold_space-T1w_label-aparcaseg_roi.json
         ├── sub-001_task-MGT_run-04_bold_space-T1w_label-aparcaseg_roi.nii.gz
+        ├── sub-001_task-MGT_run-04_bold_space-T1w_label-aseg_roi.json
         └── sub-001_task-MGT_run-04_bold_space-T1w_label-aseg_roi.nii.gz
 ```
 
@@ -209,6 +220,7 @@ bids_prov_visualizer --input_file derivatives/fmriprep/prov/nipype/workflow_prov
     "https://github.com/bids-standard/BEP028_BIDSprov/terms/Digest": "sha512:c585500ee6565b5e8277e3cf72dcdef81768439e7998c258d9e3cfc4042cf2d3fa80ecd359400deda90a4ed141e3180b78a942b32827bd41fb0ca367c8f91c9c"
 }
 ```
+* As a result of the previous point, we are not able to fully replace these Entities from the `prov/prov-fmriprep_ent.json` file by a `GeneratedBy` field inside a sidecar JSON
 * Some terms are missing in the BIDS-Prov context although they are in the specification (such as `Digest`, `Version`, `EnvVar`)
 * For now, the conversion script is not able to transform RDF triplets into dictionaries, as requested for `Digest` or `EnvVar` objects.
 * IRIs are not human readable enough (e.g.: `http://iri.nidash.org/262c247816c9fc071309a1da8bad277d`)
@@ -218,7 +230,5 @@ bids_prov_visualizer --input_file derivatives/fmriprep/prov/nipype/workflow_prov
 
 * how to represent entities with two labels and locations ?
 * then, use file names for Ids of entities
-* split provenance metadata into sidecar JSONs
 * make extractions based on consistent use of qualifiedUsage and qualifiedGeneration (vs. Used and GeneratedBy)
 * investiate activities Using an Generating the same file (e.g.: `http://iri.nidash.org/4650c7ac00df11f0992d72ca464e997e` with entity `http://iri.nidash.org/72737575a38dda35b8ab6530a55aa543` which is `file://b330d9dac87a/data/sub-001/anat/sub-001_T1w.nii.gz`)
-* copy actual (or dummy) derivatives files into `fmriprep/sub-001`
