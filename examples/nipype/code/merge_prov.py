@@ -14,7 +14,7 @@ prov_env_files = [
 	'derivatives/flirt/prov/prov-flirt_env.prov.json'
 ]
 prov_act_files = [
-	'derivatives/flirt/sub-001/anat/prov/sub-001_prov-flirt_act.prov.json'
+	'derivatives/flirt/prov/prov-flirt_act.prov.json'
 ]
 prov_ent_files = [
 	'derivatives/flirt/prov/prov-flirt_ent.prov.json'
