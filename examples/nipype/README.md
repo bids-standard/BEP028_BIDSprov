@@ -6,7 +6,7 @@ This example aims at showing provenance traces from a simple [nipype](https://ni
 
 The workflow code is inside `code/normalize.py` and performs:
 1. a brain extraction of a T1w anatomical file `sub-001/anat/sub-001_Tw.nii.gz`, using BET;
-2. a normalisation to MNI152 of the resulting file, using FLIRT;
+2. a registration to MNI152 of the resulting file, using FLIRT;
 3. exporting relevant output files to a BIDS compliant name space.
 
 See [hereafter](#running-the-workflow) for more details on how to run the workflow.
@@ -17,7 +17,6 @@ In order to describe provenance records using BIDS Prov, we use:
 
 * the `GeneratedBy` field of JSON sidecar files, already existing in the BIDS specification;
 * modality agnostic files inside the `derivatives/flirt/prov/` directory
-* a modality agnostic file inside the `derivatives/flirt/sub-001/anat/prov/` directory
 
 After running the workflow and adding provenance traces, the resulting directory tree looks like this:
 
@@ -29,14 +28,13 @@ After running the workflow and adding provenance traces, the resulting directory
 │   ├── bids_prov_workflow
 │   └── flirt
 │       ├── prov
+│       │   ├── prov-flirt_act.prov.json
 │       │   ├── prov-flirt_base.prov.json
 │       │   ├── prov-flirt_ent.prov.json
 │       │   ├── prov-flirt_env.prov.json
 │       │   └── prov-flirt_soft.prov.json
 │       └── sub-001
 │           └── anat
-│               ├── prov
-│               │   └── sub-001_prov-flirt_act.prov.json
 │               ├── sub-001_space-mni152nlin2009casym_T1w_brain.json
 │               ├── sub-001_space-mni152nlin2009casym_T1w_brain.nii.gz
 │               ├── sub-001_T1w_brain.json
@@ -84,7 +82,7 @@ Assuming we are inside the nipype example directory (`examples/nipype`)
 ```bash
 # Get the container and run the workflow
 docker pull nipype/nipype:py38
-docker run -u root -it --rm -v .:/work nipype/nipype:py38 python code/normalize.py
+docker run -u root -it --rm -v .:/work nipype/nipype:py38 python code/flirt.py
 ```
 
 ## Limitations / open questions
