@@ -73,7 +73,7 @@ This script perform SPARQL queries to extract a simplified version of the RDF gr
 The script  generates:
 * `derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_compacted.jsonld`: a JSON-LD file, which is the serialization of the simplified RDF graph
 * `derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_bidsprov.jsonld`: a BIDS-Prov file created by adapting the previous JSON-LD file to a BIDS-Prov skeleton
-* provenance records splitted into JSON files `derivatives/fmriprep/prov/prov-fmriprep_*.json`
+* provenance records split into JSON files `derivatives/fmriprep/prov/prov-fmriprep_*.json`
 
 We are able to visualize the BIDS-Prov graph:
 ```shell

@@ -91,7 +91,7 @@ for record in compacted['@graph']:
 with open('prov/nipype/workflow_provenance_20250314T155959_bidsprov.jsonld', 'w', encoding='utf-8') as file:
     file.write(json.dumps(bids_prov_skeleton, indent=2))
 
-# Write splitted JSONs
+# Write split JSONs
 with open('prov/prov-fmriprep_soft.json', 'w', encoding='utf-8') as file:
     file.write(json.dumps(software_records, indent=2))
 with open('prov/prov-fmriprep_act.json', 'w', encoding='utf-8') as file:
