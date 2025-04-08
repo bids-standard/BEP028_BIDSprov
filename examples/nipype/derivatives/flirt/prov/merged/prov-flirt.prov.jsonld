@@ -1,0 +1,97 @@
+{
+  "Records": {
+    "Software": [
+      {
+        "Label": "Nipype",
+        "Version": "1.8.6.dev0",
+        "AltIdentifier": "RRID:SCR_002502",
+        "Id": "bids::prov/#nipype-s9w94f9u"
+      },
+      {
+        "Label": "FSL",
+        "Version": "5.0",
+        "AltIdentifier": "RRID:SCR_002823",
+        "prov:actedOnBehalfOf": "bids::prov/#nipype-s9w94f9u",
+        "Id": "bids::prov/#fsl-e1oq534p"
+      }
+    ],
+    "Activities": [
+      {
+        "Label": "brain_extraction",
+        "Command": "bet sub-001_T1w.nii.gz sub-001_T1w_brain.nii.gz",
+        "AssociatedWith": "bids::prov/#fsl-e1oq534p",
+        "Used": [
+          {
+            "Id": "bids::sub-001/anat/sub-001_T1w.nii.gz",
+            "Type": "Entity",
+            "Label": "sub-001_T1w.nii.gz"
+          },
+          "bids::prov/#docker.io/nipype/nipype:py38-vavfao8v"
+        ],
+        "Id": "bids::prov/#bet-ys913vx4"
+      },
+      {
+        "Label": "flirt",
+        "Command": "flirt -in /work/derivatives/bids_prov_workflow/brain_extraction/sub-001_T1w_brain.nii.gz -ref /usr/share/fsl/5.0/data/standard/MNI152_T1_1mm_brain.nii.gz -out sub-001_T1w_brain_flirt.nii.gz -omat sub-001_T1w_brain_flirt.mat",
+        "AssociatedWith": "bids::prov/#fsl-e1oq534p",
+        "Used": [
+          {
+            "Id": "bids::derivatives/bids_prov_workflow/brain_extraction/sub-001_T1w_brain.nii.gz",
+            "Type": "Entity",
+            "Label": "sub-001_T1w_brain.nii.gz",
+            "GeneratedBy": "bids::prov/#bet-ys913vx4"
+          },
+          "/usr/share/fsl/5.0/data/standard/MNI152_T1_1mm_brain.nii.gz",
+          "bids::prov/#docker.io/nipype/nipype:py38-vavfao8v"
+        ],
+        "Id": "bids::prov/#flirt-xzje9hjh"
+      },
+      {
+        "Label": "export_brain",
+        "Command": "shutil.copy",
+        "AssociatedWith": "bids::prov/#nipype-s9w94f9u",
+        "Used": [
+          "bids::derivatives/bids_prov_workflow/brain_extraction/sub-001_T1w_brain.nii.gz",
+          "bids::prov/#docker.io/nipype/nipype:py38-vavfao8v"
+        ],
+        "Id": "bids::prov/#export_file-i1cblvll"
+      },
+      {
+        "Label": "export_brain_MNI_space",
+        "Command": "shutil.copy",
+        "AssociatedWith": "bids::prov/#nipype-s9w94f9u",
+        "Used": [
+          {
+            "Id": "bids::derivatives/bids_prov_workflow/flirt/sub-001_T1w_brain_flirt.nii.gz",
+            "Type": "Entity",
+            "Label": "sub-001_T1w_brain_flirt.nii.gz",
+            "GeneratedBy": "bids::prov/#flirt-xzje9hjh"
+          },
+          "bids::prov/#docker.io/nipype/nipype:py38-vavfao8v"
+        ],
+        "Id": "bids::prov/#export_file-fpw3jrwy"
+      }
+    ],
+    "Entities": [
+      {
+        "Label": "nipype/nipype:py38 docker image",
+        "OperatingSystem": "GNU/Linux 6.2.15-100.fc36.x86_64",
+        "Id": "bids::prov/#docker.io/nipype/nipype:py38-vavfao8v"
+      },
+      {
+        "Label": "MNI152_T1_1mm_brain.nii.gz",
+        "Id": "/usr/share/fsl/5.0/data/standard/MNI152_T1_1mm_brain.nii.gz"
+      },
+      {
+        "Id": "bids::derivatives/flirt/sub-001/anat/sub-001_T1w_brain.nii.gz",
+        "GeneratedBy": "bids::prov/#export_file-i1cblvll"
+      },
+      {
+        "Id": "bids::derivatives/flirt/sub-001/anat/sub-001_space-mni152nlin2009casym_T1w_brain.nii.gz",
+        "GeneratedBy": "bids::prov/#export_file-fpw3jrwy"
+      }
+    ]
+  },
+  "@context": "https://purl.org/nidash/bidsprov/context.json",
+  "BIDSProvVersion": "0.0.1"
+}
