@@ -67,7 +67,8 @@ This script perform SPARQL queries to extract a simplified version of the RDF gr
 | Agents | `Label`<br>`Type`<br>`Version` |
 | Environments | `Label`<br>`Type`<br>`EnvVar` |
 
-> [!NOTE] The script works with the `code/queries.py` module containing a set of exhaustive queries, and a set of simplified ones. The example uses he simplified queries (that do not extract Environments or Agents) to simplify the output graph.
+> [!NOTE]
+> The script works with the `code/queries.py` module containing a set of exhaustive queries, and a set of simplified ones. The example uses he simplified queries (that do not extract Environments or Agents) to simplify the output graph.
 
 The script  generates:
 * `derivatives/fmriprep/prov/nipype/workflow_provenance_20250314T155959_compacted.jsonld`: a JSON-LD file, which is the serialization of the simplified RDF graph
