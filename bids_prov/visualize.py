@@ -28,7 +28,9 @@ def viz_turtle(content=None, img_file=None, source=None, **kwargs) -> None:
     # TODO : show attributes has optional arg
     dot = prov_to_dot(prov_doc, use_labels=True,
                       show_element_attributes=False, show_relation_attributes=False)
-    dot.write_png(img_file)
+    # dot.write_png(img_file)
+    with open(img_file, 'wb') as file:
+        file.write(dot.create_svg())
 
 
 def viz_jsonld11(jsonld11: dict, img_file: str) -> None:
