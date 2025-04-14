@@ -35,20 +35,20 @@ job
 326951
 </pre><hr>Initialisation<br><pre>
 
-/usr/local/packages/fsl-5.0.10/bin/fslmaths /storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/sub-01/func/sub-01_task-tonecounting_bold prefiltered_func_data -odt float
+/usr/local/packages/fsl-5.0.10/bin/fslmaths ds011/sub-01/func/sub-01_task-tonecounting_bold prefiltered_func_data -odt float
 Total original volumes = 104
 
 /usr/local/packages/fsl-5.0.10/bin/fslroi prefiltered_func_data example_func 52 1
 </pre><hr>Preprocessing:Stage 1<br><pre>
 
-/usr/local/packages/fsl-5.0.10/bin/mainfeatreg -F 6.00 -d /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat -l /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/logs/feat2_pre -R /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/report_unwarp.html -r /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/report_reg.html  -i /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/example_func.nii.gz  -h /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w_brain -w  BBR -x 90 -s /usr/local/packages/fsl-5.0.8/data/standard/MNI152_T1_2mm_brain -y 12 -z 90 
+/usr/local/packages/fsl-5.0.10/bin/mainfeatreg -F 6.00 -d /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat -l /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/logs/feat2_pre -R /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/report_unwarp.html -r /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/report_reg.html  -i /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/example_func.nii.gz  -h ds011/derivatives/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w_brain -w  BBR -x 90 -s /usr/local/packages/fsl-5.0.8/data/standard/MNI152_T1_2mm_brain -y 12 -z 90 
 Option -F ( FEAT version parameter ) selected with  argument "6.00"
 Option -d ( output directory ) selected with  argument "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat"
 Option -l ( logfile )input with argument "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/logs/feat2_pre"
 Option -R ( html unwarping report ) selected with  argument "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/report_unwarp.html"
 Option -r ( html registration report ) selected with  argument "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/report_reg.html"
 Option -i ( main input ) input with argument "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/example_func.nii.gz"
-Option -h ( high-res structural image ) selected with  argument "/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w_brain"
+Option -h ( high-res structural image ) selected with  argument "ds011/derivatives/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w_brain"
 Option -w ( highres dof ) selected with  argument "BBR"
 Option -x ( highres search ) selected with  argument "90"
 Option -s ( standard image ) selected with  argument "/usr/local/packages/fsl-5.0.8/data/standard/MNI152_T1_2mm_brain"
@@ -59,10 +59,10 @@ Option -z ( standard search ) selected with  argument "90"
 /bin/mkdir -p /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/fsl_cluster_p005.feat/reg
 
 
-/usr/local/packages/fsl-5.0.10/bin/fslmaths /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w_brain highres
+/usr/local/packages/fsl-5.0.10/bin/fslmaths ds011/derivatives/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w_brain highres
 
 
-/usr/local/packages/fsl-5.0.10/bin/fslmaths /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w  highres_head
+/usr/local/packages/fsl-5.0.10/bin/fslmaths ds011/derivatives/SPM/PREPROCESSING/ANATOMICAL/sub-01_T1w  highres_head
 
 did not find file: example_func2highres.mat. Generating transform.
 
@@ -128,9 +128,9 @@ Running FAST segmentation FLIRT pre-alignment Running BBR 0.436200 0.999899 -0.0
 /bin/rm -rf prefiltered_func_data*
 </pre><hr>Stats<br><pre>
 
-mkdir -p custom_timing_files ; /usr/local/packages/fsl-5.0.10/bin/fslFixText /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/FSL/ONSETS/sub-01_tone_counting.txt custom_timing_files/ev1.txt
+mkdir -p custom_timing_files ; /usr/local/packages/fsl-5.0.10/bin/fslFixText ds011/derivatives/FSL/ONSETS/sub-01_tone_counting.txt custom_timing_files/ev1.txt
 
-mkdir -p custom_timing_files ; /usr/local/packages/fsl-5.0.10/bin/fslFixText /storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/FSL/ONSETS/sub-01_tone_counting_probe.txt custom_timing_files/ev2.txt
+mkdir -p custom_timing_files ; /usr/local/packages/fsl-5.0.10/bin/fslFixText ds011/derivatives/FSL/ONSETS/sub-01_tone_counting_probe.txt custom_timing_files/ev2.txt
 
 /usr/local/packages/fsl-5.0.10/bin/film_gls --in=filtered_func_data --rn=stats --pd=design.mat --thr=1000.0 --sa --ms=5 --con=design.con  
 Log directory is: stats

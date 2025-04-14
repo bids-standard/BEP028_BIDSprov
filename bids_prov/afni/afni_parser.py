@@ -7,8 +7,11 @@ from collections import defaultdict, OrderedDict
 from itertools import chain
 
 from bids_prov.fsl.fsl_parser import get_entities
-from bids_prov.utils import get_default_graph, CONTEXT_URL, get_id, label_mapping, compute_sha_256_entity, \
+from bids_prov.utils import (
+    get_default_graph, CONTEXT_URL, label_mapping, compute_sha_256_entity,
+    get_activity_urn, get_agent_urn, get_entity_urn, make_alnum, get_uuid,
     writing_jsonld
+    )
 
 # regex to catch inputs
 # in `cp /fsl/5.0/doc/fsl.css .files no_ext 5.0` --> only `.files` should match
@@ -117,12 +120,12 @@ def build_records(commands_block: list, agent_id: str, verbose: bool = False):
 
     for (block, cmd) in commands_block:
         cmd_s = re.split(" |=", cmd)
-        a_name = cmd_s[0]
+        activity_name = cmd_s[0]
         cmd_args_remain = cmd_s[1:]
         inputs = []
         outputs = []
         function_in_description_functions = False
-        command_name_end = os.path.split(a_name)[1]
+        command_name_end = os.path.split(activity_name)[1]
 
         for df in description_functions:
             if df["Name"] == command_name_end:
@@ -182,7 +185,7 @@ def build_records(commands_block: list, agent_id: str, verbose: bool = False):
             outputs = list(chain(*(attributes.pop(k)
                                    for k in attributes.keys() & OUTPUT_TAGS)))
             entity_names = [_ for _ in re.findall(
-                INPUT_RE, cmd_without_attributes[len(a_name):])]
+                INPUT_RE, cmd_without_attributes[len(activity_name):])]
 
             if entity_names and entity_names[0] in cmd_without_attributes:
                 outputs.append(entity_names[-1])
@@ -190,19 +193,24 @@ def build_records(commands_block: list, agent_id: str, verbose: bool = False):
                     inputs.append(entity_names[0])
 
         # the file name and possible extension
-        label = f"{os.path.split(a_name)[1]}"
-
+        activity_label = label_mapping(
+            f'{os.path.split(activity_name)[1]}',
+            'afni/afni_labels.json')
         activity = {
-            "@id": f"urn:{get_id()}",
-            "Label": label_mapping(label, "afni/afni_labels.json"),
-            "AssociatedWith": "urn:" + agent_id,
+            "@id": get_activity_urn(activity_label),
+            "Label": activity_label,
+            "AssociatedWith": agent_id,
             "Command": cmd,
             "Parameters": param_dic,
             "Used": list(),
         }
 
         for input_path in inputs:
-            input_id = f"urn:{get_id()}"  # def format_id
+            # Deal with not human readable paths
+            if not make_alnum(input_path):
+                input_id = 'urn:uuid:' + get_uuid()
+            else:
+                input_id = get_entity_urn(input_path)
             existing_input = next(
                 (entity for entity in records["Entities"] if entity["AtLocation"] == input_path), None)
 
@@ -223,9 +231,13 @@ def build_records(commands_block: list, agent_id: str, verbose: bool = False):
         activity["Used"] = sorted(set(activity["Used"]))
 
         for output_path in outputs:
+            if not make_alnum(output_path):
+                output_id = 'urn:uuid:' + get_uuid()
+            else:
+                output_id = get_entity_urn(output_path)
             records["Entities"].append(
                 {
-                    "@id": f"urn:{get_id()}",
+                    "@id": output_id,
                     "Label": os.path.split(output_path)[1],
                     "AtLocation": output_path,
                     "GeneratedBy": activity["@id"],
@@ -272,7 +284,7 @@ def gather_multiline(input_file: str) -> list:
 
 def readlines(input_file: str) -> list:
     """
-    gather multiline command split by \ separator
+    Read lines form an input file and return the list of commands it contains
 
     Parameters
     ----------
@@ -363,7 +375,7 @@ def fusion_activities(activities, label):
             command += activity["Command"] + "; "
 
         return {
-            "@id": f"urn:{get_id()}",
+            "@id": get_activity_urn(label),
             "Label": label,
             "AssociatedWith": activities[0]["AssociatedWith"],
             "Command": command,
@@ -454,7 +466,8 @@ def afni_to_bids_prov(filename: str, context_url=CONTEXT_URL, output_file=None,
     """
     commands_block = readlines(filename)
 
-    graph, agent_id = get_default_graph(label="AFNI", context_url=context_url, soft_ver=soft_ver)
+    graph, agent_id = get_default_graph(
+        soft_label="AFNI", context_url=context_url, soft_version=soft_ver)
     records, bloc_act = build_records(commands_block, agent_id, verbose=verbose)
 
     graph["Records"].update(records)
