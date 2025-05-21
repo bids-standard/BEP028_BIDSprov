@@ -12,9 +12,10 @@ After conversion, and adding provenance traces, the resulting directory tree loo
 
 ```
 prov/
-├── prov-dcm2niix_act.prov.json
-├── prov-dcm2niix_env.prov.json
-└── prov-dcm2niix_soft.prov.json
+├── prov-dcm2niix_act.json
+├── prov-dcm2niix_ent.json
+├── prov-dcm2niix_env.json
+└── prov-dcm2niix_soft.json
 sourcedata/
 sub-02/
 └── anat
@@ -71,7 +72,7 @@ We introduce the following BIDS suffixes that are currently not existing:
 
 We use the `GeneratedBy` field of JSON sidecars to link to `Activities` that created the file the sidecars refers to.
 
-In this example, we rely on the fact that nodes defined in the `prov/*.prov.jsonld` files have `bids::prov/` as base IRIs.
+In this example, we rely on the fact that nodes defined in the `prov/*.jsonld` files have `bids::prov/` as base IRIs.
 
 The `code/merge_prov.py` code is responsible for:
 * merging the JSON provenance traces into the base JSON-LD graph;
