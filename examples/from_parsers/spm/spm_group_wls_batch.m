@@ -6,20 +6,20 @@
 matlabbatch{1}.spm.stats.mfx.ffx.dir = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/TEST/nidmresults-examples/spm_WLS_t_test'};
 %%
 matlabbatch{1}.spm.stats.mfx.ffx.spmmat = {
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-01/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-02/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-03/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-04/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-06/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-07/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-08/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-09/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-10/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-11/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-12/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-13/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-14/SPM.mat'
-                                           '/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/LEVEL1/sub-05/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-01/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-02/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-03/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-04/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-06/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-07/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-08/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-09/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-10/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-11/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-12/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-13/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-14/SPM.mat'
+                                           'ds011/derivatives/SPM/LEVEL1/sub-05/SPM.mat'
                                            };
 %%
 matlabbatch{2}.spm.stats.fmri_est.spmmat(1) = cfg_dep('FFX Specification: SPM.mat File', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));

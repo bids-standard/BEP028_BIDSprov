@@ -2,38 +2,149 @@ import hashlib
 import json
 import os
 import random
+import string
 import shutil
 import uuid
+from rfc3986 import normalize_uri
 from typing import Mapping, Union, Tuple
 import re
 
 CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
+SOFTWARE_RRIDS = {
+        'AFNI': 'RRID:SCR_005927',
+        'FSL': 'RRID:SCR_002823',
+        'SPM': 'RRID:SCR_007037'
+    }
 
-
-def get_id():
+def get_uuid() -> str:
     return str(uuid.UUID(int=random.getrandbits(128), version=4))
 
+def get_random_string(length: str = 8) -> str:
+    """ Return a random string of a given length.
+        The string may contain uppercase letters,
+        lowercase letters, and digits.
 
-def get_default_graph(label: str, context_url: str = CONTEXT_URL, soft_ver: str = "dev", ) \
+    Parameters
+    ----------
+    length : length of the output string
+
+    Returns
+    -------
+    str : a random string
+    """
+    return ''.join(random.choices(
+        string.ascii_uppercase + string.ascii_lowercase + string.digits, k=length))
+
+def get_rrid(soft_label: str):
+    """ Return the RRID (see: https://rrid.site/about/Getting%20Started) for a software
+
+    Parameters
+    ----------
+    soft_label : the label of the software (e.g.: FSL, SPM, etc.)
+
+    Returns
+    -------
+    str : the RRID of the software
+    or None if the software is not referenced in SOFTWARE_RRIDS
+    """
+    if soft_label in SOFTWARE_RRIDS:
+        return SOFTWARE_RRIDS[soft_label]
+
+    return None
+
+def make_alnum(input_string: str) -> str:
+    """ Remove all non alphanumeric form a string
+
+    Parameters
+    ----------
+    input_string : string to make alphanumeric
+
+    Returns
+    -------
+    str : input string with all non alphanumeric removed
+    """
+    return re.sub(re.compile(r'[^a-zA-Z0-9]'), '', input_string)
+
+def get_activity_urn(label: str) -> str:
+    """ Return a randomly generated yet human readable URN for a bids prov Activity
+
+    Parameters
+    ----------
+    label : the label of the Activity
+
+    Returns
+    -------
+    str : a new URN for the Activity
+    """
+    return f'urn:{make_alnum(label)[:8].lower()}-{get_random_string()}'
+
+def get_agent_urn(label: str) -> str:
+    """ Return a randomly generated yet human readable URN for a bids prov Agent
+
+    Parameters
+    ----------
+    label : the label of the Agent
+
+    Returns
+    -------
+    str : a new URN for the Agent
+    """
+    return f'urn:{make_alnum(label)[:8].lower()}-{get_random_string()}'
+
+def get_entity_urn(label: str, dataset: str = '') -> str:
+    """ Return a URN for a bids prov Entity, based on a given label and the
+    id of the BIDS dataset.
+
+    Parameters
+    ----------
+    label : the label of the entity
+    dataset : id of the BIDS dataset
+
+    Returns
+    -------
+    str : a new URN for the entity
+    """
+    return f'bids:{dataset}:{normalize_uri(label)}'
+
+def get_default_graph(soft_label: str, soft_version: str = "dev", context_url: str = CONTEXT_URL) \
         -> Tuple[Mapping[str, Union[str, Mapping]], str]:  # TODO Dict instead of Mapping , see parser graph["Records"].update
-    agent_id = get_id()
+    """ Return the base graph for a bids prov file
+
+    Parameters
+    ----------
+    soft_label : the label of the software generating the provenance tracks (e.g.: FSL, SPM, etc.)
+    soft_version : the version of the software generating the provenance tracks
+    context_url : the url to the json context
+
+    Returns
+    -------
+    tuple :
+        mapping : the base graph
+        str : the id generated for the software
+    """
+    agent_id = get_agent_urn(soft_label)
+    software_record = {
+        "@id": agent_id,
+        "@type": "prov:SoftwareAgent",
+        "Label": soft_label,
+        "Version": soft_version
+       }
+
+    agent_rrid = get_rrid(soft_label)
+    if agent_rrid is not None:
+        software_record["AltIdentifier"] = get_rrid(soft_label)
+
     return {
-               "@context": context_url,
-               "BIDSProvVersion": "dev",  # TODO ?
-               "Records": {
-                   "Software": [
-                       {
-                           "@id": "urn:" + agent_id,
-                           "RRID": "RRID:SCR_007037",
-                           "@type": "prov:SoftwareAgent",
-                           "Label": label,
-                           "Version": soft_ver
-                       }
-                   ],
-                   "Activities": [],
-                   "Entities": [],
-               },
-           }, agent_id
+        "@context": context_url,
+        "BIDSProvVersion": "dev",
+        "Records": {
+            "Software": [
+                software_record
+            ],
+            "Activities": [],
+            "Entities": [],
+        },
+    }, agent_id
 
 
 def label_mapping(label: str, mapping_filename: str) -> str:
