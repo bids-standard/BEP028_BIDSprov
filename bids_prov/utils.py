@@ -124,7 +124,7 @@ def get_default_graph(soft_label: str, soft_version: str = "dev", context_url: s
     """
     agent_id = get_agent_urn(soft_label)
     software_record = {
-        "@id": "urn:" + agent_id,
+        "@id": agent_id,
         "@type": "prov:SoftwareAgent",
         "Label": soft_label,
         "Version": soft_version
