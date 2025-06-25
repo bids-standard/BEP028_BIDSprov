@@ -28,8 +28,25 @@ def get_provenance_files(layout: BIDSLayout, suffix: str, group: str = None) -> 
     return files
 
 def get_described_datasets(layout: BIDSLayout) -> list:
-    """ Return the dataset_description.json file of a dataset as a BIDSJSONFile. """
-    return [f for f in layout.get() if f.filename == 'dataset_description.json']
+    """ Return a list of dataset_description.json files that contain provenance description.
+        Output files are returned as BIDSJSONFile.
+        dataset_description.json contains provenance description if:
+        - it contains a GeneratedBy field ;
+        AND
+        - at least one of the objects of the GeneratedBy has a Id field.
+    """
+    files = [f for f in layout.get() if f.filename == 'dataset_description.json']
+    out_files = []
+
+    for file in files:
+        metadata = file.get_dict()
+        if 'GeneratedBy' in metadata:
+            for generated_by_obj in metadata['GeneratedBy']:
+                if 'Id' in generated_by_obj:
+                    out_files.append(file)
+                    break
+
+    return out_files
 
 def get_described_files(layout: BIDSLayout) -> list:
     """ Return a list of files of the dataset for which provenance
@@ -44,7 +61,12 @@ def get_described_sidecars(layout: BIDSLayout) -> list:
     return layout.get(SidecarGeneratedBy='', invalid_filters='allow', regex_search=True)
 
 def get_dataset_entity_record(description_file: BIDSJSONFile) -> dict:
-    """ Return an Entity provenance record from metadata of a BIDS dataset. """
+    """ Return an Entity provenance record from metadata of a BIDS dataset.
+        We assume that provenance is described in the description_file, i.e.:
+        - it contains a GeneratedBy field ;
+        AND
+        - at least one of the objects of the GeneratedBy has a Id field.
+    """
 
     metadata = description_file.get_dict()
 
@@ -57,16 +79,11 @@ def get_dataset_entity_record(description_file: BIDSJSONFile) -> dict:
     }
 
     # Get provenance-related metadata
-    if 'GeneratedBy' in metadata:
-        for generated_by_obj in metadata['GeneratedBy']:
-            if 'Id' in generated_by_obj:
-                entity['GeneratedBy'].append(generated_by_obj['Id'])
+    for generated_by_obj in metadata['GeneratedBy']:
+        if 'Id' in generated_by_obj:
+            entity['GeneratedBy'].append(generated_by_obj['Id'])
 
-    # Return only if GeneratedBy contains something
-    if entity['GeneratedBy']:
-        return entity
-
-    return None
+    return entity
 
 def get_entity_record(data_file: BIDSFile) -> dict:
     """ Return an Entity provenance record from metadata of a BIDS file. """
@@ -89,7 +106,7 @@ def get_entity_record(data_file: BIDSFile) -> dict:
 
     return entity
 
-def get_sidecar_entity_record(data_file: BIDSJSONFile) -> dict:
+def get_sidecar_entity_record(data_file: BIDSFile) -> dict:
     """ Return an Entity provenance record for the sidecar of a BIDS file, given its metadata. """
 
     # Get sidecar associated with the data_file
@@ -110,17 +127,11 @@ def get_sidecar_entity_record(data_file: BIDSJSONFile) -> dict:
 
     return None
 
-def entry_point():
-    """ A command line tool for the merge module """
 
-    parser = ArgumentParser()
-    parser.add_argument('--dataset', '-d', type=str, default='.',
-        help='The path to the input BIDS dataset.')
-    parser.add_argument('--output_file', '-o', type=str, required=True,
-        help='Output JSON-LD file containing the provenance graph for the input dataset.')
-    parser.add_argument('--group', '-g', type=str,
-        help='Provenance group for which to extract the metadata.')
-    arguments = parser.parse_args()
+def merge_records(layout: BIDSLayout, group: str = None) -> dict:
+    """ Merge provenace records of a dataset (`layout`) from the provenance group `group`.
+        Return the JSON-LD version of the provenance description.
+    """
 
     # Base for the output JSON-LD
     base_provenance = {
@@ -133,18 +144,15 @@ def entry_point():
       }
     }
 
-    # Input dataset
-    layout = BIDSLayout(arguments.dataset)
-
     # Get provenance metadata form provenance files
-    for file in get_provenance_files(layout, suffix='ent', group=arguments.group):
+    for file in get_provenance_files(layout, suffix='ent', group=group):
         base_provenance['Records']['Entities'] += file.get_dict()['Entities']
     # TODO : add environment feature
-    #for file in get_provenance_files(layout, suffix='env', group=arguments.group):
+    #for file in get_provenance_files(layout, suffix='env', group=group):
     #    base_provenance['Records']['Environments'] += file.get_dict()['Environments']
-    for file in get_provenance_files(layout, suffix='act', group=arguments.group):
+    for file in get_provenance_files(layout, suffix='act', group=group):
         base_provenance['Records']['Activities'] += file.get_dict()['Activities']
-    for file in get_provenance_files(layout, suffix='soft', group=arguments.group):
+    for file in get_provenance_files(layout, suffix='soft', group=group):
         base_provenance['Records']['Software'] += file.get_dict()['Software']
 
     # Get provenance metadata from other JSON files in the dataset
@@ -161,9 +169,25 @@ def entry_point():
         if entity is not None:
             base_provenance['Records']['Entities'].append(entity)
 
+    return base_provenance
+
+def entry_point():
+    """ A command line tool for the merge module """
+
+    parser = ArgumentParser()
+    parser.add_argument('--dataset', '-d', type=str, default='.',
+        help='The path to the input BIDS dataset.')
+    parser.add_argument('--output_file', '-o', type=str, required=True,
+        help='Output JSON-LD file containing the provenance graph for the input dataset.')
+    parser.add_argument('--group', '-g', type=str,
+        help='Provenance group for which to extract the metadata.')
+    arguments = parser.parse_args()
+
     # Write output JSON-LD file
     with open(arguments.output_file, 'w', encoding = 'utf-8') as file:
-        file.write(json.dumps(base_provenance, indent = 2))
+        file.write(
+            json.dumps(merge_records(BIDSLayout(arguments.dataset), arguments.group), indent = 2)
+        )
 
 if __name__ == '__main__':
     entry_point()
