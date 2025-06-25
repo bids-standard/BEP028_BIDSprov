@@ -3,10 +3,10 @@
 % spm SPM - SPM12 (12.1)
 % cfg_basicio BasicIO - Unknown
 %-----------------------------------------------------------------------
-matlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.files = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};
-matlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.action.copyto = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/FUNCTIONAL'};
-matlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.files = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/DATA/BIDS/ds011/sub-01/anat/sub-01_T1w.nii.gz'};
-matlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.action.copyto = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ANATOMICAL'};
+matlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.files = {'ds011/sub-01/func/sub-01_task-tonecounting_bold.nii.gz'};
+matlabbatch{1}.cfg_basicio.file_dir.file_ops.file_move.action.copyto = {'ds011/derivatives/SPM/PREPROCESSING/FUNCTIONAL'};
+matlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.files = {'ds011/sub-01/anat/sub-01_T1w.nii.gz'};
+matlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.action.copyto = {'ds011/derivatives/SPM/PREPROCESSING/ANATOMICAL'};
 matlabbatch{3}.cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1) = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));
 matlabbatch{4}.cfg_basicio.file_dir.file_ops.cfg_gunzip_files.files(1) = cfg_dep('Move/Delete Files: Moved/Copied Files', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));
 matlabbatch{5}.spm.spatial.realign.estwrite.data{1}(1) = cfg_dep('GunZip Files: GunZipped Files', substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{':'}));
@@ -90,7 +90,7 @@ matlabbatch{11}.spm.stats.fmri_spec.timing.fmri_t = 16;
 matlabbatch{11}.spm.stats.fmri_spec.timing.fmri_t0 = 8;
 matlabbatch{11}.spm.stats.fmri_spec.sess.scans(1) = cfg_dep('Smooth: Smoothed Images', substruct('.','val', '{}',{10}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));
 matlabbatch{11}.spm.stats.fmri_spec.sess.cond = struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {});
-matlabbatch{11}.spm.stats.fmri_spec.sess.multi = {'/storage/essicd/data/NIDM-Ex/BIDS_Data/RESULTS/EXAMPLES/ds011/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat'};
+matlabbatch{11}.spm.stats.fmri_spec.sess.multi = {'ds011/derivatives/SPM/PREPROCESSING/ONSETS/sub-01-MultiCond.mat'};
 matlabbatch{11}.spm.stats.fmri_spec.sess.regress = struct('name', {}, 'val', {});
 matlabbatch{11}.spm.stats.fmri_spec.sess.multi_reg = {''};
 matlabbatch{11}.spm.stats.fmri_spec.sess.hpf = 128;

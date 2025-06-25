@@ -6,19 +6,19 @@
 matlabbatch{1}.spm.stats.factorial_design.dir = {'/storage/essicd/data/NIDM-Ex/Testing/ds000006/RESULTS/Group/Con1/Covariate'};
 %%
 matlabbatch{1}.spm.stats.factorial_design.des.t1.scans = {
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub01/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub02/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub03/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub04/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub05/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub06/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub07/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub08/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub09/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub10/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub11/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub12/con_0001.nii,1'
-                                                          '/storage/essicd/data/NIDM-Ex/Data/ds000052/RESULTS/Sub13/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub01/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub02/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub03/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub04/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub05/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub06/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub07/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub08/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub09/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub10/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub11/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub12/con_0001.nii,1'
+                                                          'ds000052/derivatives/RESULTS/Sub13/con_0001.nii,1'
                                                           };
 %%
 %%
