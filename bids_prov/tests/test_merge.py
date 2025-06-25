@@ -177,5 +177,8 @@ class TestMergeFunctions(unittest.TestCase):
             assert merge_records(TEST_DATASET_3) == json_contents
             assert merge_records(TEST_DATASET_3, 'fmriprep') == json_contents
 
+        # TODO : tests for groups that are not present
+        # TODO : check test_files
+
 if __name__ == '__main__':
     unittest.main()
