@@ -56,7 +56,7 @@ options:
 
 This is a generated graph, form the spm_default_batch example.
 
-![provenance graph for the spm_default_batch](examples/from_parsers/spm/spm_default_batch.png)
+![provenance graph for the spm_default_batch](/examples/from_parsers/spm/spm_default_batch.png)
 
 ### Merge provenance provenance records
 
