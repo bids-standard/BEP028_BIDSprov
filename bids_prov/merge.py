@@ -7,6 +7,13 @@
 
 import json
 from argparse import ArgumentParser
+from io import StringIO
+
+from pyld import jsonld
+
+from rdflib import Dataset
+from rdflib.namespace import PROV
+from rdflib.plugins.sparql import prepareQuery
 
 from bids import BIDSLayout
 from bids.layout.models import BIDSFile, BIDSJSONFile
@@ -127,6 +134,54 @@ def get_sidecar_entity_record(data_file: BIDSFile) -> dict:
 
     return None
 
+def get_entities_in_group(input_graph: dict, group: str = None) -> list:
+    """ Return the Ids of Entity provenance records from the provenance graph
+        and belonging to the same provenance group.
+
+        Arguments:
+            - input_graph, dict: JSON-LD graph containing provenance records
+            - group, str: label of the provenance group
+        Return:
+            - list: list of Entity provenance records from the graph that
+            belong to the group
+    """
+
+    # Open file & create graph from it
+    graph = Dataset()
+    graph.parse(StringIO(json.dumps(jsonld.expand(input_graph))), format='json-ld')
+
+    # Search for all prov:Entity GeneratedBy a prov:Activity in the graph
+    query = prepareQuery("""
+        SELECT ?s ?p ?o WHERE {
+            ?s a prov:Entity .
+            ?act a prov:Activity .
+            ?s prov:wasGeneratedBy ?act .
+            ?s ?p ?o .
+        }
+        GROUP BY ?s
+        """,
+        initNs = {'prov': PROV}
+        )
+    generated_entities = [s.n3(graph.namespace_manager).replace('<', '').replace('>', '')
+        for s, _, _ in graph.query(query)]
+
+    # Search for all prov:Entity used a prov:Activity in the graph
+    query = prepareQuery("""
+        SELECT ?s ?p ?o WHERE {
+            ?s a prov:Entity .
+            ?act a prov:Activity .
+            ?act prov:used ?s .
+            ?s ?p ?o .
+        }
+        GROUP BY ?s
+        """,
+        initNs = {'prov': PROV}
+        )
+    used_entities = [s.n3(graph.namespace_manager).replace('<', '').replace('>', '')
+        for s, _, _ in graph.query(query)]
+
+    # Return all prov:Entity in the group
+    return list(set(used_entities + generated_entities))
 
 def merge_records(layout: BIDSLayout, group: str = None) -> dict:
     """ Merge provenace records of a dataset (`layout`) from the provenance group `group`.
@@ -156,7 +211,6 @@ def merge_records(layout: BIDSLayout, group: str = None) -> dict:
         base_provenance['Records']['Software'] += file.get_dict()['Software']
 
     # Get provenance metadata from other JSON files in the dataset
-    # TODO : how to filter on provenance group ?
     for data_file in get_described_files(layout):
         entity = get_entity_record(data_file)
         base_provenance['Records']['Entities'].append(entity)
@@ -168,6 +222,14 @@ def merge_records(layout: BIDSLayout, group: str = None) -> dict:
         entity = get_dataset_entity_record(dataset)
         if entity is not None:
             base_provenance['Records']['Entities'].append(entity)
+
+    # Filter on provenance group
+    entities_in_group = get_entities_in_group(base_provenance, group)
+    entities = []
+    for entity in base_provenance['Records']['Entities']:
+        if entity['Id'] in entities_in_group:
+            entities.append(entity)
+    base_provenance['Records']['Entities'] = entities
 
     return base_provenance
 
