@@ -64,14 +64,18 @@ The `bids_prov.merge` module allows to merge provenance records contained in a B
 
 ```bash
 >> python -m bids_prov.merge --help
-usage: merge.py [-h] [--dataset DATASET] --output_file OUTPUT_FILE [--group GROUP]
+usage: merge.py [-h] [--dataset DATASET] [--derivative] --output_file
+                OUTPUT_FILE [--group GROUP]
 
 options:
   -h, --help            show this help message and exit
   --dataset DATASET, -d DATASET
                         The path to the input BIDS dataset.
+  --derivative          Set this option to specify the dataset is a BIDS
+                        derivative dataset.
   --output_file OUTPUT_FILE, -o OUTPUT_FILE
-                        Output JSON-LD file containing the provenance graph for the input dataset.
+                        Output JSON-LD file containing the provenance graph
+                        for the input dataset.
   --group GROUP, -g GROUP
                         Provenance group for which to extract the metadata.
 ```
@@ -125,4 +129,6 @@ Launching this command from the root dir of the dataset:
 python -m bids_prov.merge -d . -o prov/prov-fmriprep_all.jsonld
 ```
 
-Will look through all the sidecar JSON files, the `dataset_description.json`, and the `prov/*` files to extract provenance metadata, and merge it into the `prov/prov-fmriprep_all.jsonld` file as a JSON-LD RDF graph.
+will look through all the sidecar JSON files, the `dataset_description.json`, and the `prov/*` files to extract provenance metadata, and merge it into the `prov/prov-fmriprep_all.jsonld` file as a JSON-LD RDF graph.
+
+Note that it is possible to extract provenance metadata for all provenance groups or for one provenance group only. Also note that it is important to set the `--derivative` option to parse BIDS derivative datasets.
