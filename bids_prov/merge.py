@@ -24,6 +24,7 @@ def get_associated_sidecar(layout: BIDSLayout, data_file: BIDSFile) -> dict:
         derivative datasets.
 
         Return the associated sidecar of a BIDSFile in a given BIDSLayout.
+        This returns None if no such sidecar exists.
     """
     filename = Path(data_file.path)
     extensions = ''.join(filename.suffixes)

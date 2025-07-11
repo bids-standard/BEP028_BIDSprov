@@ -1,6 +1,6 @@
-# BEP028 example dataset - Provenance records for SPM based fMRI statistical analysis
+# BEP028 example dataset - SPM based fMRI statistical analysis with no provenance records
 
-This example aims at showing provenance records for a functional MRI preprocessing performed with [`SPM`](https://www.fil.ion.ucl.ac.uk/spm/). Provenance records were created manually ; they act as a guideline for further machine-generated records by `SPM`. 
+This example aims at showing a functional MRI preprocessing performed with [`SPM`](https://www.fil.ion.ucl.ac.uk/spm/) before provenance records are added to it.
 
 ## Source dataset
 
