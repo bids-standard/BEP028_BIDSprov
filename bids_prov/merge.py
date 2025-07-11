@@ -94,7 +94,6 @@ def get_dataset_entity_record(description_file: BIDSJSONFile) -> dict:
     entity = {
         "Id": "bids:current_dataset",
         "Label": metadata['Name'],
-        "AtLocation": description_file.dirname,
         "GeneratedBy": []
     }
 
@@ -114,7 +113,7 @@ def get_entity_record(layout: BIDSLayout, data_file: BIDSFile) -> dict:
     entity = {
         "Id": f"bids::{data_file.relpath}",
         "Label": data_file.filename,
-        "AtLocation": data_file.path
+        "AtLocation": data_file.relpath
     }
 
     # Get provenance-related metadata
@@ -146,7 +145,7 @@ def get_sidecar_entity_record(layout: BIDSLayout, data_file: BIDSFile) -> dict:
     entity = {
         "Id": f"bids::{sidecar.relpath}",
         "Label": sidecar.filename,
-        "AtLocation": sidecar.path
+        "AtLocation": sidecar.relpath
     }
 
     # Get provenance-related metadata

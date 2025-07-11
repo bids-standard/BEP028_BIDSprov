@@ -143,7 +143,6 @@ class TestMergeFunctions(unittest.TestCase):
         assert entity == {
             'Id': 'bids:current_dataset',
             'Label': 'Provenance records for SPM-based fMRI statistical analysis',
-            'AtLocation': join(TEST_DATA_DIR, 'provenance_ds01'),
             'GeneratedBy': ['bids::prov#preprocessing-yBHdvts7']
             }
 
@@ -151,7 +150,6 @@ class TestMergeFunctions(unittest.TestCase):
         assert entity == {
             'Id': 'bids:current_dataset',
             'Label': 'Outputs from fMRIPrep preprocessing',
-            'AtLocation': join(TEST_DATA_DIR, 'provenance_ds03'),
             'GeneratedBy': ['bids::prov#preprocessing-xMpFqB5q']
             }
 
@@ -162,8 +160,7 @@ class TestMergeFunctions(unittest.TestCase):
         assert entity == {
             'Id': 'bids::sub-01/anat/sub-01_T1w.nii',
             'Label': 'sub-01_T1w.nii',
-            'AtLocation': join(
-                TEST_DATA_DIR, 'provenance_ds01', 'sub-01', 'anat', 'sub-01_T1w.nii'),
+            'AtLocation': join('sub-01', 'anat', 'sub-01_T1w.nii'),
             'GeneratedBy': 'bids::prov#coregister-6d38be4a',
             'Digest':
                 {
@@ -175,8 +172,7 @@ class TestMergeFunctions(unittest.TestCase):
         assert entity == {
             'Id': 'bids::sub-02/anat/sub-02_T1w.nii',
             'Label': 'sub-02_T1w.nii',
-            'AtLocation': join(
-                TEST_DATA_DIR, 'provenance_ds02', 'sub-02', 'anat', 'sub-02_T1w.nii'),
+            'AtLocation': join('sub-02', 'anat', 'sub-02_T1w.nii'),
             'GeneratedBy': 'bids::prov#conversion-00f3a18f'
             }
 
@@ -187,8 +183,7 @@ class TestMergeFunctions(unittest.TestCase):
         assert entity == {
             'Id': 'bids::sub-02/anat/sub-02_T1w.json',
             'Label': 'sub-02_T1w.json',
-            'AtLocation': join(
-                TEST_DATA_DIR, 'provenance_ds02', 'sub-02', 'anat', 'sub-02_T1w.json'),
+            'AtLocation': join('sub-02', 'anat', 'sub-02_T1w.json'),
             'GeneratedBy': 'bids::prov#conversion-00f3a18f'
             }
 
@@ -198,7 +193,10 @@ class TestMergeFunctions(unittest.TestCase):
         with open(join(TEST_DATA_DIR, 'test_linked_entities.jsonld'),
             encoding = 'utf-8') as test_file:
             json_contents = json.load(test_file)
-            assert get_linked_entities(json_contents) == ['urn:not_used', 'urn:not_generated']
+            linked_entities = get_linked_entities(json_contents)
+            assert len(linked_entities) == 2
+            for entity_id in ['urn:not_used', 'urn:not_generated']:
+                assert entity_id in linked_entities
 
     def test_merge_records(self):
         """ Test the merge_records function """
