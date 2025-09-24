@@ -62,10 +62,15 @@ def get_described_datasets(layout: BIDSLayout) -> list:
     for file in files:
         metadata = file.get_dict()
         if 'GeneratedBy' in metadata:
-            for generated_by_obj in metadata['GeneratedBy']:
-                if 'Id' in generated_by_obj:
-                    out_files.append(file)
-                    break
+            # If GeneratedBy is either a list of objects or a list of activity ids
+            if isinstance(metadata['GeneratedBy'], list):
+                for generated_by_obj in metadata['GeneratedBy']:
+                    if 'Name' not in generated_by_obj:
+                        out_files.append(file)
+                        break
+            # If GeneratedBy is an activity id
+            else:
+                out_files.append(file)
 
     return out_files
 
@@ -98,9 +103,12 @@ def get_dataset_entity_record(description_file: BIDSJSONFile) -> dict:
     }
 
     # Get provenance-related metadata
-    for generated_by_obj in metadata['GeneratedBy']:
-        if 'Id' in generated_by_obj:
-            entity['GeneratedBy'].append(generated_by_obj['Id'])
+    if isinstance(metadata['GeneratedBy'], list):
+        for generated_by_obj in metadata['GeneratedBy']:
+            if 'Name' not in generated_by_obj:
+                entity['GeneratedBy'].append(generated_by_obj)
+    else:
+        entity['GeneratedBy'].append(metadata['GeneratedBy'])
 
     return entity
 
