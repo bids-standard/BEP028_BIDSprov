@@ -33,7 +33,7 @@ def get_associated_sidecar(layout: BIDSLayout, data_file: BIDSFile) -> dict:
     return layout.get_file(sidecar_filename)
 
 def filter_provenance_group(files: list, group: str) -> list:
-    """ Filter a given BIDSFile list, returning the sub-list containig the BIDS
+    """ Filter a given BIDSFile list, returning the sub-list containing the BIDS
     `prov` entity equal to group
     """
     return [f for f in files if f'prov-{group}' in f.filename]
