@@ -4,7 +4,7 @@ This repository contains **BIDS Extension Proposal 028 : BIDS-prov, a provenance
 ## Our goal
 **Interpreting and comparing scientific results** and enabling reusable data and analysis output require understanding provenance, i.e. how the data were generated and processed. To be useful, the provenance must be understandable, easily communicated, and captured automatically in machine accessible form. Provenance records are thus used to encode transformations between digital objects.
 
-### Contributors  ✨
+### Contributors
 
 Camille Maumet ([@cmaumet](https://github.com/cmaumet)) and Satrajit Ghosh ([@satra](https://github.com/satra)) are the BEP co-moderators. Here is the list of all contributors ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
