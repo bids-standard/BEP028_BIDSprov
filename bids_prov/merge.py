@@ -33,10 +33,10 @@ def get_associated_sidecar(layout: BIDSLayout, data_file: BIDSFile) -> dict:
     return layout.get_file(sidecar_filename)
 
 def filter_provenance_group(files: list, group: str) -> list:
-    """ Filter a given BIDSFile list, returning the sub-list containig the BIDS
+    """ Filter a given BIDSFile list, returning the sub-list containing the BIDS
     `prov` entity equal to group
     """
-    return [f for f in files if f'prov-{group}' in f.filename]
+    return [f for f in files if f'prov-{group}_' in f.filename]
 
 def get_provenance_files(layout: BIDSLayout, suffix: str, group: str = None) -> list:
     """ Return a list of provenance files for the dataset. The list is filtered based on
@@ -62,10 +62,15 @@ def get_described_datasets(layout: BIDSLayout) -> list:
     for file in files:
         metadata = file.get_dict()
         if 'GeneratedBy' in metadata:
-            for generated_by_obj in metadata['GeneratedBy']:
-                if 'Id' in generated_by_obj:
-                    out_files.append(file)
-                    break
+            # If GeneratedBy is either a list of objects or a list of activity ids
+            if isinstance(metadata['GeneratedBy'], list):
+                for generated_by_obj in metadata['GeneratedBy']:
+                    if 'Name' not in generated_by_obj:
+                        out_files.append(file)
+                        break
+            # If GeneratedBy is an activity id
+            else:
+                out_files.append(file)
 
     return out_files
 
@@ -92,15 +97,18 @@ def get_dataset_entity_record(description_file: BIDSJSONFile) -> dict:
 
     # Provenance Entity record for the dataset
     entity = {
-        "Id": "bids:current_dataset",
+        "Id": "bids::.",
         "Label": metadata['Name'],
         "GeneratedBy": []
     }
 
     # Get provenance-related metadata
-    for generated_by_obj in metadata['GeneratedBy']:
-        if 'Id' in generated_by_obj:
-            entity['GeneratedBy'].append(generated_by_obj['Id'])
+    if isinstance(metadata['GeneratedBy'], list):
+        for generated_by_obj in metadata['GeneratedBy']:
+            if 'Name' not in generated_by_obj:
+                entity['GeneratedBy'].append(generated_by_obj)
+    else:
+        entity['GeneratedBy'].append(metadata['GeneratedBy'])
 
     return entity
 
@@ -174,7 +182,8 @@ def get_linked_entities(input_graph: dict) -> list:
     # Search for all prov:Entity GeneratedBy a prov:Activity in the graph
     query = prepareQuery("""
         SELECT ?s ?p ?o WHERE {
-            ?s a prov:Entity .
+            VALUES ?entityType { prov:Entity prov:Collection }
+            ?s a ?entityType .
             ?act a prov:Activity .
             ?s prov:wasGeneratedBy ?act .
             ?s ?p ?o .
@@ -189,7 +198,8 @@ def get_linked_entities(input_graph: dict) -> list:
     # Search for all prov:Entity used a prov:Activity in the graph
     query = prepareQuery("""
         SELECT ?s ?p ?o WHERE {
-            ?s a prov:Entity .
+            VALUES ?entityType { prov:Entity prov:Collection }
+            ?s a ?entityType .
             ?act a prov:Activity .
             ?act prov:used ?s .
             ?s ?p ?o .
@@ -211,21 +221,28 @@ def merge_records(layout: BIDSLayout, group: str = None) -> dict:
 
     # Base for the output JSON-LD
     base_provenance = {
-      "BIDSProvVersion": "0.0.1",
-      "@context": "https://purl.org/nidash/bidsprov/context.json",
+      "@context": "https://bids-specification--2099.org.readthedocs.build/en/2099/provenance-context.json",
       "Records": {
         "Software": [],
         "Activities": [],
-        "Entities": []
+        "Files": [],
+        "Datasets": [],
+        "prov:Entity": [],
+        "Environments": []
       }
     }
 
     # Get provenance metadata form provenance files
-    for file in get_provenance_files(layout, suffix='ent', group=group):
-        base_provenance['Records']['Entities'] += file.get_dict()['Entities']
-    # TODO : add environment feature
-    #for file in get_provenance_files(layout, suffix='env', group=group):
-    #    base_provenance['Records']['Environments'] += file.get_dict()['Environments']
+    for file in get_provenance_files(layout, suffix='io', group=group):
+        file_dict = file.get_dict()
+        if 'Files' in file_dict:
+            base_provenance['Records']['Files'] += file_dict['Files']
+        if 'Datasets' in file_dict:
+            base_provenance['Records']['Datasets'] += file_dict['Datasets']
+        if 'prov:Entity' in file_dict:
+            base_provenance['Records']['prov:Entity'] += file_dict['prov:Entity']
+    for file in get_provenance_files(layout, suffix='env', group=group):
+        base_provenance['Records']['Environments'] += file.get_dict()['Environments']
     for file in get_provenance_files(layout, suffix='act', group=group):
         base_provenance['Records']['Activities'] += file.get_dict()['Activities']
     for file in get_provenance_files(layout, suffix='soft', group=group):
@@ -235,23 +252,24 @@ def merge_records(layout: BIDSLayout, group: str = None) -> dict:
     for data_file in get_described_files(layout):
         entity = get_entity_record(layout, data_file)
         if entity is not None:
-            base_provenance['Records']['Entities'].append(entity)
+            base_provenance['Records']['Files'].append(entity)
     for data_file in get_described_sidecars(layout):
         entity = get_sidecar_entity_record(layout, data_file)
         if entity is not None:
-            base_provenance['Records']['Entities'].append(entity)
+            base_provenance['Records']['Files'].append(entity)
     for dataset in get_described_datasets(layout):
         entity = get_dataset_entity_record(dataset)
         if entity is not None:
-            base_provenance['Records']['Entities'].append(entity)
+            base_provenance['Records']['Datasets'].append(entity)
 
-    # Filter on provenance group
+    # Exclude entites that are not linked to the provenance group
     entities_in_group = get_linked_entities(base_provenance)
-    entities = []
-    for entity in base_provenance['Records']['Entities']:
-        if entity['Id'] in entities_in_group:
-            entities.append(entity)
-    base_provenance['Records']['Entities'] = entities
+    for key in ['Files', 'Datasets', 'prov:Entity']:
+        entities = []
+        for entity in base_provenance['Records'][key]:
+            if entity['Id'] in entities_in_group:
+                entities.append(entity)
+        base_provenance['Records'][key] = entities
 
     return base_provenance
 
