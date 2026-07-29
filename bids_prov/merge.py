@@ -36,7 +36,7 @@ def filter_provenance_group(files: list, group: str) -> list:
     """ Filter a given BIDSFile list, returning the sub-list containing the BIDS
     `prov` entity equal to group
     """
-    return [f for f in files if f'prov-{group}' in f.filename]
+    return [f for f in files if f'prov-{group}_' in f.filename]
 
 def get_provenance_files(layout: BIDSLayout, suffix: str, group: str = None) -> list:
     """ Return a list of provenance files for the dataset. The list is filtered based on
