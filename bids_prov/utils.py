@@ -9,7 +9,7 @@ from rfc3986 import normalize_uri
 from typing import Mapping, Union, Tuple
 import re
 
-CONTEXT_URL = "https://raw.githubusercontent.com/bids-standard/BEP028_BIDSprov/master/context.json"
+CONTEXT_URL = "https://bids-specification--2099.org.readthedocs.build/en/2099/provenance-context.json"
 SOFTWARE_RRIDS = {
         'AFNI': 'RRID:SCR_005927',
         'FSL': 'RRID:SCR_002823',

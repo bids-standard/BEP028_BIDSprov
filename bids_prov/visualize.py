@@ -1,125 +1,105 @@
-"""
-A Command Line Interface to generate `graphviz` graphs from bids-prov JSON-ld files
+#!/usr/bin/python
+# coding: utf-8
 
-This facilitates debugging and design of the specifications
+""" A Command Line Interface to generate `graphviz` graphs from bids-prov JSON-LD files.
+    This facilitates debugging and design of the specifications.
 """
 
-# import click
-import argparse
 import json
-import os
-import warnings
-from collections import defaultdict
+from os.path import splitext
 
-import pyld as ld
-import rdflib as rl
 import requests
+from pyld.jsonld import compact
+from rdflib import Dataset
 from prov.dot import prov_to_dot
 from prov.model import ProvDocument
 
-OPTIONAL_FIELDS = {'Activity': ("startedAtTime", "endedAtTime"),
-                   'Entity': ("atLocation", "generatedAt")}  # fields to omit if `--high-level` flag activated
+def turtle_to_image(turtle: str, output_file: str, detailed: bool) -> None:
+    """ Write PNG graph visualization from RDF turtle graph content.
 
-
-def viz_turtle(content=None, img_file=None, source=None, **kwargs) -> None:
-
-    prov_doc = ProvDocument.deserialize(
-        content=content, format="rdf", rdf_format="turtle", source=source)
-    # TODO : show attributes has optional arg
-    dot = prov_to_dot(prov_doc, use_labels=True,
-                      show_element_attributes=False, show_relation_attributes=False)
-    dot.write_png(img_file)
-
-
-def viz_jsonld11(jsonld11: dict, img_file: str) -> None:
+        turtle: str,
+            Graph as turtle content
+        output_file: str,
+            Name of the output PNG file
+        detailed: bool,
+            Provide graph with more information
     """
-    jsonld11: dict
-        a dictionary containing jsonld data,  usually obtained by calling `json.load`
-    img_file: str
-        output path
+    # Open turtle content as a prov document
+    prov_doc = ProvDocument.deserialize(content=turtle, format='rdf', rdf_format='turtle')
+
+    # Convert prov document to dot format
+    dot_data = prov_to_dot(
+        prov_doc,
+        use_labels=True,
+        show_element_attributes=detailed,
+        show_relation_attributes=detailed
+        )
+
+    # Write output file
+    dot_data.write_png(output_file)
+
+def jsonld11_to_jsonld10(jsonld_11: dict) -> dict:
+    """ Convert JSON-LD 1.1 data into JSON-LD 1.0 data.
+        TODO: how / what ? Without type indexing
+
+        jsonld_11: dict
+            JSON-LD data, usually obtained by calling `json.load`
+
+        Return JSON-LD 1.1 data as a dict
     """
-    req_context_11 = requests.get(url=jsonld11["@context"])
+    # Get context data from the provided URL
+    req_context_11 = requests.get(url=jsonld_11['@context'])
+
+    # Convert JSON-LD 1.1 context data to JSON-LD 1.0
     context_11 = req_context_11.json()
     context_10 = {
         k: v
-        for k, v in context_11["@context"].items()
-        if k not in {"@version", "Records"}
+        for k, v in context_11['@context'].items()
+        if k not in {'@version', 'Records'}
     }
 
-    # Load graph from json-ld file as non 1.1 JSON-LD
-    aa = ld.jsonld.compact(jsonld11, context_10)
-    dataaa = json.dumps(aa, indent=2)  # , sort_keys=True)
+    # Return JSON-LD 1.0 data
+    return compact(jsonld_11, context_10)
 
-    # https://rdflib.readthedocs.io/en/stable/_modules/rdflib/graph.html#ConjunctiveGraph
-    g = (rl.ConjunctiveGraph())
-    g.parse(data=dataaa, format="json-ld")
-    viz_turtle(content=g.serialize(format="turtle"), img_file=img_file)
+def jsonld10_to_turtle(jsonld_10: dict) -> str:
+    """ Convert JSON-LD data to RDF turtle.
 
+        jsonld_10: str,
+            input JSON-LD data
 
-def join_jsonld(lds: list, graph_key="Records", omit_details=True) -> dict:
+        Return turtle data as a string
     """
-    lds: list of dict
-        jsonld graphs to be joined
+    # Load JSON-LD data into a rdflib Dataset
+    graph = Dataset()
+    graph.parse(data=json.dumps(jsonld_10), format='json-ld')
 
-    omit_details: bool, default: True
-        omit low level details like datetimes and paths
-    Notes: assumes graph is typed indexed
+    # Serialize to turtle
+    return graph.serialize(format='turtle')
+
+def entry_point(filename: str, output_file:str, detailed:bool) -> None:
+    """ Entry point to convert JSON-LD data to a PNG RDF graph
+        filename: str,
+            name of the file containing JSON-LD data
+        output_file: str,
+            optional name for the output PNG file
+        detailed: bool,
+            If false: omit low level details like datetimes and paths
     """
-    ctx = set((_["@context"] for _ in lds))
-    if not len(ctx) == 1:
-        raise ValueError(f"jsonlds should have a common context, found {ctx}")
-    payload = {"@context": next(iter(ctx)), graph_key: defaultdict(list)}
-    for idx, ld in enumerate(lds, start=1):
-        graph = ld.get(graph_key, dict())
-        if not graph:
-            warnings.warn(f"no graph found in jsonld file number {idx}")
-        for _type, values in graph.items():
-            if omit_details and _type[5:] in OPTIONAL_FIELDS.keys():
-                values = [
-                    {
-                        k: d[k]
-                        for k in d
-                        if k not in OPTIONAL_FIELDS.get(_type[5:], tuple())
-                    }
-                    for d in values
-                ]
 
-            # FIXME check for duplicated defs
-            payload[graph_key][_type].extend(values)
+    # Handle multiple files ?
+    #join_jsonld(graph_data, omit_details=not detailed)
 
-    if not payload[graph_key]:
-        warnings.warn(
-            f"could not found any {graph_key} section in the jsonlds")
-    # payload[graph_key]] = dict(payload[graph_key]])
-    return payload
+    # Read JSON-LD data from file
+    with open(filename, 'r', encoding='utf-8') as file:
+        graph_data = json.load(file)
 
+    graph_data = jsonld11_to_jsonld10(graph_data)
+    graph_data = jsonld10_to_turtle(graph_data)
 
-def main(filename: str, output_file=None, omit_details=True) -> None:
-    jsonld11s = list()
-    with open(filename) as fd:
-        ld = json.load(fd)
-        jsonld11s.append(ld)
-
-    # join multiple definitions
-    jsonld11 = join_jsonld(jsonld11s, graph_key="Records",
-                           omit_details=omit_details)
-
+    # Name for the output file
     if output_file is None:
-        # replace extension .jsonld by .png
-        output_file = (os.path.splitext(filename)[0] + ".png")
+        # Replace extension .jsonld by .png
+        output_file = (splitext(filename)[0] + '.png')
 
-    viz_jsonld11(jsonld11, output_file)
-
-
-def entry_point():
-    """ A command line tool for the visualize module """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, help="input BIDSprov data as a .jsonld file ", required=True)
-    parser.add_argument("--output_file", type=str, default="output_graph.png", help="output .png file showing BIDSprov graph")
-    opt = parser.parse_args()
-
-    main(opt.input_file, output_file=opt.output_file, omit_details=True)
-    # >> python -m   bids_prov.visualize --input_file ./res_temp.jsonld  --output_file res.png
-
-if __name__ == "__main__":
-    entry_point()
+    # Write PNG file
+    turtle_to_image(graph_data, output_file, detailed)

@@ -40,6 +40,11 @@ Options:
 
 ### Visualize provenance as a graph
 
+> [!WARNING]
+> This code is outdated.
+> The new repository [`pybidsprov`](https://github.com/bids-standard/pybidsprov) exposes
+> the code as a python package.
+
 The `bids_prov.visualize` module allows to generate an image showing provenance contained in a JSON-LD file as a graph.
 
 ```bash
@@ -59,6 +64,11 @@ This is a generated graph, form the spm_default_batch example.
 ![](examples/from_parsers/spm/spm_default_batch.png)
 
 ### Merge provenance provenance records
+
+> [!WARNING]
+> This code is outdated.
+> The new repository [`pybidsprov`](https://github.com/bids-standard/pybidsprov) exposes
+> the code as a python package.
 
 The `bids_prov.merge` module allows to merge provenance records contained in a BIDS dataset into a single JSON-LD file.
 
