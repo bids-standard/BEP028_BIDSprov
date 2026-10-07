@@ -19,7 +19,7 @@ def reproducescript_to_commands(lines: list) -> list:
         # Remove comments
         elif line.startswith('%'):
             continue
-        # Begining of commands are identified with cfg = [];
+        # Beginning of commands are identified with cfg = [];
         elif line.startswith('cfg = [];'):
             commands.append('')
             commands[-1] += line

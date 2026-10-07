@@ -52,7 +52,7 @@ def entry_point():
     parser_visualize.add_argument('--detailed', '-d', action='store_true',
         help='Set this option to write a detailed version of the graph.')
 
-    # Parse command line and lauch corresponding programs
+    # Parse command line and launch corresponding programs
     args = parser.parse_args()
     match args.sub_command:
         case 'merge':

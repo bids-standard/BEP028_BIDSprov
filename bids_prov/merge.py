@@ -262,7 +262,7 @@ def merge_records(layout: BIDSLayout, group: str = None) -> dict:
         if entity is not None:
             base_provenance['Records']['Datasets'].append(entity)
 
-    # Exclude entites that are not linked to the provenance group
+    # Exclude entities that are not linked to the provenance group
     entities_in_group = get_linked_entities(base_provenance)
     for key in ['Files', 'Datasets', 'prov:Entity']:
         entities = []
