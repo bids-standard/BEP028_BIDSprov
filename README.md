@@ -66,8 +66,15 @@ If you don't know much about markdown, here's a [good intro guide](https://guide
 
 ## Finding information and getting in touch
 
+### BIDS-Prov in the BIDS specification
+The BEP028 is now merged in the BIDS specification (see [§ Provenance](https://bids-specification--2099.org.readthedocs.build/en/2099/modality-agnostic-files/provenance.html)).
+
+The community review of the BEP took place [here on Github](https://github.com/bids-standard/bids-specification/discussions/2405).
+
+We published [a summary document](bep028community_review.md) about the community review as well as the consequent answers and changes.
+
 ### Google doc
-The BEP028 is in a [google doc](https://docs.google.com/document/d/1vw3VNDof5cecv2PkFp7Lw_pNUTUo8-m8V4SIdtGJVKs/edit?usp=sharing).
+The BEP028 was in a [google doc](https://docs.google.com/document/d/1vw3VNDof5cecv2PkFp7Lw_pNUTUo8-m8V4SIdtGJVKs/edit?usp=sharing).
 
 ### Contact BIDS-Prov
 The group is always open to new contributors interested in neuroimaging data sharing. 
@@ -84,7 +91,19 @@ Mature building blocks of NIDM:
 
 ## Using the code
 
-### Visualize your BIDSprov data
+> [!WARNING]
+> Except for parsers (AFNI, SPM, FSL, fieldtrip), the code in `bids_prov` is outdated.
+> The new repository [`pybidsprov`](https://github.com/bids-standard/pybidsprov) exposes
+> the code as a python package.
+
+> [!NOTE]
+> `pybidsprov` comes with the `bids_prov` command lines, providing the following features:
+>  * `merge`: Aggregates all provenance metadata available in a BIDS dataset to generate a provenance graph inside a single JSON-LD file.
+>  * `extract`: Isolates the provenance graph of a given prov:Entity (e.g. a file, dataset or another prov:Entity) and generates a provenance graph inside a JSON-LD file.
+>  * `check`: Perform a sanity check on a provenance graph contained in a JSON-LD file.
+>  * `visualize`: Generates an image (graphviz graph) representing a provenance graph contained in a JSON-LD file.
+
+### (Outdated) Visualize your BIDSprov data
 
 To visualize your BIDSprov data, perform the following steps :
 1. [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the code inside a `BEP028_BIDSprov` directory, and cd into this directory :
